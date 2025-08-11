@@ -8,7 +8,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 interface DashboardPageProps {
-  searchParams: { error?: string }
+  searchParams: Promise<{ error?: string }>
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
@@ -26,8 +26,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     .eq('id', user.id)
     .single()
 
+  const resolvedSearchParams = await searchParams
   const isAdmin = profile?.is_admin || false
-  const hasAdminError = searchParams.error === 'admin_required'
+  const hasAdminError = resolvedSearchParams.error === 'admin_required'
 
   return (
     <main className="min-h-screen bg-background">
