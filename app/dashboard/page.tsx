@@ -77,7 +77,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6">
             <h3 className="text-lg font-semibold text-destructive mb-2">Access Denied</h3>
             <p className="text-destructive/80">
-              You don't have admin privileges to access the admin panel. Contact an administrator if you believe this is an error.
+              You don&apos;t have admin privileges to access the admin panel. Contact an administrator if you believe this is an error.
             </p>
           </div>
         )}

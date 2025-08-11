@@ -24,7 +24,7 @@ export default function Error({
           Something went wrong
         </h1>
         <p className="text-muted-foreground mb-6">
-          We encountered an unexpected error. This has been logged and we'll look into it.
+          We encountered an unexpected error. This has been logged and we&apos;ll look into it.
         </p>
         <div className="flex gap-3 justify-center">
           <Button onClick={reset} variant="default">

@@ -54,7 +54,7 @@ export default function HomePage() {
               Welcome to the Care Collective platform preview! This demonstrates the core functionality of your community mutual aid application.
             </p>
             <div className="bg-white/50 rounded-lg p-4 mb-4">
-              <h3 className="font-semibold mb-2">✨ What's Ready to Explore:</h3>
+               <h3 className="font-semibold mb-2">✨ What&apos;s Ready to Explore:</h3>
               <ul className="text-left space-y-2 text-sm">
                 <li>• <strong>Complete user registration</strong> and authentication system</li>
                 <li>• <strong>Help request creation</strong> with categories and urgency levels</li>
