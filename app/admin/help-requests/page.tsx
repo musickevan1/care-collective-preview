@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { StatusBadge } from '@/components/StatusBadge'
+import { AdminRequestActions } from './AdminRequestActions'
 import Link from 'next/link'
 
 function formatTimeAgo(dateString: string) {
@@ -39,7 +41,11 @@ export default async function AdminHelpRequestsPage() {
     .from('help_requests')
     .select(`
       *,
-      profiles (
+      profiles!user_id (
+        name,
+        location
+      ),
+      helper:profiles!helper_id (
         name,
         location
       )
@@ -50,15 +56,17 @@ export default async function AdminHelpRequestsPage() {
     console.error('Error fetching help requests:', error)
   }
 
-  // Get stats
+  // Get stats with new statuses
   const [
     { count: totalRequests },
     { count: openRequests },
-    { count: closedRequests },
+    { count: inProgressRequests },
+    { count: completedRequests },
   ] = await Promise.all([
     supabase.from('help_requests').select('*', { count: 'exact', head: true }),
     supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'open'),
-    supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'closed'),
+    supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
+    supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
   ])
 
   return (
@@ -92,11 +100,11 @@ export default async function AdminHelpRequestsPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                📋 Total Requests
+                📋 Total
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -107,7 +115,7 @@ export default async function AdminHelpRequestsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                ✅ Open
+                🟢 Open
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -118,11 +126,22 @@ export default async function AdminHelpRequestsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                ❌ Closed
+                🔵 In Progress
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-600">{closedRequests || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{inProgressRequests || 0}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                ✅ Completed
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-600">{completedRequests || 0}</div>
             </CardContent>
           </Card>
         </div>
@@ -153,9 +172,7 @@ export default async function AdminHelpRequestsPage() {
                           {request.urgency}
                         </Badge>
                         
-                        <Badge variant={request.status === 'open' ? 'default' : 'outline'}>
-                          {request.status}
-                        </Badge>
+                        <StatusBadge status={request.status} />
                       </div>
                       
                       <h3 className="font-medium text-foreground mb-1">
@@ -175,25 +192,16 @@ export default async function AdminHelpRequestsPage() {
                         {request.profiles?.location && (
                           <span>📍 {request.profiles.location}</span>
                         )}
+                        {request.helper && (
+                          <span>🤝 Helper: {request.helper.name}</span>
+                        )}
                         <span>
                           🕒 {formatTimeAgo(request.created_at)}
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 ml-4">
-                      <Button variant="outline" size="sm" disabled>
-                        View (Preview)
-                      </Button>
-                      
-                      <Button 
-                        variant="destructive" 
-                        size="sm"
-                        disabled
-                      >
-                        Remove (Preview)
-                      </Button>
-                    </div>
+                    <AdminRequestActions request={request} />
                   </div>
                 ))}
               </div>

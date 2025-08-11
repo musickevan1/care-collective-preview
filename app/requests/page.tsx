@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { StatusBadge } from '@/components/StatusBadge'
 import Link from 'next/link'
 
 type HelpRequest = {
@@ -13,7 +14,12 @@ type HelpRequest = {
   urgency: string
   status: string
   created_at: string
+  helper_id: string | null
   profiles: {
+    name: string
+    location: string | null
+  } | null
+  helper: {
     name: string
     location: string | null
   } | null
@@ -47,7 +53,14 @@ function formatTimeAgo(dateString: string) {
   }
 }
 
-export default async function RequestsPage() {
+interface PageProps {
+  searchParams: Promise<{ status?: string }>
+}
+
+export default async function RequestsPage({ searchParams }: PageProps) {
+  const params = await searchParams
+  const statusFilter = params.status || 'all'
+  
   const supabase = await createClient()
 
   const { data: { user }, error } = await supabase.auth.getUser()
@@ -56,13 +69,20 @@ export default async function RequestsPage() {
     redirect('/login')
   }
 
-  const { data: requests } = await supabase
+  let query = supabase
     .from('help_requests')
     .select(`
       *,
-      profiles (name, location)
+      profiles!user_id (name, location),
+      helper:profiles!helper_id (name, location)
     `)
-    .eq('status', 'open')
+    
+  // Apply status filter
+  if (statusFilter !== 'all') {
+    query = query.eq('status', statusFilter)
+  }
+  
+  const { data: requests } = await query
     .order('urgency', { ascending: false })
     .order('created_at', { ascending: false })
 
@@ -94,6 +114,42 @@ export default async function RequestsPage() {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Status Filter Tabs */}
+        <div className="mb-6 flex gap-2 flex-wrap">
+          <Link href="/requests">
+            <Button 
+              variant={statusFilter === 'all' ? 'default' : 'outline'}
+              size="sm"
+            >
+              All Requests
+            </Button>
+          </Link>
+          <Link href="/requests?status=open">
+            <Button 
+              variant={statusFilter === 'open' ? 'default' : 'outline'}
+              size="sm"
+            >
+              Open
+            </Button>
+          </Link>
+          <Link href="/requests?status=in_progress">
+            <Button 
+              variant={statusFilter === 'in_progress' ? 'default' : 'outline'}
+              size="sm"
+            >
+              In Progress
+            </Button>
+          </Link>
+          <Link href="/requests?status=completed">
+            <Button 
+              variant={statusFilter === 'completed' ? 'default' : 'outline'}
+              size="sm"
+            >
+              Completed
+            </Button>
+          </Link>
+        </div>
+
         {!requests || requests.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
@@ -153,15 +209,23 @@ export default async function RequestsPage() {
                         <Badge variant={categoryColors[request.category as keyof typeof categoryColors]} className="text-xs">
                           {request.category}
                         </Badge>
+                        <StatusBadge status={request.status as any} />
                       </div>
                       <span className="text-xs text-muted-foreground">
                         {formatTimeAgo(request.created_at)}
                       </span>
                     </div>
+                    {request.helper && request.status === 'in_progress' && (
+                      <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
+                        Being helped by {request.helper.name}
+                      </div>
+                    )}
                     <div className="mt-4 pt-4 border-t">
-                      <Button variant="outline" size="sm" className="w-full">
-                        View Details & Offer Help
-                      </Button>
+                      <Link href={`/requests/${request.id}`}>
+                        <Button variant="outline" size="sm" className="w-full">
+                          View Details {request.status === 'open' && '& Offer Help'}
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
