@@ -64,6 +64,17 @@ export default function HomePage() {
                 <li>• <strong>Role-based permissions</strong> and audit logging</li>
               </ul>
             </div>
+            
+            <div className="bg-primary/10 rounded-lg p-4 mb-4 border-l-4 border-primary">
+              <h3 className="font-semibold mb-2 text-primary">🔑 Admin Demo Account</h3>
+              <div className="text-left space-y-1 text-sm">
+                <p><strong>Email:</strong> maureen.templeman@demo.carecollective.org</p>
+                <p><strong>Password:</strong> CarePreview2025!</p>
+                <p className="text-muted-foreground mt-2">
+                  Use these credentials to explore the full admin interface with 17 demo help requests.
+                </p>
+              </div>
+            </div>
             <p className="text-sm text-muted-foreground">
               <strong>Note:</strong> This preview page will be replaced by your main Wix homepage. Users will access the member portal through your existing Wix website.
             </p>

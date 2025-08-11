@@ -12,7 +12,7 @@ export async function signOut() {
     }
     
     // Redirect to home page after successful logout
-    window.location.href = '/'
+    window.location.href = window.location.origin + '/'
   } catch (error) {
     console.error('Failed to sign out:', error)
     throw error
