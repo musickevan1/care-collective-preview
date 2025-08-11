@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Overlock:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+@import "./styles/tokens.css";
+@import "./styles/buttons.css";
+
+@theme {
+  --color-terracotta: #BC6547;
+  --color-navy: #324158;
+  --color-tan: #C39778;
+  --color-cream: #FBF2E9;
+  --color-brown: #483129;
+  
+  --color-primary: #BC6547;
+  --color-primary-contrast: #B15F43;
+  --color-primary-foreground: #FFFFFF;
+  
+  --color-secondary: #324158;
+  --color-secondary-foreground: #FFFFFF;
+  
+  --color-accent: #C39778;
+  --color-accent-foreground: #000000;
+  
+  --color-background: #FBF2E9;
+  --color-foreground: #000000;
+  
+  --color-destructive: #EF4444;
+  --color-destructive-foreground: #FFFFFF;
+  
+  --color-muted: #C39778;
+  --color-muted-foreground: #000000;
+  
+  --color-card: #FFFFFF;
+  --color-card-foreground: #000000;
+  
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #000000;
+  
+  --color-border: #C39778;
+  --color-input: #C39778;
+  --color-ring: #BC6547;
+  
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  
+  --font-family-sans: 'Overlock', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: 'Overlock', system-ui, -apple-system, sans-serif;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

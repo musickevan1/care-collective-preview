@@ -1,0 +1,219 @@
+/* Button Component Styles */
+.btn {
+  /* Base button styles */
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  position: relative;
+  white-space: nowrap;
+}
+
+/* Focus styles for accessibility */
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Disabled state */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Button Variants */
+
+/* Primary action button */
+.btn--primary {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  border-color: var(--color-accent);
+}
+
+.btn--primary:hover:not(:disabled) {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Destructive/Danger button (for logout, delete, etc.) */
+.btn--danger {
+  background: var(--color-danger);
+  color: var(--color-text-on-danger);
+  border-color: var(--color-danger);
+}
+
+.btn--danger:hover:not(:disabled) {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+}
+
+.btn--danger:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn--danger:focus-visible {
+  box-shadow: var(--focus-ring-danger);
+}
+
+/* Secondary button */
+.btn--secondary {
+  background: var(--color-surface-secondary);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+}
+
+/* Ghost button (minimal style) */
+.btn--ghost {
+  background: transparent;
+  color: currentColor;
+  border-color: transparent;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Outline button */
+.btn--outline {
+  background: transparent;
+  color: currentColor;
+  border-color: currentColor;
+}
+
+.btn--outline:hover:not(:disabled) {
+  background: currentColor;
+  color: var(--color-surface-secondary);
+}
+
+/* Success button */
+.btn--success {
+  background: var(--color-success);
+  color: var(--color-text-on-success);
+  border-color: var(--color-success);
+}
+
+.btn--success:hover:not(:disabled) {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+}
+
+/* Warning button */
+.btn--warning {
+  background: var(--color-warning);
+  color: var(--color-text-on-warning);
+  border-color: var(--color-warning);
+}
+
+.btn--warning:hover:not(:disabled) {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
+}
+
+/* Button Sizes */
+.btn--sm {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--radius-sm);
+}
+
+.btn--lg {
+  font-size: var(--font-size-lg);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-lg);
+}
+
+.btn--xl {
+  font-size: var(--font-size-xl);
+  padding: var(--spacing-lg) var(--spacing-2xl);
+  border-radius: var(--radius-lg);
+}
+
+/* Icon button */
+.btn--icon {
+  padding: var(--spacing-sm);
+  aspect-ratio: 1;
+}
+
+.btn--icon.btn--sm {
+  padding: var(--spacing-xs);
+}
+
+.btn--icon.btn--lg {
+  padding: var(--spacing-md);
+}
+
+/* Full width button */
+.btn--full {
+  width: 100%;
+}
+
+/* Button group */
+.btn-group {
+  display: inline-flex;
+  gap: var(--spacing-sm);
+}
+
+.btn-group--vertical {
+  flex-direction: column;
+}
+
+/* Loading state */
+.btn--loading {
+  color: transparent;
+}
+
+.btn--loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: btn-spinner 0.6s linear infinite;
+}
+
+@keyframes btn-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Readable mode enhancements */
+.readable-mode .btn {
+  font-weight: var(--font-weight-semibold);
+  padding: var(--spacing-md) var(--spacing-xl);
+}
+
+.readable-mode .btn--sm {
+  padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+.readable-mode .btn--lg {
+  padding: var(--spacing-lg) var(--spacing-2xl);
+}

@@ -1,0 +1,175 @@
+/* Design System Tokens */
+:root {
+  /* Color tokens - existing brand colors */
+  --color-surface: #FBF2E9; /* cream background */
+  --color-surface-secondary: #FFFFFF;
+  --color-accent: #BC6547; /* terracotta - primary action color */
+  --color-text-on-accent: #FFFFFF;
+  --color-danger: #D32F2F; /* accessible red for destructive actions */
+  --color-text-on-danger: #FFFFFF;
+  --color-warning: #F57C00;
+  --color-text-on-warning: #FFFFFF;
+  --color-success: #388E3C;
+  --color-text-on-success: #FFFFFF;
+  
+  /* Border and focus */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --focus-ring: 0 0 0 3px rgba(188, 101, 71, 0.35);
+  --focus-ring-danger: 0 0 0 3px rgba(211, 47, 47, 0.35);
+  
+  /* Typography - Base */
+  --font-family-base: 'Overlock', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  --font-family-readable: "Atkinson Hyperlegible", "Inter", "Noto Sans", Arial, sans-serif;
+  
+  /* Font sizes */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+  --font-size-4xl: 36px;
+  
+  /* Font weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-black: 900;
+  
+  /* Line heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* Letter spacing */
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+}
+
+/* Readable Mode Overrides */
+.readable-mode {
+  /* Enhanced typography for better readability */
+  --font-family-base: var(--font-family-readable);
+  
+  /* Increase all font sizes */
+  --font-size-xs: 14px;
+  --font-size-sm: 16px;
+  --font-size-base: 18px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 36px;
+  --font-size-4xl: 42px;
+  
+  /* Increase font weights for better visibility */
+  --font-weight-normal: 500;
+  --font-weight-medium: 600;
+  --font-weight-semibold: 700;
+  --font-weight-bold: 800;
+  --font-weight-black: 900;
+  
+  /* More relaxed line height */
+  --line-height-normal: 1.6;
+  --line-height-relaxed: 1.8;
+  
+  /* Slightly wider letter spacing */
+  --letter-spacing-normal: 0.01em;
+  --letter-spacing-wide: 0.03em;
+  
+  /* Increase spacing for better visual separation */
+  --spacing-xs: 6px;
+  --spacing-sm: 10px;
+  --spacing-md: 14px;
+  --spacing-lg: 20px;
+  --spacing-xl: 28px;
+  --spacing-2xl: 36px;
+}
+
+/* Apply base typography tokens */
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+/* Heading styles using tokens */
+h1 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-normal);
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+h5 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+h6 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+p, li {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Form elements */
+button, input, select, textarea {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+}
+
+/* Small text */
+small, .text-sm {
+  font-size: var(--font-size-sm);
+}
+
+.text-xs {
+  font-size: var(--font-size-xs);
+}
+
+/* Large text */
+.text-lg {
+  font-size: var(--font-size-lg);
+}
+
+.text-xl {
+  font-size: var(--font-size-xl);
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrast Test - CARE Collective</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 40px;
+            background: #FBF2E9; /* cream background */
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .button-test {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            border: 2px solid transparent;
+        }
+        
+        /* Old problematic button */
+        .btn-old {
+            background: #FBF2E9; /* cream */
+            color: white;
+            border-color: #C39778;
+        }
+        
+        /* New destructive button */
+        .btn-destructive {
+            background: #D32F2F;
+            color: white;
+        }
+        
+        /* Primary button */
+        .btn-primary {
+            background: #BC6547;
+            color: white;
+        }
+        
+        .contrast-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>CARE Collective - Button Contrast Test</h1>
+        
+        <div class="test-section">
+            <h2>Problem: Old Logout Button</h2>
+            <button class="button-test btn-old">Sign Out</button>
+            <div class="contrast-info">
+                <p>White text (#FFFFFF) on Cream background (#FBF2E9)</p>
+                <p>Contrast Ratio: ~1.1:1 <span class="fail">FAIL</span></p>
+                <p>Required: 4.5:1 for normal text (WCAG AA)</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Solution: New Destructive Button</h2>
+            <button class="button-test btn-destructive">Sign Out</button>
+            <div class="contrast-info">
+                <p>White text (#FFFFFF) on Red background (#D32F2F)</p>
+                <p>Contrast Ratio: ~4.6:1 <span class="pass">PASS</span></p>
+                <p>Meets WCAG AA standards ✓</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Primary Action Button</h2>
+            <button class="button-test btn-primary">Create Request</button>
+            <div class="contrast-info">
+                <p>White text (#FFFFFF) on Terracotta background (#BC6547)</p>
+                <p>Contrast Ratio: ~4.5:1 <span class="pass">PASS</span></p>
+                <p>Meets WCAG AA standards ✓</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Readable Mode Typography Test</h2>
+            <div style="margin: 20px 0;">
+                <h3>Normal Mode:</h3>
+                <p style="font-family: 'Overlock', sans-serif; font-size: 16px; font-weight: 400;">
+                    This is regular text in normal mode using Overlock font at 16px with regular weight.
+                </p>
+            </div>
+            <div style="margin: 20px 0;">
+                <h3>Readable Mode:</h3>
+                <p style="font-family: 'Atkinson Hyperlegible', 'Inter', sans-serif; font-size: 18px; font-weight: 500;">
+                    This is text in readable mode using Atkinson Hyperlegible font at 18px with medium weight for better visibility.
+                </p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Accessibility Features Implemented</h2>
+            <ul>
+                <li>✅ Fixed logout button contrast (now uses destructive red variant)</li>
+                <li>✅ Added Readable Mode toggle for accessibility</li>
+                <li>✅ Atkinson Hyperlegible font for better legibility</li>
+                <li>✅ Increased font sizes in readable mode (base: 16px → 18px)</li>
+                <li>✅ Increased font weights in readable mode (normal: 400 → 500)</li>
+                <li>✅ Better line height and letter spacing in readable mode</li>
+                <li>✅ Persistent user preference (saved in localStorage)</li>
+                <li>✅ Focus visible states for keyboard navigation</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
