@@ -5,6 +5,10 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "CARE Collective - Preview",
   description: "Southwest Missouri CARE Collective - Building community through mutual aid (Preview Version)",
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -73,7 +74,16 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="text-primary hover:text-primary/80 text-sm">← Back to Home</Link>
-          <h1 className="text-3xl font-bold text-foreground mb-2 mt-4">Join Care Collective</h1>
+          <div className="flex justify-center mt-4 mb-4">
+            <Image 
+              src="/logo.png" 
+              alt="Care Collective Logo" 
+              width={64} 
+              height={64}
+              className="rounded-lg"
+            />
+          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Join Care Collective</h1>
           <p className="text-muted-foreground">Create your account to start helping your community</p>
         </div>
 

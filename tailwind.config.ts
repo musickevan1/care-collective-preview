@@ -24,11 +24,11 @@ const config: Config = {
         },
         accent: {
           DEFAULT: "#C39778",
-          foreground: "#000000",
+          foreground: "#483129",
         },
         background: {
           DEFAULT: "#FBF2E9",
-          foreground: "#000000",
+          foreground: "#483129",
         },
         dark: {
           accent: "#483129",

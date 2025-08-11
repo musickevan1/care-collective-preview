@@ -20,22 +20,22 @@
   --color-secondary-foreground: #FFFFFF;
   
   --color-accent: #C39778;
-  --color-accent-foreground: #000000;
+  --color-accent-foreground: #483129;
   
   --color-background: #FBF2E9;
-  --color-foreground: #000000;
+  --color-foreground: #483129;
   
   --color-destructive: #EF4444;
   --color-destructive-foreground: #FFFFFF;
   
   --color-muted: #C39778;
-  --color-muted-foreground: #000000;
+  --color-muted-foreground: #483129;
   
   --color-card: #FFFFFF;
-  --color-card-foreground: #000000;
+  --color-card-foreground: #483129;
   
   --color-popover: #FFFFFF;
-  --color-popover-foreground: #000000;
+  --color-popover-foreground: #483129;
   
   --color-border: #C39778;
   --color-input: #C39778;

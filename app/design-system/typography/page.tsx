@@ -1,6 +1,11 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { features } from '@/lib/features'
 
 export default function TypographyPage() {
+  if (!features.designSystem) {
+    notFound()
+  }
   const headings = [
     { tag: "h1", size: "text-5xl", weight: "font-bold", sample: "Heading 1" },
     { tag: "h2", size: "text-4xl", weight: "font-bold", sample: "Heading 2" },

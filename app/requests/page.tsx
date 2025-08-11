@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
 import Link from 'next/link'
+import Image from 'next/image'
 
 type HelpRequest = {
   id: string
@@ -98,9 +99,18 @@ export default async function RequestsPage({ searchParams }: PageProps) {
                   ← Dashboard
                 </Button>
               </Link>
-              <div>
-                <h1 className="text-2xl font-bold">Help Requests</h1>
-                <p className="text-sm text-secondary-foreground/70">Browse community requests for help</p>
+              <div className="flex items-center gap-3">
+                <Image 
+                  src="/logo.png" 
+                  alt="Care Collective Logo" 
+                  width={24} 
+                  height={24}
+                  className="rounded"
+                />
+                <div>
+                  <h1 className="text-2xl font-bold">Help Requests</h1>
+                  <p className="text-sm text-secondary-foreground/70">Browse community requests for help</p>
+                </div>
               </div>
             </div>
             <Link href="/requests/new">

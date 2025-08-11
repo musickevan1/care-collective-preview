@@ -15,9 +15,9 @@
     "db:push": "supabase db push",
     "db:pull": "supabase db pull",
     "db:migration": "supabase migration new",
-    "db:types": "supabase gen types typescript --project-id fagwisxdmfyyagzihnvh > lib/database.types.ts",
+    "db:types": "supabase gen types typescript --project-id kecureoyekeqhrxkmjuh > lib/database.types.ts",
     "db:seed": "supabase db seed",
-    "db:link": "supabase link --project-ref fagwisxdmfyyagzihnvh"
+    "db:link": "supabase link --project-ref kecureoyekeqhrxkmjuh"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",

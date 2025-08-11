@@ -19,8 +19,7 @@ export function RequestActions({
   userId,
   isOwner,
   isHelper,
-  canHelp,
-  canUpdateStatus
+  canHelp
 }: RequestActionsProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

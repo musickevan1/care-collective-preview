@@ -26,17 +26,17 @@ const statusConfig: Record<RequestStatus, {
   completed: {
     label: 'Completed',
     variant: 'outline',
-    className: 'bg-gray-100 text-gray-700 border-gray-300'
+    className: 'bg-accent/20 text-foreground border-accent/40'
   },
   cancelled: {
     label: 'Cancelled',
     variant: 'outline',
-    className: 'bg-gray-50 text-gray-500 border-gray-200'
+    className: 'bg-accent/10 text-muted-foreground border-accent/30'
   },
   closed: {
     label: 'Closed',
     variant: 'outline',
-    className: 'bg-gray-100 text-gray-600 border-gray-300'
+    className: 'bg-accent/20 text-foreground border-accent/40'
   }
 }
 

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
 import { AdminRequestActions } from './AdminRequestActions'
 import Link from 'next/link'
+import Image from 'next/image'
 
 function formatTimeAgo(dateString: string) {
   const now = new Date()
@@ -81,9 +82,18 @@ export default async function AdminHelpRequestsPage() {
                   ← Admin Dashboard
                 </Button>
               </Link>
-              <div>
-                <h1 className="text-2xl font-bold">Help Request Management</h1>
-                <p className="text-sm text-secondary-foreground/70">Review community help requests (Preview - Read Only)</p>
+              <div className="flex items-center gap-3">
+                <Image 
+                  src="/logo.png" 
+                  alt="Care Collective Logo" 
+                  width={24} 
+                  height={24}
+                  className="rounded"
+                />
+                <div>
+                  <h1 className="text-2xl font-bold">Help Request Management</h1>
+                  <p className="text-sm text-secondary-foreground/70">Manage and moderate community help requests</p>
+                </div>
               </div>
             </div>
           </div>
@@ -91,11 +101,11 @@ export default async function AdminHelpRequestsPage() {
       </header>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Preview Notice */}
-        <div className="bg-accent/20 border border-accent/30 rounded-lg p-4 mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-2">🔍 Preview Mode - Read Only</h2>
-          <p className="text-muted-foreground">
-            This page shows help request data in read-only mode for demonstration purposes.
+        {/* Admin Notice */}
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8">
+          <h2 className="text-lg font-semibold text-green-900 mb-2">🛡️ Admin Management Panel</h2>
+          <p className="text-green-800">
+            Full administrative capabilities: change request status, assign helpers, and maintain audit logs for community oversight.
           </p>
         </div>
 

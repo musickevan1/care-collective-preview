@@ -5,8 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import Link from 'next/link'
+import Image from 'next/image'
 
-export default async function DashboardPage() {
+interface DashboardPageProps {
+  searchParams: { error?: string }
+}
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const supabase = await createClient()
 
   const { data: { user }, error } = await supabase.auth.getUser()
@@ -21,6 +26,9 @@ export default async function DashboardPage() {
     .eq('id', user.id)
     .single()
 
+  const isAdmin = profile?.is_admin || false
+  const hasAdminError = searchParams.error === 'admin_required'
+
   return (
     <main className="min-h-screen bg-background">
       {/* Header */}
@@ -28,19 +36,32 @@ export default async function DashboardPage() {
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <Link href="/" className="text-xl font-bold">
-                CARE Collective
+              <Link href="/" className="flex items-center gap-3">
+                <Image 
+                  src="/logo.png" 
+                  alt="Care Collective Logo" 
+                  width={28} 
+                  height={28}
+                  className="rounded"
+                />
+                <span className="text-xl font-bold">CARE Collective</span>
               </Link>
               <nav className="hidden md:flex items-center gap-4">
                 <Link href="/dashboard" className="text-accent">Dashboard</Link>
                 <Link href="/requests" className="hover:text-accent transition-colors">Requests</Link>
-                <Link href="/admin" className="hover:text-accent transition-colors">Admin</Link>
+                {isAdmin && (
+                  <Link href="/admin" className="hover:text-accent transition-colors">Admin</Link>
+                )}
               </nav>
             </div>
             <div className="flex items-center gap-2">
               <ReadableModeToggle />
               <form action="/api/auth/logout" method="post">
-                <Button variant="destructive" size="sm" type="submit">
+                <Button 
+                  size="sm" 
+                  type="submit"
+                  className="bg-[#BC6547] hover:bg-[#A55439] text-white"
+                >
                   Sign Out
                 </Button>
               </form>
@@ -51,10 +72,34 @@ export default async function DashboardPage() {
 
       {/* Dashboard Content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Error Messages */}
+        {hasAdminError && (
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6">
+            <h3 className="text-lg font-semibold text-destructive mb-2">Access Denied</h3>
+            <p className="text-destructive/80">
+              You don't have admin privileges to access the admin panel. Contact an administrator if you believe this is an error.
+            </p>
+          </div>
+        )}
+
+        {/* Preview Notice */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <div className="text-blue-600 text-xl">ℹ️</div>
+            <div>
+              <h3 className="font-semibold text-blue-900 mb-1">Preview Mode</h3>
+              <p className="text-blue-800 text-sm">
+                This is a demonstration of the member portal functionality. In production, users will access this dashboard through your main Wix website after logging in.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">
             Welcome back, {profile?.name || user.email}!
+            {isAdmin && <Badge variant="secondary" className="ml-2">Admin</Badge>}
           </h2>
           <p className="text-muted-foreground">
             Here&apos;s what&apos;s happening in your community today.

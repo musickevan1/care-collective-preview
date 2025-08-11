@@ -1,6 +1,11 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { features } from '@/lib/features'
 
 export default function ColorsPage() {
+  if (!features.designSystem) {
+    notFound()
+  }
   const colors = [
     {
       name: "Primary Terracotta",
@@ -21,14 +26,14 @@ export default function ColorsPage() {
       variable: "accent",
       hex: "#C39778",
       usage: "Borders, dividers, muted elements",
-      textColor: "black",
+      textColor: "#483129",
     },
     {
       name: "Background Soft Cream",
       variable: "background",
       hex: "#FBF2E9",
       usage: "Main background color",
-      textColor: "black",
+      textColor: "#483129",
     },
     {
       name: "Dark Accent Brown",
@@ -120,7 +125,7 @@ export default function ColorsPage() {
               <li className="flex items-start gap-2">
                 <span>•</span>
                 <span>
-                  Prefer black text on light colors, white text on dark colors
+                  Use dark brown text on light colors, white text on dark colors for optimal brand consistency
                 </span>
               </li>
             </ul>

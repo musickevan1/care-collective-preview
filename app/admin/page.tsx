@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 
@@ -40,8 +41,15 @@ export default async function AdminDashboard() {
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <Link href="/" className="text-xl font-bold">
-                CARE Collective
+              <Link href="/" className="flex items-center gap-3">
+                <Image 
+                  src="/logo.png" 
+                  alt="Care Collective Logo" 
+                  width={28} 
+                  height={28}
+                  className="rounded"
+                />
+                <span className="text-xl font-bold">CARE Collective</span>
               </Link>
               <nav className="hidden md:flex items-center gap-4">
                 <Link href="/dashboard" className="hover:text-accent transition-colors">Dashboard</Link>
@@ -52,7 +60,11 @@ export default async function AdminDashboard() {
             <div className="flex items-center gap-2">
               <ReadableModeToggle />
               <form action="/api/auth/logout" method="post">
-                <Button variant="destructive" size="sm" type="submit">
+                <Button 
+                  size="sm" 
+                  type="submit"
+                  className="bg-[#BC6547] hover:bg-[#A55439] text-white"
+                >
                   Sign Out
                 </Button>
               </form>
@@ -62,11 +74,11 @@ export default async function AdminDashboard() {
       </header>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Preview Notice */}
-        <div className="bg-accent/20 border border-accent/30 rounded-lg p-4 mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-2">🔍 Admin Preview - Read Only</h2>
-          <p className="text-muted-foreground">
-            This is a preview of the admin panel. All data is read-only for demonstration purposes.
+        {/* Admin Notice */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
+          <h2 className="text-lg font-semibold text-blue-900 mb-2">🛡️ Administrative Dashboard</h2>
+          <p className="text-blue-800">
+            Complete admin oversight with user management, request moderation, and community statistics. All actions are logged for accountability.
           </p>
         </div>
 
@@ -106,7 +118,7 @@ export default async function AdminDashboard() {
           <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
             <CardDescription>
-              Common administrative tasks (Preview Mode)
+              Essential administrative functions for community management
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -142,8 +154,8 @@ export default async function AdminDashboard() {
                 <p className="text-sm text-muted-foreground">Authentication</p>
               </div>
               <div className="text-center">
-                <div className="text-lg font-bold text-green-600">Preview</div>
-                <p className="text-sm text-muted-foreground">Mode</p>
+                <div className="text-lg font-bold text-green-600">Ready</div>
+                <p className="text-sm text-muted-foreground">Platform</p>
               </div>
             </div>
           </CardContent>
