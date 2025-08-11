@@ -68,7 +68,7 @@ export default function HomePage() {
             <div className="bg-primary/10 rounded-lg p-4 mb-4 border-l-4 border-primary">
               <h3 className="font-semibold mb-2 text-primary">🔑 Admin Demo Account</h3>
               <div className="text-left space-y-1 text-sm">
-                <p><strong>Email:</strong> maureen.templeman@demo.carecollective.org</p>
+                <p><strong>Email:</strong> maureentempleman@demo.org</p>
                 <p><strong>Password:</strong> CarePreview2025!</p>
                 <p className="text-muted-foreground mt-2">
                   Use these credentials to explore the full admin interface with 17 demo help requests.
