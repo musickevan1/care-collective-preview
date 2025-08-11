@@ -65,7 +65,7 @@ export default function HomePage() {
               </ul>
             </div>
             <p className="text-sm text-muted-foreground">
-              <strong>Note:</strong> In production, this will integrate with your main Wix website as the member portal.
+              <strong>Note:</strong> This preview page will be replaced by your main Wix homepage. Users will access the member portal through your existing Wix website.
             </p>
           </div>
         </div>
