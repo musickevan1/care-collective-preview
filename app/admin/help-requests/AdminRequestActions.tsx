@@ -186,22 +186,28 @@ export function AdminRequestActions({ request }: AdminRequestActionsProps) {
   }
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex flex-wrap items-center gap-1 sm:gap-2 w-full sm:w-auto">
       <Button
         variant="outline"
         size="sm"
         onClick={() => window.open(`/requests/${request.id}`, '_blank')}
+        className="text-xs sm:text-sm"
       >
         View
       </Button>
       
-      {getStatusActions()}
+      {getStatusActions().map((action, index) => (
+        <div key={index} className="text-xs sm:text-sm">
+          {action}
+        </div>
+      ))}
       
       <Button
         variant="destructive"
         size="sm"
         onClick={handleDelete}
         disabled={loading}
+        className="text-xs sm:text-sm"
       >
         Delete
       </Button>

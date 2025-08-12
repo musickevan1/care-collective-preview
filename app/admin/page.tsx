@@ -75,27 +75,27 @@ export default async function AdminDashboard() {
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Admin Notice */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
-          <h2 className="text-lg font-semibold text-blue-900 mb-2">🛡️ Administrative Dashboard</h2>
-          <p className="text-blue-800">
-            Complete admin oversight with user management, request moderation, and community statistics. All actions are logged for accountability.
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-8">
+          <h2 className="text-base sm:text-lg font-semibold text-blue-900 mb-1 sm:mb-2">🛡️ Admin Dashboard</h2>
+          <p className="text-sm sm:text-base text-blue-800">
+            Complete admin oversight with user management, request moderation, and community statistics.
           </p>
         </div>
 
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+        <div className="mb-4 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">
             Admin Dashboard
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm sm:text-base text-muted-foreground">
             Manage and monitor the CARE Collective community
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-8">
           {stats.map((stat) => (
             <Link key={stat.title} href={stat.href}>
               <Card className="hover:shadow-md transition-shadow cursor-pointer">
@@ -146,7 +146,7 @@ export default async function AdminDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
               <div className="text-center">
                 <div className="text-lg font-bold text-green-600">Active</div>
                 <p className="text-sm text-muted-foreground">Database</p>
