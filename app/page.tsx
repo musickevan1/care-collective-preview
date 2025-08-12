@@ -31,21 +31,21 @@ export default function HomePage() {
         </div>
       </nav>
       
-      <main className="container mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-6">
+      <main className="container mx-auto px-4 py-8 sm:py-12">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="flex justify-center mb-4 sm:mb-6">
             <Image 
               src="/logo.png" 
               alt="Care Collective Logo" 
-              width={120} 
-              height={120}
-              className="rounded-lg shadow-lg"
+              width={80} 
+              height={80}
+              className="rounded-lg shadow-lg sm:w-[120px] sm:h-[120px]"
             />
           </div>
-          <h1 className="text-5xl font-bold text-foreground mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4">
             Welcome to CARE Collective
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-4 sm:mb-6 px-2">
             Building community through mutual aid in Southwest Missouri
           </p>
           <div className="bg-accent/20 rounded-lg p-6 max-w-3xl mx-auto">
@@ -81,7 +81,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className={`grid md:grid-cols-2 ${features.designSystem ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-6 mb-12`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${features.designSystem ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4 sm:gap-6 mb-8 sm:mb-12`}>
           <div className="bg-card rounded-lg p-6 border">
             <h3 className="text-xl font-semibold mb-3">Authentication</h3>
             <p className="text-muted-foreground mb-4">

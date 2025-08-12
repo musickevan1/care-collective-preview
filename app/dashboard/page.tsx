@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ReadableModeToggle } from '@/components/ReadableModeToggle'
+import { MobileNav } from '@/components/MobileNav'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -57,7 +58,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </div>
             <div className="flex items-center gap-2">
               <ReadableModeToggle />
-              <form action="/api/auth/logout" method="post">
+              <MobileNav isAdmin={isAdmin} />
+              <form action="/api/auth/logout" method="post" className="hidden md:block">
                 <Button 
                   size="sm" 
                   type="submit"
@@ -72,7 +74,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       </header>
 
       {/* Dashboard Content */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Error Messages */}
         {hasAdminError && (
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6">
@@ -108,7 +110,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

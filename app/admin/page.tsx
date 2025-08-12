@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ReadableModeToggle } from '@/components/ReadableModeToggle'
+import { MobileNav } from '@/components/MobileNav'
 
 export default async function AdminDashboard() {
   const supabase = await createClient()
@@ -59,7 +60,8 @@ export default async function AdminDashboard() {
             </div>
             <div className="flex items-center gap-2">
               <ReadableModeToggle />
-              <form action="/api/auth/logout" method="post">
+              <MobileNav isAdmin={true} />
+              <form action="/api/auth/logout" method="post" className="hidden md:block">
                 <Button 
                   size="sm" 
                   type="submit"

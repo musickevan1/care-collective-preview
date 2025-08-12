@@ -69,23 +69,23 @@ export default function NewRequestPage() {
     <main className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-secondary text-secondary-foreground shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/requests">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+            <Link href="/requests" className="inline-block">
               <Button variant="ghost" size="sm">
-                ← Back to Requests
+                ← Back
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold">Create Help Request</h1>
-              <p className="text-sm text-secondary-foreground/70">Let the community know how they can help you</p>
+              <h1 className="text-xl sm:text-2xl font-bold">Create Help Request</h1>
+              <p className="text-xs sm:text-sm text-secondary-foreground/70">Let the community know how they can help you</p>
             </div>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <div className="max-w-2xl mx-auto px-6 py-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <Card>
           <CardHeader>
             <CardTitle>Request Details</CardTitle>
@@ -174,7 +174,7 @@ export default function NewRequestPage() {
                         checked={urgency === level.value}
                         onChange={(e) => setUrgency(e.target.value)}
                         disabled={loading}
-                        className="w-4 h-4 text-primary accent-primary"
+                        className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-primary flex-shrink-0"
                       />
                       <div>
                         <div className="text-sm font-medium text-foreground capitalize">{level.value}</div>

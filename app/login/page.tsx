@@ -36,7 +36,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center p-6">
+    <main className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="text-primary hover:text-primary/80 text-sm">← Back to Home</Link>
@@ -80,6 +80,8 @@ export default function LoginPage() {
                   placeholder="Enter your email"
                   required
                   disabled={loading}
+                  autoComplete="email"
+                  inputMode="email"
                 />
               </div>
 
@@ -95,6 +97,7 @@ export default function LoginPage() {
                   placeholder="Enter your password"
                   required
                   disabled={loading}
+                  autoComplete="current-password"
                 />
               </div>
 
