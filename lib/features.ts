@@ -24,7 +24,7 @@ export const features = {
   previewAdmin: process.env.NEXT_PUBLIC_PREVIEW_ADMIN === '1',
   
   // Development Features
-  designSystem: process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_FEATURE_DESIGN_SYSTEM === 'true',
+  designSystem: true, // Always show design system on preview
 } as const;
 
 /**
