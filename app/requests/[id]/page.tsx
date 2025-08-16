@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
 import Link from 'next/link'
 import { RequestActions } from './RequestActions'
+import { ContactExchange } from '@/components/ContactExchange'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -16,6 +17,13 @@ const categoryColors = {
   transport: 'secondary',
   household: 'outline',
   medical: 'destructive',
+  meals: 'default',
+  childcare: 'secondary',
+  petcare: 'outline',
+  technology: 'secondary',
+  companionship: 'default',
+  respite: 'outline',
+  emotional: 'default',
   other: 'outline'
 } as const
 
@@ -127,6 +135,17 @@ export default async function RequestDetailPage({ params }: PageProps) {
                 {request.category}
               </Badge>
             </div>
+
+            {/* Contact Exchange - Show when someone is helping */}
+            {request.helper_id && (isOwner || isHelper) && (
+              <ContactExchange
+                requestId={request.id}
+                helperId={request.helper_id}
+                requesterId={request.user_id}
+                isHelper={isHelper}
+                isRequester={isOwner}
+              />
+            )}
 
             {/* Helper Information */}
             {request.helper_id && (

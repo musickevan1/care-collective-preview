@@ -31,6 +31,13 @@ const categoryColors = {
   transport: 'secondary',
   household: 'outline',
   medical: 'destructive',
+  meals: 'default',
+  childcare: 'secondary',
+  petcare: 'outline',
+  technology: 'secondary',
+  companionship: 'default',
+  respite: 'outline',
+  emotional: 'default',
   other: 'outline'
 } as const
 

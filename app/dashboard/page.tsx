@@ -104,9 +104,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             Welcome back, {profile?.name || user.email}!
             {isAdmin && <Badge variant="secondary" className="ml-2">Admin</Badge>}
           </h2>
-          <p className="text-muted-foreground">
-            Here&apos;s what&apos;s happening in your community today.
-          </p>
+            <p className="text-muted-foreground">
+              Here&apos;s what&apos;s happening in your community today. 
+              <Link href="/help/workflows" className="text-sage hover:text-sage-dark underline ml-1">
+                Learn how it works
+              </Link>
+            </p>
         </div>
 
         {/* Quick Actions */}
@@ -117,7 +120,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <span className="text-2xl">🙋‍♀️</span>
                 Need Help?
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-base">
                 Post a request and let the community help you out
               </CardDescription>
             </CardHeader>
@@ -136,7 +139,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <span className="text-2xl">🤝</span>
                 Want to Help?
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-base">
                 Browse requests from people who need assistance
               </CardDescription>
             </CardHeader>

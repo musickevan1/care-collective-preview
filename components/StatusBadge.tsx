@@ -16,17 +16,17 @@ const statusConfig: Record<RequestStatus, {
   open: {
     label: 'Open',
     variant: 'default',
-    className: 'bg-green-500 hover:bg-green-600 text-white'
+    className: 'bg-dusty-rose hover:bg-dusty-rose-dark text-white'
   },
   in_progress: {
     label: 'In Progress',
     variant: 'secondary',
-    className: 'bg-blue-500 hover:bg-blue-600 text-white'
+    className: 'bg-sage hover:bg-sage-dark text-white'
   },
   completed: {
     label: 'Completed',
     variant: 'outline',
-    className: 'bg-accent/20 text-foreground border-accent/40'
+    className: 'bg-sage/20 text-foreground border-sage/40'
   },
   cancelled: {
     label: 'Cancelled',

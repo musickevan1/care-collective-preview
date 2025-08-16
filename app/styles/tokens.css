@@ -12,6 +12,14 @@
   --color-success: #388E3C;
   --color-text-on-success: #FFFFFF;
   
+  /* New brand colors from client */
+  --color-sage: #7A9E99; /* Calm, supportive accent */
+  --color-sage-light: #A3C4BF; /* Lighter variant */
+  --color-sage-dark: #5A7D78; /* Darker variant */
+  --color-dusty-rose: #D8A8A0; /* Warm, community accent */
+  --color-dusty-rose-light: #E5C6C1; /* Lighter variant */
+  --color-dusty-rose-dark: #B88B83; /* Darker variant */
+  
   /* Border and focus */
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -23,9 +31,9 @@
   --font-family-base: 'Overlock', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   --font-family-readable: "Atkinson Hyperlegible", "Inter", "Noto Sans", Arial, sans-serif;
   
-  /* Font sizes */
-  --font-size-xs: 12px;
-  --font-size-sm: 14px;
+  /* Font sizes - Increased for better readability */
+  --font-size-xs: 13px;  /* was 12px */
+  --font-size-sm: 15px;  /* was 14px */
   --font-size-base: 16px;
   --font-size-lg: 18px;
   --font-size-xl: 20px;

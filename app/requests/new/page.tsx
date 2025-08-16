@@ -9,11 +9,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { createClient } from '@/lib/supabase/client'
 
 const categories = [
-  { value: 'groceries', label: 'Groceries & Shopping' },
-  { value: 'transport', label: 'Transportation' },
-  { value: 'household', label: 'Household Tasks' },
-  { value: 'medical', label: 'Medical Assistance' },
-  { value: 'other', label: 'Other' },
+  { value: 'groceries', label: 'Groceries & Shopping', icon: '🛒' },
+  { value: 'transport', label: 'Transportation', icon: '🚗' },
+  { value: 'household', label: 'Household Tasks', icon: '🏠' },
+  { value: 'medical', label: 'Medical & Pharmacy', icon: '💊' },
+  { value: 'meals', label: 'Meal Preparation', icon: '🍽️' },
+  { value: 'childcare', label: 'Childcare & Family', icon: '👶' },
+  { value: 'petcare', label: 'Pet Care', icon: '🐾' },
+  { value: 'technology', label: 'Technology Help', icon: '💻' },
+  { value: 'companionship', label: 'Companionship', icon: '👥' },
+  { value: 'respite', label: 'Respite Care', icon: '💆' },
+  { value: 'emotional', label: 'Emotional Support', icon: '💝' },
+  { value: 'other', label: 'Other', icon: '📋' },
 ]
 
 const urgencyLevels = [
@@ -27,6 +34,8 @@ export default function NewRequestPage() {
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('')
   const [urgency, setUrgency] = useState('normal')
+  const [locationOverride, setLocationOverride] = useState('')
+  const [locationPrivacy, setLocationPrivacy] = useState('public')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -54,6 +63,8 @@ export default function NewRequestPage() {
         category,
         urgency,
         user_id: user.id,
+        location_override: locationOverride || null,
+        location_privacy: locationPrivacy,
       })
 
     if (error) {
@@ -183,6 +194,42 @@ export default function NewRequestPage() {
                     </label>
                   ))}
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="location" className="text-sm font-medium text-foreground">
+                  Location for This Request (Optional)
+                </label>
+                <Input
+                  id="location"
+                  type="text"
+                  value={locationOverride}
+                  onChange={(e) => setLocationOverride(e.target.value)}
+                  placeholder="e.g., Downtown, ZIP 65802, or specific address"
+                  disabled={loading}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Override your profile location for this specific request if needed
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Who Can See the Location?
+                </label>
+                <select
+                  value={locationPrivacy}
+                  onChange={(e) => setLocationPrivacy(e.target.value)}
+                  disabled={loading}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="public">Everyone (Public)</option>
+                  <option value="helpers_only">Only People Who Offer Help</option>
+                  <option value="after_match">Only After I Accept Help</option>
+                </select>
+                <p className="text-xs text-muted-foreground">
+                  Control who can see your location information
+                </p>
               </div>
 
               <div className="flex gap-4 pt-4">

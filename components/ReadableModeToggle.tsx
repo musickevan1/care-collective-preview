@@ -15,7 +15,7 @@ export function ReadableModeToggle() {
       aria-checked={readableMode}
       aria-label={readableMode ? 'Disable readable mode' : 'Enable readable mode'}
       onClick={toggleReadableMode}
-      className="flex items-center gap-2"
+      className="flex items-center gap-2 border-[#C39778] bg-[#FBF2E9] text-[#483129] hover:bg-[#C39778] hover:text-[#483129]"
     >
       <svg
         width="20"
