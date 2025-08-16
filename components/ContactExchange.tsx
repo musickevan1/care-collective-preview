@@ -40,6 +40,7 @@ export function ContactExchange({
 
   useEffect(() => {
     loadContactInfo()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestId, helperId, requesterId])
 
   const loadContactInfo = async () => {

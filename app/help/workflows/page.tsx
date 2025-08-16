@@ -222,7 +222,7 @@ export default function WorkflowsPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-dusty-rose-dark mt-0.5">•</span>
-                <span>Trust your instincts - if something doesn't feel right, it's okay to decline</span>
+                <span>Trust your instincts - if something doesn&apos;t feel right, it&apos;s okay to decline</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-dusty-rose-dark mt-0.5">•</span>
@@ -234,7 +234,7 @@ export default function WorkflowsPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-dusty-rose-dark mt-0.5">•</span>
-                <span>Keep personal information private until you're comfortable sharing</span>
+                <span>Keep personal information private until you&apos;re comfortable sharing</span>
               </li>
             </ul>
           </CardContent>
