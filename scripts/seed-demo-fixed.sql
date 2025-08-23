@@ -194,7 +194,9 @@ WHERE status IN ('completed', 'cancelled')
 LIMIT 5;
 
 -- Create a summary view for the demo
-CREATE OR REPLACE VIEW demo_summary AS
+-- Using SECURITY INVOKER to respect user permissions and RLS policies
+CREATE OR REPLACE VIEW demo_summary 
+WITH (security_invoker = true) AS
 SELECT 
   'Demo Data Summary' as title,
   (SELECT COUNT(*) FROM profiles) as total_users,
@@ -208,6 +210,9 @@ SELECT
 
 -- Grant access to the view
 GRANT SELECT ON demo_summary TO anon, authenticated;
+
+-- Add documentation about security model
+COMMENT ON VIEW demo_summary IS 'Summary view for demo data. Uses SECURITY INVOKER to respect the querying user''s permissions and RLS policies.';
 
 -- Display summary
 SELECT * FROM demo_summary;

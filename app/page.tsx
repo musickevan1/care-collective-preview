@@ -16,6 +16,8 @@ export default function HomePage() {
                 width={32} 
                 height={32}
                 className="rounded"
+                priority
+                sizes="32px"
               />
               <span className="text-xl font-bold">CARE Collective</span>
             </Link>
@@ -37,9 +39,13 @@ export default function HomePage() {
             <Image 
               src="/logo.png" 
               alt="Care Collective Logo" 
-              width={80} 
-              height={80}
-              className="rounded-lg shadow-lg sm:w-[120px] sm:h-[120px]"
+              width={120} 
+              height={120}
+              className="rounded-lg shadow-lg w-20 h-20 sm:w-[120px] sm:h-[120px]"
+              priority
+              sizes="(max-width: 640px) 80px, 120px"
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyEiWZQeGJ3Hcz3k0y7FhI0bNK0Y8A+vUYKhgHxJOeHjdGVcMKG8ccGaZu4oj/nB+kQjGfT/9k="
             />
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4">

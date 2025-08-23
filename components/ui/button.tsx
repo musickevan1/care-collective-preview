@@ -15,8 +15,9 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        sage: "bg-sage text-white hover:bg-sage/90",
-        rose: "bg-dusty-rose text-white hover:bg-dusty-rose/90",
+        sage: "bg-sage-dark text-white hover:bg-sage-accessible focus-visible:ring-sage/50",
+        rose: "bg-dusty-rose-accessible text-white hover:bg-dusty-rose-dark focus-visible:ring-dusty-rose/50",
+        terracotta: "bg-terracotta text-white hover:bg-terracotta/90 focus-visible:ring-terracotta/50",
       },
       size: {
         default: "h-11 px-4 py-2 min-h-[44px]",
@@ -38,18 +39,30 @@ export interface ButtonProps
   asChild?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    )
-  }
+// Memoized Button component to prevent unnecessary re-renders when props haven't changed
+const Button = React.memo(
+  React.forwardRef<HTMLButtonElement, ButtonProps>(
+    ({ className, variant, size, asChild = false, ...props }, ref) => {
+      // Memoize the component type selection
+      const Comp = React.useMemo(() => asChild ? Slot : "button", [asChild])
+      
+      // Memoize className computation to avoid recalculation on every render
+      const computedClassName = React.useMemo(
+        () => cn(buttonVariants({ variant, size, className })),
+        [variant, size, className]
+      )
+      
+      return (
+        <Comp
+          className={computedClassName}
+          ref={ref}
+          {...props}
+        />
+      )
+    }
+  )
 )
+
 Button.displayName = "Button"
 
 export { Button, buttonVariants }

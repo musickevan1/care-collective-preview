@@ -1,3 +1,4 @@
+import React, { memo, useMemo } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
@@ -8,6 +9,7 @@ interface StatusBadgeProps {
   className?: string
 }
 
+// Memoized status configuration to prevent recreation on every render
 const statusConfig: Record<RequestStatus, {
   label: string
   variant: 'default' | 'secondary' | 'destructive' | 'outline'
@@ -38,17 +40,30 @@ const statusConfig: Record<RequestStatus, {
     variant: 'outline',
     className: 'bg-accent/20 text-foreground border-accent/40'
   }
-}
+} as const
 
-export function StatusBadge({ status, className }: StatusBadgeProps) {
-  const config = statusConfig[status] || statusConfig.open
+// Memoized component to prevent unnecessary re-renders
+export const StatusBadge = memo<StatusBadgeProps>(({ status, className }) => {
+  // Memoize config lookup to avoid repeated object access
+  const config = useMemo(() => 
+    statusConfig[status] || statusConfig.open, 
+    [status]
+  )
+
+  // Memoize className computation
+  const badgeClassName = useMemo(() => 
+    cn(config.className, className), 
+    [config.className, className]
+  )
   
   return (
     <Badge 
       variant={config.variant}
-      className={cn(config.className, className)}
+      className={badgeClassName}
     >
       {config.label}
     </Badge>
   )
-}
+})
+
+StatusBadge.displayName = 'StatusBadge'

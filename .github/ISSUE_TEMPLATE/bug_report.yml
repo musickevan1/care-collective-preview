@@ -1,0 +1,177 @@
+name: 🐛 Bug Report
+description: File a bug report to help us improve
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! This helps us improve the Care Collective platform.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Bug Summary
+      description: A clear and concise description of what the bug is
+      placeholder: "Brief description of the issue"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - Critical (blocks core functionality)
+        - High (significant impact on users)
+        - Medium (moderate impact)
+        - Low (minor issue)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the application is affected?
+      options:
+        - Authentication/Login
+        - Dashboard
+        - Help Requests
+        - Admin Panel
+        - User Management
+        - Database/API
+        - Security
+        - Performance
+        - UI/UX
+        - Mobile
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: "Describe what you expected to happen"
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: "Describe what actually happened"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      description: Which browser are you using?
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Mobile Safari (iOS)
+        - Chrome Mobile (Android)
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device Type
+      description: What device are you using?
+      options:
+        - Desktop/Laptop
+        - Mobile Phone
+        - Tablet
+        - Other
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: |
+        Include relevant environment information:
+        - Operating System
+        - Browser Version
+        - Screen Resolution (if UI related)
+        - Any browser extensions
+      placeholder: |
+        OS: Windows 10 / macOS 13.0 / Ubuntu 22.04
+        Browser: Chrome 119.0
+        Extensions: uBlock Origin, LastPass
+        Screen: 1920x1080
+
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: Console Errors
+      description: Any errors in the browser console? (Press F12 to open dev tools)
+      placeholder: "Paste any error messages from the console here"
+      render: text
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots/Videos
+      description: |
+        Add screenshots or videos that help explain the problem.
+        You can drag and drop images here.
+
+  - type: checkboxes
+    id: user-impact
+    attributes:
+      label: User Impact
+      description: How does this affect users?
+      options:
+        - label: Prevents users from completing essential tasks
+        - label: Causes data loss or corruption
+        - label: Security vulnerability
+        - label: Accessibility issue
+        - label: Performance degradation
+        - label: Visual/cosmetic issue only
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: |
+        Add any other context about the problem here.
+        - Does this happen consistently or intermittently?
+        - When did you first notice this issue?
+        - Any workarounds you've found?
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Confirmation
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: I have provided enough information to reproduce the issue
+          required: true
+        - label: This issue affects the Care Collective platform functionality
+          required: true

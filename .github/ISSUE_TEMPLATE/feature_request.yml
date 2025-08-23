@@ -1,0 +1,219 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! This helps us improve the Care Collective platform and better serve our community.
+
+  - type: input
+    id: title
+    attributes:
+      label: Feature Title
+      description: A clear and concise title for the feature
+      placeholder: "Brief description of the feature"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Feature Category
+      description: What type of feature is this?
+      options:
+        - User Experience/Interface
+        - Help Request Management
+        - User Authentication/Authorization
+        - Admin/Moderation Tools
+        - Communication/Messaging
+        - Search/Discovery
+        - Mobile Experience
+        - Accessibility
+        - Security/Privacy
+        - Performance/Optimization
+        - Analytics/Reporting
+        - Integration/API
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - Critical (essential for core mission)
+        - High (significantly improves user experience)
+        - Medium (nice to have, adds value)
+        - Low (minor enhancement)
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem/Need
+      description: What problem does this feature solve? What need does it address?
+      placeholder: "Describe the problem or need this feature would address"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed solution in detail
+      placeholder: "Describe how you envision this feature working"
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-stories
+    attributes:
+      label: User Stories
+      description: |
+        Describe how different users would interact with this feature.
+        Use the format: "As a [user type], I want [goal] so that [benefit]"
+      placeholder: |
+        As a help seeker, I want to filter requests by location so that I can find nearby assistance.
+        As a volunteer, I want to see urgent requests first so that I can prioritize my help.
+        As an admin, I want to moderate content so that the platform remains safe.
+
+  - type: checkboxes
+    id: user-types
+    attributes:
+      label: Who would benefit from this feature?
+      description: Select all user types that would benefit
+      options:
+        - label: Help seekers (people requesting assistance)
+        - label: Volunteers/helpers
+        - label: Community moderators
+        - label: System administrators
+        - label: All users
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solutions
+      description: What other approaches could solve this problem?
+      placeholder: "Describe any alternative solutions you've considered"
+
+  - type: textarea
+    id: mockups
+    attributes:
+      label: Mockups/Wireframes
+      description: |
+        If you have mockups, wireframes, or visual examples, attach them here.
+        You can drag and drop images directly into this text area.
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Estimated Complexity
+      description: How complex do you think implementing this feature would be?
+      options:
+        - Simple (minor changes, 1-2 days)
+        - Medium (moderate changes, 1-2 weeks)
+        - Complex (major changes, 1+ months)
+        - Not sure
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: |
+        What criteria must be met for this feature to be considered complete?
+        Use checkboxes for clear, testable criteria.
+      placeholder: |
+        - [ ] Users can create new help requests
+        - [ ] Requests are visible to volunteers
+        - [ ] Email notifications are sent
+        - [ ] Mobile responsive design
+
+  - type: checkboxes
+    id: care-collective-alignment
+    attributes:
+      label: Care Collective Mission Alignment
+      description: How does this feature align with our mission?
+      options:
+        - label: Improves access to community support
+        - label: Enhances safety and trust
+        - label: Increases volunteer engagement
+        - label: Removes barriers to help-seeking
+        - label: Promotes community building
+        - label: Supports vulnerable populations
+
+  - type: textarea
+    id: technical-considerations
+    attributes:
+      label: Technical Considerations
+      description: |
+        Any technical aspects to consider? (optional, but helpful)
+        - Database changes needed?
+        - New APIs required?
+        - Third-party integrations?
+        - Security implications?
+        - Performance impact?
+
+  - type: checkboxes
+    id: accessibility
+    attributes:
+      label: Accessibility Requirements
+      description: Select accessibility considerations for this feature
+      options:
+        - label: Keyboard navigation support
+        - label: Screen reader compatibility
+        - label: High contrast/color blind support
+        - label: Multi-language support
+        - label: Simple/clear language
+        - label: No specific accessibility requirements
+
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Success Metrics
+      description: How would we measure the success of this feature?
+      placeholder: |
+        - Increased user engagement (time on platform)
+        - Higher help request completion rates
+        - More volunteer signups
+        - Reduced support tickets
+        - User satisfaction scores
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: |
+        Add any other context, research, or information about the feature request.
+        - Similar features in other platforms?
+        - User feedback that inspired this?
+        - Related issues or PRPs?
+
+  - type: checkboxes
+    id: implementation
+    attributes:
+      label: Implementation Interest
+      description: Are you interested in helping implement this feature?
+      options:
+        - label: I'd like to contribute to the implementation
+        - label: I can help with design/UX
+        - label: I can help with testing
+        - label: I can provide user feedback
+        - label: I'm just suggesting the idea
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      description: Please confirm the following
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: This feature aligns with the Care Collective mission
+          required: true
+        - label: I have provided sufficient detail for evaluation
+          required: true

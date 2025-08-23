@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { OptimizedQueries } from '@/lib/db-cache'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -9,16 +10,18 @@ import { MobileNav } from '@/components/MobileNav'
 export default async function AdminDashboard() {
   const supabase = await createClient()
 
-  // Get basic statistics (simplified for preview)
+  // Get basic statistics with caching for better performance
   const [
-    { count: totalUsers },
-    { count: totalHelpRequests },
-    { count: openHelpRequests },
+    userStatsResult,
+    helpRequestStatsResult
   ] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('help_requests').select('*', { count: 'exact', head: true }),
-    supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'open'),
+    OptimizedQueries.getUserStats(),
+    OptimizedQueries.getHelpRequestStats()
   ])
+
+  const totalUsers = userStatsResult.data?.total || 0
+  const totalHelpRequests = helpRequestStatsResult.data?.total || 0
+  const openHelpRequests = helpRequestStatsResult.data?.open || 0
 
   const stats = [
     {
@@ -65,7 +68,7 @@ export default async function AdminDashboard() {
                 <Button 
                   size="sm" 
                   type="submit"
-                  className="bg-[#BC6547] hover:bg-[#A55439] text-white"
+                  variant="terracotta"
                 >
                   Sign Out
                 </Button>
@@ -132,6 +135,11 @@ export default async function AdminDashboard() {
             <Link href="/admin/help-requests">
               <Button variant="outline" className="w-full justify-start">
                 📋 Review Help Requests
+              </Button>
+            </Link>
+            <Link href="/admin/performance">
+              <Button variant="outline" className="w-full justify-start">
+                📊 Performance Dashboard
               </Button>
             </Link>
           </CardContent>

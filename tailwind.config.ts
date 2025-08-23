@@ -14,12 +14,12 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#BC6547",
-          contrast: "#B15F43",
+          DEFAULT: "#5A7D78", // Using accessible sage dark
+          contrast: "#4A6B66",
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#324158",
+          DEFAULT: "#9A6B61", // Using accessible dusty rose
           foreground: "#FFFFFF",
         },
         accent: {
@@ -42,9 +42,11 @@ const config: Config = {
         sage: "#7A9E99",
         "sage-light": "#A3C4BF",
         "sage-dark": "#5A7D78",
+        "sage-accessible": "#4A6B66",
         "dusty-rose": "#D8A8A0",
         "dusty-rose-light": "#E5C6C1",
         "dusty-rose-dark": "#B88B83",
+        "dusty-rose-accessible": "#9A6B61",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

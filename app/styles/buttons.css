@@ -35,11 +35,11 @@
 
 /* Button Variants */
 
-/* Primary action button */
+/* Primary action button - Now using sage */
 .btn--primary {
-  background: var(--color-accent);
-  color: var(--color-text-on-accent);
-  border-color: var(--color-accent);
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border-color: var(--color-primary);
 }
 
 .btn--primary:hover:not(:disabled) {
@@ -71,16 +71,60 @@
   box-shadow: var(--focus-ring-danger);
 }
 
-/* Secondary button */
+/* Secondary button - Now using dusty rose */
 .btn--secondary {
-  background: var(--color-surface-secondary);
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+  border-color: var(--color-secondary);
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background: var(--color-accent);
-  color: var(--color-text-on-accent);
+  background: var(--color-secondary-hover);
+  color: var(--color-secondary-foreground);
+}
+
+/* Sage button variant */
+.btn--sage {
+  background: var(--color-sage);
+  color: var(--color-sage-foreground);
+  border-color: var(--color-sage);
+}
+
+.btn--sage:hover:not(:disabled) {
+  background: var(--color-sage-dark);
+  transform: translateY(-1px);
+}
+
+.btn--sage:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* Dusty Rose button variant */
+.btn--dusty-rose {
+  background: var(--color-dusty-rose);
+  color: var(--color-dusty-rose-foreground);
+  border-color: var(--color-dusty-rose);
+}
+
+.btn--dusty-rose:hover:not(:disabled) {
+  background: var(--color-dusty-rose-dark);
+  transform: translateY(-1px);
+}
+
+.btn--dusty-rose:focus-visible {
+  box-shadow: var(--focus-ring-secondary);
+}
+
+/* Terracotta button variant (legacy) */
+.btn--terracotta {
+  background: var(--color-terracotta);
+  color: var(--color-terracotta-foreground);
+  border-color: var(--color-terracotta);
+}
+
+.btn--terracotta:hover:not(:disabled) {
+  filter: brightness(0.9);
+  transform: translateY(-1px);
 }
 
 /* Ghost button (minimal style) */

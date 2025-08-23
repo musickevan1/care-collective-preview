@@ -1,35 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Overlock:wght@400;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+/* Fonts are now loaded via next/font for optimal performance */
 @import "tailwindcss";
 @import "./styles/tokens.css";
 @import "./styles/buttons.css";
 
 @theme {
+  /* Legacy colors for backwards compatibility */
   --color-terracotta: #BC6547;
   --color-navy: #324158;
   --color-tan: #C39778;
   --color-cream: #FBF2E9;
   --color-brown: #483129;
   
-  /* New brand colors from client */
+  /* Primary brand colors - sage and dusty rose */
   --color-sage: #7A9E99;
+  --color-sage-light: #A3C4BF;
+  --color-sage-dark: #5A7D78;
   --color-dusty-rose: #D8A8A0;
+  --color-dusty-rose-light: #E5C6C1;
+  --color-dusty-rose-dark: #B88B83;
   
-  --color-primary: #BC6547;
-  --color-primary-contrast: #B15F43;
+  /* Use accessible sage as primary now */
+  --color-primary: #5A7D78;
+  --color-primary-contrast: #4A6B66;
   --color-primary-foreground: #FFFFFF;
   
-  --color-secondary: #324158;
+  /* Use accessible dusty rose as secondary */
+  --color-secondary: #9A6B61;
   --color-secondary-foreground: #FFFFFF;
   
+  /* Keep tan as accent for subtle elements */
   --color-accent: #C39778;
   --color-accent-foreground: #483129;
   
   --color-background: #FBF2E9;
   --color-foreground: #483129;
   
-  --color-destructive: #EF4444;
+  --color-destructive: #D32F2F;
   --color-destructive-foreground: #FFFFFF;
   
   --color-muted: #C39778;
@@ -43,13 +49,15 @@
   
   --color-border: #C39778;
   --color-input: #C39778;
-  --color-ring: #BC6547;
+  --color-ring: #7A9E99;
   
   --radius-sm: 0.125rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
   
-  --font-family-sans: 'Overlock', system-ui, -apple-system, sans-serif;
+  --font-family-sans: var(--font-overlock), system-ui, -apple-system, sans-serif;
+  --font-family-accessible: var(--font-atkinson), system-ui, -apple-system, sans-serif;
+  --font-family-system: var(--font-inter), system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -59,7 +67,7 @@
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  font-family: 'Overlock', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-family-sans);
   font-feature-settings: "rlig" 1, "calt" 1;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;

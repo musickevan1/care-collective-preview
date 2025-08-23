@@ -1,0 +1,304 @@
+name: 📋 PRP Request
+description: Request a new Product Requirement Prompt (PRP)
+title: "[PRP]: "
+labels: ["prp", "needs-triage", "methodology"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Product Requirement Prompt (PRP) Request
+        
+        Use this template to request a new PRP following the Care Collective methodology.
+        A PRP provides AI coding agents with the complete context needed to implement features successfully.
+
+  - type: input
+    id: prp-title
+    attributes:
+      label: PRP Title
+      description: Clear, descriptive title for the PRP
+      placeholder: "e.g., Implement Real-time Help Request Notifications"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: prp-category
+    attributes:
+      label: PRP Category
+      description: What type of development work does this PRP cover?
+      options:
+        - New Feature Implementation
+        - Bug Fix/Issue Resolution
+        - Performance Optimization
+        - Security Enhancement
+        - Refactoring/Code Quality
+        - Testing/Validation
+        - Database Migration
+        - API Development
+        - UI/UX Component
+        - Integration Development
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Estimated Complexity
+      description: How complex is this implementation?
+      options:
+        - Simple (1-3 days, single component)
+        - Medium (1-2 weeks, multiple components)
+        - Complex (2+ weeks, system-wide changes)
+        - Epic (multiple PRPs needed)
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context & Background
+      description: |
+        Provide detailed context that an AI agent would need to understand:
+        - Current system state
+        - Relevant existing code/files
+        - Related user stories or requirements
+        - Business logic context
+      placeholder: |
+        The Care Collective platform currently allows users to submit help requests, but there's no real-time notification system. Users must manually refresh to see updates...
+        
+        Relevant files:
+        - app/requests/page.tsx (main requests view)
+        - lib/supabase/client.ts (database connection)
+        - components/StatusBadge.tsx (status display)
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation-strategy
+    attributes:
+      label: Implementation Strategy
+      description: |
+        Outline the technical approach and implementation details:
+        - Technologies/libraries to use
+        - Architecture decisions
+        - API endpoints needed
+        - Database changes
+        - Component structure
+      placeholder: |
+        Technical Approach:
+        1. Use Supabase real-time subscriptions for live updates
+        2. Implement WebSocket connection in useEffect hook
+        3. Add notification banner component to requests page
+        4. Update database schema with notification_settings table
+        
+        Key Components:
+        - NotificationBanner.tsx
+        - useRealtimeUpdates.ts hook
+        - API route: /api/notifications
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation-gates
+    attributes:
+      label: Validation Gates & Success Criteria
+      description: |
+        Define specific, testable criteria for completion:
+        - Unit tests to write
+        - Integration tests needed
+        - Manual testing steps
+        - Performance requirements
+        - Security checks
+      placeholder: |
+        Validation Gates:
+        - [ ] Unit tests for notification components (>90% coverage)
+        - [ ] Integration test for real-time subscription
+        - [ ] Manual test: notifications appear within 2 seconds
+        - [ ] Performance: no memory leaks in WebSocket connections
+        - [ ] Security: validate user permissions for notifications
+        - [ ] Accessibility: screen reader announces new notifications
+    validations:
+      required: true
+
+  - type: textarea
+    id: file-references
+    attributes:
+      label: File References & Dependencies
+      description: |
+        List specific files, directories, and dependencies involved:
+        - Files to create/modify
+        - Dependencies to add
+        - Configuration changes
+        - Environment variables
+      placeholder: |
+        Files to Create/Modify:
+        - components/NotificationBanner.tsx (new)
+        - hooks/useRealtimeNotifications.ts (new)
+        - app/requests/page.tsx (modify)
+        - lib/types.ts (add notification types)
+        
+        Dependencies:
+        - @supabase/realtime-js (add to package.json)
+        
+        Environment Variables:
+        - NEXT_PUBLIC_REALTIME_ENABLED=true
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: care-collective-requirements
+    attributes:
+      label: Care Collective Specific Requirements
+      description: Check all that apply to this PRP
+      options:
+        - label: Affects help request workflow
+        - label: Involves user authentication/authorization
+        - label: Requires admin/moderation features
+        - label: Impacts user privacy/security
+        - label: Needs accessibility considerations
+        - label: Requires mobile optimization
+        - label: Involves community safety features
+
+  - type: textarea
+    id: user-impact
+    attributes:
+      label: User Impact & Benefits
+      description: |
+        Describe how this implementation will benefit users:
+        - Help seekers
+        - Volunteers
+        - Administrators
+        - Community safety
+      placeholder: |
+        User Benefits:
+        - Help seekers get immediate feedback when volunteers respond
+        - Volunteers see new requests without page refresh
+        - Admins can monitor platform activity in real-time
+        - Reduced platform abandonment due to perceived inactivity
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How urgent is this PRP?
+      options:
+        - Critical (blocking other work)
+        - High (significant user impact)
+        - Medium (enhances user experience)
+        - Low (nice to have)
+    validations:
+      required: true
+
+  - type: textarea
+    id: edge-cases
+    attributes:
+      label: Edge Cases & Error Handling
+      description: |
+        Identify potential edge cases and error scenarios:
+        - What could go wrong?
+        - How should errors be handled?
+        - Fallback behaviors
+      placeholder: |
+        Edge Cases:
+        - WebSocket connection lost: fall back to polling
+        - User offline: queue notifications for next session
+        - High notification volume: implement rate limiting
+        - Browser doesn't support WebSockets: graceful degradation
+
+  - type: textarea
+    id: testing-strategy
+    attributes:
+      label: Testing Strategy
+      description: |
+        Detailed testing approach:
+        - Unit test scenarios
+        - Integration test cases
+        - Manual testing checklist
+        - Performance testing
+      placeholder: |
+        Testing Strategy:
+        
+        Unit Tests:
+        - NotificationBanner renders correctly
+        - useRealtimeNotifications hook manages state
+        - Notification filtering works properly
+        
+        Integration Tests:
+        - Real-time subscription connects successfully
+        - Notifications display for correct user types
+        - WebSocket reconnection after network issues
+        
+        Manual Testing:
+        - Test on multiple browsers/devices
+        - Verify accessibility with screen readers
+        - Test notification permissions
+        - Performance under high notification load
+
+  - type: checkboxes
+    id: prp-methodology
+    attributes:
+      label: PRP Methodology Compliance
+      description: Confirm this PRP follows the methodology
+      options:
+        - label: Provides sufficient technical context for AI implementation
+        - label: Includes specific file paths and code references
+        - label: Defines clear validation gates and success criteria
+        - label: Addresses Care Collective platform requirements
+        - label: Specifies implementation strategy and approach
+          required: true
+
+  - type: textarea
+    id: related-prps
+    attributes:
+      label: Related PRPs & Dependencies
+      description: |
+        List any related PRPs or dependencies:
+        - PRPs that must be completed first
+        - PRPs that depend on this one
+        - Related issues or tickets
+      placeholder: |
+        Dependencies:
+        - Requires completion of "User Authentication Upgrade" PRP
+        - Blocks "Mobile Push Notifications" PRP
+        
+        Related Issues:
+        - Issue #123: Users want real-time updates
+        - Feature Request #456: Notification preferences
+
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Additional Notes
+      description: Any other important information for PRP implementation
+      placeholder: |
+        Additional considerations:
+        - Consider GDPR compliance for notification data
+        - May need rate limiting to prevent spam
+        - Should integrate with existing error tracking
+
+  - type: checkboxes
+    id: implementation-readiness
+    attributes:
+      label: Implementation Readiness
+      description: Check when ready for implementation
+      options:
+        - label: All requirements are clearly defined
+        - label: Technical approach is validated
+        - label: Dependencies are identified
+        - label: Success criteria are measurable
+        - label: Ready for AI agent implementation
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      description: Please confirm the following
+      options:
+        - label: I have provided sufficient technical detail for implementation
+          required: true
+        - label: The validation gates are specific and testable
+          required: true
+        - label: This PRP follows the Care Collective methodology
+          required: true
+        - label: I have considered user impact and edge cases
+          required: true

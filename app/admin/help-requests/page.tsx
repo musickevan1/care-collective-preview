@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
-import { AdminRequestActions } from './AdminRequestActions'
+import { DynamicAdminRequestActions } from '@/components/DynamicComponents'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -210,7 +210,7 @@ export default async function AdminHelpRequestsPage() {
                     </div>
 
                     <div className="flex sm:block">
-                      <AdminRequestActions request={request} />
+                      <DynamicAdminRequestActions request={request} />
                     </div>
                   </div>
                 ))}

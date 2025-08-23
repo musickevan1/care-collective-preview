@@ -63,7 +63,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <Button 
                   size="sm" 
                   type="submit"
-                  className="bg-[#BC6547] hover:bg-[#A55439] text-white"
+                  variant="terracotta"
                 >
                   Sign Out
                 </Button>

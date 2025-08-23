@@ -1,0 +1,129 @@
+# CODEOWNERS for Care Collective
+# This file defines who should review different parts of the codebase
+# GitHub will automatically request reviews from the appropriate owners
+
+# Default owners for everything in the repo
+# This is a fallback for when no specific rule matches
+* @care-collective/core-team
+
+# CI/CD Pipeline and GitHub Actions
+/.github/ @care-collective/devops-team @care-collective/core-team
+/.github/workflows/ @care-collective/devops-team
+/.github/branch-protection-rules.md @care-collective/devops-team
+/.github/CI-CD-SETUP.md @care-collective/devops-team
+
+# Core application code
+/app/ @care-collective/frontend-team @care-collective/core-team
+/components/ @care-collective/frontend-team @care-collective/core-team
+/lib/ @care-collective/backend-team @care-collective/core-team
+
+# Security-related files
+/lib/security/ @care-collective/security-team @care-collective/core-team
+/middleware.ts @care-collective/security-team @care-collective/backend-team
+*.security.* @care-collective/security-team
+
+# Database and Supabase
+/supabase/ @care-collective/backend-team @care-collective/database-team
+/scripts/ @care-collective/backend-team @care-collective/database-team
+*.sql @care-collective/database-team
+
+# PRP Methodology and Documentation
+/PRPs/ @care-collective/product-team @care-collective/core-team
+/PRPs-agentic-eng/ @care-collective/product-team @care-collective/ai-team
+**/prp-*.md @care-collective/product-team
+**/PRP_*.md @care-collective/product-team
+
+# Configuration files
+package.json @care-collective/core-team
+package-lock.json @care-collective/core-team
+next.config.ts @care-collective/frontend-team @care-collective/security-team
+tsconfig.json @care-collective/frontend-team @care-collective/core-team
+tailwind.config.ts @care-collective/frontend-team
+vitest.config.ts @care-collective/frontend-team @care-collective/core-team
+
+# Testing
+/tests/ @care-collective/qa-team @care-collective/core-team
+**/*.test.* @care-collective/qa-team
+**/*.spec.* @care-collective/qa-team
+/test-*.* @care-collective/qa-team
+
+# Documentation
+README.md @care-collective/core-team @care-collective/product-team
+SECURITY.md @care-collective/security-team @care-collective/core-team
+*.md @care-collective/product-team
+
+# Deployment and Infrastructure
+vercel.json @care-collective/devops-team
+.vercelignore @care-collective/devops-team
+Dockerfile @care-collective/devops-team
+docker-compose*.yml @care-collective/devops-team
+
+# Environment and Secrets
+.env* @care-collective/security-team @care-collective/devops-team
+.gitignore @care-collective/core-team
+
+# Styling
+/app/globals.css @care-collective/frontend-team @care-collective/design-team
+/app/styles/ @care-collective/frontend-team @care-collective/design-team
+**/*.css @care-collective/frontend-team
+
+# API Routes
+/app/api/ @care-collective/backend-team @care-collective/core-team
+
+# Admin functionality
+/app/admin/ @care-collective/backend-team @care-collective/security-team
+
+# Public assets
+/public/ @care-collective/frontend-team @care-collective/design-team
+
+# Hooks and utilities
+/hooks/ @care-collective/frontend-team
+/lib/utils.ts @care-collective/frontend-team @care-collective/backend-team
+
+# Error handling and logging
+/lib/error-*.ts @care-collective/backend-team @care-collective/security-team
+/lib/logger.ts @care-collective/backend-team
+/components/ErrorBoundary.* @care-collective/frontend-team
+/components/ErrorState.* @care-collective/frontend-team
+
+# Feature flags and configuration
+/lib/features.ts @care-collective/product-team @care-collective/backend-team
+
+# Authentication and authorization
+/lib/auth.ts @care-collective/security-team @care-collective/backend-team
+/app/auth/ @care-collective/security-team @care-collective/backend-team
+/app/login/ @care-collective/security-team @care-collective/frontend-team
+/app/signup/ @care-collective/security-team @care-collective/frontend-team
+
+# Core business logic
+/app/requests/ @care-collective/product-team @care-collective/backend-team
+/app/dashboard/ @care-collective/product-team @care-collective/frontend-team
+
+# Email and notifications
+email-client.* @care-collective/backend-team @care-collective/product-team
+
+# Scripts and automation
+/scripts/run-prp.sh @care-collective/ai-team @care-collective/product-team
+/apply-security-fix.sh @care-collective/security-team
+/setup-github.sh @care-collective/devops-team
+
+# Team-specific overrides (more specific rules take precedence)
+
+# Critical security files require multiple approvals
+/lib/security/middleware.ts @care-collective/security-team @care-collective/backend-team @care-collective/core-team
+/lib/security/sql-safety.ts @care-collective/security-team @care-collective/database-team @care-collective/core-team
+
+# Core configuration requires core team approval
+/next.config.ts @care-collective/core-team
+/package.json @care-collective/core-team
+
+# Database migrations require special attention
+/supabase/migrations/ @care-collective/database-team @care-collective/backend-team @care-collective/core-team
+
+# AI and PRP tooling
+/PRPs/scripts/ @care-collective/ai-team @care-collective/product-team
+/PRPs-agentic-eng/scripts/ @care-collective/ai-team
+
+# Design system components
+/components/ui/ @care-collective/design-team @care-collective/frontend-team
+/app/design-system/ @care-collective/design-team @care-collective/frontend-team
