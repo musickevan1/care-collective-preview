@@ -167,6 +167,38 @@ const nextConfig: NextConfig = {
 
   // Simplified webpack configuration - heavy optimizations only in production
   webpack: (config, { dev, isServer, webpack }) => {
+    // Simple approach: add polyfill banner to fix "self is not defined" error
+    if (isServer) {
+      config.plugins.push(
+        new webpack.BannerPlugin({
+          banner: `
+            if (typeof self === 'undefined') {
+              global.self = global;
+            }
+          `,
+          raw: true,
+          entryOnly: false,
+        })
+      )
+    }
+
+    // Fix for "self is not defined" error - Add resolve fallbacks for Node.js globals
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+      crypto: false,
+      stream: false,
+      url: false,
+      zlib: false,
+      http: false,
+      https: false,
+      assert: false,
+      os: false,
+      path: false,
+    }
+
     // Bundle analyzer only when explicitly requested
     if (process.env.ANALYZE === 'true' && !dev) {
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
