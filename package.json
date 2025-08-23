@@ -68,7 +68,7 @@
     "jsdom": "^26.1.0",
     "lighthouse": "^12.2.1",
     "msw": "^2.10.5",
-    "serve": "^14.3.0",
+    "serve": "^14.2.3",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.2.4",
