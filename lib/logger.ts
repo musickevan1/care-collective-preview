@@ -103,6 +103,11 @@ class Logger {
     // This would send logs to your monitoring service
     // Example: DataDog, LogRocket, Sentry, etc.
     
+    // Only use localStorage if we're in the browser
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return
+    }
+    
     // For now, we'll just store in localStorage for debugging
     try {
       const logs = JSON.parse(localStorage.getItem('care_collective_logs') || '[]')
