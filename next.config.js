@@ -106,22 +106,7 @@ const nextConfig = {
 
   // Enhanced image optimization
   images: {
-    domains: [],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
-      },
-    ],
-    dangerouslyAllowSVG: false,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    formats: ['image/webp', 'image/avif'],
-    minimumCacheTTL: 31536000, // 1 year cache for optimized images
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    unoptimized: false,
+    unoptimized: true, // Required for static export
   },
 
   // Strict mode for better error handling
@@ -148,8 +133,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // Output optimization for static export and performance
-  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  // Use static export to bypass SSR issues
+  output: 'export',
+  trailingSlash: true,
   
   // Advanced compiler options for better performance
   compiler: {
