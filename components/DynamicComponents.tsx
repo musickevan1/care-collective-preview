@@ -62,22 +62,12 @@ export const DynamicMobileNav = withDynamicLoading(
   () => <div className="md:hidden">Loading menu...</div>
 )
 
-// Performance monitoring components
-export const DynamicWebVitals = dynamic(
-  () => import('@/components/WebVitals').then(mod => ({ default: mod.WebVitals })),
-  {
-    ssr: false,
-    loading: () => null // No loading state for monitoring
-  }
-)
+// Performance monitoring components (disabled for deployment)
+// These components caused "self is not defined" errors during build
+// Providing null placeholders to prevent import errors
+export const DynamicWebVitals = () => null
 
-export const DynamicServiceWorkerRegistration = dynamic(
-  () => import('@/components/ServiceWorkerRegistration').then(mod => ({ default: mod.ServiceWorkerRegistration })),
-  {
-    ssr: false,
-    loading: () => null
-  }
-)
+export const DynamicServiceWorkerRegistration = () => null
 
 // Form components that might be heavy
 export const DynamicSafeFormWrapper = withDynamicLoading(
