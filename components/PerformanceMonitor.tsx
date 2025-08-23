@@ -105,29 +105,30 @@ export const PerformanceMonitor = memo<PerformanceMonitorProps>(({
     }
 
     // Load web vitals and measure Core Web Vitals
-    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
-      onCLS((metric) => {
-        setMetrics(prev => ({ ...prev, cls: metric.value }))
-      })
+    // Temporarily disabled to fix build issues with 'self is not defined'
+    // import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+    //   onCLS((metric) => {
+    //     setMetrics(prev => ({ ...prev, cls: metric.value }))
+    //   })
 
-      onFID((metric) => {
-        setMetrics(prev => ({ ...prev, fid: metric.value }))
-      })
+    //   onFID((metric) => {
+    //     setMetrics(prev => ({ ...prev, fid: metric.value }))
+    //   })
 
-      onFCP((metric) => {
-        setMetrics(prev => ({ ...prev, fcp: metric.value }))
-      })
+    //   onFCP((metric) => {
+    //     setMetrics(prev => ({ ...prev, fcp: metric.value }))
+    //   })
 
-      onLCP((metric) => {
-        setMetrics(prev => ({ ...prev, lcp: metric.value }))
-      })
+    //   onLCP((metric) => {
+    //     setMetrics(prev => ({ ...prev, lcp: metric.value }))
+    //   })
 
-      onTTFB((metric) => {
-        setMetrics(prev => ({ ...prev, ttfb: metric.value }))
-      })
-    }).catch(error => {
-      console.warn('Failed to load web-vitals:', error)
-    })
+    //   onTTFB((metric) => {
+    //     setMetrics(prev => ({ ...prev, ttfb: metric.value }))
+    //   })
+    // }).catch(error => {
+    //   console.warn('Failed to load web-vitals:', error)
+    // })
 
     // Estimate bundle size (approximation)
     const scriptElements = document.querySelectorAll('script[src]')
@@ -374,13 +375,14 @@ export function usePerformanceMetrics() {
     }
 
     // Load and track web vitals
-    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
-      onCLS((metric) => setMetrics(prev => ({ ...prev, cls: metric.value })))
-      onFID((metric) => setMetrics(prev => ({ ...prev, fid: metric.value })))
-      onFCP((metric) => setMetrics(prev => ({ ...prev, fcp: metric.value })))
-      onLCP((metric) => setMetrics(prev => ({ ...prev, lcp: metric.value })))
-      onTTFB((metric) => setMetrics(prev => ({ ...prev, ttfb: metric.value })))
-    })
+    // Temporarily disabled to fix build issues with 'self is not defined'
+    // import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+    //   onCLS((metric) => setMetrics(prev => ({ ...prev, cls: metric.value })))
+    //   onFID((metric) => setMetrics(prev => ({ ...prev, fid: metric.value })))
+    //   onFCP((metric) => setMetrics(prev => ({ ...prev, fcp: metric.value })))
+    //   onLCP((metric) => setMetrics(prev => ({ ...prev, lcp: metric.value })))
+    //   onTTFB((metric) => setMetrics(prev => ({ ...prev, ttfb: metric.value })))
+    // })
   }, [])
 
   return metrics
