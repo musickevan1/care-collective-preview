@@ -53,8 +53,8 @@ export default function RootLayout({
       </head>
       <body className={`antialiased ${overlock.className} font-feature-settings-'kern' 1`}>
         <Providers>
-          {/* Disabled in development for better performance */}
-          {process.env.NODE_ENV === 'production' && (
+          {/* Temporarily disabled to fix deployment issue */}
+          {false && process.env.NODE_ENV === 'production' && (
             <>
               <DynamicServiceWorkerRegistration />
               <DynamicWebVitals />
