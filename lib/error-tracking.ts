@@ -313,38 +313,103 @@ class ErrorTracker {
   }
 }
 
-// Export singleton instance
-export const errorTracker = new ErrorTracker()
+// Lazy singleton instance - only create when needed and in browser environment
+let _errorTracker: ErrorTracker | null = null
 
-// Helper functions for easier usage
-export const captureError = (error: Error, context?: ErrorContext) => 
-  errorTracker.captureError(error, context, true)
+function getErrorTracker(): ErrorTracker | null {
+  if (typeof window === 'undefined') return null
+  if (!_errorTracker) {
+    _errorTracker = new ErrorTracker()
+  }
+  return _errorTracker
+}
 
-export const captureWarning = (message: string, context?: ErrorContext) =>
-  errorTracker.captureWarning(message, context)
+// Create a proxy object that safely delegates to the tracker
+export const errorTracker = {
+  captureError: (error: Error, context?: ErrorContext, handled = true) => {
+    const tracker = getErrorTracker()
+    if (tracker) return tracker.captureError(error, context, handled)
+  },
+  captureWarning: (message: string, context?: ErrorContext) => {
+    const tracker = getErrorTracker()
+    if (tracker) return tracker.captureWarning(message, context)
+  },
+  captureInfo: (message: string, context?: ErrorContext) => {
+    const tracker = getErrorTracker()
+    if (tracker) return tracker.captureInfo(message, context)
+  },
+  addBreadcrumb: (breadcrumb: any) => {
+    const tracker = getErrorTracker()
+    if (tracker) return tracker.addBreadcrumb(breadcrumb)
+  },
+  setUser: (user: any) => {
+    const tracker = getErrorTracker()
+    if (tracker) return tracker.setUser(user)
+  },
+  setTag: (key: string, value: string) => {
+    const tracker = getErrorTracker()
+    if (tracker) return tracker.setTag(key, value)
+  },
+  withErrorTracking: <T>(operation: () => T, context?: ErrorContext): T | null => {
+    const tracker = getErrorTracker()
+    if (tracker) return tracker.withErrorTracking(operation, context)
+    return null
+  },
+  withErrorTrackingAsync: <T>(operation: () => Promise<T>, context?: ErrorContext): Promise<T | null> => {
+    const tracker = getErrorTracker()
+    if (tracker) return tracker.withErrorTrackingAsync(operation, context)
+    return Promise.resolve(null)
+  }
+}
 
-export const captureInfo = (message: string, context?: ErrorContext) =>
-  errorTracker.captureInfo(message, context)
+// Helper functions for easier usage with null checks
+export const captureError = (error: Error, context?: ErrorContext) => {
+  if (typeof window === 'undefined') return
+  getErrorTracker().captureError(error, context, true)
+}
+
+export const captureWarning = (message: string, context?: ErrorContext) => {
+  if (typeof window === 'undefined') return
+  getErrorTracker().captureWarning(message, context)
+}
+
+export const captureInfo = (message: string, context?: ErrorContext) => {
+  if (typeof window === 'undefined') return
+  getErrorTracker().captureInfo(message, context)
+}
 
 export const addBreadcrumb = (breadcrumb: {
   message: string
   category?: string
   level?: 'info' | 'warning' | 'error'
   data?: any
-}) => errorTracker.addBreadcrumb(breadcrumb)
+}) => {
+  if (typeof window === 'undefined') return
+  getErrorTracker().addBreadcrumb(breadcrumb)
+}
 
-export const setUser = (user: { id?: string; email?: string; username?: string }) =>
-  errorTracker.setUser(user)
+export const setUser = (user: { id?: string; email?: string; username?: string }) => {
+  if (typeof window === 'undefined') return
+  getErrorTracker().setUser(user)
+}
 
-export const setTag = (key: string, value: string) =>
-  errorTracker.setTag(key, value)
+export const setTag = (key: string, value: string) => {
+  if (typeof window === 'undefined') return
+  getErrorTracker().setTag(key, value)
+}
 
 export const withErrorTracking = <T>(
   operation: () => T,
   context?: ErrorContext
-): T | null => errorTracker.withErrorTracking(operation, context)
+): T | null => {
+  if (typeof window === 'undefined') return null
+  return getErrorTracker().withErrorTracking(operation, context)
+}
 
 export const withErrorTrackingAsync = <T>(
   operation: () => Promise<T>,
   context?: ErrorContext
-): Promise<T | null> => errorTracker.withErrorTrackingAsync(operation, context)
+): Promise<T | null> => {
+  if (typeof window === 'undefined') return Promise.resolve(null)
+  return getErrorTracker().withErrorTrackingAsync(operation, context)
+}

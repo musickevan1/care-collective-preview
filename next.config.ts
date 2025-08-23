@@ -222,23 +222,11 @@ const nextConfig: NextConfig = {
     return config
   },
 
-  // Experimental features - simplified for development performance
+  // Experimental features - temporarily disabled to debug build issues
   experimental: {
-    // Only enable essential optimizations in development
-    ...(process.env.NODE_ENV === 'production' ? {
-      optimizePackageImports: [
-        '@radix-ui/react-slot', 
-        'lucide-react', 
-        'date-fns',
-        'clsx',
-        'class-variance-authority'
-      ],
-      webpackBuildWorker: true,
-      memoryBasedWorkersCount: true,
-    } : {
-      // Minimal config for development speed
-      webpackBuildWorker: false,
-    }),
+    // Disable all experimental features that might cause build issues
+    webpackBuildWorker: false,
+    memoryBasedWorkersCount: false,
   },
   
   // Server components external packages (moved out of experimental)

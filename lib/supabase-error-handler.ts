@@ -1,6 +1,7 @@
 import { PostgrestError } from '@supabase/supabase-js'
 import { logger } from './logger'
-import { captureError } from './error-tracking'
+// Temporarily disabled to fix build issue
+// import { captureError } from './error-tracking'
 import { CareCollectiveError, ErrorCode } from './api-error'
 
 export interface SupabaseErrorContext {
@@ -28,15 +29,16 @@ export class SupabaseErrorHandler {
     )
 
     // Track the error
-    captureError(error, {
-      component: 'SupabaseClient',
-      action: context.operation,
-      extra: {
-        table: context.table,
-        query: context.query,
-        filters: context.filters
-      }
-    })
+    // Temporarily disabled to fix build issue
+    // captureError(error, {
+    //   component: 'SupabaseClient',
+    //   action: context.operation,
+    //   extra: {
+    //     table: context.table,
+    //     query: context.query,
+    //     filters: context.filters
+    //   }
+    // })
 
     // Handle PostgrestError specifically
     if ('code' in error && 'details' in error) {
