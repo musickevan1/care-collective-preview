@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
-import { PerformanceMonitor } from '@/components/PerformanceMonitor'
+// Temporarily disabled to fix build issues
+// import { PerformanceMonitor } from '@/components/PerformanceMonitor'
 import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import { MobileNav } from '@/components/MobileNav'
 
@@ -79,7 +80,11 @@ export default async function PerformancePage() {
         </div>
 
         {/* Performance Monitor */}
-        <PerformanceMonitor showDetails={true} />
+        {/* Temporarily disabled to fix build issues */}
+        {/* <PerformanceMonitor showDetails={true} /> */}
+        <div className="text-center text-muted-foreground py-8">
+          Performance monitoring temporarily disabled for deployment
+        </div>
 
         {/* Performance Optimization Guide */}
         <Card className="mt-8">
