@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 import { overlock, fontClasses, atkinsonHyperlegible } from "@/lib/fonts";
-import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
+// Service worker and web vitals components removed to prevent build issues
+// import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'),
