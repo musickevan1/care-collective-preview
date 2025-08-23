@@ -43,26 +43,42 @@ export const LazySection = memo<LazySectionProps>(({
 
   useEffect(() => {
     if (priority) return // Skip observer for priority sections
-
-    // Use a single observer with optimized options
-    const observer = new IntersectionObserver(handleIntersection, {
-      threshold,
-      rootMargin,
-      // Optimize performance by reducing observer frequency
-      trackVisibility: true,
-      delay: 100
-    })
-
-    const currentRef = ref.current
-    if (currentRef) {
-      observer.observe(currentRef)
+    
+    // Check if we're in browser environment
+    if (typeof window === 'undefined' || 
+        typeof IntersectionObserver === 'undefined') {
+      // On server or when IntersectionObserver is not available, show content immediately
+      setIsVisible(true)
+      setHasLoaded(true)
+      return
     }
 
-    return () => {
+    try {
+      // Use a single observer with optimized options
+      const observer = new IntersectionObserver(handleIntersection, {
+        threshold,
+        rootMargin,
+        // Optimize performance by reducing observer frequency
+        trackVisibility: true,
+        delay: 100
+      })
+
+      const currentRef = ref.current
       if (currentRef) {
-        observer.unobserve(currentRef)
+        observer.observe(currentRef)
       }
-      observer.disconnect()
+
+      return () => {
+        if (currentRef) {
+          observer.unobserve(currentRef)
+        }
+        observer.disconnect()
+      }
+    } catch (error) {
+      // IntersectionObserver not supported, show content immediately
+      console.warn('IntersectionObserver not supported:', error)
+      setIsVisible(true)
+      setHasLoaded(true)
     }
   }, [threshold, rootMargin, handleIntersection, priority])
 

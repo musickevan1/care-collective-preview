@@ -69,45 +69,63 @@ export function clearUserContext() {
 
 /**
  * Set up performance monitoring
+ * Only runs client-side with proper guards
  */
 export function setupPerformanceMonitoring() {
-  if (typeof window === 'undefined') return
-
-  // Monitor page load times
-  window.addEventListener('load', () => {
-    const navigationTiming = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
-    if (navigationTiming) {
-      const pageLoadTime = navigationTiming.loadEventEnd - navigationTiming.fetchStart
-      logger.performanceMetric('page_load_time', pageLoadTime)
-    }
-  })
-
-  // Monitor Core Web Vitals
-  if ('web-vital' in window) {
-    // This would require the web-vitals library
-    // import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals'
-    
-    // getCLS(metric => logger.performanceMetric('cls', metric.value))
-    // getFID(metric => logger.performanceMetric('fid', metric.value))
-    // getFCP(metric => logger.performanceMetric('fcp', metric.value))
-    // getLCP(metric => logger.performanceMetric('lcp', metric.value))
-    // getTTFB(metric => logger.performanceMetric('ttfb', metric.value))
+  // Multiple safety checks for server-side rendering
+  if (typeof window === 'undefined' || 
+      typeof document === 'undefined' || 
+      typeof performance === 'undefined') {
+    return
   }
 
-  // Monitor long tasks
-  if ('PerformanceObserver' in window) {
-    try {
-      const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          if (entry.duration > 50) { // Tasks longer than 50ms
-            logger.performanceMetric('long_task', entry.duration)
-          }
+  try {
+    // Monitor page load times
+    window.addEventListener('load', () => {
+      try {
+        const navigationTiming = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+        if (navigationTiming) {
+          const pageLoadTime = navigationTiming.loadEventEnd - navigationTiming.fetchStart
+          logger.performanceMetric('page_load_time', pageLoadTime)
+        }
+      } catch (error) {
+        // Performance API might not be available
+        logger.warn('Performance monitoring failed:', error)
+      }
+    })
+
+    // Monitor Core Web Vitals - disabled to prevent build issues
+    // if ('web-vital' in window) {
+    //   // This would require the web-vitals library
+    //   // import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals'
+    //   
+    //   // getCLS(metric => logger.performanceMetric('cls', metric.value))
+    //   // getFID(metric => logger.performanceMetric('fid', metric.value))
+    //   // getFCP(metric => logger.performanceMetric('fcp', metric.value))
+    //   // getLCP(metric => logger.performanceMetric('lcp', metric.value))
+    //   // getTTFB(metric => logger.performanceMetric('ttfb', metric.value))
+    // }
+
+    // Monitor long tasks - with additional safety checks
+    if (typeof PerformanceObserver !== 'undefined' && 
+        'PerformanceObserver' in window) {
+      try {
+        const observer = new PerformanceObserver((list) => {
+          list.getEntries().forEach((entry) => {
+            if (entry.duration > 50) { // Tasks longer than 50ms
+              logger.performanceMetric('long_task', entry.duration)
+            }
+          })
         })
-      })
-      observer.observe({ entryTypes: ['longtask'] })
-    } catch (e) {
-      // PerformanceObserver not supported or failed
+        observer.observe({ entryTypes: ['longtask'] })
+      } catch (e) {
+        // PerformanceObserver not supported or failed
+        logger.warn('PerformanceObserver setup failed:', e)
+      }
     }
+  } catch (error) {
+    // Entire performance monitoring setup failed
+    logger.warn('Performance monitoring setup failed:', error)
   }
 }
 
@@ -115,10 +133,15 @@ export function setupPerformanceMonitoring() {
  * Monitor API responses and automatically track errors
  */
 export function setupApiMonitoring() {
-  if (typeof window === 'undefined') return
+  // Multiple safety checks for server-side rendering
+  if (typeof window === 'undefined' || 
+      typeof fetch === 'undefined') {
+    return
+  }
 
-  // Intercept fetch requests
-  const originalFetch = window.fetch
+  try {
+    // Intercept fetch requests
+    const originalFetch = window.fetch
   window.fetch = async (...args) => {
     const [resource, config] = args
     const url = typeof resource === 'string' ? resource : resource.url
@@ -152,16 +175,25 @@ export function setupApiMonitoring() {
       throw error
     }
   }
+  } catch (error) {
+    // API monitoring setup failed
+    logger.warn('API monitoring setup failed:', error)
+  }
 }
 
 /**
  * Monitor console errors and warnings
  */
 export function setupConsoleMonitoring() {
-  if (typeof window === 'undefined') return
+  // Multiple safety checks for server-side rendering
+  if (typeof window === 'undefined' || 
+      typeof console === 'undefined') {
+    return
+  }
 
-  // Intercept console.error
-  const originalError = console.error
+  try {
+    // Intercept console.error
+    const originalError = console.error
   console.error = (...args) => {
     // Still call original console.error
     originalError(...args)
@@ -195,6 +227,10 @@ export function setupConsoleMonitoring() {
         extra: { consoleArgs: args }
       })
     }
+  }
+  } catch (error) {
+    // Console monitoring setup failed
+    logger.warn('Console monitoring setup failed:', error)
   }
 }
 
