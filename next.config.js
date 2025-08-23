@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Security headers
   async headers() {
     return [
@@ -125,7 +124,6 @@ const nextConfig: NextConfig = {
     unoptimized: false,
   },
 
-
   // Strict mode for better error handling
   reactStrictMode: true,
 
@@ -165,9 +163,9 @@ const nextConfig: NextConfig = {
     } : false,
   },
 
-  // Simplified webpack configuration - heavy optimizations only in production
+  // Simplified webpack configuration
   webpack: (config, { dev, isServer, webpack }) => {
-    // Minimal intervention: just define self for server builds
+    // Fix "self is not defined" error for server builds
     if (isServer) {
       config.plugins.push(
         new webpack.DefinePlugin({
@@ -175,7 +173,6 @@ const nextConfig: NextConfig = {
         })
       )
     }
-
     // Bundle analyzer only when explicitly requested
     if (process.env.ANALYZE === 'true' && !dev) {
       const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
@@ -231,25 +228,11 @@ const nextConfig: NextConfig = {
     return config
   },
 
-  // Experimental features - temporarily disabled to debug build issues
+  // Experimental features - compatible with Next.js 14
   experimental: {
-    // Disable all experimental features that might cause build issues
-    webpackBuildWorker: false,
-    memoryBasedWorkersCount: false,
-  },
-  
-  // Server components external packages (moved out of experimental)
-  serverExternalPackages: ['@supabase/supabase-js'],
-  
-  // Turbopack configuration (moved from experimental)
-  turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
+    // Next.js 14 compatible experimental features
+    serverComponentsExternalPackages: ['@supabase/supabase-js'],
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

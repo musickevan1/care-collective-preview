@@ -1,3 +1,5 @@
+// Import polyfills first to fix server-side 'self is not defined' errors
+import "@/lib/global-polyfills.js";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
