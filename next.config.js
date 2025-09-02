@@ -121,16 +121,16 @@ const nextConfig = {
   // Compression for performance
   compress: true,
 
-  // TypeScript configuration - temporary for deployment
+  // TypeScript configuration
   typescript: {
-    // Skip type checking during build for deployment
-    ignoreBuildErrors: true,
+    // Enable type checking during build
+    ignoreBuildErrors: false,
   },
 
   // ESLint configuration
   eslint: {
-    // Skip ESLint during build for deployment
-    ignoreDuringBuilds: true,
+    // Enable ESLint during build
+    ignoreDuringBuilds: false,
   },
 
   // Use static export to bypass SSR issues

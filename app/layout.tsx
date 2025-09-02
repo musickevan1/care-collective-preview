@@ -56,13 +56,6 @@ export default function RootLayout({
       </head>
       <body className={`antialiased ${overlock.className} font-feature-settings-'kern' 1`}>
         <Providers>
-          {/* Temporarily disabled to fix deployment issue */}
-          {false && process.env.NODE_ENV === 'production' && (
-            <>
-              <DynamicServiceWorkerRegistration />
-              <DynamicWebVitals />
-            </>
-          )}
           {children}
           <footer className="bg-secondary text-secondary-foreground py-4 mt-16">
             <div className="container mx-auto px-4 text-center">

@@ -58,9 +58,7 @@ export const LazySection = memo<LazySectionProps>(({
       const observer = new IntersectionObserver(handleIntersection, {
         threshold,
         rootMargin,
-        // Optimize performance by reducing observer frequency
-        trackVisibility: true,
-        delay: 100
+        // Note: trackVisibility and delay are experimental features not supported in all browsers
       })
 
       const currentRef = ref.current
@@ -118,8 +116,7 @@ export function useLazyLoading(options: {
     const observer = new IntersectionObserver(handleIntersection, {
       threshold,
       rootMargin,
-      trackVisibility: true,
-      delay: 100
+      // Note: trackVisibility and delay are experimental features not supported in all browsers
     })
 
     const currentRef = ref.current

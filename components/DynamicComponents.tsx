@@ -36,17 +36,17 @@ function withDynamicLoading<T extends ComponentType<any>>(
 
 // Admin Components - Heavy components that are only loaded when needed
 export const DynamicAdminRequestActions = withDynamicLoading(
-  () => import('@/app/admin/help-requests/AdminRequestActions'),
+  () => import('@/app/admin/help-requests/AdminRequestActions').then(module => ({ default: module.AdminRequestActions })),
   () => <ComponentLoader title="Admin Actions" />
 )
 
 export const DynamicContactExchange = withDynamicLoading(
-  () => import('@/components/ContactExchange'),
+  () => import('@/components/ContactExchange').then(module => ({ default: module.ContactExchange })),
   () => <ComponentLoader title="Contact Exchange" />
 )
 
 export const DynamicRequestActions = withDynamicLoading(
-  () => import('@/app/requests/[id]/RequestActions'),
+  () => import('@/app/requests/[id]/RequestActions').then(module => ({ default: module.RequestActions })),
   () => <ComponentLoader title="Request Actions" />
 )
 
@@ -58,7 +58,7 @@ export const DynamicChart = withDynamicLoading(
 
 // Mobile Navigation - Only load when needed
 export const DynamicMobileNav = withDynamicLoading(
-  () => import('@/components/MobileNav'),
+  () => import('@/components/MobileNav').then(module => ({ default: module.MobileNav })),
   () => <div className="md:hidden">Loading menu...</div>
 )
 
@@ -71,7 +71,7 @@ export const DynamicServiceWorkerRegistration = () => null
 
 // Form components that might be heavy
 export const DynamicSafeFormWrapper = withDynamicLoading(
-  () => import('@/components/SafeFormWrapper'),
+  () => import('@/components/SafeFormWrapper').then(module => ({ default: module.SafeFormWrapper })),
   () => <div>Loading form...</div>
 )
 
@@ -86,7 +86,7 @@ export function DynamicLazySection({
   threshold?: number 
 }) {
   const LazySection = dynamic(
-    () => import('@/components/LazySection'),
+    () => import('@/components/LazySection').then(module => ({ default: module.LazySection })),
     { ssr: false, loading: () => <>{fallback}</> }
   )
   
@@ -102,7 +102,7 @@ export function DynamicLazySection({
 // Error boundary wrapper for dynamic components
 export function DynamicErrorBoundary({ children }: { children: React.ReactNode }) {
   const ErrorBoundary = dynamic(
-    () => import('@/components/ErrorBoundary'),
+    () => import('@/components/ErrorBoundary').then(module => ({ default: module.ErrorBoundary })),
     { ssr: false, loading: () => <>{children}</> }
   )
   

@@ -200,4 +200,4 @@ class Logger {
 export const logger = new Logger()
 
 // Export types for use in other modules
-export type { LogEntry, LogLevel }
+export type { LogEntry }

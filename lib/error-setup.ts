@@ -90,7 +90,7 @@ export function setupPerformanceMonitoring() {
         }
       } catch (error) {
         // Performance API might not be available
-        logger.warn('Performance monitoring failed:', error)
+        logger.warn('Performance monitoring failed:', error as Record<string, any>)
       }
     })
 
@@ -120,12 +120,12 @@ export function setupPerformanceMonitoring() {
         observer.observe({ entryTypes: ['longtask'] })
       } catch (e) {
         // PerformanceObserver not supported or failed
-        logger.warn('PerformanceObserver setup failed:', e)
+        logger.warn('PerformanceObserver setup failed:', e as Record<string, any>)
       }
     }
   } catch (error) {
     // Entire performance monitoring setup failed
-    logger.warn('Performance monitoring setup failed:', error)
+    logger.warn('Performance monitoring setup failed:', error as Record<string, any>)
   }
 }
 
@@ -144,7 +144,7 @@ export function setupApiMonitoring() {
     const originalFetch = window.fetch
   window.fetch = async (...args) => {
     const [resource, config] = args
-    const url = typeof resource === 'string' ? resource : resource.url
+    const url = typeof resource === 'string' ? resource : (resource instanceof Request ? resource.url : resource.toString())
     const method = config?.method || 'GET'
     const startTime = Date.now()
 
@@ -177,7 +177,7 @@ export function setupApiMonitoring() {
   }
   } catch (error) {
     // API monitoring setup failed
-    logger.warn('API monitoring setup failed:', error)
+    logger.warn('API monitoring setup failed:', error as Record<string, any>)
   }
 }
 
@@ -230,7 +230,7 @@ export function setupConsoleMonitoring() {
   }
   } catch (error) {
     // Console monitoring setup failed
-    logger.warn('Console monitoring setup failed:', error)
+    logger.warn('Console monitoring setup failed:', error as Record<string, any>)
   }
 }
 

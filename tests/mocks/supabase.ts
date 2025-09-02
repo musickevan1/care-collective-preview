@@ -11,11 +11,18 @@ export const mockSupabaseClient = {
     onAuthStateChange: vi.fn(() => ({
       data: { subscription: { unsubscribe: vi.fn() } }
     })),
+    admin: {
+      listUsers: vi.fn().mockResolvedValue({ data: [], error: null }),
+      getUserById: vi.fn().mockResolvedValue({ data: null, error: null }),
+      updateUser: vi.fn().mockResolvedValue({ data: null, error: null }),
+      deleteUser: vi.fn().mockResolvedValue({ data: null, error: null }),
+    },
   },
   from: vi.fn(() => ({
     select: vi.fn().mockReturnThis(),
     insert: vi.fn().mockReturnThis(),
     update: vi.fn().mockReturnThis(),
+    upsert: vi.fn().mockReturnThis(),
     delete: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     neq: vi.fn().mockReturnThis(),

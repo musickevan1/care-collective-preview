@@ -54,13 +54,13 @@ export async function cachedQuery<T>(
  * Pre-built cached queries for common operations
  */
 export class OptimizedQueries {
-  private static supabase: ReturnType<typeof createClient> | null = null
+  private static supabase: Awaited<ReturnType<typeof createClient>> | null = null
 
   private static async getClient() {
     if (!this.supabase) {
       this.supabase = await createClient()
     }
-    return this.supabase
+    return this.supabase!
   }
 
   /**
@@ -149,10 +149,10 @@ export class OptimizedQueries {
           inProgressResult,
           completedResult
         ] = await Promise.all([
-          supabase.from('help_requests').select('*', { count: 'exact', head: true }),
-          supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'open'),
-          supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
-          supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'completed')
+          supabase!.from('help_requests').select('*', { count: 'exact', head: true }),
+          supabase!.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'open'),
+          supabase!.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
+          supabase!.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'completed')
         ])
 
         return {
@@ -180,7 +180,7 @@ export class OptimizedQueries {
       async () => {
         const supabase = await this.getClient()
         
-        const result = await supabase
+        const result = await supabase!
           .from('profiles')
           .select('*', { count: 'exact', head: true })
 

@@ -327,11 +327,12 @@ export function createEnhancedSupabaseClient(supabase: any) {
         },
 
         async single<T>(): Promise<T> {
-          return dbQuery.select(
+          const result = await dbQuery.select(
             () => supabase.from(table).select(columns).single(),
             table,
             false
           )
+          return result as T
         },
 
         eq: (column: string, value: any) => ({
@@ -344,11 +345,12 @@ export function createEnhancedSupabaseClient(supabase: any) {
           },
 
           async single<T>(): Promise<T> {
-            return dbQuery.select(
+            const result = await dbQuery.select(
               () => supabase.from(table).select(columns).eq(column, value).single(),
               table,
               false
             )
+            return result as T
           }
         })
       }),

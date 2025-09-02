@@ -82,14 +82,17 @@ export const PerformanceMonitor = memo<PerformanceMonitorProps>(({
     setIsSupported(true)
 
     // Get navigation timing metrics immediately
-    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
-    if (navigation) {
+    const navigationEntries = performance.getEntriesByType('navigation')
+    if (navigationEntries.length > 0) {
+      const navigation = navigationEntries[0] as PerformanceNavigationTiming
+      // Use fetchStart as baseline since navigationStart is deprecated
+      const baseTime = navigation.fetchStart
       setMetrics(prev => ({
         ...prev,
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.navigationStart,
-        loadComplete: navigation.loadEventEnd - navigation.navigationStart,
-        firstByte: navigation.responseStart - navigation.navigationStart,
-        domInteractive: navigation.domInteractive - navigation.navigationStart,
+        domContentLoaded: navigation.domContentLoadedEventEnd - baseTime,
+        loadComplete: navigation.loadEventEnd - baseTime,
+        firstByte: navigation.responseStart - baseTime,
+        domInteractive: navigation.domInteractive - baseTime,
         ttfb: navigation.responseStart - navigation.requestStart
       }))
     }
@@ -136,7 +139,8 @@ export const PerformanceMonitor = memo<PerformanceMonitorProps>(({
     
     Array.from(scriptElements).forEach(script => {
       // This is a rough estimation - in production you'd use Resource Timing API
-      if (script.src.includes('_next/static/')) {
+      const scriptElement = script as HTMLScriptElement
+      if (scriptElement.src && scriptElement.src.includes('_next/static/')) {
         estimatedBundleSize += 50000 // Approximate average chunk size
       }
     })
@@ -224,7 +228,7 @@ export const PerformanceMonitor = memo<PerformanceMonitorProps>(({
               <span className="text-sm font-medium">LCP</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm">{formatMs(metrics.lcp)}</span>
-                <Badge size="sm" className={`${GRADE_COLORS[performanceScores.lcp]} border text-xs`}>
+                <Badge className={`${GRADE_COLORS[performanceScores.lcp]} border text-xs`}>
                   {performanceScores.lcp === 'unknown' ? '?' : performanceScores.lcp === 'good' ? '✓' : performanceScores.lcp === 'poor' ? '✗' : '!'}
                 </Badge>
               </div>
@@ -234,7 +238,7 @@ export const PerformanceMonitor = memo<PerformanceMonitorProps>(({
               <span className="text-sm font-medium">FID</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm">{formatMs(metrics.fid)}</span>
-                <Badge size="sm" className={`${GRADE_COLORS[performanceScores.fid]} border text-xs`}>
+                <Badge className={`${GRADE_COLORS[performanceScores.fid]} border text-xs`}>
                   {performanceScores.fid === 'unknown' ? '?' : performanceScores.fid === 'good' ? '✓' : performanceScores.fid === 'poor' ? '✗' : '!'}
                 </Badge>
               </div>
@@ -244,7 +248,7 @@ export const PerformanceMonitor = memo<PerformanceMonitorProps>(({
               <span className="text-sm font-medium">CLS</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm">{metrics.cls ? metrics.cls.toFixed(3) : 'Measuring...'}</span>
-                <Badge size="sm" className={`${GRADE_COLORS[performanceScores.cls]} border text-xs`}>
+                <Badge className={`${GRADE_COLORS[performanceScores.cls]} border text-xs`}>
                   {performanceScores.cls === 'unknown' ? '?' : performanceScores.cls === 'good' ? '✓' : performanceScores.cls === 'poor' ? '✗' : '!'}
                 </Badge>
               </div>
@@ -363,14 +367,17 @@ export function usePerformanceMetrics() {
     if (typeof window === 'undefined') return
 
     // Get navigation timing immediately
-    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
-    if (navigation) {
+    const navigationEntries = performance.getEntriesByType('navigation')
+    if (navigationEntries.length > 0) {
+      const navigation = navigationEntries[0] as PerformanceNavigationTiming
+      // Use fetchStart as baseline since navigationStart is deprecated
+      const baseTime = navigation.fetchStart
       setMetrics(prev => ({
         ...prev,
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.navigationStart,
-        loadComplete: navigation.loadEventEnd - navigation.navigationStart,
-        firstByte: navigation.responseStart - navigation.navigationStart,
-        domInteractive: navigation.domInteractive - navigation.navigationStart
+        domContentLoaded: navigation.domContentLoadedEventEnd - baseTime,
+        loadComplete: navigation.loadEventEnd - baseTime,
+        firstByte: navigation.responseStart - baseTime,
+        domInteractive: navigation.domInteractive - baseTime
       }))
     }
 

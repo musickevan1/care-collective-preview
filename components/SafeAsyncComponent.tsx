@@ -57,14 +57,15 @@ export function SafeAsyncComponent<T>({
       })
       setAttemptCount(0)
     } else {
+      const finalError = handlerError || new Error('Operation failed')
       setState(prev => ({
         ...prev,
         loading: false,
-        error: handlerError || new Error('Operation failed')
+        error: finalError
       }))
       
       if (onError) {
-        onError(handlerError || new Error('Operation failed'))
+        onError(finalError)
       }
     }
   }
@@ -104,14 +105,15 @@ export function SafeAsyncComponent<T>({
 
     // Determine error type for appropriate messaging
     const currentError = state.error || handlerError
-    const isNetworkError = currentError?.message.toLowerCase().includes('network') ||
-                          currentError?.message.toLowerCase().includes('fetch')
+    const errorMessage = currentError?.message || ''
+    const isNetworkError = errorMessage.toLowerCase().includes('network') ||
+                          errorMessage.toLowerCase().includes('fetch')
 
     if (isNetworkError) {
       return (
         <NetworkErrorState
           onRetry={retry && attemptCount < retryCount ? handleRetry : undefined}
-          error={currentError}
+          error={currentError || undefined}
         />
       )
     }
@@ -119,7 +121,7 @@ export function SafeAsyncComponent<T>({
     return (
       <LoadingErrorState
         onRetry={retry && attemptCount < retryCount ? handleRetry : undefined}
-        error={currentError}
+        error={currentError || undefined}
         resourceName={componentName}
       />
     )
@@ -246,13 +248,13 @@ export function useAsyncState<T>(
       setAttemptCount(0)
       return result
     } else {
-      const error = handlerError || new Error('Operation failed')
+      const finalError = handlerError || new Error('Operation failed')
       setState(prev => ({
         ...prev,
         loading: false,
-        error
+        error: finalError
       }))
-      throw error
+      throw finalError
     }
   }
 

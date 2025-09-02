@@ -193,7 +193,11 @@ describe('ErrorBoundary Component', () => {
     it('shows development info in development mode', () => {
       // Mock development environment
       const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'development',
+        writable: true,
+        configurable: true
+      });
       
       render(
         <ErrorBoundary>
@@ -205,13 +209,22 @@ describe('ErrorBoundary Component', () => {
       expect(screen.getByText(/Error:/)).toBeInTheDocument();
       expect(screen.getByText('Component always throws')).toBeInTheDocument();
       
-      process.env.NODE_ENV = originalEnv;
+      // Restore original value
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: originalEnv,
+        writable: true,
+        configurable: true
+      });
     });
 
     it('hides development info in production mode', () => {
       // Mock production environment
       const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'production',
+        writable: true,
+        configurable: true
+      });
       
       render(
         <ErrorBoundary>
@@ -222,7 +235,12 @@ describe('ErrorBoundary Component', () => {
       expect(screen.queryByText('Development Info')).not.toBeInTheDocument();
       expect(screen.queryByText(/Error:/)).not.toBeInTheDocument();
       
-      process.env.NODE_ENV = originalEnv;
+      // Restore original value
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: originalEnv,
+        writable: true,
+        configurable: true
+      });
     });
   });
 

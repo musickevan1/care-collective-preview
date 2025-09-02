@@ -365,17 +365,20 @@ export const errorTracker = {
 // Helper functions for easier usage with null checks
 export const captureError = (error: Error, context?: ErrorContext) => {
   if (typeof window === 'undefined') return
-  getErrorTracker().captureError(error, context, true)
+  const tracker = getErrorTracker()
+  if (tracker) tracker.captureError(error, context, true)
 }
 
 export const captureWarning = (message: string, context?: ErrorContext) => {
   if (typeof window === 'undefined') return
-  getErrorTracker().captureWarning(message, context)
+  const tracker = getErrorTracker()
+  if (tracker) tracker.captureWarning(message, context)
 }
 
 export const captureInfo = (message: string, context?: ErrorContext) => {
   if (typeof window === 'undefined') return
-  getErrorTracker().captureInfo(message, context)
+  const tracker = getErrorTracker()
+  if (tracker) tracker.captureInfo(message, context)
 }
 
 export const addBreadcrumb = (breadcrumb: {
@@ -385,17 +388,20 @@ export const addBreadcrumb = (breadcrumb: {
   data?: any
 }) => {
   if (typeof window === 'undefined') return
-  getErrorTracker().addBreadcrumb(breadcrumb)
+  const tracker = getErrorTracker()
+  if (tracker) tracker.addBreadcrumb(breadcrumb)
 }
 
 export const setUser = (user: { id?: string; email?: string; username?: string }) => {
   if (typeof window === 'undefined') return
-  getErrorTracker().setUser(user)
+  const tracker = getErrorTracker()
+  if (tracker) tracker.setUser(user)
 }
 
 export const setTag = (key: string, value: string) => {
   if (typeof window === 'undefined') return
-  getErrorTracker().setTag(key, value)
+  const tracker = getErrorTracker()
+  if (tracker) tracker.setTag(key, value)
 }
 
 export const withErrorTracking = <T>(
@@ -403,7 +409,8 @@ export const withErrorTracking = <T>(
   context?: ErrorContext
 ): T | null => {
   if (typeof window === 'undefined') return null
-  return getErrorTracker().withErrorTracking(operation, context)
+  const tracker = getErrorTracker()
+  return tracker ? tracker.withErrorTracking(operation, context) : null
 }
 
 export const withErrorTrackingAsync = <T>(
@@ -411,5 +418,6 @@ export const withErrorTrackingAsync = <T>(
   context?: ErrorContext
 ): Promise<T | null> => {
   if (typeof window === 'undefined') return Promise.resolve(null)
-  return getErrorTracker().withErrorTrackingAsync(operation, context)
+  const tracker = getErrorTracker()
+  return tracker ? tracker.withErrorTrackingAsync(operation, context) : Promise.resolve(null)
 }

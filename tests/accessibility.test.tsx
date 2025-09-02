@@ -100,10 +100,10 @@ describe('Accessibility Tests', () => {
     });
 
     it('status badges convey information to screen readers', () => {
-      render(<StatusBadge status="urgent" />);
+      render(<StatusBadge status="open" />);
       
       // Should have meaningful text content
-      const badge = screen.getByText('Urgent');
+      const badge = screen.getByText('Open');
       expect(badge).toBeInTheDocument();
       
       // Text should be sufficient for screen readers
@@ -211,14 +211,14 @@ describe('Accessibility Tests', () => {
       render(
         <div>
           <StatusBadge status="open" />
-          <StatusBadge status="urgent" />
+          <StatusBadge status="in_progress" />
           <StatusBadge status="completed" />
         </div>
       );
 
       // Status should be conveyed through text, not just color
       expect(screen.getByText('Open')).toBeInTheDocument();
-      expect(screen.getByText('Urgent')).toBeInTheDocument();
+      expect(screen.getByText('In Progress')).toBeInTheDocument();
       expect(screen.getByText('Completed')).toBeInTheDocument();
     });
   });
@@ -283,18 +283,18 @@ describe('Accessibility Tests', () => {
     it('emergency/urgent content is properly announced', () => {
       render(
         <div>
-          <StatusBadge status="urgent" />
+          <StatusBadge status="open" />
           <div role="alert" aria-live="assertive">
-            Urgent help request posted
+            Important help request posted
           </div>
         </div>
       );
 
-      // Urgent status should be clearly indicated
-      expect(screen.getByText('Urgent')).toBeInTheDocument();
+      // Status should be clearly indicated
+      expect(screen.getByText('Open')).toBeInTheDocument();
       
       // Important notifications should use alert role
-      expect(screen.getByRole('alert')).toHaveTextContent('Urgent help request posted');
+      expect(screen.getByRole('alert')).toHaveTextContent('Important help request posted');
     });
 
     it('contact information sharing is clearly announced', () => {

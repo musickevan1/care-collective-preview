@@ -8,11 +8,6 @@ export const mockProfile: Profile = {
   name: 'Alice Johnson',
   location: 'Springfield, MO',
   created_at: '2025-01-20T10:00:00Z',
-  avatar_url: null,
-  phone: null,
-  email: null,
-  bio: null,
-  is_admin: false,
 };
 
 export const mockHelpRequest: HelpRequest = {
@@ -24,7 +19,6 @@ export const mockHelpRequest: HelpRequest = {
   urgency: 'urgent',
   status: 'open',
   created_at: '2025-01-20T10:00:00Z',
-  updated_at: '2025-01-20T10:00:00Z',
 };
 
 export const mockHelpRequestWithProfile = {
@@ -43,7 +37,6 @@ export const mockHelpRequests: HelpRequest[] = [
     urgency: 'normal',
     status: 'open',
     created_at: '2025-01-19T14:30:00Z',
-    updated_at: '2025-01-19T14:30:00Z',
   },
   {
     id: '012e3456-e89b-12d3-a456-426614174004',
@@ -54,7 +47,6 @@ export const mockHelpRequests: HelpRequest[] = [
     urgency: 'normal',
     status: 'in_progress',
     created_at: '2025-01-18T09:15:00Z',
-    updated_at: '2025-01-20T08:00:00Z',
   },
 ];
 
