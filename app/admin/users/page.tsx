@@ -21,7 +21,7 @@ function formatTimeAgo(dateString: string) {
 }
 
 export default async function UsersPage() {
-  const supabase = await createClient()
+  const supabase = createClient()
 
   const { data: users, error } = await supabase
     .from('profiles')

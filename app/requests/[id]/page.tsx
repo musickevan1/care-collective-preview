@@ -53,7 +53,7 @@ function formatDate(dateString: string) {
 
 export default async function RequestDetailPage({ params }: PageProps) {
   const { id } = await params
-  const supabase = await createClient()
+  const supabase = createClient()
 
   const { data: { user }, error } = await supabase.auth.getUser()
   

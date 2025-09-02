@@ -13,7 +13,7 @@ interface DashboardPageProps {
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
-  const supabase = await createClient()
+  const supabase = createClient()
 
   const { data: { user }, error } = await supabase.auth.getUser()
   
