@@ -115,8 +115,6 @@ const nextConfig = {
   // PoweredByHeader removal for security
   poweredByHeader: false,
 
-  // Trailing slash handling
-  trailingSlash: false,
 
   // Compression for performance
   compress: true,
@@ -133,9 +131,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // Disable SSR to avoid server build issues
-  output: 'export',
-  trailingSlash: true,
+  // Build configuration for Vercel deployment
+  output: undefined, // Allow SSR
+  trailingSlash: false,
   
   // Advanced compiler options for better performance
   compiler: {
@@ -149,67 +147,8 @@ const nextConfig = {
     } : false,
   },
 
-  // Disable webpack modifications that cause build issues
-  webpack: (config, { dev, isServer, webpack }) => {
-    // Minimal config - avoid touching globals that cause "self is not defined"
-    if (!dev && !isServer) {
-      // Client-side only modifications
-      config.resolve.alias = {
-        ...config.resolve.alias,
-      }
-    }
-    // Bundle analyzer only when explicitly requested
-    if (process.env.ANALYZE === 'true' && !dev) {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-      config.plugins.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'static',
-          openAnalyzer: false,
-          generateStatsFile: true,
-        })
-      )
-    }
-
-    // Only apply heavy optimizations in production
-    if (!dev) {
-      config.optimization.usedExports = true
-      config.optimization.sideEffects = false
-      config.optimization.concatenateModules = true
-      
-      // Advanced code splitting only in production
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          vendor: {
-            name: 'vendors',
-            chunks: 'all',
-            test: /node_modules/,
-            priority: 20,
-            enforce: true,
-          },
-          framework: {
-            name: 'framework',
-            chunks: 'all',
-            test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]/,
-            priority: 30,
-            enforce: true,
-          },
-        },
-      }
-
-      // Performance hints only in production
-      config.performance = {
-        hints: 'warning',
-        maxEntrypointSize: 244 * 1024,
-        maxAssetSize: 244 * 1024,
-      }
-    } else {
-      // Development: disable performance hints for faster builds
-      config.performance = false
-    }
-
+  // Minimal webpack config to avoid build issues
+  webpack: (config) => {
     return config
   },
 
