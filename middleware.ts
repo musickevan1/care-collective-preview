@@ -1,11 +1,14 @@
 import { type NextRequest, NextResponse } from 'next/server'
-// Temporarily disabled to fix build issues with Supabase Edge Runtime compatibility
-// import { updateSession } from '@/lib/supabase/middleware'
+import { updateSession } from '@/lib/supabase/middleware-edge'
 
 export async function middleware(request: NextRequest) {
-  // Temporarily disabled to fix 'self is not defined' build error
-  // return await updateSession(request)
-  return NextResponse.next()
+  try {
+    return await updateSession(request)
+  } catch (error) {
+    console.error('Middleware error:', error)
+    // Fallback to allow request through if middleware fails
+    return NextResponse.next()
+  }
 }
 
 export const config = {
