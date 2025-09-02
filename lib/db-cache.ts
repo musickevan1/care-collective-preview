@@ -56,9 +56,9 @@ export async function cachedQuery<T>(
 export class OptimizedQueries {
   private static supabase: Awaited<ReturnType<typeof createClient>> | null = null
 
-  private static getClient() {
+  private static async getClient() {
     if (!this.supabase) {
-      this.supabase = createClient()
+      this.supabase = await createClient()
     }
     return this.supabase!
   }
@@ -69,7 +69,7 @@ export class OptimizedQueries {
   static async getUserProfile(userId: string) {
     return cachedQuery(
       async () => {
-        const supabase = this.getClient()
+        const supabase = await this.getClient()
         return supabase
           .from('profiles')
           .select('*')
@@ -96,7 +96,7 @@ export class OptimizedQueries {
     
     return cachedQuery(
       async () => {
-        const supabase = this.getClient()
+        const supabase = await this.getClient()
         
         let query = supabase
           .from('help_requests')
@@ -141,7 +141,7 @@ export class OptimizedQueries {
   static async getHelpRequestStats() {
     return cachedQuery(
       async () => {
-        const supabase = this.getClient()
+        const supabase = await this.getClient()
         
         const [
           totalResult,
@@ -178,7 +178,7 @@ export class OptimizedQueries {
   static async getUserStats() {
     return cachedQuery(
       async () => {
-        const supabase = this.getClient()
+        const supabase = await this.getClient()
         
         const result = await supabase!
           .from('profiles')
@@ -229,9 +229,9 @@ export class OptimizedQueries {
 export class ConnectionManager {
   private static connections = new Map<string, any>()
   
-  static getConnection(key: string = 'default') {
+  static async getConnection(key: string = 'default') {
     if (!this.connections.has(key)) {
-      const supabase = createClient()
+      const supabase = await createClient()
       this.connections.set(key, supabase)
     }
     return this.connections.get(key)

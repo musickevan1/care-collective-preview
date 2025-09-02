@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     const { error } = await supabase.auth.signOut()
     

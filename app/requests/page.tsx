@@ -69,7 +69,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
   const params = await searchParams
   const statusFilter = params.status || 'all'
   
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: { user }, error } = await supabase.auth.getUser()
   

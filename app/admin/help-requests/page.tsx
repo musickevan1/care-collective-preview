@@ -36,7 +36,7 @@ const urgencyColors = {
 } as const
 
 export default async function AdminHelpRequestsPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: helpRequests, error } = await supabase
     .from('help_requests')

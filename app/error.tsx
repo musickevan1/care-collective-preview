@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Link from 'next/link'
+import Image from 'next/image'
 // Temporarily disabled to fix build issue
 // import { captureError } from '@/lib/error-tracking'
 
@@ -27,9 +28,27 @@ export default function Error({
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="text-center max-w-lg mx-auto p-8">
-        {/* Supportive visual - heart instead of warning */}
-        <div className="text-6xl mb-6">💙</div>
+      <Card className="text-center max-w-lg mx-auto p-8 shadow-lg border-sage/20">
+        {/* Care Collective Branding */}
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center gap-3">
+            <Image 
+              src="/logo.png" 
+              alt="Care Collective Logo" 
+              width={32} 
+              height={32}
+              className="rounded"
+            />
+            <span className="text-lg font-bold text-foreground">CARE Collective</span>
+          </div>
+        </div>
+        
+        {/* Supportive visual with Care Collective colors */}
+        <div className="text-6xl mb-6" role="img" aria-label="Care icon">
+          <div className="w-16 h-16 mx-auto bg-sage/10 rounded-full flex items-center justify-center">
+            <span className="text-sage text-3xl">💚</span>
+          </div>
+        </div>
         
         <h1 className="text-2xl font-bold text-foreground mb-4">
           We&apos;re having a moment
@@ -41,43 +60,46 @@ export default function Error({
           Your wellbeing is our priority.
         </p>
         
-        {/* Primary actions */}
+        {/* Primary actions with Care Collective styling */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-          <Button onClick={reset} className="min-w-[120px]">
+          <Button 
+            onClick={reset} 
+            className="min-w-[120px] bg-sage hover:bg-sage-dark"
+          >
             Try again
           </Button>
           <Link href="/">
-            <Button variant="outline" className="min-w-[120px]">
+            <Button variant="outline" className="min-w-[120px] border-sage text-sage hover:bg-sage/5">
               Go home
             </Button>
           </Link>
         </div>
 
-        {/* Support options */}
-        <div className="border-t pt-6 mt-6">
+        {/* Support options with brand colors */}
+        <div className="border-t border-sage/20 pt-6 mt-6">
           <p className="text-sm text-muted-foreground mb-4">
             Need support right now?
           </p>
           <div className="flex flex-col sm:flex-row gap-2 text-sm">
-            <Link href="/help">
-              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
+            <Link href="/help" className="flex-1">
+              <Button variant="ghost" size="sm" className="text-sage hover:text-sage-dark hover:bg-sage/5 w-full">
                 Contact our support team
               </Button>
             </Link>
-            <Link href="/resources">
-              <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700">
+            <Link href="/resources" className="flex-1">
+              <Button variant="ghost" size="sm" className="text-dusty-rose hover:text-dusty-rose-dark hover:bg-dusty-rose/5 w-full">
                 Crisis resources
               </Button>
             </Link>
           </div>
         </div>
 
-        {/* Crisis support notice */}
-        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg text-sm">
-          <p className="font-medium text-blue-800 dark:text-blue-200 mb-1">
+        {/* Crisis support notice with Care Collective colors */}
+        <div className="mt-6 p-4 bg-sage/5 border border-sage/20 rounded-lg text-sm">
+          <p className="font-medium text-sage-dark mb-1">
             In crisis or need immediate help?
           </p>
-          <p className="text-blue-700 dark:text-blue-300">
+          <p className="text-sage">
             Please reach out to local emergency services or crisis hotlines in your area. 
             Your safety and wellbeing matter.
           </p>
