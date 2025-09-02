@@ -33,20 +33,48 @@ export async function updateSession(request: NextRequest) {
               httpOnly: true,
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'lax',
+              path: '/', // Ensure cookies are available for all paths
             })
           })
+          
+          // Debug logging for cookie operations
+          if (process.env.NODE_ENV === 'development' && cookiesToSet.length > 0) {
+            console.log('[Middleware] Setting cookies:', cookiesToSet.map(c => c.name))
+          }
         },
       },
     }
   )
 
   try {
-    // Get user session
-    const { data: { user } } = await supabase.auth.getUser()
+    // Get user session and refresh if needed
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    // If we have a user, refresh the session to ensure it's up to date
+    if (user) {
+      const { error: refreshError } = await supabase.auth.refreshSession()
+      if (refreshError && process.env.NODE_ENV === 'development') {
+        console.warn('[Middleware] Session refresh warning:', refreshError.message)
+      }
+    }
+
+    // Debug logging for authentication issues
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Middleware] Auth state:', { 
+        path: request.nextUrl.pathname,
+        hasUser: !!user, 
+        userId: user?.id,
+        cookieCount: request.cookies.getAll().length,
+        authError: authError?.message 
+      })
+    }
 
     // Check if accessing admin routes
     if (request.nextUrl.pathname.startsWith('/admin')) {
       if (!user) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[Middleware] Redirecting to login for admin route')
+        }
         const redirectUrl = new URL('/login', request.url)
         redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
         return NextResponse.redirect(redirectUrl)
@@ -60,6 +88,9 @@ export async function updateSession(request: NextRequest) {
     )
 
     if (isProtectedPath && !user) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Middleware] Redirecting to login for protected route')
+      }
       const redirectUrl = new URL('/login', request.url)
       redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
       return NextResponse.redirect(redirectUrl)

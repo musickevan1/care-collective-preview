@@ -54,13 +54,10 @@ export async function cachedQuery<T>(
  * Pre-built cached queries for common operations
  */
 export class OptimizedQueries {
-  private static supabase: Awaited<ReturnType<typeof createClient>> | null = null
-
+  // Remove static client caching to prevent auth state issues
   private static async getClient() {
-    if (!this.supabase) {
-      this.supabase = await createClient()
-    }
-    return this.supabase!
+    // Always create a fresh client to ensure proper auth state
+    return await createClient()
   }
 
   /**
@@ -69,16 +66,39 @@ export class OptimizedQueries {
   static async getUserProfile(userId: string) {
     return cachedQuery(
       async () => {
-        const supabase = await this.getClient()
-        return supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', userId)
-          .single()
+        try {
+          const supabase = await this.getClient()
+          
+          // Verify authentication first
+          const { data: { user }, error: authError } = await supabase.auth.getUser()
+          if (authError || !user) {
+            console.warn('[OptimizedQueries] Auth check failed for getUserProfile:', authError?.message)
+            return { data: null, error: authError || new Error('No authenticated user') }
+          }
+
+          const result = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single()
+
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[OptimizedQueries] getUserProfile result:', { 
+              hasData: !!result.data, 
+              error: result.error?.message 
+            })
+          }
+
+          return result
+        } catch (error) {
+          console.error('[OptimizedQueries] getUserProfile exception:', error)
+          return { data: null, error }
+        }
       },
       { 
         key: `profile_${userId}`,
-        ttl: 300000 // 5 minutes
+        ttl: 300000, // 5 minutes
+        skipCache: process.env.NODE_ENV === 'development' // Skip cache in development
       }
     )
   }
@@ -141,33 +161,61 @@ export class OptimizedQueries {
   static async getHelpRequestStats() {
     return cachedQuery(
       async () => {
-        const supabase = await this.getClient()
-        
-        const [
-          totalResult,
-          openResult,
-          inProgressResult,
-          completedResult
-        ] = await Promise.all([
-          supabase!.from('help_requests').select('*', { count: 'exact', head: true }),
-          supabase!.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'open'),
-          supabase!.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
-          supabase!.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'completed')
-        ])
+        try {
+          const supabase = await this.getClient()
+          
+          // Verify authentication first
+          const { data: { user }, error: authError } = await supabase.auth.getUser()
+          if (authError || !user) {
+            console.warn('[OptimizedQueries] Auth check failed for getHelpRequestStats:', authError?.message)
+            return { data: null, error: authError || new Error('No authenticated user') }
+          }
+          
+          const [
+            totalResult,
+            openResult,
+            inProgressResult,
+            completedResult
+          ] = await Promise.all([
+            supabase.from('help_requests').select('*', { count: 'exact', head: true }),
+            supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'open'),
+            supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
+            supabase.from('help_requests').select('*', { count: 'exact', head: true }).eq('status', 'completed')
+          ])
 
-        return {
-          data: {
+          // Check for any errors in the queries
+          const errors = [totalResult.error, openResult.error, inProgressResult.error, completedResult.error]
+            .filter(Boolean)
+          
+          if (errors.length > 0) {
+            console.error('[OptimizedQueries] Help request stats query errors:', errors)
+            return { data: null, error: errors[0] }
+          }
+
+          const stats = {
             total: totalResult.count || 0,
             open: openResult.count || 0,
             inProgress: inProgressResult.count || 0,
             completed: completedResult.count || 0
-          },
-          error: null
+          }
+
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[OptimizedQueries] Help request stats:', stats)
+          }
+
+          return {
+            data: stats,
+            error: null
+          }
+        } catch (error) {
+          console.error('[OptimizedQueries] getHelpRequestStats exception:', error)
+          return { data: null, error }
         }
       },
       {
         key: 'help_request_stats',
-        ttl: 120000 // 2 minutes
+        ttl: 120000, // 2 minutes
+        skipCache: process.env.NODE_ENV === 'development' // Skip cache in development
       }
     )
   }
@@ -178,20 +226,44 @@ export class OptimizedQueries {
   static async getUserStats() {
     return cachedQuery(
       async () => {
-        const supabase = await this.getClient()
-        
-        const result = await supabase!
-          .from('profiles')
-          .select('*', { count: 'exact', head: true })
+        try {
+          const supabase = await this.getClient()
+          
+          // Verify authentication first
+          const { data: { user }, error: authError } = await supabase.auth.getUser()
+          if (authError || !user) {
+            console.warn('[OptimizedQueries] Auth check failed for getUserStats:', authError?.message)
+            return { data: null, error: authError || new Error('No authenticated user') }
+          }
+          
+          const result = await supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
 
-        return {
-          data: { total: result.count || 0 },
-          error: result.error
+          if (result.error) {
+            console.error('[OptimizedQueries] getUserStats query error:', result.error)
+            return { data: null, error: result.error }
+          }
+
+          const stats = { total: result.count || 0 }
+
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[OptimizedQueries] User stats:', stats)
+          }
+
+          return {
+            data: stats,
+            error: null
+          }
+        } catch (error) {
+          console.error('[OptimizedQueries] getUserStats exception:', error)
+          return { data: null, error }
         }
       },
       {
         key: 'user_stats',
-        ttl: 300000 // 5 minutes
+        ttl: 300000, // 5 minutes
+        skipCache: process.env.NODE_ENV === 'development' // Skip cache in development
       }
     )
   }

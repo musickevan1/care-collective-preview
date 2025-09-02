@@ -6,16 +6,29 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import { MobileNav } from '@/components/MobileNav'
+import { redirect } from 'next/navigation'
 
 export default async function AdminDashboard() {
-  const supabase = await createClient()
-
-  // Get basic statistics with caching for better performance
+  console.log('[Admin] Page render started')
+  
   let totalUsers = 0
   let totalHelpRequests = 0
   let openHelpRequests = 0
 
   try {
+    console.log('[Admin] Creating Supabase client...')
+    const supabase = await createClient()
+
+    // Verify user is authenticated and admin
+    console.log('[Admin] Checking authentication...')
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      console.log('[Admin] No authenticated user, redirecting to login')
+      redirect('/login?redirectTo=/admin')
+    }
+
+    console.log('[Admin] Fetching admin statistics...')
     const [
       userStatsResult,
       helpRequestStatsResult
@@ -24,12 +37,28 @@ export default async function AdminDashboard() {
       OptimizedQueries.getHelpRequestStats()
     ])
 
-    totalUsers = userStatsResult.data?.total || 0
-    totalHelpRequests = helpRequestStatsResult.data?.total || 0
-    openHelpRequests = helpRequestStatsResult.data?.open || 0
+    console.log('[Admin] Stats results:', {
+      userStats: userStatsResult.error ? 'ERROR' : 'OK',
+      helpRequestStats: helpRequestStatsResult.error ? 'ERROR' : 'OK'
+    })
+
+    // Handle errors gracefully
+    if (userStatsResult.error) {
+      console.error('[Admin] User stats error:', userStatsResult.error)
+    } else {
+      totalUsers = userStatsResult.data?.total || 0
+    }
+
+    if (helpRequestStatsResult.error) {
+      console.error('[Admin] Help request stats error:', helpRequestStatsResult.error)
+    } else {
+      totalHelpRequests = helpRequestStatsResult.data?.total || 0
+      openHelpRequests = helpRequestStatsResult.data?.open || 0
+    }
+
   } catch (error) {
-    console.error('Error fetching admin stats:', error)
-    // Continue with default values
+    console.error('[Admin] Caught exception:', error)
+    // Continue with default values instead of throwing
   }
 
   const stats = [

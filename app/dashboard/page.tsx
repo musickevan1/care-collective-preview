@@ -13,23 +13,50 @@ interface DashboardPageProps {
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
-  const supabase = await createClient()
-
-  const { data: { user }, error } = await supabase.auth.getUser()
+  console.log('[Dashboard] Page render started')
   
-  if (error || !user) {
-    redirect('/login')
-  }
+  let supabase
+  let user = null
+  let profile = null
+  let profileError = null
 
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
+  try {
+    console.log('[Dashboard] Creating Supabase client...')
+    supabase = await createClient()
 
-  // Handle profile errors gracefully - profile might not exist yet
-  if (profileError && profileError.code !== 'PGRST116') {
-    console.error('Profile query error:', profileError)
+    console.log('[Dashboard] Getting authenticated user...')
+    const { data: userData, error: authError } = await supabase.auth.getUser()
+    user = userData.user
+    
+    if (authError || !user) {
+      console.log('[Dashboard] No authenticated user, redirecting to login')
+      redirect('/login')
+    }
+
+    console.log('[Dashboard] Querying user profile...', { userId: user.id })
+    const { data: profileData, error: profileQueryError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+
+    profile = profileData
+    profileError = profileQueryError
+
+    console.log('[Dashboard] Profile query result:', { 
+      hasProfile: !!profile, 
+      error: profileQueryError?.message,
+      errorCode: profileQueryError?.code
+    })
+
+    // Handle profile errors gracefully - profile might not exist yet
+    if (profileError && profileError.code !== 'PGRST116') {
+      console.error('[Dashboard] Profile query error:', profileError)
+    }
+
+  } catch (error) {
+    console.error('[Dashboard] Caught exception:', error)
+    throw error // Let error boundary handle it
   }
 
   const resolvedSearchParams = await searchParams
