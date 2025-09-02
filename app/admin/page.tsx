@@ -8,6 +8,9 @@ import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import { MobileNav } from '@/components/MobileNav'
 import { redirect } from 'next/navigation'
 
+// Force dynamic rendering since this page uses authentication
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDashboard() {
   console.log('[Admin] Page render started')
   

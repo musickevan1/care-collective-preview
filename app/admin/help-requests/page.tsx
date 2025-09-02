@@ -3,6 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
+
+// Force dynamic rendering since this page uses authentication
+export const dynamic = 'force-dynamic'
 import { DynamicAdminRequestActions } from '@/components/DynamicComponents'
 import Link from 'next/link'
 import Image from 'next/image'

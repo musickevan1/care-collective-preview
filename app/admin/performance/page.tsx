@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+
+// Force dynamic rendering since this page uses authentication
+export const dynamic = 'force-dynamic'
 import Image from 'next/image'
 // Temporarily disabled to fix build issues
 // import { PerformanceMonitor } from '@/components/PerformanceMonitor'

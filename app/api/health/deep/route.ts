@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { logger } from '@/lib/logger'
 
+// Force dynamic rendering since this API uses authentication
+export const dynamic = 'force-dynamic'
+
 interface DeepHealthCheck {
   status: 'healthy' | 'degraded' | 'unhealthy'
   timestamp: string

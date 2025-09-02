@@ -8,6 +8,9 @@ import { MobileNav } from '@/components/MobileNav'
 import Link from 'next/link'
 import Image from 'next/image'
 
+// Force dynamic rendering since this page uses authentication
+export const dynamic = 'force-dynamic'
+
 interface DashboardPageProps {
   searchParams: Promise<{ error?: string }>
 }

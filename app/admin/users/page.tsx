@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 
+// Force dynamic rendering since this page uses authentication
+export const dynamic = 'force-dynamic'
+
 function formatTimeAgo(dateString: string) {
   const now = new Date()
   const date = new Date(dateString)
