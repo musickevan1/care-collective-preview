@@ -133,14 +133,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
-  // Use static export to bypass SSR issues
+  // Disable SSR to avoid server build issues
   output: 'export',
   trailingSlash: true,
-  
-  // Disable static optimization for dynamic routes
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
   
   // Advanced compiler options for better performance
   compiler: {
@@ -154,31 +149,13 @@ const nextConfig = {
     } : false,
   },
 
-  // Simplified webpack configuration
+  // Disable webpack modifications that cause build issues
   webpack: (config, { dev, isServer, webpack }) => {
-    // Fix "self is not defined" error for all contexts
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        self: 'typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {}',
-      })
-    )
-    
-    // Additional global polyfills for server environment
-    if (isServer) {
+    // Minimal config - avoid touching globals that cause "self is not defined"
+    if (!dev && !isServer) {
+      // Client-side only modifications
       config.resolve.alias = {
         ...config.resolve.alias,
-      }
-      
-      // Provide fallbacks for Node.js polyfills
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        "crypto": false,
-        "stream": false,
-        "util": false,
-        "url": false,
-        "zlib": false,
-        "https": false,
-        "http": false,
       }
     }
     // Bundle analyzer only when explicitly requested
