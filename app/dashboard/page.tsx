@@ -21,11 +21,16 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     redirect('/login')
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
+
+  // Handle profile errors gracefully - profile might not exist yet
+  if (profileError && profileError.code !== 'PGRST116') {
+    console.error('Profile query error:', profileError)
+  }
 
   const resolvedSearchParams = await searchParams
   const isAdmin = profile?.is_admin || false

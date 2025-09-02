@@ -11,17 +11,26 @@ export default async function AdminDashboard() {
   const supabase = await createClient()
 
   // Get basic statistics with caching for better performance
-  const [
-    userStatsResult,
-    helpRequestStatsResult
-  ] = await Promise.all([
-    OptimizedQueries.getUserStats(),
-    OptimizedQueries.getHelpRequestStats()
-  ])
+  let totalUsers = 0
+  let totalHelpRequests = 0
+  let openHelpRequests = 0
 
-  const totalUsers = userStatsResult.data?.total || 0
-  const totalHelpRequests = helpRequestStatsResult.data?.total || 0
-  const openHelpRequests = helpRequestStatsResult.data?.open || 0
+  try {
+    const [
+      userStatsResult,
+      helpRequestStatsResult
+    ] = await Promise.all([
+      OptimizedQueries.getUserStats(),
+      OptimizedQueries.getHelpRequestStats()
+    ])
+
+    totalUsers = userStatsResult.data?.total || 0
+    totalHelpRequests = helpRequestStatsResult.data?.total || 0
+    openHelpRequests = helpRequestStatsResult.data?.open || 0
+  } catch (error) {
+    console.error('Error fetching admin stats:', error)
+    // Continue with default values
+  }
 
   const stats = [
     {

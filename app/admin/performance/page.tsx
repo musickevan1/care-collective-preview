@@ -19,11 +19,17 @@ export default async function PerformancePage() {
     redirect('/login')
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
+
+  // Handle profile errors gracefully
+  if (profileError) {
+    console.error('Profile query error in admin:', profileError)
+    redirect('/dashboard?error=admin_required')
+  }
 
   if (!profile?.is_admin) {
     redirect('/dashboard?error=admin_required')
