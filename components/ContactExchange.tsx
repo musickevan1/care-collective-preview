@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 import { AlertTriangle, Shield, CheckCircle, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -40,6 +42,8 @@ export function ContactExchange({
   const [consentGiven, setConsentGiven] = useState(false)
   const [showConsentDialog, setShowConsentDialog] = useState(false)
   const [hasExistingExchange, setHasExistingExchange] = useState(false)
+  const [consentMessage, setConsentMessage] = useState('')
+  const [messageError, setMessageError] = useState<string | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -73,18 +77,76 @@ export function ContactExchange({
     setShowConsentDialog(true)
   }
 
-  const handleConsentGiven = async () => {
+  const handleConsentGiven = async (message: string) => {
     try {
       setLoading(true)
       setShowConsentDialog(false)
       
-      // Create consent record first
+      // Import validation functions
+      const { validateContactExchange, validateRateLimit, createAuditEntry, canExchangeContacts } = 
+        await import('@/lib/validations/contact-exchange');
+      
+      // Validate exchange eligibility
+      const eligibility = canExchangeContacts(helperId, requesterId, 'open');
+      if (!eligibility.canExchange) {
+        throw new Error(eligibility.reason);
+      }
+      
+      // Validate input data
+      const validatedData = validateContactExchange({
+        requestId,
+        helperId,
+        requesterId,
+        message,
+        consent: true,
+      });
+      
+      // Check rate limiting
+      const { data: recentExchanges } = await supabase
+        .from('contact_exchanges')
+        .select('created_at')
+        .eq('helper_id', helperId)
+        .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
+      
+      const recentDates = recentExchanges?.map(e => new Date(e.created_at)) || [];
+      if (!validateRateLimit(helperId, recentDates)) {
+        throw new Error('Too many contact exchange attempts. Please try again later.');
+      }
+      
+      // Create audit trail BEFORE revealing contact
+      const auditEntry = createAuditEntry('CONTACT_EXCHANGE_INITIATED', {
+        requestId,
+        helperId,
+        requesterId,
+        metadata: { message: validatedData.message },
+      });
+      
+      // Insert audit trail
+      const { error: auditError } = await supabase
+        .from('contact_exchange_audit')
+        .insert({
+          action: auditEntry.action,
+          request_id: auditEntry.requestId,
+          helper_id: auditEntry.helperId,
+          requester_id: auditEntry.requesterId,
+          timestamp: auditEntry.timestamp,
+          metadata: auditEntry.metadata,
+        });
+      
+      if (auditError) {
+        console.warn('Audit trail creation failed:', auditError);
+        // Continue but log the issue
+      }
+      
+      // Create consent record with validated data
       const { error: consentError } = await supabase
         .from('contact_exchanges')
         .insert({
           request_id: requestId,
           helper_id: helperId,
           requester_id: requesterId,
+          message: validatedData.message,
+          consent_given: true,
           status: 'initiated',
           initiated_at: new Date().toISOString()
         })
@@ -95,8 +157,33 @@ export function ContactExchange({
       await loadContactInfo()
     } catch (err) {
       console.error('Error processing consent:', err)
-      setError('Failed to process consent')
+      const errorMessage = err instanceof Error ? err.message : 'Failed to process consent';
+      setError(errorMessage)
       setLoading(false)
+      
+      // Log failed attempt for security monitoring
+      try {
+        const { createAuditEntry } = await import('@/lib/validations/contact-exchange');
+        const auditEntry = createAuditEntry('CONTACT_EXCHANGE_FAILED', {
+          requestId,
+          helperId,
+          requesterId,
+          metadata: { error: errorMessage },
+        });
+        
+        await supabase
+          .from('contact_exchange_audit')
+          .insert({
+            action: auditEntry.action,
+            request_id: auditEntry.requestId,
+            helper_id: auditEntry.helperId,
+            requester_id: auditEntry.requesterId,
+            timestamp: auditEntry.timestamp,
+            metadata: auditEntry.metadata,
+          });
+      } catch {
+        // Silently fail audit logging to not block user
+      }
     }
   }
 
@@ -149,6 +236,46 @@ export function ContactExchange({
 
   // Consent Dialog
   if (showConsentDialog) {
+    const handleSubmitConsent = async () => {
+      setMessageError(null);
+      
+      // Validate message before proceeding
+      if (!consentMessage.trim()) {
+        setMessageError('Please provide a message explaining how you can help');
+        return;
+      }
+      
+      if (consentMessage.trim().length < 10) {
+        setMessageError('Message must be at least 10 characters');
+        return;
+      }
+      
+      if (consentMessage.trim().length > 200) {
+        setMessageError('Message cannot exceed 200 characters');
+        return;
+      }
+      
+      try {
+        // Validate message content
+        const { sanitizeMessage, validateContactExchange } = await import('@/lib/validations/contact-exchange');
+        const sanitizedMessage = sanitizeMessage(consentMessage);
+        
+        // This will throw if message contains inappropriate content
+        validateContactExchange({
+          requestId,
+          helperId,
+          requesterId,
+          message: sanitizedMessage,
+          consent: true,
+        });
+        
+        await handleConsentGiven(sanitizedMessage);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Invalid message content';
+        setMessageError(errorMessage);
+      }
+    };
+    
     return (
       <Card className="border-amber-200 bg-amber-50">
         <CardHeader>
@@ -169,23 +296,57 @@ export function ContactExchange({
                 <ul className="mt-1 space-y-1 text-amber-700">
                   <li>• Only your basic contact information will be shared</li>
                   <li>• This exchange is logged for safety and trust</li>
+                  <li>• Maximum 5 contact exchanges per hour</li>
                   <li>• Report any inappropriate contact to admins</li>
                   <li>• You can revoke shared information at any time</li>
                 </ul>
               </div>
             </div>
           </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="consent-message" className="text-amber-800 font-medium">
+              How can you help with this request? <span className="text-red-500">*</span>
+            </Label>
+            <Textarea
+              id="consent-message"
+              placeholder="Briefly explain how you can help (10-200 characters)"
+              value={consentMessage}
+              onChange={(e) => setConsentMessage(e.target.value)}
+              className="min-h-[80px] bg-white"
+              maxLength={200}
+              required
+              aria-describedby={messageError ? 'message-error' : undefined}
+              aria-invalid={!!messageError}
+            />
+            {messageError && (
+              <p id="message-error" role="alert" className="text-sm text-red-600 flex items-center gap-1">
+                <AlertTriangle className="h-3 w-3" />
+                {messageError}
+              </p>
+            )}
+            <p className="text-xs text-amber-600">
+              {consentMessage.length}/200 characters
+            </p>
+          </div>
+          
           <div className="flex gap-3">
             <Button 
-              onClick={handleConsentGiven}
-              className="bg-sage hover:bg-sage-dark text-white"
+              onClick={handleSubmitConsent}
+              disabled={!consentMessage.trim() || consentMessage.length < 10 || loading}
+              className="bg-sage hover:bg-sage-dark text-white disabled:opacity-50"
             >
               <CheckCircle className="h-4 w-4 mr-2" />
-              Yes, Share My Contact Info
+              {loading ? 'Sharing...' : 'Yes, Share My Contact Info'}
             </Button>
             <Button 
               variant="outline" 
-              onClick={() => setShowConsentDialog(false)}
+              onClick={() => {
+                setShowConsentDialog(false);
+                setConsentMessage('');
+                setMessageError(null);
+              }}
+              disabled={loading}
             >
               Cancel
             </Button>

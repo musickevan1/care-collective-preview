@@ -31,6 +31,7 @@
     "db:link": "supabase link --project-ref kecureoyekeqhrxkmjuh"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.54.0",

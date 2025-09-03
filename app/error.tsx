@@ -16,15 +16,42 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // Track the error with our error tracking system
-    // Temporarily disabled to fix build issue
-    // captureError(error, {
-    //   component: 'GlobalErrorBoundary',
-    //   severity: 'high',
-    //   extra: { digest: error.digest }
-    // })
-    console.error('Global error boundary caught error:', error)
+    // Log error for debugging and monitoring
+    console.error('[Global Error Boundary]', {
+      message: error.message,
+      stack: error.stack,
+      digest: error.digest,
+      timestamp: new Date().toISOString(),
+      url: window.location.href,
+    })
+    
+    // In production, send to error monitoring service
+    if (process.env.NODE_ENV === 'production') {
+      // Example: Send to monitoring service
+      logErrorToService({
+        message: error.message,
+        stack: error.stack,
+        digest: error.digest,
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString(),
+        component: 'GlobalErrorBoundary',
+        severity: 'high',
+      }).catch(err => {
+        console.warn('Failed to log error to monitoring service:', err)
+      })
+    }
   }, [error])
+  
+  // Error logging service function
+  async function logErrorToService(errorData: any) {
+    try {
+      // Replace with your actual error monitoring service
+      console.log('[Error Service] Would log to monitoring:', errorData)
+    } catch (err) {
+      console.warn('[Error Service] Failed to log error:', err)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">

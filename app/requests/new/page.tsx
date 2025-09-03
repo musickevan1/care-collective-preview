@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
+import { ensureAuthSync, requireAuthentication, handleAuthError } from '@/lib/auth/session-sync'
 
 const categories = [
   { value: 'groceries', label: 'Groceries & Shopping', icon: '🛒' },
@@ -38,42 +39,127 @@ export default function NewRequestPage() {
   const [locationPrivacy, setLocationPrivacy] = useState('public')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [authLoading, setAuthLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const router = useRouter()
   const supabase = createClient()
+
+  // Check authentication state on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        setAuthLoading(true)
+        const authResult = await ensureAuthSync()
+        
+        if (!authResult.success || !authResult.user) {
+          const errorInfo = handleAuthError(authResult.error || 'Authentication required')
+          if (errorInfo.shouldRedirect) {
+            router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
+            return
+          }
+        }
+        
+        setIsAuthenticated(!!authResult.user)
+      } catch (error) {
+        console.error('Auth check failed:', error)
+        const errorInfo = handleAuthError(error)
+        if (errorInfo.shouldRedirect) {
+          router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
+        }
+      } finally {
+        setAuthLoading(false)
+      }
+    }
+
+    checkAuth()
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { data: { user } } = await supabase.auth.getUser()
-    
-    if (!user) {
-      setError('You must be logged in to create a request')
+    try {
+      // Use requireAuthentication to ensure we have a valid user
+      const user = await requireAuthentication()
+      
+      if (!user) {
+        setError('You must be logged in to create a request')
+        setLoading(false)
+        return
+      }
+
+      const { error } = await supabase
+        .from('help_requests')
+        .insert({
+          title,
+          description: description || null,
+          category,
+          urgency,
+          user_id: user.id,
+          location_override: locationOverride || null,
+          location_privacy: locationPrivacy,
+        })
+
+      if (error) {
+        setError(error.message)
+      } else {
+        router.push('/dashboard')
+      }
+      
+    } catch (authError) {
+      console.error('Authentication error:', authError)
+      const errorInfo = handleAuthError(authError)
+      setError(errorInfo.message)
+      
+      if (errorInfo.shouldRedirect) {
+        router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
+      }
+    } finally {
       setLoading(false)
-      return
     }
+  }
 
-    const { error } = await supabase
-      .from('help_requests')
-      .insert({
-        title,
-        description: description || null,
-        category,
-        urgency,
-        user_id: user.id,
-        location_override: locationOverride || null,
-        location_privacy: locationPrivacy,
-      })
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <Card>
+            <CardContent className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                <p className="mt-2 text-sm text-muted-foreground">Checking authentication...</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    )
+  }
 
-    if (error) {
-      setError(error.message)
-    } else {
-      router.push('/dashboard')
-    }
-    
-    setLoading(false)
+  // Show error state if not authenticated (fallback)
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <Card>
+            <CardContent className="py-12">
+              <div className="text-center">
+                <p className="text-lg font-semibold text-foreground mb-2">Authentication Required</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  You must be logged in to create a help request.
+                </p>
+                <Link href="/login">
+                  <Button>Go to Login</Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    )
   }
 
   return (
