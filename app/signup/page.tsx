@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
 
@@ -12,6 +13,8 @@ export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [location, setLocation] = useState('')
+  const [applicationReason, setApplicationReason] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -29,6 +32,8 @@ export default function SignUpPage() {
       options: {
         data: {
           name: name,
+          location: location,
+          application_reason: applicationReason,
         },
       },
     })
@@ -37,6 +42,28 @@ export default function SignUpPage() {
       setError(error.message)
     } else {
       setSuccess(true)
+      
+      // Send notification email about new application
+      try {
+        await fetch('/api/notify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'new_application',
+            userId: 'pending' // We don't have the user ID yet, but the API will handle it
+          })
+        })
+      } catch (notifyError) {
+        console.warn('Failed to send new application notification:', notifyError)
+        // Don't fail the signup process if email fails
+      }
+      
+      // Redirect to waitlist after showing success message
+      setTimeout(() => {
+        window.location.href = '/waitlist'
+      }, 5000)
     }
     
     setLoading(false)
@@ -48,18 +75,35 @@ export default function SignUpPage() {
         <div className="w-full max-w-md">
           <Card>
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-foreground">Check Your Email</CardTitle>
+              <CardTitle className="text-2xl text-foreground">Application Submitted!</CardTitle>
               <CardDescription>
-                We&apos;ve sent you a confirmation link at {email}
+                Thank you for your interest in joining Care Collective
               </CardDescription>
             </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-muted-foreground mb-6">
-                Click the link in the email to complete your registration.
+            <CardContent className="text-center space-y-4">
+              <div className="text-6xl mb-4">📋</div>
+              <p className="text-muted-foreground mb-4">
+                We&apos;ve sent a confirmation email to <strong>{email}</strong>. 
+                Please click the link in the email to verify your account.
               </p>
-              <Link href="/login">
-                <Button variant="outline" className="w-full">
-                  Back to Sign In
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                <h3 className="font-semibold text-blue-900 mb-2">What happens next?</h3>
+                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                  <li>Verify your email by clicking the confirmation link</li>
+                  <li>Our team will review your application</li>
+                  <li>You&apos;ll receive an email once your application is approved</li>
+                  <li>Start connecting with your community!</li>
+                </ol>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Applications are typically reviewed within 1-2 business days.
+              </p>
+              <div className="text-xs text-muted-foreground bg-gray-50 rounded p-2">
+                You&apos;ll be redirected to your application status page in 5 seconds...
+              </div>
+              <Link href="/waitlist">
+                <Button className="w-full">
+                  Check Application Status
                 </Button>
               </Link>
             </CardContent>
@@ -148,6 +192,40 @@ export default function SignUpPage() {
                 />
                 <p className="text-xs text-muted-foreground">
                   Password must be at least 8 characters long
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="location" className="text-sm font-medium text-foreground">
+                  Location (Optional)
+                </label>
+                <Input
+                  id="location"
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="e.g., Springfield, MO"
+                  disabled={loading}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Helps connect you with nearby community members
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="applicationReason" className="text-sm font-medium text-foreground">
+                  Why do you want to join Care Collective? (Optional)
+                </label>
+                <Textarea
+                  id="applicationReason"
+                  value={applicationReason}
+                  onChange={(e) => setApplicationReason(e.target.value)}
+                  placeholder="Tell us briefly why you're interested in joining our mutual aid community..."
+                  disabled={loading}
+                  rows={3}
+                />
+                <p className="text-xs text-muted-foreground">
+                  This helps us understand your interest in community mutual aid
                 </p>
               </div>
 

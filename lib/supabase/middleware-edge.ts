@@ -69,31 +69,74 @@ export async function updateSession(request: NextRequest) {
       })
     }
 
-    // Check if accessing admin routes
-    if (request.nextUrl.pathname.startsWith('/admin')) {
+    // Define protected paths that require verification
+    const protectedPaths = ['/dashboard', '/requests', '/admin']
+    const isProtectedPath = protectedPaths.some(path => 
+      request.nextUrl.pathname.startsWith(path)
+    )
+
+    // Allow access to waitlist page and auth pages without additional checks
+    const allowedPaths = ['/waitlist', '/login', '/signup', '/auth', '/', '/design-system', '/help', '/api']
+    const isAllowedPath = allowedPaths.some(path => 
+      request.nextUrl.pathname.startsWith(path)
+    )
+
+    if (isProtectedPath) {
+      // First check if user is authenticated
       if (!user) {
         if (process.env.NODE_ENV === 'development') {
-          console.log('[Middleware] Redirecting to login for admin route')
+          console.log('[Middleware] Redirecting to login for protected route')
         }
         const redirectUrl = new URL('/login', request.url)
         redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
         return NextResponse.redirect(redirectUrl)
       }
-    }
 
-    // Check if accessing protected routes
-    const protectedPaths = ['/dashboard', '/requests']
-    const isProtectedPath = protectedPaths.some(path => 
-      request.nextUrl.pathname.startsWith(path)
-    )
+      // Check user verification status for protected routes
+      try {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('verification_status, is_admin')
+          .eq('id', user.id)
+          .single()
 
-    if (isProtectedPath && !user) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Middleware] Redirecting to login for protected route')
+        if (profileError) {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('[Middleware] Profile query error:', profileError.message)
+          }
+          // If we can't determine status, allow through (graceful degradation)
+          return supabaseResponse
+        }
+
+        // Check admin routes specifically
+        if (request.nextUrl.pathname.startsWith('/admin')) {
+          if (!profile.is_admin || profile.verification_status !== 'approved') {
+            if (process.env.NODE_ENV === 'development') {
+              console.log('[Middleware] Redirecting to dashboard - not admin or not approved')
+            }
+            const redirectUrl = new URL('/dashboard', request.url)
+            redirectUrl.searchParams.set('error', 'admin_required')
+            return NextResponse.redirect(redirectUrl)
+          }
+        }
+
+        // Check verification status for all protected routes
+        if (profile.verification_status !== 'approved') {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[Middleware] Redirecting to waitlist - not approved')
+          }
+          return NextResponse.redirect(new URL('/waitlist', request.url))
+        }
+
+        // User is approved, allow access
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[Middleware] User approved, allowing access to:', request.nextUrl.pathname)
+        }
+        
+      } catch (error) {
+        console.error('[Middleware] Verification check error:', error)
+        // Graceful degradation - allow access if verification check fails
       }
-      const redirectUrl = new URL('/login', request.url)
-      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
-      return NextResponse.redirect(redirectUrl)
     }
 
   } catch (error) {

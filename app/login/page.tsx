@@ -21,7 +21,7 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
@@ -29,7 +29,26 @@ export default function LoginPage() {
     if (error) {
       setError(error.message)
     } else {
-      window.location.href = '/dashboard'
+      // Check user verification status after successful login
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('verification_status')
+        .eq('id', authData.user.id)
+        .single()
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError)
+        // Default to dashboard if we can't determine status
+        window.location.href = '/dashboard'
+      } else {
+        // Redirect based on verification status
+        if (profile.verification_status === 'approved') {
+          window.location.href = '/dashboard'
+        } else {
+          // Pending or rejected users go to waitlist
+          window.location.href = '/waitlist'
+        }
+      }
     }
     
     setLoading(false)

@@ -17,6 +17,7 @@ export default async function AdminDashboard() {
   let totalUsers = 0
   let totalHelpRequests = 0
   let openHelpRequests = 0
+  let pendingApplications = 0
 
   try {
     console.log('[Admin] Creating Supabase client...')
@@ -34,15 +35,21 @@ export default async function AdminDashboard() {
     console.log('[Admin] Fetching admin statistics...')
     const [
       userStatsResult,
-      helpRequestStatsResult
+      helpRequestStatsResult,
+      pendingApplicationsResult
     ] = await Promise.all([
       OptimizedQueries.getUserStats(),
-      OptimizedQueries.getHelpRequestStats()
+      OptimizedQueries.getHelpRequestStats(),
+      supabase
+        .from('profiles')
+        .select('id', { count: 'exact' })
+        .eq('verification_status', 'pending')
     ])
 
     console.log('[Admin] Stats results:', {
       userStats: userStatsResult.error ? 'ERROR' : 'OK',
-      helpRequestStats: helpRequestStatsResult.error ? 'ERROR' : 'OK'
+      helpRequestStats: helpRequestStatsResult.error ? 'ERROR' : 'OK',
+      pendingApplications: pendingApplicationsResult.error ? 'ERROR' : 'OK'
     })
 
     // Handle errors gracefully
@@ -59,12 +66,25 @@ export default async function AdminDashboard() {
       openHelpRequests = helpRequestStatsResult.data?.open || 0
     }
 
+    if (pendingApplicationsResult.error) {
+      console.error('[Admin] Pending applications error:', pendingApplicationsResult.error)
+    } else {
+      pendingApplications = pendingApplicationsResult.count || 0
+    }
+
   } catch (error) {
     console.error('[Admin] Caught exception:', error)
     // Continue with default values instead of throwing
   }
 
   const stats = [
+    {
+      title: 'Pending Applications',
+      value: pendingApplications || 0,
+      description: 'Awaiting review',
+      href: '/admin/applications',
+      highlight: pendingApplications > 0
+    },
     {
       title: 'Total Users',
       value: totalUsers || 0,
@@ -139,18 +159,31 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-8">
           {stats.map((stat) => (
             <Link key={stat.title} href={stat.href}>
-              <Card className="hover:shadow-md transition-shadow cursor-pointer">
+              <Card className={`hover:shadow-md transition-shadow cursor-pointer ${
+                stat.highlight ? 'ring-2 ring-yellow-400 bg-yellow-50' : ''
+              }`}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
+                  <CardTitle className={`text-sm font-medium ${
+                    stat.highlight ? 'text-yellow-800' : ''
+                  }`}>
                     {stat.title}
+                    {stat.highlight && (
+                      <span className="ml-1 text-yellow-600">!</span>
+                    )}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stat.value}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className={`text-2xl font-bold ${
+                    stat.highlight ? 'text-yellow-700' : ''
+                  }`}>
+                    {stat.value}
+                  </div>
+                  <p className={`text-xs ${
+                    stat.highlight ? 'text-yellow-600' : 'text-muted-foreground'
+                  }`}>
                     {stat.description}
                   </p>
                 </CardContent>
@@ -168,6 +201,11 @@ export default async function AdminDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
+            <Link href="/admin/applications">
+              <Button variant="outline" className="w-full justify-start">
+                📋 Review Applications
+              </Button>
+            </Link>
             <Link href="/admin/users">
               <Button variant="outline" className="w-full justify-start">
                 👥 Manage Users
@@ -175,7 +213,7 @@ export default async function AdminDashboard() {
             </Link>
             <Link href="/admin/help-requests">
               <Button variant="outline" className="w-full justify-start">
-                📋 Review Help Requests
+                🤝 Review Help Requests
               </Button>
             </Link>
             <Link href="/admin/performance">
