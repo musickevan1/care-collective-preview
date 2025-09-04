@@ -58,6 +58,45 @@ export async function updateSession(request: NextRequest) {
   // refreshing the auth token
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Check if accessing waitlist route - allow pending users without email confirmation
+  if (request.nextUrl.pathname.startsWith('/waitlist')) {
+    // If not authenticated, redirect to login
+    if (!user) {
+      logSecurityEvent('waitlist_access_denied', request, { reason: 'not_authenticated' })
+      const redirectUrl = new URL('/login', request.url)
+      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // Validate user ID
+    if (!validateUUID(user.id)) {
+      logSecurityEvent('invalid_user_id', request, { userId: user.id })
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 })
+    }
+
+    // Get user profile to check verification status
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('verification_status, email_confirmed')
+      .eq('id', user.id)
+      .single()
+
+    if (profileError) {
+      logSecurityEvent('profile_check_error', request, { error: profileError.message })
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
+
+    // Allow access to waitlist for pending users (no email confirmation required)
+    // If user is approved, redirect them to dashboard
+    if (profile?.verification_status === 'approved') {
+      const redirectUrl = new URL('/dashboard', request.url)
+      return NextResponse.redirect(redirectUrl)
+    }
+    
+    // Allow pending and rejected users to access waitlist
+    // (rejected users can reapply, pending users can check status)
+  }
+
   // Check if accessing admin routes
   if (request.nextUrl.pathname.startsWith('/admin')) {
     // If not authenticated, redirect to login
@@ -74,10 +113,10 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 })
     }
 
-    // Check if user is admin
+    // Check if user is admin and email is confirmed
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('is_admin, verification_status, email_confirmed')
       .eq('id', user.id)
       .single()
 
@@ -86,29 +125,82 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
-    // If not admin, redirect to dashboard with error
-    if (!profile?.is_admin) {
+    // If not admin or email not confirmed, redirect appropriately
+    if (!profile?.is_admin || profile?.verification_status !== 'approved' || !profile?.email_confirmed) {
       logSecurityEvent('admin_access_denied', request, { 
-        reason: 'not_admin', 
+        reason: profile?.is_admin ? 'email_not_confirmed' : 'not_admin', 
         userId: user.id 
       })
-      const redirectUrl = new URL('/dashboard', request.url)
-      redirectUrl.searchParams.set('error', 'admin_required')
-      return NextResponse.redirect(redirectUrl)
+      
+      // Redirect based on verification status
+      if (profile?.verification_status === 'pending') {
+        const redirectUrl = new URL('/waitlist', request.url)
+        return NextResponse.redirect(redirectUrl)
+      } else if (profile?.verification_status === 'approved' && !profile?.email_confirmed) {
+        const redirectUrl = new URL('/verify-email', request.url)
+        return NextResponse.redirect(redirectUrl)
+      } else {
+        const redirectUrl = new URL('/dashboard', request.url)
+        redirectUrl.searchParams.set('error', 'admin_required')
+        return NextResponse.redirect(redirectUrl)
+      }
     }
   }
 
-  // Check if accessing protected routes (dashboard, requests) without auth
+  // Check if accessing protected routes (dashboard, requests) without proper verification
   const protectedPaths = ['/dashboard', '/requests']
   const isProtectedPath = protectedPaths.some(path => 
     request.nextUrl.pathname.startsWith(path)
   )
 
-  if (isProtectedPath && !user) {
-    logSecurityEvent('protected_access_denied', request, { path: request.nextUrl.pathname })
-    const redirectUrl = new URL('/login', request.url)
-    redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
-    return NextResponse.redirect(redirectUrl)
+  if (isProtectedPath) {
+    // If not authenticated, redirect to login
+    if (!user) {
+      logSecurityEvent('protected_access_denied', request, { path: request.nextUrl.pathname })
+      const redirectUrl = new URL('/login', request.url)
+      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // Validate user ID
+    if (!validateUUID(user.id)) {
+      logSecurityEvent('invalid_user_id', request, { userId: user.id })
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 })
+    }
+
+    // Get user profile to check verification and email confirmation status
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('verification_status, email_confirmed')
+      .eq('id', user.id)
+      .single()
+
+    if (profileError) {
+      logSecurityEvent('profile_check_error', request, { error: profileError.message })
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
+
+    // Redirect based on user status
+    if (profile?.verification_status === 'pending') {
+      // Pending users should use the waitlist
+      const redirectUrl = new URL('/waitlist', request.url)
+      return NextResponse.redirect(redirectUrl)
+    } else if (profile?.verification_status === 'rejected') {
+      // Rejected users should go to waitlist to reapply
+      const redirectUrl = new URL('/waitlist', request.url)
+      return NextResponse.redirect(redirectUrl)
+    } else if (profile?.verification_status === 'approved' && !profile?.email_confirmed) {
+      // Approved users need email confirmation for protected routes
+      logSecurityEvent('protected_access_denied', request, { 
+        reason: 'email_not_confirmed',
+        path: request.nextUrl.pathname 
+      })
+      const redirectUrl = new URL('/verify-email', request.url)
+      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+    
+    // If verification_status is approved and email_confirmed is true, allow access
   }
 
   // Add security headers to response

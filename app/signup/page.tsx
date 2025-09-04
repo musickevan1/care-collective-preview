@@ -83,17 +83,24 @@ export default function SignUpPage() {
             <CardContent className="text-center space-y-4">
               <div className="text-6xl mb-4">📋</div>
               <p className="text-muted-foreground mb-4">
-                We&apos;ve sent a confirmation email to <strong>{email}</strong>. 
-                Please click the link in the email to verify your account.
+                Your application has been submitted successfully! 
+                You can now check your application status and track your progress.
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
                 <h3 className="font-semibold text-blue-900 mb-2">What happens next?</h3>
                 <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                  <li>Verify your email by clicking the confirmation link</li>
                   <li>Our team will review your application</li>
                   <li>You&apos;ll receive an email once your application is approved</li>
+                  <li>Verify your email to access all platform features</li>
                   <li>Start connecting with your community!</li>
                 </ol>
+              </div>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-left mt-4">
+                <p className="text-xs text-yellow-800">
+                  <strong>Note:</strong> We&apos;ve sent a confirmation email to <strong>{email}</strong>. 
+                  While you can check your application status now, you&apos;ll need to verify your email 
+                  once approved to access all platform features.
+                </p>
               </div>
               <p className="text-xs text-muted-foreground">
                 Applications are typically reviewed within 1-2 business days.
