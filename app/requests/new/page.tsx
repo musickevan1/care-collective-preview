@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/lib/auth-context'
 
 const categories = [
   { value: 'groceries', label: 'Groceries & Shopping', icon: '🛒' },
@@ -38,36 +39,18 @@ export default function NewRequestPage() {
   const [locationPrivacy, setLocationPrivacy] = useState('public')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [authLoading, setAuthLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const router = useRouter()
   const supabase = createClient()
+  const { user, loading: authLoading } = useAuth()
 
-  // Check authentication state on component mount
+  // Handle authentication redirect
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        setAuthLoading(true)
-        const { data: { user }, error } = await supabase.auth.getUser()
-        
-        if (error || !user) {
-          console.log('User not authenticated, redirecting to login')
-          router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
-          return
-        }
-        
-        setIsAuthenticated(true)
-      } catch (error) {
-        console.error('Auth check failed:', error)
-        router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
-      } finally {
-        setAuthLoading(false)
-      }
+    if (!authLoading && !user) {
+      console.log('User not authenticated, redirecting to login')
+      router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
     }
-
-    checkAuth()
-  }, [router, supabase.auth])
+  }, [user, authLoading, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,10 +58,7 @@ export default function NewRequestPage() {
     setError('')
 
     try {
-      // Get current user
-      const { data: { user }, error: userError } = await supabase.auth.getUser()
-      
-      if (userError || !user) {
+      if (!user) {
         setError('You must be logged in to create a request')
         setLoading(false)
         return
@@ -119,7 +99,7 @@ export default function NewRequestPage() {
             <CardContent className="flex items-center justify-center py-12">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                <p className="mt-2 text-sm text-muted-foreground">Checking authentication...</p>
+                <p className="mt-2 text-sm text-muted-foreground">Loading...</p>
               </div>
             </CardContent>
           </Card>
@@ -129,7 +109,7 @@ export default function NewRequestPage() {
   }
 
   // Show error state if not authenticated (fallback)
-  if (!isAuthenticated) {
+  if (!user) {
     return (
       <main className="min-h-screen bg-background">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">

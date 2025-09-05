@@ -30,12 +30,10 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) => {
             supabaseResponse.cookies.set(name, value, {
               ...options,
-              httpOnly: true,
+              path: '/', // Ensure cookies are available for all paths
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'lax',
-              path: '/', // Ensure cookies are available for all paths
-              maxAge: 60 * 60 * 24 * 7, // 7 days
-              expires: new Date(Date.now() + 60 * 60 * 24 * 7 * 1000), // 7 days
+              // Let Supabase handle cookie expiration and httpOnly settings
             })
           })
           
@@ -49,37 +47,14 @@ export async function updateSession(request: NextRequest) {
   )
 
   try {
-    // Get user session with timeout handling
-    const sessionPromise = supabase.auth.getUser()
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Session check timeout')), 5000)
-    )
+    // Simple auth check - trust Supabase's session management
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
     
-    let { data: { user }, error: authError } = await Promise.race([
-      sessionPromise,
-      timeoutPromise
-    ]) as any
-
-    // If we have a user, try to refresh the session
-    if (user && !authError) {
-      try {
-        const { data: { session }, error: refreshError } = await supabase.auth.refreshSession()
-        
-        if (refreshError) {
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('[Middleware] Session refresh warning:', refreshError.message)
-          }
-          // If refresh fails, try to get the current session
-          const { data: { session: currentSession } } = await supabase.auth.getSession()
-          if (!currentSession) {
-            // No valid session - treat as unauthenticated
-            user = null
-          }
-        }
-      } catch (refreshError) {
-        console.warn('[Middleware] Session refresh failed:', refreshError)
-        // Continue with existing user data if refresh fails
+    if (authError) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[Middleware] Auth error:', authError.message)
       }
+      // Don't force logout on auth errors - let client handle it
     }
 
     // Debug logging for authentication issues
@@ -183,23 +158,13 @@ export async function updateSession(request: NextRequest) {
   } catch (error) {
     console.error('[Middleware] Auth error:', error)
     
-    // For critical auth pages, redirect to login on error
-    const authCriticalPaths = ['/dashboard', '/requests', '/admin']
-    const isAuthCritical = authCriticalPaths.some(path => 
-      request.nextUrl.pathname.startsWith(path)
-    )
-    
-    if (isAuthCritical) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Middleware] Redirecting to login due to auth error on critical path')
-      }
-      const redirectUrl = new URL('/login', request.url)
-      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
-      redirectUrl.searchParams.set('error', 'session_error')
-      return NextResponse.redirect(redirectUrl)
+    // For auth errors, let the application handle gracefully
+    // instead of blocking requests in middleware
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Middleware] Auth error occurred, allowing request to proceed')
     }
     
-    // Continue without blocking for non-critical requests
+    // Continue without blocking - let client-side handle auth errors
   }
 
   // Add basic security headers
