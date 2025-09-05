@@ -44,29 +44,6 @@ export default function LoginPage() {
       }
 
       if (authData?.user) {
-        // Wait for session to be fully established
-        let sessionEstablished = false
-        let attempts = 0
-        const maxAttempts = 5
-
-        while (!sessionEstablished && attempts < maxAttempts) {
-          await new Promise(resolve => setTimeout(resolve, 500))
-          const { data: { session } } = await supabase.auth.getSession()
-          
-          if (session?.user?.id === authData.user.id) {
-            sessionEstablished = true
-          } else {
-            attempts++
-          }
-        }
-
-        if (!sessionEstablished) {
-          console.warn('Session not established after login')
-          setError('Login successful but session could not be established. Please try again.')
-          setLoading(false)
-          return
-        }
-
         // Get redirect destination from URL params
         const urlParams = new URLSearchParams(window.location.search)
         const redirectTo = urlParams.get('redirectTo')

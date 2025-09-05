@@ -46,43 +46,15 @@ export default function SignUpPage() {
       }
 
       if (signUpData?.user) {
-        // Wait a moment for the signup to fully process
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        // Try to sign in the user after successful signup
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
 
-        // Try to sign in the user with retry logic
-        let signInAttempts = 0
-        const maxAttempts = 3
-        let signInError = null
-
-        while (signInAttempts < maxAttempts) {
-          const { error: attemptError, data: signInData } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          })
-
-          if (!attemptError && signInData?.user) {
-            // Successful sign in - verify session is established
-            const { data: { session } } = await supabase.auth.getSession()
-            if (session) {
-              break // Success - exit retry loop
-            }
-          }
-
-          signInError = attemptError
-          signInAttempts++
-          
-          if (signInAttempts < maxAttempts) {
-            // Wait before retry
-            await new Promise(resolve => setTimeout(resolve, 1500))
-          }
-        }
-
-        if (signInAttempts >= maxAttempts) {
-          console.warn('Auto sign-in failed after retries:', signInError)
-          // Show success but indicate manual login needed
-          setSuccess(true)
-          setLoading(false)
-          return
+        if (signInError) {
+          console.warn('Auto sign-in failed:', signInError)
+          // Still show success - user can login manually
         }
 
         // Send notification email about new application
