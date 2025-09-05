@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
-import { ensureAuthSync, requireAuthentication, handleAuthError } from '@/lib/auth/session-sync'
 
 const categories = [
   { value: 'groceries', label: 'Groceries & Shopping', icon: '🛒' },
@@ -50,30 +49,25 @@ export default function NewRequestPage() {
     const checkAuth = async () => {
       try {
         setAuthLoading(true)
-        const authResult = await ensureAuthSync()
+        const { data: { user }, error } = await supabase.auth.getUser()
         
-        if (!authResult.success || !authResult.user) {
-          const errorInfo = handleAuthError(authResult.error || 'Authentication required')
-          if (errorInfo.shouldRedirect) {
-            router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
-            return
-          }
+        if (error || !user) {
+          console.log('User not authenticated, redirecting to login')
+          router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
+          return
         }
         
-        setIsAuthenticated(!!authResult.user)
+        setIsAuthenticated(true)
       } catch (error) {
         console.error('Auth check failed:', error)
-        const errorInfo = handleAuthError(error)
-        if (errorInfo.shouldRedirect) {
-          router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
-        }
+        router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
       } finally {
         setAuthLoading(false)
       }
     }
 
     checkAuth()
-  }, [router])
+  }, [router, supabase.auth])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -81,10 +75,10 @@ export default function NewRequestPage() {
     setError('')
 
     try {
-      // Use requireAuthentication to ensure we have a valid user
-      const user = await requireAuthentication()
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
       
-      if (!user) {
+      if (userError || !user) {
         setError('You must be logged in to create a request')
         setLoading(false)
         return
@@ -108,14 +102,9 @@ export default function NewRequestPage() {
         router.push('/dashboard')
       }
       
-    } catch (authError) {
-      console.error('Authentication error:', authError)
-      const errorInfo = handleAuthError(authError)
-      setError(errorInfo.message)
-      
-      if (errorInfo.shouldRedirect) {
-        router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
-      }
+    } catch (err) {
+      console.error('Request creation error:', err)
+      setError('Failed to create request. Please try again.')
     } finally {
       setLoading(false)
     }
