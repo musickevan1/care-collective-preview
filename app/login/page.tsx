@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -16,42 +16,98 @@ export default function LoginPage() {
 
   const supabase = createClient()
 
+  // Check for error messages from redirects
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const errorParam = urlParams.get('error')
+    
+    if (errorParam === 'session_error') {
+      setError('Your session expired. Please log in again.')
+    }
+  }, [])
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    if (error) {
-      setError(error.message)
-    } else {
-      // Check user verification status after successful login
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('verification_status')
-        .eq('id', authData.user.id)
-        .single()
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
+      }
 
-      if (profileError) {
-        console.error('Error fetching profile:', profileError)
-        // Default to dashboard if we can't determine status
-        window.location.href = '/dashboard'
-      } else {
-        // Redirect based on verification status
-        if (profile.verification_status === 'approved') {
-          window.location.href = '/dashboard'
-        } else {
-          // Pending or rejected users go to waitlist
-          window.location.href = '/waitlist'
+      if (authData?.user) {
+        // Wait for session to be fully established
+        let sessionEstablished = false
+        let attempts = 0
+        const maxAttempts = 5
+
+        while (!sessionEstablished && attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 500))
+          const { data: { session } } = await supabase.auth.getSession()
+          
+          if (session?.user?.id === authData.user.id) {
+            sessionEstablished = true
+          } else {
+            attempts++
+          }
+        }
+
+        if (!sessionEstablished) {
+          console.warn('Session not established after login')
+          setError('Login successful but session could not be established. Please try again.')
+          setLoading(false)
+          return
+        }
+
+        // Get redirect destination from URL params
+        const urlParams = new URLSearchParams(window.location.search)
+        const redirectTo = urlParams.get('redirectTo')
+
+        // Check user verification status after successful login
+        try {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('verification_status')
+            .eq('id', authData.user.id)
+            .single()
+
+          let destination = '/dashboard' // default
+
+          if (profileError) {
+            console.error('Error fetching profile:', profileError)
+            // If we can't get profile, use redirect or default to dashboard
+            destination = redirectTo || '/dashboard'
+          } else {
+            // Determine redirect based on verification status
+            if (profile.verification_status === 'approved') {
+              // Approved users can go to their intended destination or dashboard
+              destination = redirectTo || '/dashboard'
+            } else {
+              // Pending or rejected users go to waitlist, unless they're already there
+              destination = redirectTo === '/waitlist' ? '/waitlist' : '/waitlist'
+            }
+          }
+
+          // Use replace instead of href for better navigation
+          window.location.replace(destination)
+        } catch (profileErr) {
+          console.error('Profile lookup failed:', profileErr)
+          window.location.replace(redirectTo || '/dashboard')
         }
       }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('An unexpected error occurred. Please try again.')
+      setLoading(false)
     }
-    
-    setLoading(false)
   }
 
   return (

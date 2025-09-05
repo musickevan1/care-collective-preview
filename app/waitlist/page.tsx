@@ -36,10 +36,31 @@ export default function WaitlistPage(): ReactElement {
   useEffect(() => {
     async function getProfile() {
       try {
+        // First verify we have a valid session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError)
+          setError('Session expired. Please log in again.')
+          setLoading(false)
+          return
+        }
+
+        if (!session?.user) {
+          // Try to refresh session once before giving up
+          const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
+          
+          if (refreshError || !refreshedSession?.user) {
+            setError('Please log in to view your application status.')
+            setLoading(false)
+            return
+          }
+        }
+
         const { data: { user } } = await supabase.auth.getUser()
         
         if (!user) {
-          setError('Please log in to view your application status.')
+          setError('Authentication failed. Please log in again.')
           setLoading(false)
           return
         }

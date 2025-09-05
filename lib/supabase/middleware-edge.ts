@@ -34,6 +34,8 @@ export async function updateSession(request: NextRequest) {
               secure: process.env.NODE_ENV === 'production',
               sameSite: 'lax',
               path: '/', // Ensure cookies are available for all paths
+              maxAge: 60 * 60 * 24 * 7, // 7 days
+              expires: new Date(Date.now() + 60 * 60 * 24 * 7 * 1000), // 7 days
             })
           })
           
@@ -47,14 +49,36 @@ export async function updateSession(request: NextRequest) {
   )
 
   try {
-    // Get user session and refresh if needed
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    // Get user session with timeout handling
+    const sessionPromise = supabase.auth.getUser()
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Session check timeout')), 5000)
+    )
     
-    // If we have a user, refresh the session to ensure it's up to date
-    if (user) {
-      const { error: refreshError } = await supabase.auth.refreshSession()
-      if (refreshError && process.env.NODE_ENV === 'development') {
-        console.warn('[Middleware] Session refresh warning:', refreshError.message)
+    let { data: { user }, error: authError } = await Promise.race([
+      sessionPromise,
+      timeoutPromise
+    ]) as any
+
+    // If we have a user, try to refresh the session
+    if (user && !authError) {
+      try {
+        const { data: { session }, error: refreshError } = await supabase.auth.refreshSession()
+        
+        if (refreshError) {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('[Middleware] Session refresh warning:', refreshError.message)
+          }
+          // If refresh fails, try to get the current session
+          const { data: { session: currentSession } } = await supabase.auth.getSession()
+          if (!currentSession) {
+            // No valid session - treat as unauthenticated
+            user = null
+          }
+        }
+      } catch (refreshError) {
+        console.warn('[Middleware] Session refresh failed:', refreshError)
+        // Continue with existing user data if refresh fails
       }
     }
 
@@ -75,11 +99,28 @@ export async function updateSession(request: NextRequest) {
       request.nextUrl.pathname.startsWith(path)
     )
 
-    // Allow access to waitlist page and auth pages without additional checks
-    const allowedPaths = ['/waitlist', '/login', '/signup', '/auth', '/', '/design-system', '/help', '/api']
-    const isAllowedPath = allowedPaths.some(path => 
+    // Allow access to public and auth pages without additional checks
+    const publicPaths = ['/login', '/signup', '/auth', '/', '/design-system', '/help', '/api']
+    const isPublicPath = publicPaths.some(path => 
       request.nextUrl.pathname.startsWith(path)
     )
+    
+    // Waitlist requires authentication but not necessarily verification
+    const waitlistPath = request.nextUrl.pathname.startsWith('/waitlist')
+
+    // Handle waitlist page - requires authentication
+    if (waitlistPath) {
+      if (!user) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[Middleware] Redirecting to login for waitlist')
+        }
+        const redirectUrl = new URL('/login', request.url)
+        redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+        return NextResponse.redirect(redirectUrl)
+      }
+      // Authenticated user can access waitlist regardless of verification status
+      return supabaseResponse
+    }
 
     if (isProtectedPath) {
       // First check if user is authenticated
@@ -140,8 +181,25 @@ export async function updateSession(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Auth middleware error:', error)
-    // Continue without blocking the request
+    console.error('[Middleware] Auth error:', error)
+    
+    // For critical auth pages, redirect to login on error
+    const authCriticalPaths = ['/dashboard', '/requests', '/admin']
+    const isAuthCritical = authCriticalPaths.some(path => 
+      request.nextUrl.pathname.startsWith(path)
+    )
+    
+    if (isAuthCritical) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Middleware] Redirecting to login due to auth error on critical path')
+      }
+      const redirectUrl = new URL('/login', request.url)
+      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+      redirectUrl.searchParams.set('error', 'session_error')
+      return NextResponse.redirect(redirectUrl)
+    }
+    
+    // Continue without blocking for non-critical requests
   }
 
   // Add basic security headers

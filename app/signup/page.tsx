@@ -26,58 +26,94 @@ export default function SignUpPage() {
     setLoading(true)
     setError('')
 
-    const { data: signUpData, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name: name,
-          location: location,
-          application_reason: applicationReason,
-        },
-      },
-    })
-
-    if (error) {
-      setError(error.message)
-    } else if (signUpData?.user) {
-      // Automatically sign in the user after successful signup
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+    try {
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            name: name,
+            location: location,
+            application_reason: applicationReason,
+          },
+        },
       })
 
-      if (signInError) {
-        console.warn('Auto sign-in failed:', signInError)
-        // Still show success even if auto-login fails
+      if (error) {
+        setError(error.message)
+        setLoading(false)
+        return
       }
 
-      setSuccess(true)
-      
-      // Send notification email about new application
-      try {
-        await fetch('/api/notify', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            type: 'new_application',
-            userId: signUpData.user.id
+      if (signUpData?.user) {
+        // Wait a moment for the signup to fully process
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        // Try to sign in the user with retry logic
+        let signInAttempts = 0
+        const maxAttempts = 3
+        let signInError = null
+
+        while (signInAttempts < maxAttempts) {
+          const { error: attemptError, data: signInData } = await supabase.auth.signInWithPassword({
+            email,
+            password,
           })
-        })
-      } catch (notifyError) {
-        console.warn('Failed to send new application notification:', notifyError)
-        // Don't fail the signup process if email fails
+
+          if (!attemptError && signInData?.user) {
+            // Successful sign in - verify session is established
+            const { data: { session } } = await supabase.auth.getSession()
+            if (session) {
+              break // Success - exit retry loop
+            }
+          }
+
+          signInError = attemptError
+          signInAttempts++
+          
+          if (signInAttempts < maxAttempts) {
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, 1500))
+          }
+        }
+
+        if (signInAttempts >= maxAttempts) {
+          console.warn('Auto sign-in failed after retries:', signInError)
+          // Show success but indicate manual login needed
+          setSuccess(true)
+          setLoading(false)
+          return
+        }
+
+        // Send notification email about new application
+        try {
+          await fetch('/api/notify', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              type: 'new_application',
+              userId: signUpData.user.id
+            })
+          })
+        } catch (notifyError) {
+          console.warn('Failed to send new application notification:', notifyError)
+        }
+
+        setSuccess(true)
+        
+        // Redirect to waitlist after showing success message
+        setTimeout(() => {
+          window.location.href = '/waitlist'
+        }, 2500)
       }
-      
-      // Redirect to waitlist after showing success message
-      setTimeout(() => {
-        window.location.href = '/waitlist'
-      }, 3000) // Reduced to 3 seconds for better UX
+    } catch (err) {
+      console.error('Signup error:', err)
+      setError('An unexpected error occurred. Please try again.')
+    } finally {
+      setLoading(false)
     }
-    
-    setLoading(false)
   }
 
   if (success) {
@@ -117,7 +153,7 @@ export default function SignUpPage() {
                 Applications are typically reviewed within 1-2 business days.
               </p>
               <div className="text-xs text-muted-foreground bg-gray-50 rounded p-2">
-                You&apos;ll be automatically logged in and redirected to your application status page in a moment...
+                You&apos;ll be redirected to your application status page in a moment...
               </div>
               <Link href="/waitlist">
                 <Button className="w-full">
