@@ -26,7 +26,7 @@ export default function SignUpPage() {
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -40,7 +40,18 @@ export default function SignUpPage() {
 
     if (error) {
       setError(error.message)
-    } else {
+    } else if (signUpData?.user) {
+      // Automatically sign in the user after successful signup
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (signInError) {
+        console.warn('Auto sign-in failed:', signInError)
+        // Still show success even if auto-login fails
+      }
+
       setSuccess(true)
       
       // Send notification email about new application
@@ -52,7 +63,7 @@ export default function SignUpPage() {
           },
           body: JSON.stringify({
             type: 'new_application',
-            userId: 'pending' // We don't have the user ID yet, but the API will handle it
+            userId: signUpData.user.id
           })
         })
       } catch (notifyError) {
@@ -63,7 +74,7 @@ export default function SignUpPage() {
       // Redirect to waitlist after showing success message
       setTimeout(() => {
         window.location.href = '/waitlist'
-      }, 5000)
+      }, 3000) // Reduced to 3 seconds for better UX
     }
     
     setLoading(false)
@@ -106,11 +117,11 @@ export default function SignUpPage() {
                 Applications are typically reviewed within 1-2 business days.
               </p>
               <div className="text-xs text-muted-foreground bg-gray-50 rounded p-2">
-                You&apos;ll be redirected to your application status page in 5 seconds...
+                You&apos;ll be automatically logged in and redirected to your application status page in a moment...
               </div>
               <Link href="/waitlist">
                 <Button className="w-full">
-                  Check Application Status
+                  Go to Application Status Now
                 </Button>
               </Link>
             </CardContent>
