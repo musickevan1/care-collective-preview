@@ -6,7 +6,7 @@ import { ReactElement } from 'react'
 
 export default function Hero(): ReactElement {
   return (
-    <section id="home" className="relative pt-16 py-20 bg-gradient-to-br from-background via-background to-sage-light/20 overflow-hidden">
+    <section id="home" className="relative pt-24 pb-20 bg-gradient-to-br from-background via-background to-sage-light/20 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 left-10 w-32 h-32 bg-sage rounded-full blur-xl animate-pulse"></div>
@@ -132,70 +132,6 @@ export default function Hero(): ReactElement {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes gradient-x {
-          0%, 100% {
-            background-size: 200% 200%;
-            background-position: left center;
-          }
-          50% {
-            background-size: 200% 200%;
-            background-position: right center;
-          }
-        }
-        
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out forwards;
-        }
-        
-        .animate-gradient-x {
-          animation: gradient-x 3s ease infinite;
-        }
-        
-        .delay-200 {
-          animation-delay: 0.2s;
-        }
-        
-        .delay-300 {
-          animation-delay: 0.3s;
-        }
-        
-        .delay-400 {
-          animation-delay: 0.4s;
-        }
-        
-        .delay-500 {
-          animation-delay: 0.5s;
-        }
-        
-        .delay-600 {
-          animation-delay: 0.6s;
-        }
-        
-        .delay-1000 {
-          animation-delay: 1s;
-        }
-        
-        .delay-2000 {
-          animation-delay: 2s;
-        }
-        
-        .delay-3000 {
-          animation-delay: 3s;
-        }
-      `}</style>
     </section>
   )
 }

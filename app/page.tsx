@@ -31,38 +31,42 @@ export default function HomePage(): ReactElement {
             
             {/* Desktop Navigation */}
             <ul className="hidden md:flex items-center gap-6 list-none">
-              <li><Link href="#home" className="hover:text-sage-light transition-colors py-2 px-3 rounded min-h-[44px] flex items-center">Home</Link></li>
-              <li><Link href="#about" className="hover:text-sage-light transition-colors py-2 px-3 rounded min-h-[44px] flex items-center">About</Link></li>
-              <li><Link href="#how-it-works" className="hover:text-sage-light transition-colors py-2 px-3 rounded min-h-[44px] flex items-center">How It Works</Link></li>
-              <li><Link href="#contact" className="hover:text-sage-light transition-colors py-2 px-3 rounded min-h-[44px] flex items-center">Contact</Link></li>
-              <li><Link href="/login" className="bg-sage text-white px-4 py-2 rounded font-semibold hover:bg-sage-dark transition-colors min-h-[44px] flex items-center">Member Login</Link></li>
+              <li><Link href="#home" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">Home</Link></li>
+              <li><Link href="#mission" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">Mission</Link></li>
+              <li><Link href="#how-it-works" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">How It Works</Link></li>
+              <li><Link href="#whats-happening" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">What's Happening</Link></li>
+              <li><Link href="#about" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">About</Link></li>
+              <li><Link href="#contact" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">Contact</Link></li>
+              <li><Link href="/login" className="bg-sage text-white px-4 py-2 rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center">Member Login</Link></li>
             </ul>
             
             {/* Mobile Navigation Toggle */}
             <button 
-              className="md:hidden flex flex-col gap-1 p-2 min-h-[44px] min-w-[44px] justify-center items-center"
+              className="md:hidden flex flex-col gap-1 p-2 min-h-[44px] min-w-[44px] justify-center items-center group focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded-lg"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle navigation menu"
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={mobileMenuOpen}
             >
-              <span className="w-6 h-0.5 bg-white transition-all"></span>
-              <span className="w-6 h-0.5 bg-white transition-all"></span>
-              <span className="w-6 h-0.5 bg-white transition-all"></span>
+              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
+              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
             </button>
           </div>
           
           {/* Mobile Navigation Menu */}
-          {mobileMenuOpen && (
-            <nav className="md:hidden bg-navy border-t border-white/10">
+          <div className={`md:hidden overflow-hidden bg-navy border-t border-white/10 transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+            <nav className="animate-fade-in-up">
               <ul className="list-none p-4 space-y-2">
-                <li><Link href="#home" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors" onClick={() => setMobileMenuOpen(false)}>Home</Link></li>
-                <li><Link href="#about" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors" onClick={() => setMobileMenuOpen(false)}>About</Link></li>
-                <li><Link href="#how-it-works" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors" onClick={() => setMobileMenuOpen(false)}>How It Works</Link></li>
-                <li><Link href="#contact" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors" onClick={() => setMobileMenuOpen(false)}>Contact</Link></li>
-                <li><Link href="/login" className="block py-3 px-4 bg-sage rounded font-semibold hover:bg-sage-dark transition-colors">Member Login</Link></li>
+                <li><Link href="#home" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>Home</Link></li>
+                <li><Link href="#mission" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>Mission</Link></li>
+                <li><Link href="#how-it-works" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>How It Works</Link></li>
+                <li><Link href="#whats-happening" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>What's Happening</Link></li>
+                <li><Link href="#about" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>About</Link></li>
+                <li><Link href="#contact" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>Contact</Link></li>
+                <li><Link href="/login" className="block py-3 px-4 bg-sage rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-inset">Member Login</Link></li>
               </ul>
             </nav>
-          )}
+          </div>
         </nav>
       </header>
 
@@ -71,10 +75,10 @@ export default function HomePage(): ReactElement {
         <Hero />
 
         {/* Mission Section */}
-        <section id="mission" className="py-20 bg-white">
-          <div className="container mx-auto px-4">
+        <section id="mission" className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
                 Our Mission
               </h2>
               <p className="text-xl font-medium text-foreground mb-12 max-w-3xl mx-auto">
@@ -109,10 +113,10 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="py-20 bg-gradient-to-br from-sage-light to-green-50">
-          <div className="container mx-auto px-4">
+        <section id="how-it-works" className="py-16 md:py-20 bg-gradient-to-br from-sage-light to-green-50">
+          <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
                 How It Works
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
@@ -151,8 +155,11 @@ export default function HomePage(): ReactElement {
               </div>
               
               <div className="mt-12">
-                <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[48px]">
-                  Get Started Today
+                <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[48px] group">
+                  <span>Get Started Today</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
                 </Link>
               </div>
             </div>
@@ -160,10 +167,10 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* What's Happening Section */}
-        <section id="whats-happening" className="py-20 bg-white">
-          <div className="container mx-auto px-4">
+        <section id="whats-happening" className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
                 What's Happening
               </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto text-left">
@@ -211,8 +218,11 @@ export default function HomePage(): ReactElement {
               </div>
               
               <div className="mt-12">
-                <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:opacity-90 transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[48px]">
-                  View All in Member Portal
+                <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
+                  <span>View All in Member Portal</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
                 </Link>
               </div>
             </div>
@@ -220,10 +230,10 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-20 bg-background">
-          <div className="container mx-auto px-4">
+        <section id="about" className="py-16 md:py-20 bg-background">
+          <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
                 About
               </h2>
               <div className="max-w-4xl mx-auto text-left">
@@ -263,7 +273,7 @@ export default function HomePage(): ReactElement {
               <h3 className="text-xl font-bold text-sage-light mb-6">Contact Information</h3>
               <p className="mb-2">
                 <strong>Email:</strong> {' '}
-                <a href="mailto:swmocarecollective@gmail.com" className="text-white hover:text-sage-light transition-colors">
+                <a href="mailto:swmocarecollective@gmail.com" className="text-white hover:text-sage-light transition-colors focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-1 py-0.5">
                   swmocarecollective@gmail.com
                 </a>
               </p>
@@ -273,10 +283,10 @@ export default function HomePage(): ReactElement {
             <div>
               <h3 className="text-xl font-bold text-sage-light mb-6">Quick Links</h3>
               <ul className="space-y-2 list-none">
-                <li><Link href="/login" className="text-white hover:text-sage-light transition-colors inline-block py-1">Member Login</Link></li>
-                <li><Link href="/signup" className="text-white hover:text-sage-light transition-colors inline-block py-1">Join Community</Link></li>
-                <li><Link href="#contact" className="text-white hover:text-sage-light transition-colors inline-block py-1">Contact Us</Link></li>
-                <li><Link href="/dashboard" className="text-white hover:text-sage-light transition-colors inline-block py-1">Member Portal</Link></li>
+                <li><Link href="/login" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Member Login</Link></li>
+                <li><Link href="/signup" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Join Community</Link></li>
+                <li><Link href="#contact" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Contact Us</Link></li>
+                <li><Link href="/dashboard" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Member Portal</Link></li>
               </ul>
             </div>
           </div>
