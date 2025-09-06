@@ -64,6 +64,11 @@
   border-color: var(--color-border);
 }
 
+/* Smooth Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);

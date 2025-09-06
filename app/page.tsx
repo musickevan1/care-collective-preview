@@ -1,18 +1,24 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { features } from '@/lib/features'
+import { useState } from 'react'
+import { ReactElement } from 'react'
 
-export default function HomePage() {
+export default function HomePage(): ReactElement {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Simple Header */}
-      <nav className="bg-secondary text-secondary-foreground">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
+      {/* Header/Navigation */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-navy text-white shadow-lg">
+        <nav className="container mx-auto">
+          <div className="flex items-center justify-between h-16 px-4">
+            {/* Brand */}
             <Link href="/" className="flex items-center gap-3">
               <Image 
                 src="/logo.png" 
-                alt="Care Collective Logo" 
+                alt="CARE Collective Logo" 
                 width={32} 
                 height={32}
                 className="rounded"
@@ -21,147 +27,287 @@ export default function HomePage() {
               />
               <span className="text-xl font-bold">CARE Collective</span>
             </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/login" className="hover:text-accent transition-colors">
-                Login
-              </Link>
-              <Link href="/signup" className="hover:text-accent transition-colors">
-                Sign Up
-              </Link>
+            
+            {/* Desktop Navigation */}
+            <ul className="hidden md:flex items-center gap-6 list-none">
+              <li><Link href="#home" className="hover:text-sage-light transition-colors py-2 px-3 rounded min-h-[44px] flex items-center">Home</Link></li>
+              <li><Link href="#about" className="hover:text-sage-light transition-colors py-2 px-3 rounded min-h-[44px] flex items-center">About</Link></li>
+              <li><Link href="#how-it-works" className="hover:text-sage-light transition-colors py-2 px-3 rounded min-h-[44px] flex items-center">How It Works</Link></li>
+              <li><Link href="#contact" className="hover:text-sage-light transition-colors py-2 px-3 rounded min-h-[44px] flex items-center">Contact</Link></li>
+              <li><Link href="/login" className="bg-sage text-white px-4 py-2 rounded font-semibold hover:bg-sage-dark transition-colors min-h-[44px] flex items-center">Member Login</Link></li>
+            </ul>
+            
+            {/* Mobile Navigation Toggle */}
+            <button 
+              className="md:hidden flex flex-col gap-1 p-2 min-h-[44px] min-w-[44px] justify-center items-center"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              <span className="w-6 h-0.5 bg-white transition-all"></span>
+              <span className="w-6 h-0.5 bg-white transition-all"></span>
+              <span className="w-6 h-0.5 bg-white transition-all"></span>
+            </button>
+          </div>
+          
+          {/* Mobile Navigation Menu */}
+          {mobileMenuOpen && (
+            <nav className="md:hidden bg-navy border-t border-white/10">
+              <ul className="list-none p-4 space-y-2">
+                <li><Link href="#home" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors" onClick={() => setMobileMenuOpen(false)}>Home</Link></li>
+                <li><Link href="#about" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors" onClick={() => setMobileMenuOpen(false)}>About</Link></li>
+                <li><Link href="#how-it-works" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors" onClick={() => setMobileMenuOpen(false)}>How It Works</Link></li>
+                <li><Link href="#contact" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors" onClick={() => setMobileMenuOpen(false)}>Contact</Link></li>
+                <li><Link href="/login" className="block py-3 px-4 bg-sage rounded font-semibold hover:bg-sage-dark transition-colors">Member Login</Link></li>
+              </ul>
+            </nav>
+          )}
+        </nav>
+      </header>
+
+      <main>
+        {/* Hero Section */}
+        <section id="home" className="pt-16 py-20 bg-background text-center">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6">
+                Southwest Missouri CARE Collective
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground mb-6 font-medium">
+                Building community through mutual aid
+              </p>
+              <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+                A community for caregivers to exchange practical help, shared resources, and mutual support. 
+                Together, we're building a space where caregivers can find connection, strength, and the support they deserve.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[48px]">
+                  Join Our Community
+                </Link>
+                <Link href="#how-it-works" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:opacity-90 transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[48px]">
+                  Learn How It Works
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
-      
-      <main className="container mx-auto px-4 py-8 sm:py-12">
-        <div className="text-center mb-8 sm:mb-12">
-          <div className="flex justify-center mb-4 sm:mb-6">
-            <Image 
-              src="/logo.png" 
-              alt="Care Collective Logo" 
-              width={120} 
-              height={120}
-              className="rounded-lg shadow-lg w-20 h-20 sm:w-[120px] sm:h-[120px]"
-              priority
-              sizes="(max-width: 640px) 80px, 120px"
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyEiWZQeGJ3Hcz3k0y7FhI0bNK0Y8A+vUYKhgHxJOeHjdGVcMKG8ccGaZu4oj/nB+kQjGfT/9k="
-            />
+        </section>
+
+        {/* Mission Section */}
+        <section id="mission" className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
+                Our Mission
+              </h2>
+              <p className="text-xl font-medium text-foreground mb-12 max-w-3xl mx-auto">
+                To connect caregivers with one another for the exchange of practical help, 
+                shared resources, and mutual support.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
+                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+                  <div className="text-5xl mb-4">🤝</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Community</h3>
+                  <p className="text-muted-foreground">Building real connections between neighbors</p>
+                </div>
+                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+                  <div className="text-5xl mb-4">💖</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Support</h3>
+                  <p className="text-muted-foreground">Practical help when you need it most</p>
+                </div>
+                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+                  <div className="text-5xl mb-4">🌟</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Trust</h3>
+                  <p className="text-muted-foreground">Safe and welcoming environment</p>
+                </div>
+                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+                  <div className="text-5xl mb-4">🌱</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Growth</h3>
+                  <p className="text-muted-foreground">Stronger communities through mutual aid</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4">
-            Welcome to CARE Collective
-          </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-4 sm:mb-6 px-2">
-            Building community through mutual aid in Southwest Missouri
-          </p>
-          <div className="bg-accent/20 rounded-lg p-6 max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 text-primary">🎯 Client Preview</h2>
-            <p className="text-foreground mb-4">
-              Welcome to the Care Collective platform preview! This demonstrates the core functionality of your community mutual aid application.
-            </p>
-            <div className="bg-white/50 rounded-lg p-4 mb-4">
-               <h3 className="font-semibold mb-2">✨ What&apos;s Ready to Explore:</h3>
-              <ul className="text-left space-y-2 text-sm">
-                <li>• <strong>Complete user registration</strong> and authentication system</li>
-                <li>• <strong>Help request creation</strong> with categories and urgency levels</li>
-                <li>• <strong>Community browsing</strong> and request management</li>
-                <li>• <strong>Admin oversight panel</strong> with full moderation capabilities</li>
-                <li>• <strong>Status workflow</strong> from open → in progress → completed</li>
-                <li>• <strong>Role-based permissions</strong> and audit logging</li>
-              </ul>
+        </section>
+
+        {/* How It Works Section */}
+        <section id="how-it-works" className="py-20 bg-gradient-to-br from-sage-light to-green-50">
+          <div className="container mx-auto px-4">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
+                How It Works
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage text-white rounded-full flex items-center justify-center font-bold">
+                    1
+                  </div>
+                  <div className="text-5xl mb-6 mt-4">👥</div>
+                  <h3 className="text-xl font-bold text-foreground mb-4">Join the Community</h3>
+                  <p className="text-muted-foreground">
+                    Sign up with your basic information to become part of our trusted community network.
+                  </p>
+                </div>
+                
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage text-white rounded-full flex items-center justify-center font-bold">
+                    2
+                  </div>
+                  <div className="text-5xl mb-6 mt-4">🙋‍♀️</div>
+                  <h3 className="text-xl font-bold text-foreground mb-4">Request or Offer Help</h3>
+                  <p className="text-muted-foreground">
+                    Post what you need help with, or browse requests to see how you can assist others.
+                  </p>
+                </div>
+                
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage text-white rounded-full flex items-center justify-center font-bold">
+                    3
+                  </div>
+                  <div className="text-5xl mb-6 mt-4">🤝</div>
+                  <h3 className="text-xl font-bold text-foreground mb-4">Connect with Neighbors</h3>
+                  <p className="text-muted-foreground">
+                    Build meaningful relationships while giving and receiving support in your community.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-12">
+                <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[48px]">
+                  Get Started Today
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* What's Happening Section */}
+        <section id="whats-happening" className="py-20 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
+                What's Happening
+              </h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto text-left">
+                <div>
+                  <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
+                    Upcoming Events
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex gap-4 p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
+                      <div className="bg-sage text-white px-3 py-2 rounded text-sm font-semibold text-center min-w-[60px] flex-shrink-0">
+                        Jan 15
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-foreground mb-1">Community Meet & Greet</h4>
+                        <p className="text-muted-foreground">Join us for coffee and connection</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-4 p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
+                      <div className="bg-sage text-white px-3 py-2 rounded text-sm font-semibold text-center min-w-[60px] flex-shrink-0">
+                        Jan 22
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-foreground mb-1">Resource Sharing Workshop</h4>
+                        <p className="text-muted-foreground">Learn about mutual aid principles</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
+                    Community Updates
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
+                      <h4 className="text-lg font-semibold text-foreground mb-1">Welcome New Members!</h4>
+                      <p className="text-muted-foreground">15 new community members joined this week</p>
+                    </div>
+                    <div className="p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
+                      <h4 className="text-lg font-semibold text-foreground mb-1">Help Requests Fulfilled</h4>
+                      <p className="text-muted-foreground">23 successful connections made this month</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-12">
+                <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:opacity-90 transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[48px]">
+                  View All in Member Portal
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* About Section */}
+        <section id="about" className="py-20 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
+                About
+              </h2>
+              <div className="max-w-4xl mx-auto text-left">
+                <div className="mb-8">
+                  <p className="text-lg leading-relaxed text-foreground mb-6">
+                    The CARE Collective (Caregiver Assistance and Resource Exchange) is a community for 
+                    caregivers in Southwest Missouri. The Collective is powered by caregivers themselves - 
+                    neighbors supporting neighbors - along with students and volunteers who help maintain 
+                    the site and coordinate resources.
+                  </p>
+                  <p className="text-lg leading-relaxed text-foreground">
+                    Together, we are building a space where caregivers can find connection, strength, 
+                    and the support they deserve.
+                  </p>
+                </div>
+                
+                <div className="bg-white p-6 rounded-lg border-2 border-dusty-rose-light border-l-6 border-l-dusty-rose">
+                  <h3 className="text-xl font-bold text-dusty-rose-dark mb-4">Academic Partnership</h3>
+                  <p className="text-muted-foreground italic">
+                    This project was created by Dr. Maureen Templeman, Department of Sociology, 
+                    Anthropology, and Gerontology at Missouri State University, with support from 
+                    community partners and funding from the Southern Gerontological Society 
+                    Innovative Projects Grant.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer id="contact" className="bg-navy text-white py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-8">
+            <div>
+              <h3 className="text-xl font-bold text-sage-light mb-6">Contact Information</h3>
+              <p className="mb-2">
+                <strong>Email:</strong> {' '}
+                <a href="mailto:swmocarecollective@gmail.com" className="text-white hover:text-sage-light transition-colors">
+                  swmocarecollective@gmail.com
+                </a>
+              </p>
+              <p><strong>Location:</strong> Springfield, 65897</p>
             </div>
             
-            <div className="bg-primary/10 rounded-lg p-4 mb-4 border-l-4 border-primary">
-              <h3 className="font-semibold mb-2 text-primary">🔑 Admin Demo Account</h3>
-              <div className="text-left space-y-1 text-sm">
-                <p><strong>Email:</strong> maureentempleman@demo.org</p>
-                <p><strong>Password:</strong> CarePreview2025!</p>
-                <p className="text-muted-foreground mt-2">
-                  Use these credentials to explore the full admin interface with 17 demo help requests.
-                </p>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              <strong>Note:</strong> This preview page will be replaced by your main Wix homepage. Users will access the member portal through your existing Wix website.
-            </p>
-          </div>
-        </div>
-
-        <div className={`grid grid-cols-1 sm:grid-cols-2 ${features.designSystem ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4 sm:gap-6 mb-8 sm:mb-12`}>
-          <div className="bg-card rounded-lg p-6 border">
-            <h3 className="text-xl font-semibold mb-3">Authentication</h3>
-            <p className="text-muted-foreground mb-4">
-              Try the signup and login flows
-            </p>
-            <div className="space-y-2">
-              <Link href="/login" className="block w-full bg-primary text-primary-foreground text-center py-2 px-4 rounded hover:bg-primary-contrast transition-colors">
-                Login
-              </Link>
-              <Link href="/signup" className="block w-full bg-secondary text-secondary-foreground text-center py-2 px-4 rounded hover:opacity-90 transition-opacity">
-                Sign Up
-              </Link>
+            <div>
+              <h3 className="text-xl font-bold text-sage-light mb-6">Quick Links</h3>
+              <ul className="space-y-2 list-none">
+                <li><Link href="/login" className="text-white hover:text-sage-light transition-colors inline-block py-1">Member Login</Link></li>
+                <li><Link href="/signup" className="text-white hover:text-sage-light transition-colors inline-block py-1">Join Community</Link></li>
+                <li><Link href="#contact" className="text-white hover:text-sage-light transition-colors inline-block py-1">Contact Us</Link></li>
+                <li><Link href="/dashboard" className="text-white hover:text-sage-light transition-colors inline-block py-1">Member Portal</Link></li>
+              </ul>
             </div>
           </div>
-
-          <div className="bg-card rounded-lg p-6 border">
-            <h3 className="text-xl font-semibold mb-3">Dashboard</h3>
-            <p className="text-muted-foreground mb-4">
-              View your personalized dashboard
-            </p>
-            <Link href="/dashboard" className="block w-full bg-accent text-accent-foreground text-center py-2 px-4 rounded hover:opacity-90 transition-opacity">
-              Dashboard
-            </Link>
-          </div>
-
-          <div className="bg-card rounded-lg p-6 border">
-            <h3 className="text-xl font-semibold mb-3">Admin Management</h3>
-            <p className="text-muted-foreground mb-4">
-              Full admin capabilities with moderation tools
-            </p>
-            <Link href="/admin" className="block w-full bg-brown text-white text-center py-2 px-4 rounded hover:opacity-90 transition-opacity">
-              Admin Panel
-            </Link>
-          </div>
-
-          {features.designSystem && (
-            <div className="bg-card rounded-lg p-6 border">
-              <h3 className="text-xl font-semibold mb-3">Dev Panel</h3>
-              <p className="text-muted-foreground mb-4">
-                Technical docs, permissions, and database schema
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <Link href="/design-system/colors" className="block w-full bg-terracotta text-white text-center py-1 px-3 rounded text-sm hover:opacity-90 transition-opacity">
-                  Colors
-                </Link>
-                <Link href="/design-system/typography" className="block w-full bg-navy text-white text-center py-1 px-3 rounded text-sm hover:opacity-90 transition-opacity">
-                  Typography
-                </Link>
-                <Link href="/design-system/permissions" className="block w-full bg-sage text-white text-center py-1 px-3 rounded text-sm hover:opacity-90 transition-opacity">
-                  Permissions
-                </Link>
-                <Link href="/design-system/database" className="block w-full bg-brown text-white text-center py-1 px-3 rounded text-sm hover:opacity-90 transition-opacity">
-                  Database
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="bg-accent/10 rounded-lg p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">Experience the Full Platform</h2>
-          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            Create an account to test the complete user journey from registration to community interaction.
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link href="/signup" className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary-contrast transition-colors">
-              Try the Platform
-            </Link>
-            <Link href="/login" className="inline-block bg-secondary text-secondary-foreground px-8 py-3 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity">
-              Demo Login
-            </Link>
+          
+          <div className="border-t border-white/10 pt-6 text-center">
+            <p className="text-white/70">&copy; 2025 CARE Collective - Southwest Missouri</p>
           </div>
         </div>
-      </main>
+      </footer>
     </div>
   )
 }
