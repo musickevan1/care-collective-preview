@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { emailService } from '@/lib/email-service'
 
 // Email templates for different notification types
 const EMAIL_TEMPLATES = {
@@ -195,34 +196,48 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid notification type' }, { status: 400 })
     }
 
-    // For development/testing, we'll log the HTML email
-    // In production, integrate with SendGrid, AWS SES, Resend, etc.
-    console.log('\n=== EMAIL NOTIFICATION ===')
-    console.log(`To: ${recipientEmail}`)
-    console.log(`Subject: ${subject}`)
-    console.log('Type:', type, adminAction ? `(${adminAction})` : '')
-    console.log('=========================\n')
+    // Send email using the email service
+    let emailResult;
     
-    // In development, also log a text version for clarity
-    if (process.env.NODE_ENV === 'development') {
-      console.log('HTML Email Preview:', emailHtml.substring(0, 200) + '...')
+    switch (type) {
+      case 'waitlist_confirmation':
+        emailResult = await emailService.sendWaitlistConfirmation(recipientEmail, userProfile.name || 'Friend')
+        break
+      case 'admin_action':
+        if (adminAction === 'approve') {
+          const confirmUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback?type=email_confirm`
+          emailResult = await emailService.sendApprovalNotification(recipientEmail, userProfile.name || 'Friend', confirmUrl)
+        } else if (adminAction === 'reject') {
+          emailResult = await emailService.sendRejectionNotification(recipientEmail, userProfile.name || 'Friend', userProfile.rejection_reason)
+        } else {
+          return NextResponse.json({ error: 'Invalid admin action' }, { status: 400 })
+        }
+        break
+      default:
+        // Fallback to generic email sending
+        emailResult = await emailService.sendEmail({
+          to: recipientEmail,
+          subject,
+          html: emailHtml
+        })
     }
 
-    // For now, we'll simulate successful email sending
-    // TODO: Integrate with actual email service
+    if (!emailResult.success) {
+      console.error('[Notify API] Email sending failed:', emailResult.error)
+      return NextResponse.json({ 
+        error: 'Failed to send email notification',
+        details: emailResult.error 
+      }, { status: 500 })
+    }
+
+    console.log(`[Notify API] Email sent successfully to ${recipientEmail} (${type})`)
     
     return NextResponse.json({ 
       success: true, 
       message: `Notification email sent to ${recipientEmail}`,
-      // In development, include the email details in response for testing
-      ...(process.env.NODE_ENV === 'development' && {
-        recipient: recipientEmail,
-        subject,
-        type,
-        adminAction,
-        // Include a preview of the HTML
-        htmlPreview: emailHtml.substring(0, 500) + '...'
-      })
+      messageId: emailResult.messageId,
+      type,
+      adminAction
     })
 
   } catch (error) {

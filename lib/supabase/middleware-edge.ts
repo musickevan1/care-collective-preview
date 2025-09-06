@@ -124,12 +124,20 @@ export async function updateSession(request: NextRequest) {
           return supabaseResponse
         }
 
-        // Check admin routes specifically
-        if (request.nextUrl.pathname.startsWith('/admin')) {
+        // Check admin routes specifically (both UI and API)
+        if (request.nextUrl.pathname.startsWith('/admin') || 
+            request.nextUrl.pathname.startsWith('/api/admin')) {
           if (!profile.is_admin || profile.verification_status !== 'approved') {
             if (process.env.NODE_ENV === 'development') {
-              console.log('[Middleware] Redirecting to dashboard - not admin or not approved')
+              console.log('[Middleware] Blocking admin access - not admin or not approved')
             }
+            
+            // For API routes, return JSON error
+            if (request.nextUrl.pathname.startsWith('/api/admin')) {
+              return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+            }
+            
+            // For UI routes, redirect to dashboard
             const redirectUrl = new URL('/dashboard', request.url)
             redirectUrl.searchParams.set('error', 'admin_required')
             return NextResponse.redirect(redirectUrl)

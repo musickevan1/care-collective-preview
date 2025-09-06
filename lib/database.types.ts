@@ -22,6 +22,8 @@ export interface Database {
           approved_by: string | null
           rejection_reason: string | null
           is_admin?: boolean
+          contact_preferences: Json | null
+          phone: string | null
         }
         Insert: {
           id: string
@@ -35,6 +37,8 @@ export interface Database {
           approved_by?: string | null
           rejection_reason?: string | null
           is_admin?: boolean
+          contact_preferences?: Json | null
+          phone?: string | null
         }
         Update: {
           id?: string
@@ -48,6 +52,8 @@ export interface Database {
           approved_by?: string | null
           rejection_reason?: string | null
           is_admin?: boolean
+          contact_preferences?: Json | null
+          phone?: string | null
         }
       }
       help_requests: {
@@ -60,6 +66,14 @@ export interface Database {
           urgency: string
           status: string
           created_at: string
+          updated_at: string | null
+          helper_id: string | null
+          helped_at: string | null
+          completed_at: string | null
+          cancelled_at: string | null
+          cancel_reason: string | null
+          location_override: string | null
+          location_privacy: string | null
         }
         Insert: {
           id?: string
@@ -70,6 +84,14 @@ export interface Database {
           urgency?: string
           status?: string
           created_at?: string
+          updated_at?: string | null
+          helper_id?: string | null
+          helped_at?: string | null
+          completed_at?: string | null
+          cancelled_at?: string | null
+          cancel_reason?: string | null
+          location_override?: string | null
+          location_privacy?: string | null
         }
         Update: {
           id?: string
@@ -80,6 +102,46 @@ export interface Database {
           urgency?: string
           status?: string
           created_at?: string
+          updated_at?: string | null
+          helper_id?: string | null
+          helped_at?: string | null
+          completed_at?: string | null
+          cancelled_at?: string | null
+          cancel_reason?: string | null
+          location_override?: string | null
+          location_privacy?: string | null
+        }
+      }
+      contact_exchanges: {
+        Row: {
+          id: string
+          request_id: string
+          helper_id: string
+          requester_id: string
+          exchange_type: string
+          contact_shared: Json
+          exchanged_at: string
+          confirmed_at: string | null
+        }
+        Insert: {
+          id?: string
+          request_id: string
+          helper_id: string
+          requester_id: string
+          exchange_type?: string
+          contact_shared?: Json
+          exchanged_at?: string
+          confirmed_at?: string | null
+        }
+        Update: {
+          id?: string
+          request_id?: string
+          helper_id?: string
+          requester_id?: string
+          exchange_type?: string
+          contact_shared?: Json
+          exchanged_at?: string
+          confirmed_at?: string | null
         }
       }
       messages: {
