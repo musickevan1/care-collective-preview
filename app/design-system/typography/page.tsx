@@ -33,8 +33,13 @@ export default function TypographyPage() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8">
+        <div className="mb-8 flex items-center gap-4">
           <Link href="/" className="text-primary hover:text-primary-contrast">← Back to Home</Link>
+          <span className="text-muted-foreground">|</span>
+          <Link href="/design-system/colors" className="text-primary hover:text-primary-contrast">Colors</Link>
+          <span className="font-medium">Typography</span>
+          <Link href="/design-system/permissions" className="text-primary hover:text-primary-contrast">Permissions</Link>
+          <Link href="/design-system/database" className="text-primary hover:text-primary-contrast">Database</Link>
         </div>
         
         <h1 className="mb-8 text-4xl font-bold text-foreground">

@@ -125,16 +125,22 @@ export default function HomePage() {
 
           {features.designSystem && (
             <div className="bg-card rounded-lg p-6 border">
-              <h3 className="text-xl font-semibold mb-3">Design System</h3>
+              <h3 className="text-xl font-semibold mb-3">Dev Panel</h3>
               <p className="text-muted-foreground mb-4">
-                Review colors and typography
+                Technical docs, permissions, and database schema
               </p>
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Link href="/design-system/colors" className="block w-full bg-terracotta text-white text-center py-1 px-3 rounded text-sm hover:opacity-90 transition-opacity">
                   Colors
                 </Link>
                 <Link href="/design-system/typography" className="block w-full bg-navy text-white text-center py-1 px-3 rounded text-sm hover:opacity-90 transition-opacity">
                   Typography
+                </Link>
+                <Link href="/design-system/permissions" className="block w-full bg-sage text-white text-center py-1 px-3 rounded text-sm hover:opacity-90 transition-opacity">
+                  Permissions
+                </Link>
+                <Link href="/design-system/database" className="block w-full bg-brown text-white text-center py-1 px-3 rounded text-sm hover:opacity-90 transition-opacity">
+                  Database
                 </Link>
               </div>
             </div>
