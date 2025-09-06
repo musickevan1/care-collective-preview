@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { ReactElement } from 'react'
+import Hero from '@/components/Hero'
 
 export default function HomePage(): ReactElement {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -66,31 +67,8 @@ export default function HomePage(): ReactElement {
       </header>
 
       <main>
-        {/* Hero Section */}
-        <section id="home" className="pt-16 py-20 bg-background text-center">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6">
-                Southwest Missouri CARE Collective
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-6 font-medium">
-                Building community through mutual aid
-              </p>
-              <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-                A community for caregivers to exchange practical help, shared resources, and mutual support. 
-                Together, we're building a space where caregivers can find connection, strength, and the support they deserve.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[48px]">
-                  Join Our Community
-                </Link>
-                <Link href="#how-it-works" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:opacity-90 transition-all transform hover:-translate-y-1 hover:shadow-lg min-h-[48px]">
-                  Learn How It Works
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Enhanced Hero Section */}
+        <Hero />
 
         {/* Mission Section */}
         <section id="mission" className="py-20 bg-white">
