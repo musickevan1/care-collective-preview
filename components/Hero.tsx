@@ -36,7 +36,7 @@ export default function Hero(): ReactElement {
                 alt="CARE Collective Logo" 
                 width={80} 
                 height={80}
-                className="relative rounded-full shadow-lg hover:scale-105 transition-transform duration-300"
+                className="relative rounded-full shadow-lg hover:scale-[1.02] transition-transform duration-200"
                 priority
                 sizes="80px"
               />
@@ -76,7 +76,7 @@ export default function Hero(): ReactElement {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up delay-500">
             <Link 
               href="/signup" 
-              className="group relative inline-flex items-center justify-center bg-gradient-to-r from-sage to-sage-dark text-white px-10 py-5 text-lg font-bold rounded-xl hover:scale-105 transition-all duration-300 transform hover:shadow-2xl min-h-[56px] overflow-hidden"
+              className="group relative inline-flex items-center justify-center bg-gradient-to-r from-sage to-sage-dark text-white px-10 py-5 text-lg font-bold rounded-xl hover:scale-[1.02] transition-all duration-200 transform hover:shadow-lg min-h-[56px] overflow-hidden"
             >
               <span className="absolute inset-0 bg-gradient-to-r from-sage-dark to-sage opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
               <span className="relative flex items-center gap-3">
@@ -89,12 +89,12 @@ export default function Hero(): ReactElement {
 
             <Link 
               href="#how-it-works" 
-              className="group relative inline-flex items-center justify-center bg-white/90 backdrop-blur-sm text-sage-dark px-10 py-5 text-lg font-bold rounded-xl hover:bg-white hover:scale-105 transition-all duration-300 transform hover:shadow-xl border-2 border-sage/20 hover:border-sage/40 min-h-[56px]"
+              className="group relative inline-flex items-center justify-center bg-white/90 backdrop-blur-sm text-sage-dark px-10 py-5 text-lg font-bold rounded-xl hover:bg-white hover:scale-[1.02] transition-all duration-200 transform hover:shadow-lg border-2 border-sage/20 hover:border-sage/40 min-h-[56px]"
             >
               <span className="flex items-center gap-3">
                 <span>Learn How It Works</span>
-                <svg className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </span>
             </Link>
@@ -104,28 +104,28 @@ export default function Hero(): ReactElement {
           <div className="mt-12 pt-8 border-t border-sage/10 animate-fade-in-up delay-600">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
               <div className="text-center group cursor-default">
-                <div className="text-3xl font-black text-sage-dark group-hover:scale-110 transition-transform duration-300">150+</div>
+                <div className="text-3xl font-black text-sage-dark group-hover:scale-105 transition-transform duration-200">150+</div>
                 <div className="text-sm text-muted-foreground font-medium">Community Members</div>
               </div>
               <div className="text-center group cursor-default">
-                <div className="text-3xl font-black text-dusty-rose-dark group-hover:scale-110 transition-transform duration-300">89</div>
+                <div className="text-3xl font-black text-dusty-rose-dark group-hover:scale-105 transition-transform duration-200">89</div>
                 <div className="text-sm text-muted-foreground font-medium">Help Requests Fulfilled</div>
               </div>
               <div className="text-center group cursor-default">
-                <div className="text-3xl font-black text-terracotta group-hover:scale-110 transition-transform duration-300">12</div>
+                <div className="text-3xl font-black text-terracotta group-hover:scale-105 transition-transform duration-200">12</div>
                 <div className="text-sm text-muted-foreground font-medium">Active This Week</div>
               </div>
             </div>
           </div>
 
           {/* Scroll Indicator */}
-          <div className="mt-12 animate-bounce">
+          <div className="mt-12 animate-pulse">
             <Link 
               href="#mission" 
-              className="inline-block text-sage-dark hover:text-sage transition-colors duration-300"
+              className="inline-block text-sage-dark hover:text-sage transition-all duration-300 hover:scale-110"
               aria-label="Scroll to learn more about our mission"
             >
-              <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 mx-auto opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
               </svg>
             </Link>
