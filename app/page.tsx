@@ -5,18 +5,29 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { ReactElement } from 'react'
 import Hero from '@/components/Hero'
+import { MobileNav } from '@/components/MobileNav'
+import { useAuthNavigation } from '@/lib/hooks/useAuthNavigation'
 
 export default function HomePage(): ReactElement {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { isAuthenticated, displayName, isLoading } = useAuthNavigation()
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Skip Links for Accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      <a href="#mobile-navigation-menu" className="skip-link">
+        Skip to navigation
+      </a>
+      
       {/* Header/Navigation */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-navy text-white shadow-lg">
-        <nav className="container mx-auto">
-          <div className="flex items-center justify-between h-16 px-4">
+        <nav className="container mx-auto max-w-7xl">
+          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
             {/* Brand */}
-            <Link href="/" className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
               <Image 
                 src="/logo.png" 
                 alt="CARE Collective Logo" 
@@ -26,51 +37,49 @@ export default function HomePage(): ReactElement {
                 priority
                 sizes="32px"
               />
-              <span className="text-xl font-bold">CARE Collective</span>
+              <span className="text-lg sm:text-xl font-bold truncate">CARE Collective</span>
             </Link>
             
             {/* Desktop Navigation */}
-            <ul className="hidden md:flex items-center gap-6 list-none">
-              <li><Link href="#home" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">Home</Link></li>
-              <li><Link href="#mission" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">Mission</Link></li>
-              <li><Link href="#how-it-works" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">How It Works</Link></li>
-              <li><Link href="#whats-happening" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">What's Happening</Link></li>
-              <li><Link href="#about" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">About</Link></li>
-              <li><Link href="#contact" className="hover:text-sage-light transition-colors py-2 px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">Contact</Link></li>
-              <li><Link href="/login" className="bg-sage text-white px-4 py-2 rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center">Member Login</Link></li>
-            </ul>
-            
-            {/* Mobile Navigation Toggle */}
-            <button 
-              className="md:hidden flex flex-col gap-1 p-2 min-h-[44px] min-w-[44px] justify-center items-center group focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded-lg"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-              aria-expanded={mobileMenuOpen}
-            >
-              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
-            </button>
-          </div>
-          
-          {/* Mobile Navigation Menu */}
-          <div className={`md:hidden overflow-hidden bg-navy border-t border-white/10 transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-            <nav className="animate-fade-in-up">
-              <ul className="list-none p-4 space-y-2">
-                <li><Link href="#home" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>Home</Link></li>
-                <li><Link href="#mission" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>Mission</Link></li>
-                <li><Link href="#how-it-works" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>How It Works</Link></li>
-                <li><Link href="#whats-happening" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>What's Happening</Link></li>
-                <li><Link href="#about" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>About</Link></li>
-                <li><Link href="#contact" className="block py-3 px-4 hover:bg-white/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset" onClick={() => setMobileMenuOpen(false)}>Contact</Link></li>
-                <li><Link href="/login" className="block py-3 px-4 bg-sage rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-inset">Member Login</Link></li>
+            <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
+              <ul className="flex items-center gap-3 xl:gap-4 list-none">
+                <li><Link href="#home" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Home</Link></li>
+                <li><Link href="#mission" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Mission</Link></li>
+                <li><Link href="#how-it-works" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">How It Works</Link></li>
+                <li><Link href="#whats-happening" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What's Happening</Link></li>
+                <li><Link href="#about" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">About</Link></li>
+                <li><Link href="#contact" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Contact</Link></li>
               </ul>
-            </nav>
+            </div>
+            
+            {/* Desktop Auth Buttons */}
+            <div className="hidden lg:flex items-center gap-2 xl:gap-3 flex-shrink-0">
+              {isLoading ? (
+                <div className="bg-sage/50 text-white px-3 xl:px-4 py-2 rounded-lg font-semibold min-h-[44px] flex items-center animate-pulse text-sm xl:text-base">Loading...</div>
+              ) : isAuthenticated ? (
+                <>
+                  <Link href="/dashboard" className="bg-secondary text-secondary-foreground px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-secondary/90 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary/50 min-h-[44px] flex items-center text-sm xl:text-base">Dashboard</Link>
+                  <form action="/api/auth/logout" method="post" className="inline">
+                    <button type="submit" className="bg-destructive text-destructive-foreground px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-destructive/90 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-destructive/50 min-h-[44px] flex items-center text-sm xl:text-base">
+                      Sign Out
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <Link href="/signup" className="border border-sage text-sage px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Join Community</Link>
+                  <Link href="/login" className="bg-sage text-white px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Member Login</Link>
+                </>
+              )}
+            </div>
+            
+            {/* Mobile Navigation */}
+            <MobileNav variant="homepage" />
           </div>
         </nav>
       </header>
 
-      <main>
+      <main id="main-content" tabIndex={-1}>
         {/* Enhanced Hero Section */}
         <Hero />
 

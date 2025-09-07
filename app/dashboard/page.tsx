@@ -67,49 +67,73 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const hasAdminError = resolvedSearchParams.error === 'admin_required'
 
   return (
-    <main className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background">
+      {/* Skip Links for Accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      <a href="#mobile-navigation-menu" className="skip-link">
+        Skip to navigation
+      </a>
+      
       {/* Header */}
-      <header className="bg-secondary text-secondary-foreground shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <Link href="/" className="flex items-center gap-3">
-                <Image 
-                  src="/logo.png" 
-                  alt="Care Collective Logo" 
-                  width={28} 
-                  height={28}
-                  className="rounded"
-                />
-                <span className="text-xl font-bold">CARE Collective</span>
-              </Link>
-              <nav className="hidden md:flex items-center gap-4">
-                <Link href="/dashboard" className="text-accent">Dashboard</Link>
-                <Link href="/requests" className="hover:text-accent transition-colors">Requests</Link>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-secondary text-secondary-foreground shadow-lg">
+        <nav className="container mx-auto max-w-7xl">
+          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
+            {/* Brand */}
+            <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+              <Image 
+                src="/logo.png" 
+                alt="Care Collective Logo" 
+                width={32} 
+                height={32}
+                className="rounded"
+                priority
+                sizes="32px"
+              />
+              <span className="text-lg sm:text-xl font-bold truncate">CARE Collective</span>
+            </Link>
+            
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
+              <nav className="flex items-center gap-3 xl:gap-4">
+                <Link href="/dashboard" className="bg-accent/20 text-accent px-3 py-2 rounded-lg font-semibold min-h-[44px] flex items-center text-sm xl:text-base">Dashboard</Link>
+                <Link href="/requests" className="hover:text-accent transition-colors px-3 py-2 rounded-lg min-h-[44px] flex items-center text-sm xl:text-base focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-secondary">Requests</Link>
                 {isAdmin && (
-                  <Link href="/admin" className="hover:text-accent transition-colors">Admin</Link>
+                  <Link href="/admin" className="hover:text-accent transition-colors px-3 py-2 rounded-lg min-h-[44px] flex items-center text-sm xl:text-base focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-secondary">
+                    Admin
+                    <Badge variant="secondary" className="ml-2 text-xs">Admin</Badge>
+                  </Link>
                 )}
               </nav>
             </div>
-            <div className="flex items-center gap-2">
+            
+            {/* Desktop Actions */}
+            <div className="hidden lg:flex items-center gap-2 xl:gap-3 flex-shrink-0">
               <ReadableModeToggle />
-              <MobileNav isAdmin={isAdmin} />
-              <form action="/api/auth/logout" method="post" className="hidden md:block">
+              <form action="/api/auth/logout" method="post" className="inline">
                 <Button 
                   size="sm" 
                   type="submit"
                   variant="terracotta"
+                  className="min-h-[44px] px-3 xl:px-4 text-sm xl:text-base"
                 >
                   Sign Out
                 </Button>
               </form>
             </div>
+            
+            {/* Mobile Navigation */}
+            <div className="lg:hidden flex items-center gap-2">
+              <ReadableModeToggle />
+              <MobileNav isAdmin={isAdmin} />
+            </div>
           </div>
-        </div>
+        </nav>
       </header>
 
       {/* Dashboard Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main id="main-content" tabIndex={-1} className="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-6 sm:pb-8">
         {/* Error Messages */}
         {hasAdminError && (
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6">
@@ -243,7 +267,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </div>
           </CardContent>
         </Card>
-      </div>
-    </main>
+      </main>
+    </div>
   )
 }

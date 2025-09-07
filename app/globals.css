@@ -114,6 +114,66 @@ p {
   text-wrap: balance;
 }
 
+/* Enhanced Focus and Accessibility Styles */
+.focus\:ring-enhanced:focus {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(122, 158, 153, 0.2);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .hover\:bg-white\/10:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .border-white\/10 {
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .text-secondary-foreground\/70 {
+    color: var(--color-secondary-foreground);
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .transition-all,
+  .transition-colors,
+  .transition-transform,
+  .animate-pulse {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .group-hover\:translate-x-1:hover {
+    transform: none !important;
+  }
+  
+  .hover\:translate-x-1:hover {
+    transform: none !important;
+  }
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  padding: 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  z-index: 100;
+  font-weight: bold;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
 /* Mobile-specific improvements */
 @media (max-width: 640px) {
   /* Improve tap targets */
