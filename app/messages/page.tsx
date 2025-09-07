@@ -44,7 +44,7 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps):
   }
 
   return (
-    <div className=\"h-screen overflow-hidden\">
+    <div className="h-screen overflow-hidden">
       <MessagingDashboard 
         initialConversations={initialConversations}
         userId={user.id}
