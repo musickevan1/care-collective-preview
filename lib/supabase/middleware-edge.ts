@@ -18,28 +18,76 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          try {
+            const cookies = request.cookies.getAll()
+            // Filter out any cookies with undefined values
+            return (cookies || []).filter(cookie => 
+              cookie && 
+              cookie.name && 
+              typeof cookie.name === 'string' && 
+              cookie.value !== undefined &&
+              cookie.value !== null &&
+              typeof cookie.value === 'string'
+            )
+          } catch (error) {
+            console.warn('[Middleware] Cookie parsing error:', error)
+            return []
+          }
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set(name, value)
-          })
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) => {
-            supabaseResponse.cookies.set(name, value, {
-              ...options,
-              path: '/', // Ensure cookies are available for all paths
-              secure: process.env.NODE_ENV === 'production',
-              sameSite: 'lax',
-              // Let Supabase handle cookie expiration and httpOnly settings
+          try {
+            // Filter out invalid cookies with strict validation
+            const validCookies = (cookiesToSet || []).filter(cookie => 
+              cookie && 
+              cookie.name && 
+              typeof cookie.name === 'string' &&
+              cookie.value !== undefined && 
+              cookie.value !== null &&
+              typeof cookie.value === 'string'
+            )
+            
+            validCookies.forEach(({ name, value }) => {
+              try {
+                if (name && typeof name === 'string' && value !== undefined && typeof value === 'string') {
+                  request.cookies.set(name, value)
+                }
+              } catch (setCookieError) {
+                // Individual cookie setting may fail, continue with others
+                if (process.env.NODE_ENV === 'development') {
+                  console.warn('[Middleware] Individual cookie set failed:', name, setCookieError)
+                }
+              }
             })
-          })
-          
-          // Debug logging for cookie operations
-          if (process.env.NODE_ENV === 'development' && cookiesToSet.length > 0) {
-            console.log('[Middleware] Setting cookies:', cookiesToSet.map(c => c.name))
+            
+            supabaseResponse = NextResponse.next({
+              request,
+            })
+            
+            validCookies.forEach(({ name, value, options }) => {
+              try {
+                if (name && typeof name === 'string' && value !== undefined && typeof value === 'string') {
+                  supabaseResponse.cookies.set(name, value, {
+                    ...(options || {}),
+                    path: '/', // Ensure cookies are available for all paths
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                    // Let Supabase handle cookie expiration and httpOnly settings
+                  })
+                }
+              } catch (setResponseCookieError) {
+                // Individual cookie setting may fail, continue with others
+                if (process.env.NODE_ENV === 'development') {
+                  console.warn('[Middleware] Response cookie set failed:', name, setResponseCookieError)
+                }
+              }
+            })
+            
+            // Debug logging for cookie operations
+            if (process.env.NODE_ENV === 'development' && validCookies.length > 0) {
+              console.log('[Middleware] Setting cookies:', validCookies.map(c => c.name))
+            }
+          } catch (error) {
+            console.warn('[Middleware] Cookie setting error:', error)
           }
         },
       },
@@ -51,14 +99,15 @@ export async function updateSession(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError) {
-      if (process.env.NODE_ENV === 'development') {
+      // Log once per error type to avoid spam
+      if (process.env.NODE_ENV === 'development' && !authError.message?.includes('JWT')) {
         console.warn('[Middleware] Auth error:', authError.message)
       }
       // Don't force logout on auth errors - let client handle it
     }
 
-    // Debug logging for authentication issues
-    if (process.env.NODE_ENV === 'development') {
+    // Debug logging for authentication issues (reduced verbosity)
+    if (process.env.NODE_ENV === 'development' && !authError?.message?.includes('Auth session missing')) {
       console.log('[Middleware] Auth state:', { 
         path: request.nextUrl.pathname,
         hasUser: !!user, 

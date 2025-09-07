@@ -11,6 +11,14 @@ export const createClient = () =>
         autoRefreshToken: true,
         // Store session in both localStorage and cookies for better persistence
         storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+        // Reduce debug output to avoid console spam
+        debug: false,
       },
+      // Global error handling to reduce console noise
+      global: {
+        headers: {
+          'User-Agent': 'CareCollective/1.0.0'
+        }
+      }
     }
   )

@@ -6,8 +6,15 @@ export async function middleware(request: NextRequest) {
     return await updateSession(request)
   } catch (error) {
     console.error('Middleware error:', error)
-    // Fallback to allow request through if middleware fails
-    return NextResponse.next()
+    // Fallback to allow request through if middleware fails - more permissive for development
+    const response = NextResponse.next()
+    
+    // Add basic security headers even when middleware fails
+    response.headers.set('X-Frame-Options', 'DENY')
+    response.headers.set('X-Content-Type-Options', 'nosniff')
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+    
+    return response
   }
 }
 

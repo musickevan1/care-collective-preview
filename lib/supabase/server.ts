@@ -10,12 +10,17 @@ export async function createClient() {
     {
       cookies: {
         getAll() {
-          const cookies = cookieStore.getAll()
-          // Debug logging for authentication issues
-          if (process.env.NODE_ENV === 'development') {
-            console.log('[Server Client] Available cookies:', cookies.map(c => c.name))
+          try {
+            const cookies = cookieStore.getAll()
+            // Debug logging for authentication issues (only when auth cookies present)
+            if (process.env.NODE_ENV === 'development' && cookies.some(c => c.name.includes('sb-'))) {
+              console.log('[Server Client] Auth cookies found:', cookies.filter(c => c.name.includes('sb-')).map(c => c.name))
+            }
+            return cookies.filter(cookie => cookie && cookie.name && cookie.value !== undefined)
+          } catch (error) {
+            console.warn('[Server Client] Cookie parsing error:', error)
+            return []
           }
-          return cookies
         },
         setAll(cookiesToSet) {
           try {
@@ -42,17 +47,23 @@ export async function createClient() {
     }
   )
 
-  // Add authentication state logging for debugging
+  // Add authentication state logging for debugging (reduced verbosity)
   if (process.env.NODE_ENV === 'development') {
     try {
       const { data: { user }, error } = await client.auth.getUser()
-      console.log('[Server Client] Auth state:', { 
-        hasUser: !!user, 
-        userId: user?.id, 
-        error: error?.message 
-      })
+      // Only log if there's an actual user or a non-session error
+      if (user || (error && !error.message?.includes('Auth session missing'))) {
+        console.log('[Server Client] Auth state:', { 
+          hasUser: !!user, 
+          userId: user?.id, 
+          error: error?.message 
+        })
+      }
     } catch (authError) {
-      console.error('[Server Client] Auth check failed:', authError)
+      // Only log actual errors, not expected auth state
+      if (!String(authError).includes('Auth session missing')) {
+        console.error('[Server Client] Auth check failed:', authError)
+      }
     }
   }
 
