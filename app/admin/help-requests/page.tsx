@@ -171,48 +171,66 @@ export default async function AdminHelpRequestsPage() {
                 {helpRequests.map((request: any) => (
                   <div
                     key={request.id}
-                    className="flex flex-col sm:flex-row sm:items-start sm:justify-between p-3 sm:p-4 bg-muted rounded-lg gap-3"
+                    className="flex flex-col sm:flex-row sm:items-start sm:justify-between p-4 sm:p-5 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow gap-4"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <Badge variant={categoryColors[request.category as keyof typeof categoryColors]} className="text-xs">
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
+                        <Badge 
+                          variant={categoryColors[request.category as keyof typeof categoryColors]} 
+                          className="text-xs font-medium px-2.5 py-1 bg-sage/10 text-sage-dark border-sage/20"
+                        >
                           {request.category}
                         </Badge>
                         
-                        <Badge variant={urgencyColors[request.urgency as keyof typeof urgencyColors]} className="text-xs">
+                        <Badge 
+                          variant={urgencyColors[request.urgency as keyof typeof urgencyColors]} 
+                          className={`text-xs font-medium px-2.5 py-1 ${
+                            request.urgency === 'critical' ? 'bg-red-100 text-red-800 border-red-200' :
+                            request.urgency === 'urgent' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                            'bg-blue-100 text-blue-800 border-blue-200'
+                          }`}
+                        >
                           {request.urgency}
                         </Badge>
                         
                         <StatusBadge status={request.status} />
                       </div>
                       
-                      <h3 className="font-medium text-foreground mb-1 text-sm sm:text-base">
+                      <h3 className="font-semibold text-gray-900 mb-2 text-sm sm:text-base leading-tight">
                         {request.title}
                       </h3>
                       
                       {request.description && (
-                        <p className="text-xs sm:text-sm text-muted-foreground mb-2 line-clamp-2">
+                        <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
                           {request.description}
                         </p>
                       )}
                       
-                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
-                        <span className="whitespace-nowrap">
-                          👤 {request.profiles?.name || 'Anonymous'}
+                      <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-gray-500">
+                        <span className="whitespace-nowrap flex items-center gap-1">
+                          <span className="text-gray-400">👤</span>
+                          <span className="font-medium text-gray-700">{request.profiles?.name || 'Anonymous'}</span>
                         </span>
                         {request.profiles?.location && (
-                          <span className="whitespace-nowrap">📍 {request.profiles.location}</span>
+                          <span className="whitespace-nowrap flex items-center gap-1">
+                            <span className="text-gray-400">📍</span>
+                            <span>{request.profiles.location}</span>
+                          </span>
                         )}
                         {request.helper && (
-                          <span className="whitespace-nowrap">🤝 {request.helper.name}</span>
+                          <span className="whitespace-nowrap flex items-center gap-1">
+                            <span className="text-green-500">🤝</span>
+                            <span className="font-medium text-green-700">{request.helper.name}</span>
+                          </span>
                         )}
-                        <span className="whitespace-nowrap">
-                          🕒 {formatTimeAgo(request.created_at)}
+                        <span className="whitespace-nowrap flex items-center gap-1">
+                          <span className="text-gray-400">🕒</span>
+                          <span>{formatTimeAgo(request.created_at)}</span>
                         </span>
                       </div>
                     </div>
 
-                    <div className="flex sm:block">
+                    <div className="flex sm:block flex-shrink-0">
                       <DynamicAdminRequestActions request={request} />
                     </div>
                   </div>

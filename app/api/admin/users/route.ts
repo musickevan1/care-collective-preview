@@ -49,7 +49,10 @@ export async function GET(request: NextRequest) {
         created_at,
         applied_at,
         approved_at,
-        application_reason
+        application_reason,
+        phone,
+        approved_by,
+        rejection_reason
       `)
 
     // Apply filters
@@ -183,7 +186,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ 
         error: 'Invalid request data',
-        details: error.errors 
+        details: error.issues 
       }, { status: 400 })
     }
 

@@ -10,35 +10,36 @@ interface StatusBadgeProps {
 }
 
 // Memoized status configuration to prevent recreation on every render
+// Enhanced with better contrast for admin panel visibility
 const statusConfig: Record<RequestStatus, {
   label: string
-  variant: 'default' | 'secondary' | 'destructive' | 'outline'
+  variant: 'default' | 'secondary' | 'destructive' | 'outline' | 'sage' | 'rose' | 'success' | 'warning'
   className: string
 }> = {
   open: {
     label: 'Open',
-    variant: 'default',
-    className: 'bg-dusty-rose hover:bg-dusty-rose-dark text-white'
+    variant: 'rose',
+    className: 'bg-dusty-rose-accessible text-white border-transparent font-medium shadow-sm'
   },
   in_progress: {
     label: 'In Progress',
-    variant: 'secondary',
-    className: 'bg-sage hover:bg-sage-dark text-white'
+    variant: 'sage',
+    className: 'bg-sage-accessible text-white border-transparent font-medium shadow-sm'
   },
   completed: {
     label: 'Completed',
-    variant: 'outline',
-    className: 'bg-sage/20 text-foreground border-sage/40'
+    variant: 'success',
+    className: 'bg-green-600 text-white border-transparent font-medium shadow-sm'
   },
   cancelled: {
     label: 'Cancelled',
     variant: 'outline',
-    className: 'bg-accent/10 text-muted-foreground border-accent/30'
+    className: 'bg-gray-100 text-gray-700 border-gray-300 font-medium'
   },
   closed: {
     label: 'Closed',
     variant: 'outline',
-    className: 'bg-accent/20 text-foreground border-accent/40'
+    className: 'bg-gray-50 text-gray-600 border-gray-200 font-medium'
   }
 } as const
 

@@ -36,6 +36,21 @@ Build features only when community needs are validated, not anticipated.
 
 ## 🤖 AI Assistant Guidelines
 
+### Git Workflow for Changes (MANDATORY)
+**CRITICAL**: After completing any request that involves code changes, modifications, or new features:
+1. **Always ask the user if they want to commit and push changes**
+2. **Never commit or push without explicit user consent**
+3. **Use descriptive commit messages** that explain what was changed and why
+4. **Include the Claude Code attribution** in commit messages
+5. **Ask before each push operation** - "Ready to push these changes to the repository?"
+
+Example flow:
+```
+Assistant: I've completed the admin panel improvements. Would you like me to commit and push these changes to the repository?
+User: [yes/no response]
+Assistant: [commits and pushes if approved, or explains what changes were made if declined]
+```
+
 ### Care Collective Context Awareness
 - **Help Requests** are the core entity - handle with care and validate thoroughly
 - **Contact Exchange** is sensitive - implement with privacy-first approach
