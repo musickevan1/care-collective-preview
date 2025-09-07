@@ -51,7 +51,26 @@ export default defineConfig(({ mode }) => {
           functions: 80,
           lines: 80,
           statements: 80
-        }
+        },
+        // Higher thresholds for critical messaging components
+        './lib/messaging/': {
+          branches: 90,
+          functions: 90,
+          lines: 90,
+          statements: 90,
+        },
+        './components/messaging/': {
+          branches: 85,
+          functions: 85,
+          lines: 85,
+          statements: 85,
+        },
+        './app/api/messaging/': {
+          branches: 90,
+          functions: 90,
+          lines: 90,
+          statements: 90,
+        },
       }
       },
       // Mock canvas for components that might use it

@@ -1,0 +1,362 @@
+/**
+ * @fileoverview API endpoint for starting conversations from help requests
+ * POST /api/messaging/help-requests/[id]/start-conversation - Start messaging about a help request
+ */
+
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { messagingClient } from '@/lib/messaging/client';
+import { messagingValidation } from '@/lib/messaging/types';
+
+// Rate limiting for help request conversations
+const helpConversationCounts = new Map<string, { count: number; resetTime: number }>();
+
+function checkHelpConversationRateLimit(userId: string, maxConversations: number = 10, windowMs: number = 3600000): boolean {
+  const now = Date.now();
+  const userLimit = helpConversationCounts.get(userId);
+
+  if (!userLimit || now > userLimit.resetTime) {
+    helpConversationCounts.set(userId, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+
+  if (userLimit.count >= maxConversations) {
+    return false;
+  }
+
+  userLimit.count += 1;
+  return true;
+}
+
+async function getCurrentUser() {
+  const supabase = createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error || !user) {
+    return null;
+  }
+
+  return user;
+}
+
+/**
+ * POST /api/messaging/help-requests/[id]/start-conversation
+ * Start a conversation to offer help for a specific help request
+ */
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check rate limit for starting help conversations (10 per hour)
+    if (!checkHelpConversationRateLimit(user.id)) {
+      return NextResponse.json(
+        { error: 'You have started too many help conversations recently. Please wait before offering more help.' },
+        { status: 429 }
+      );
+    }
+
+    const helpRequestId = params.id;
+    if (!helpRequestId) {
+      return NextResponse.json(
+        { error: 'Help request ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(helpRequestId)) {
+      return NextResponse.json(
+        { error: 'Invalid help request ID format' },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+    
+    // Validate request body
+    const validation = messagingValidation.helpRequestConversation.safeParse({
+      help_request_id: helpRequestId,
+      ...body
+    });
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: validation.error.errors },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createClient();
+
+    // Fetch help request details and verify it exists and is accessible
+    const { data: helpRequest, error: helpError } = await supabase
+      .from('help_requests')
+      .select(`
+        id,
+        user_id,
+        title,
+        description,
+        category,
+        urgency,
+        status,
+        created_at,
+        profiles (
+          id,
+          name,
+          location
+        )
+      `)
+      .eq('id', helpRequestId)
+      .single();
+
+    if (helpError || !helpRequest) {
+      return NextResponse.json(
+        { error: 'Help request not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if help request is still open
+    if (helpRequest.status !== 'open') {
+      return NextResponse.json(
+        { error: `This help request is ${helpRequest.status} and no longer accepting offers` },
+        { status: 400 }
+      );
+    }
+
+    // Prevent users from messaging themselves
+    if (helpRequest.user_id === user.id) {
+      return NextResponse.json(
+        { error: 'You cannot offer help on your own request' },
+        { status: 400 }
+      );
+    }
+
+    // Check if a conversation already exists between these users for this help request
+    const { data: existingConversation } = await supabase
+      .from('conversations')
+      .select(`
+        id,
+        conversation_participants!inner (
+          user_id
+        )
+      `)
+      .eq('help_request_id', helpRequestId)
+      .eq('conversation_participants.user_id', user.id);
+
+    if (existingConversation && existingConversation.length > 0) {
+      // Check if the help request owner is also in any of these conversations
+      for (const conv of existingConversation) {
+        const { data: participants } = await supabase
+          .from('conversation_participants')
+          .select('user_id')
+          .eq('conversation_id', conv.id)
+          .is('left_at', null);
+
+        const participantIds = participants?.map(p => p.user_id) || [];
+        if (participantIds.includes(helpRequest.user_id)) {
+          return NextResponse.json(
+            { 
+              error: 'You already have a conversation about this help request',
+              conversation_id: conv.id 
+            },
+            { status: 409 }
+          );
+        }
+      }
+    }
+
+    // Create the conversation using the specialized help request function
+    const conversation = await messagingClient.startHelpConversation(user.id, validation.data);
+
+    // Get conversation details for response
+    const conversationDetails = await messagingClient.getMessages(conversation.id, user.id, { limit: 1, direction: 'newer' });
+
+    // Log the help offer for analytics
+    console.log('Help conversation started:', {
+      conversationId: conversation.id,
+      helpRequestId: helpRequestId,
+      helpRequestTitle: helpRequest.title,
+      offerer: user.id,
+      requester: helpRequest.user_id,
+      category: helpRequest.category,
+      urgency: helpRequest.urgency,
+      timestamp: new Date().toISOString()
+    });
+
+    // Update help request status to 'in_progress' if this is the first offer
+    const { data: existingConversations } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('help_request_id', helpRequestId);
+
+    if (!existingConversations || existingConversations.length <= 1) {
+      await supabase
+        .from('help_requests')
+        .update({ status: 'in_progress' })
+        .eq('id', helpRequestId);
+    }
+
+    return NextResponse.json({
+      conversation: conversationDetails.conversation,
+      help_request: {
+        id: helpRequest.id,
+        title: helpRequest.title,
+        category: helpRequest.category,
+        urgency: helpRequest.urgency,
+        requester: helpRequest.profiles
+      },
+      message: 'Conversation started successfully. You can now coordinate help with the requester.'
+    }, { status: 201 });
+
+  } catch (error) {
+    console.error('Error starting help conversation:', error);
+
+    if (error instanceof Error && error.message.includes('privacy settings')) {
+      return NextResponse.json(
+        { error: 'This user has restricted who can message them. You may need to wait for them to contact you.' },
+        { status: 403 }
+      );
+    }
+
+    if (error instanceof Error && error.message.includes('no longer open')) {
+      return NextResponse.json(
+        { error: 'This help request is no longer accepting new offers' },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to start conversation. Please try again.' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * GET /api/messaging/help-requests/[id]/conversations
+ * Get existing conversations for a help request (for request owner)
+ */
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const helpRequestId = params.id;
+    if (!helpRequestId) {
+      return NextResponse.json(
+        { error: 'Help request ID is required' },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createClient();
+
+    // Verify user owns this help request
+    const { data: helpRequest, error: helpError } = await supabase
+      .from('help_requests')
+      .select('user_id')
+      .eq('id', helpRequestId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (helpError || !helpRequest) {
+      return NextResponse.json(
+        { error: 'Help request not found or you do not have access' },
+        { status: 404 }
+      );
+    }
+
+    // Get all conversations for this help request
+    const { data: conversations, error: conversationsError } = await supabase
+      .from('conversations')
+      .select(`
+        id,
+        created_at,
+        last_message_at,
+        status,
+        conversation_participants!inner (
+          user_id,
+          profiles (
+            id,
+            name,
+            location
+          )
+        )
+      `)
+      .eq('help_request_id', helpRequestId)
+      .eq('conversation_participants.user_id', user.id)
+      .is('conversation_participants.left_at', null)
+      .order('last_message_at', { ascending: false });
+
+    if (conversationsError) {
+      throw conversationsError;
+    }
+
+    // Get unread count and last message for each conversation
+    const conversationsWithDetails = await Promise.all(
+      (conversations || []).map(async (conv) => {
+        const [unreadCount, lastMessage] = await Promise.all([
+          supabase
+            .from('messages')
+            .select('*', { count: 'exact' })
+            .eq('conversation_id', conv.id)
+            .eq('recipient_id', user.id)
+            .is('read_at', null)
+            .then(({ count }) => count || 0),
+          supabase
+            .from('messages')
+            .select(`
+              content,
+              created_at,
+              sender:profiles!messages_sender_id_fkey (
+                name
+              )
+            `)
+            .eq('conversation_id', conv.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single()
+            .then(({ data }) => data)
+        ]);
+
+        // Get the other participant (helper)
+        const helper = conv.conversation_participants.find(p => p.user_id !== user.id);
+
+        return {
+          id: conv.id,
+          created_at: conv.created_at,
+          last_message_at: conv.last_message_at,
+          status: conv.status,
+          helper: helper?.profiles,
+          unread_count: unreadCount,
+          last_message: lastMessage
+        };
+      })
+    );
+
+    return NextResponse.json({
+      conversations: conversationsWithDetails,
+      total: conversationsWithDetails.length
+    });
+
+  } catch (error) {
+    console.error('Error fetching help request conversations:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch conversations' },
+      { status: 500 }
+    );
+  }
+}
