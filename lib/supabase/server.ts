@@ -8,6 +8,13 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      auth: {
+        // Disable auto-refresh on server-side to prevent cookie parsing issues
+        autoRefreshToken: false,
+        persistSession: false,
+        // Disable debug mode to reduce noise
+        debug: false,
+      },
       cookies: {
         getAll() {
           try {
