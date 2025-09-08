@@ -343,14 +343,7 @@ SELECT
     WHERE m.conversation_id = c.id
       AND m.recipient_id = auth.uid()
       AND m.read_at IS NULL
-  ) as unread_count,
-  (
-    SELECT m.*
-    FROM messages m
-    WHERE m.conversation_id = c.id
-    ORDER BY m.created_at DESC
-    LIMIT 1
-  ) as last_message
+  ) as unread_count
 FROM conversations c
 LEFT JOIN help_requests hr ON c.help_request_id = hr.id
 WHERE c.id IN (
@@ -359,8 +352,3 @@ WHERE c.id IN (
   WHERE user_id = auth.uid() AND left_at IS NULL
 )
 ORDER BY c.last_message_at DESC;
-
--- Add RLS policy for the view
-ALTER TABLE user_conversations ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their conversation summaries" ON user_conversations
-  FOR SELECT USING (TRUE); -- Security handled by underlying tables
