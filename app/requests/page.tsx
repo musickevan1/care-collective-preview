@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
+import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import Link from 'next/link'
-import Image from 'next/image'
 
 type HelpRequest = {
   id: string
@@ -65,17 +65,73 @@ interface PageProps {
   searchParams: Promise<{ status?: string }>
 }
 
+async function getUser() {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error || !user) {
+    return null;
+  }
+
+  // Get user profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('id, name, location')
+    .eq('id', user.id)
+    .single();
+
+  return {
+    id: user.id,
+    name: profile?.name || user.email?.split('@')[0] || 'Unknown',
+    email: user.email || ''
+  };
+}
+
+async function getMessagingData(userId: string) {
+  const supabase = await createClient();
+  
+  try {
+    // Get unread count
+    const { count: unreadCount, error: unreadError } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact' })
+      .eq('recipient_id', userId)
+      .is('read_at', null);
+
+    // Get active conversations count
+    const { data: conversations, error: conversationsError } = await supabase
+      .from('conversations')
+      .select(`
+        id,
+        conversation_participants!inner (
+          user_id
+        )
+      `)
+      .eq('conversation_participants.user_id', userId)
+      .is('conversation_participants.left_at', null);
+
+    return {
+      unreadCount: unreadCount || 0,
+      activeConversations: conversations?.length || 0
+    };
+  } catch (error) {
+    console.error('Error fetching messaging data:', error);
+    return { unreadCount: 0, activeConversations: 0 };
+  }
+}
+
 export default async function RequestsPage({ searchParams }: PageProps) {
   const params = await searchParams
   const statusFilter = params.status || 'all'
   
-  const supabase = await createClient()
-
-  const { data: { user }, error } = await supabase.auth.getUser()
+  const user = await getUser();
   
-  if (error || !user) {
-    redirect('/login')
+  if (!user) {
+    redirect('/login?redirect=/requests');
   }
+
+  const supabase = await createClient();
+  const messagingData = await getMessagingData(user.id);
 
   let query = supabase
     .from('help_requests')
@@ -94,43 +150,30 @@ export default async function RequestsPage({ searchParams }: PageProps) {
     .order('urgency', { ascending: false })
     .order('created_at', { ascending: false })
 
-  return (
-    <main className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-secondary text-secondary-foreground shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm">
-                  ← Dashboard
-                </Button>
-              </Link>
-              <div className="flex items-center gap-3">
-                <Image 
-                  src="/logo.png" 
-                  alt="Care Collective Logo" 
-                  width={24} 
-                  height={24}
-                  className="rounded"
-                />
-                <div>
-                  <h1 className="text-2xl font-bold">Help Requests</h1>
-                  <p className="text-sm text-secondary-foreground/70">Browse community requests for help</p>
-                </div>
-              </div>
-            </div>
-            <Link href="/requests/new">
-              <Button>
-                Create Request
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
+  const breadcrumbs = [
+    { label: 'Help Requests', href: '/requests' }
+  ];
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
+  return (
+    <PlatformLayout 
+      user={user} 
+      messagingData={messagingData}
+      breadcrumbs={breadcrumbs}
+    >
+      <div className="container mx-auto px-4 py-8">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-secondary">Help Requests</h1>
+            <p className="text-muted-foreground">Browse community requests for help</p>
+          </div>
+          <Link href="/requests/new">
+            <Button>
+              Create Request
+            </Button>
+          </Link>
+        </div>
+
         {/* Status Filter Tabs */}
         <div className="mb-6 flex gap-2 flex-wrap">
           <Link href="/requests">
@@ -251,6 +294,6 @@ export default async function RequestsPage({ searchParams }: PageProps) {
           </div>
         )}
       </div>
-    </main>
+    </PlatformLayout>
   )
 }

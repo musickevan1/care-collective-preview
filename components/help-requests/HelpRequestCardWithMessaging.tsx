@@ -157,9 +157,9 @@ export function HelpRequestCardWithMessaging({
         setSuccess(false);
         setOfferMessage('');
         
-        // Optionally redirect to messaging
+        // Redirect to messaging with the specific conversation
         if (window.confirm('Would you like to go to your messages to continue the conversation?')) {
-          window.location.href = '/messages';
+          window.location.href = `/messages?conversation=${data.conversation.id}`;
         }
       }, 2000);
 
