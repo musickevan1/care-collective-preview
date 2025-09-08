@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { redirect, notFound } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -87,6 +87,15 @@ async function getMessagingData(userId: string) {
       .eq('recipient_id', userId)
       .is('read_at', null);
 
+    if (unreadError) {
+      console.error('[Messaging Data] Error fetching unread count:', {
+        userId,
+        error: unreadError.message,
+        code: unreadError.code,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     // Get active conversations count
     const { data: conversations, error: conversationsError } = await supabase
       .from('conversations')
@@ -99,12 +108,25 @@ async function getMessagingData(userId: string) {
       .eq('conversation_participants.user_id', userId)
       .is('conversation_participants.left_at', null);
 
+    if (conversationsError) {
+      console.error('[Messaging Data] Error fetching conversations:', {
+        userId,
+        error: conversationsError.message,
+        code: conversationsError.code,
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     return {
       unreadCount: unreadCount || 0,
       activeConversations: conversations?.length || 0
     };
   } catch (error) {
-    console.error('Error fetching messaging data:', error);
+    console.error('[Messaging Data] Unexpected error:', {
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+      timestamp: new Date().toISOString(),
+    });
     return { unreadCount: 0, activeConversations: 0 };
   }
 }
@@ -128,6 +150,13 @@ async function getHelpRequestMessagingStatus(requestId: string, userId: string) 
       .is('conversation_participants.left_at', null);
 
     if (conversationsError) {
+      console.error('[Help Request Messaging] Error fetching conversations:', {
+        requestId,
+        userId,
+        error: conversationsError.message,
+        code: conversationsError.code,
+        timestamp: new Date().toISOString(),
+      });
       throw conversationsError;
     }
 
@@ -135,12 +164,23 @@ async function getHelpRequestMessagingStatus(requestId: string, userId: string) 
     let unreadCount = 0;
     if (conversations && conversations.length > 0) {
       const conversationIds = conversations.map(c => c.id);
-      const { count } = await supabase
+      const { count, error: messagesError } = await supabase
         .from('messages')
         .select('*', { count: 'exact' })
         .in('conversation_id', conversationIds)
         .eq('recipient_id', userId)
         .is('read_at', null);
+      
+      if (messagesError) {
+        console.error('[Help Request Messaging] Error fetching message count:', {
+          requestId,
+          userId,
+          conversationIds,
+          error: messagesError.message,
+          code: messagesError.code,
+          timestamp: new Date().toISOString(),
+        });
+      }
       
       unreadCount = count || 0;
     }
@@ -155,7 +195,12 @@ async function getHelpRequestMessagingStatus(requestId: string, userId: string) 
       lastMessageTime: conversations?.[0]?.last_message_at
     };
   } catch (error) {
-    console.error('Error fetching help request messaging status:', error);
+    console.error('[Help Request Messaging] Unexpected error:', {
+      requestId,
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+      timestamp: new Date().toISOString(),
+    });
     return {
       conversationCount: 0,
       unreadCount: 0,
@@ -186,8 +231,32 @@ export default async function RequestDetailPage({ params }: PageProps) {
     .eq('id', id)
     .single()
 
-  if (requestError || !request) {
-    redirect('/requests')
+  // Enhanced error handling with proper logging
+  if (requestError) {
+    console.error('[Help Request Error]', {
+      requestId: id,
+      error: requestError.message,
+      code: requestError.code,
+      details: requestError.details,
+      hint: requestError.hint,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Distinguish between different error types
+    if (requestError.code === 'PGRST116') {
+      // No rows returned - request not found
+      console.info(`[Help Request] Request not found: ${id}`);
+      notFound();
+    } else {
+      // Database connection or other errors
+      console.error(`[Help Request] Database error for request ${id}:`, requestError);
+      throw new Error(`Database error: ${requestError.message}`);
+    }
+  }
+
+  if (!request) {
+    console.warn(`[Help Request] No request data returned for ID: ${id}`);
+    notFound();
   }
 
   const helpRequestMessagingStatus = await getHelpRequestMessagingStatus(id, user.id);
