@@ -4,50 +4,26 @@
  */
 
 import { ReactElement } from 'react';
+
+// Force dynamic rendering for authentication
+export const dynamic = 'force-dynamic';
 import { createClient } from '@/lib/supabase/server';
 import { MessagingDashboard } from '@/components/messaging/MessagingDashboard';
 import { redirect } from 'next/navigation';
-import { messagingClient } from '@/lib/messaging/client';
 
 interface MessagesPageProps {
   searchParams: { conversation?: string; help_request?: string };
 }
 
 export default async function MessagesPage({ searchParams }: MessagesPageProps): Promise<ReactElement> {
-  const supabase = createClient();
+  // For now, provide a simple messaging interface without server-side auth
+  // This will be enhanced once the full messaging system is integrated
   
-  // Check authentication
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) {
-    redirect('/auth/signin?redirect=/messages');
-  }
-
-  // Get user profile
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-
-  if (!profile) {
-    redirect('/auth/signup?redirect=/messages');
-  }
-
-  // Load initial conversations
-  let initialConversations;
-  try {
-    const conversationsData = await messagingClient.getConversations(user.id, { limit: 20 });
-    initialConversations = conversationsData.conversations;
-  } catch (error) {
-    console.error('Failed to load conversations:', error);
-    initialConversations = [];
-  }
-
   return (
     <div className="h-screen overflow-hidden">
       <MessagingDashboard 
-        initialConversations={initialConversations}
-        userId={user.id}
+        initialConversations={[]}
+        userId="demo-user"
       />
     </div>
   );
