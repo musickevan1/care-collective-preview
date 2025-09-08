@@ -126,9 +126,13 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
       <button
         onClick={toggleMenu}
         className={`mobile-nav-button p-2 rounded-lg transition-all duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center relative ${
-          isOpen 
-            ? 'bg-white/25 text-white shadow-lg scale-105' 
-            : 'text-white/90 hover:text-white'
+          variant === 'homepage' 
+            ? (isOpen 
+                ? 'bg-white/25 text-white shadow-lg scale-105' 
+                : 'text-white/90 hover:text-white')
+            : (isOpen 
+                ? 'bg-secondary/20 text-secondary shadow-lg scale-105 border border-secondary/30' 
+                : 'text-secondary hover:text-secondary/80 hover:bg-secondary/5 border border-secondary/20')
         }`}
         aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={isOpen}
