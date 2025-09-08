@@ -212,6 +212,61 @@ p {
   }
 }
 
+/* Enhanced mobile navigation styles */
+@media (max-width: 1023px) {
+  /* Ensure mobile nav button is visible and interactive */
+  .mobile-nav-button {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .mobile-nav-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+  }
+  
+  .mobile-nav-button:focus {
+    outline: 2px solid rgba(122, 158, 153, 0.8);
+    outline-offset: 2px;
+    background: rgba(255, 255, 255, 0.25);
+  }
+  
+  .mobile-nav-button:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Intermediate viewport optimizations (tablet landscape) */
+@media (min-width: 641px) and (max-width: 1023px) {
+  /* Adjust mobile menu width for tablet */
+  .mobile-nav-menu {
+    width: 320px;
+  }
+  
+  /* Better button sizing for tablets */
+  .mobile-nav-button {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* Very small screens optimization */
+@media (max-width: 480px) {
+  /* Ensure adequate spacing on very small screens */
+  .mobile-nav-menu {
+    width: 100vw;
+    max-width: 300px;
+  }
+  
+  /* Adjust header padding for small screens */
+  header .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
 /* Hero Section Animations */
 @keyframes fade-in-up {
   from {

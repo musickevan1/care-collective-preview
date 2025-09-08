@@ -50,7 +50,7 @@ const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuth
 export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'dashboard' }) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const { isAuthenticated, isAdmin: userIsAdmin, displayName, isLoading } = useAuthNavigation()
+  const { isAuthenticated, isAdmin: userIsAdmin, displayName, isLoading, error } = useAuthNavigation()
   
   // Use prop isAdmin for dashboard variant, userIsAdmin for homepage variant
   const effectiveIsAdmin = variant === 'dashboard' ? isAdmin : userIsAdmin
@@ -99,11 +99,23 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
     }
   }, [])
 
-  // Don't render if still loading authentication state on homepage
-  if (variant === 'homepage' && isLoading) {
+  // Handle loading and error states for homepage variant
+  if (variant === 'homepage' && (isLoading || error)) {
     return (
-      <div className="md:hidden">
-        <div className="p-2 rounded-lg w-10 h-10 animate-pulse bg-white/10" />
+      <div className="lg:hidden">
+        <div className="p-2 rounded-lg w-10 h-10 flex items-center justify-center bg-white/20 border border-white/30">
+          {isLoading ? (
+            <svg className="w-5 h-5 animate-spin text-white/70" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : (
+            // Show fallback menu icon if auth fails
+            <svg className="w-5 h-5 text-white/70" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </div>
       </div>
     )
   }
@@ -113,37 +125,39 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
       {/* Hamburger Button */}
       <button
         onClick={toggleMenu}
-        className={`p-2 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px] flex items-center justify-center relative ${
+        className={`mobile-nav-button p-2 rounded-lg transition-all duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center relative ${
           isOpen 
-            ? 'bg-white/20 text-white shadow-lg' 
-            : 'hover:bg-white/10 text-white/90 hover:text-white'
+            ? 'bg-white/25 text-white shadow-lg scale-105' 
+            : 'text-white/90 hover:text-white'
         }`}
         aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={isOpen}
         aria-controls="mobile-navigation-menu"
       >
         <div className="relative w-6 h-6 flex items-center justify-center">
+          {/* Hamburger icon */}
           <svg
-            className={`absolute w-6 h-6 transition-all duration-200 ${
+            className={`absolute w-6 h-6 transition-all duration-300 ease-in-out ${
               isOpen ? 'opacity-0 rotate-45 scale-75' : 'opacity-100 rotate-0 scale-100'
             }`}
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth="2"
+            strokeWidth="2.5"
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path d="M4 6h16M4 12h16M4 18h16" />
+            <path d="M3 6h18M3 12h18M3 18h18" />
           </svg>
+          {/* Close icon */}
           <svg
-            className={`absolute w-6 h-6 transition-all duration-200 ${
+            className={`absolute w-6 h-6 transition-all duration-300 ease-in-out ${
               isOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 rotate-45 scale-75'
             }`}
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
-            strokeWidth="2"
+            strokeWidth="2.5"
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
@@ -164,7 +178,7 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
         >
           <div 
             id="mobile-navigation-menu"
-            className={`fixed right-0 top-0 h-full w-72 sm:w-80 bg-secondary shadow-2xl transform transition-transform duration-300 ease-out ${
+            className={`mobile-nav-menu fixed right-0 top-0 h-full w-72 sm:w-80 bg-secondary shadow-2xl transform transition-transform duration-300 ease-out ${
               isOpen ? 'translate-x-0' : 'translate-x-full'
             }`}
             onClick={(e) => e.stopPropagation()}

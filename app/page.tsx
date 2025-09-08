@@ -2,14 +2,12 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
 import { ReactElement } from 'react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
 import { useAuthNavigation } from '@/lib/hooks/useAuthNavigation'
 
 export default function HomePage(): ReactElement {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { isAuthenticated, displayName, isLoading } = useAuthNavigation()
 
   return (
