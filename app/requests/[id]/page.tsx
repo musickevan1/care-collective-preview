@@ -55,25 +55,55 @@ function formatDate(dateString: string) {
 }
 
 async function getUser() {
-  const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-  
-  if (error || !user) {
+  try {
+    const supabase = await createClient();
+    
+    // Wrap auth call with timeout to prevent hanging
+    const authPromise = supabase.auth.getUser();
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Auth timeout')), 3000)
+    );
+    
+    const { data: { user }, error } = await Promise.race([authPromise, timeoutPromise]) as any;
+    
+    if (error) {
+      console.warn('[User Auth] Auth error:', error.message);
+      if (!error.message?.includes('Auth session missing')) {
+        console.error('[User Auth] Unexpected auth error:', error);
+      }
+      return null;
+    }
+    
+    if (!user) {
+      return null;
+    }
+
+    // Get user profile with error handling
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id, name, location')
+        .eq('id', user.id)
+        .single();
+
+      return {
+        id: user.id,
+        name: profile?.name || user.email?.split('@')[0] || 'Unknown',
+        email: user.email || ''
+      };
+    } catch (profileError) {
+      console.warn('[User Auth] Profile fetch error:', profileError);
+      // Return user without profile data if profile fetch fails
+      return {
+        id: user.id,
+        name: user.email?.split('@')[0] || 'Unknown',
+        email: user.email || ''
+      };
+    }
+  } catch (error) {
+    console.error('[User Auth] Critical auth error:', error);
     return null;
   }
-
-  // Get user profile
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('id, name, location')
-    .eq('id', user.id)
-    .single();
-
-  return {
-    id: user.id,
-    name: profile?.name || user.email?.split('@')[0] || 'Unknown',
-    email: user.email || ''
-  };
 }
 
 async function getMessagingData(userId: string) {
@@ -219,9 +249,17 @@ export default async function RequestDetailPage({ params }: PageProps) {
   }
 
   const supabase = await createClient();
-  const messagingData = await getMessagingData(user.id);
+  
+  let messagingData;
+  try {
+    messagingData = await getMessagingData(user.id);
+  } catch (messagingError) {
+    console.error('[Help Request] Messaging data fetch failed:', messagingError);
+    messagingData = { unreadCount: 0, activeConversations: 0 };
+  }
 
-  const { data: request, error: requestError } = await supabase
+  // Add timeout to database query to prevent hanging
+  const queryPromise = supabase
     .from('help_requests')
     .select(`
       *,
@@ -229,7 +267,13 @@ export default async function RequestDetailPage({ params }: PageProps) {
       helper:profiles!helper_id (id, name, location)
     `)
     .eq('id', id)
-    .single()
+    .single();
+    
+  const timeoutPromise = new Promise((_, reject) => 
+    setTimeout(() => reject(new Error('Database query timeout')), 5000)
+  );
+
+  const { data: request, error: requestError } = await Promise.race([queryPromise, timeoutPromise]) as any;
 
   // Enhanced error handling with proper logging
   if (requestError) {
@@ -259,7 +303,17 @@ export default async function RequestDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const helpRequestMessagingStatus = await getHelpRequestMessagingStatus(id, user.id);
+  let helpRequestMessagingStatus;
+  try {
+    helpRequestMessagingStatus = await getHelpRequestMessagingStatus(id, user.id);
+  } catch (messagingStatusError) {
+    console.error('[Help Request] Messaging status fetch failed:', messagingStatusError);
+    helpRequestMessagingStatus = {
+      conversationCount: 0,
+      unreadCount: 0,
+      hasActiveConversations: false
+    };
+  }
 
   const isOwner = request.user_id === user.id
   const isHelper = request.helper_id === user.id
