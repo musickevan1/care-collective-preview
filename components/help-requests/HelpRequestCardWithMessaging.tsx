@@ -179,27 +179,27 @@ export function HelpRequestCardWithMessaging({
           request.urgency === 'critical' && 'ring-1 ring-red-200'
         )}
       >
-        <CardHeader className=\"pb-3\">
-          <div className=\"flex items-start justify-between gap-3\">
-            <div className=\"flex-1 min-w-0\">
-              <h3 className=\"font-semibold text-lg text-secondary leading-tight mb-2\">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-lg text-secondary leading-tight mb-2">
                 {request.title}
               </h3>
-              <div className=\"flex items-center flex-wrap gap-2\">
+              <div className="flex items-center flex-wrap gap-2">
                 <Badge 
-                  variant=\"outline\" 
+                  variant="outline" 
                   className={cn('text-xs font-medium', status.color)}
                 >
                   {status.label}
                 </Badge>
                 <Badge 
-                  variant=\"outline\" 
+                  variant="outline" 
                   className={cn('text-xs font-medium flex items-center gap-1', urgency.badge)}
                 >
-                  <UrgencyIcon className=\"w-3 h-3\" />
+                  <UrgencyIcon className="w-3 h-3" />
                   {request.urgency}
                 </Badge>
-                <Badge variant=\"outline\" className=\"text-xs capitalize bg-dusty-rose/10 text-dusty-rose border-dusty-rose/20\">
+                <Badge variant="outline" className="text-xs capitalize bg-dusty-rose/10 text-dusty-rose border-dusty-rose/20">
                   {request.category.replace('_', ' ')}
                 </Badge>
               </div>
@@ -207,19 +207,19 @@ export function HelpRequestCardWithMessaging({
           </div>
         </CardHeader>
 
-        <CardContent className=\"pt-0\">
+        <CardContent className="pt-0">
           {/* Description */}
           {request.description && (
-            <p className=\"text-gray-600 mb-4 leading-relaxed\">
+            <p className="text-gray-600 mb-4 leading-relaxed">
               {request.description}
             </p>
           )}
 
           {/* Critical Request Alert */}
           {request.urgency === 'critical' && (
-            <Alert className=\"mb-4 border-red-200 bg-red-50\">
-              <AlertCircle className=\"w-4 h-4 text-red-600\" />
-              <AlertDescription className=\"text-red-700 text-sm\">
+            <Alert className="mb-4 border-red-200 bg-red-50">
+              <AlertCircle className="w-4 h-4 text-red-600" />
+              <AlertDescription className="text-red-700 text-sm">
                 <strong>Critical request:</strong> This person needs urgent assistance. 
                 If this is an emergency, please also contact local emergency services.
               </AlertDescription>
@@ -227,27 +227,27 @@ export function HelpRequestCardWithMessaging({
           )}
 
           {/* Requester Info and Actions */}
-          <div className=\"flex items-center justify-between pt-3 border-t\">
-            <div className=\"flex items-center gap-3\">
+          <div className="flex items-center justify-between pt-3 border-t">
+            <div className="flex items-center gap-3">
               <Avatar 
                 name={request.profiles.name}
-                size=\"md\"
-                className=\"bg-dusty-rose text-white\"
+                size="md"
+                className="bg-dusty-rose text-white"
               />
-              <div className=\"min-w-0\">
-                <p className=\"font-medium text-secondary\">
+              <div className="min-w-0">
+                <p className="font-medium text-secondary">
                   {request.profiles.name}
-                  {isOwnRequest && <span className=\"ml-2 text-xs text-muted-foreground\">(You)</span>}
+                  {isOwnRequest && <span className="ml-2 text-xs text-muted-foreground">(You)</span>}
                 </p>
-                <div className=\"flex items-center gap-3 text-sm text-muted-foreground\">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   {request.profiles.location && (
-                    <div className=\"flex items-center gap-1\">
-                      <MapPin className=\"w-3 h-3\" />
-                      <span className=\"truncate\">{request.profiles.location}</span>
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" />
+                      <span className="truncate">{request.profiles.location}</span>
                     </div>
                   )}
-                  <div className=\"flex items-center gap-1\">
-                    <Clock className=\"w-3 h-3\" />
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
                     <time dateTime={request.created_at} title={new Date(request.created_at).toLocaleString()}>
                       {timeAgo}
                     </time>
@@ -257,28 +257,28 @@ export function HelpRequestCardWithMessaging({
             </div>
 
             {/* Action Buttons */}
-            <div className=\"flex items-center gap-2 flex-shrink-0\">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {!isOwnRequest && request.status === 'open' ? (
                 <Button 
                   onClick={handleOfferHelp}
-                  className=\"bg-sage hover:bg-sage-dark text-white flex items-center gap-2\"
-                  size=\"sm\"
+                  className="bg-sage hover:bg-sage-dark text-white flex items-center gap-2"
+                  size="sm"
                 >
-                  <Heart className=\"w-4 h-4\" />
+                  <Heart className="w-4 h-4" />
                   Offer Help
                 </Button>
               ) : isOwnRequest ? (
                 <Button 
-                  variant=\"outline\" 
-                  size=\"sm\"
+                  variant="outline" 
+                  size="sm"
                   onClick={() => window.location.href = `/messages?help_request=${request.id}`}
-                  className=\"flex items-center gap-2 border-sage/30 text-sage hover:bg-sage/5\"
+                  className="flex items-center gap-2 border-sage/30 text-sage hover:bg-sage/5"
                 >
-                  <MessageCircle className=\"w-4 h-4\" />
+                  <MessageCircle className="w-4 h-4" />
                   View Messages
                 </Button>
               ) : (
-                <Badge variant=\"outline\" className={status.color}>
+                <Badge variant="outline" className={status.color}>
                   {status.label}
                 </Badge>
               )}
@@ -289,10 +289,10 @@ export function HelpRequestCardWithMessaging({
 
       {/* Offer Help Dialog */}
       <Dialog open={showOfferDialog} onOpenChange={setShowOfferDialog}>
-        <DialogContent className=\"max-w-md\">
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className=\"flex items-center gap-2\">
-              <Heart className=\"w-5 h-5 text-sage\" />
+            <DialogTitle className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-sage" />
               Offer Help
             </DialogTitle>
             <DialogDescription>
@@ -301,40 +301,40 @@ export function HelpRequestCardWithMessaging({
           </DialogHeader>
 
           {!success ? (
-            <div className=\"space-y-4\">
+            <div className="space-y-4">
               {/* Request Summary */}
-              <div className=\"p-3 bg-sage-light/10 rounded-lg border border-sage-light/20\">
-                <div className=\"flex items-start gap-2 mb-2\">
-                  <HelpCircle className=\"w-4 h-4 text-sage mt-0.5\" />
-                  <div className=\"flex-1 min-w-0\">
-                    <p className=\"font-medium text-sm text-secondary\">{request.title}</p>
-                    <p className=\"text-xs text-muted-foreground\">{request.profiles.name} • {request.category}</p>
+              <div className="p-3 bg-sage-light/10 rounded-lg border border-sage-light/20">
+                <div className="flex items-start gap-2 mb-2">
+                  <HelpCircle className="w-4 h-4 text-sage mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm text-secondary">{request.title}</p>
+                    <p className="text-xs text-muted-foreground">{request.profiles.name} • {request.category}</p>
                   </div>
                 </div>
                 {request.urgency !== 'normal' && (
                   <Badge 
-                    variant=\"outline\" 
+                    variant="outline" 
                     className={cn('text-xs flex items-center gap-1 w-fit', urgency.badge)}
                   >
-                    <UrgencyIcon className=\"w-3 h-3\" />
+                    <UrgencyIcon className="w-3 h-3" />
                     {request.urgency} priority
                   </Badge>
                 )}
               </div>
 
               {/* Message Composition */}
-              <div className=\"space-y-2\">
-                <Label htmlFor=\"offer-message\">Your message</Label>
+              <div className="space-y-2">
+                <Label htmlFor="offer-message">Your message</Label>
                 <Textarea
-                  id=\"offer-message\"
+                  id="offer-message"
                   value={offerMessage}
                   onChange={(e) => setOfferMessage(e.target.value)}
-                  placeholder=\"Let them know how you can help and when you're available...\"
-                  className=\"resize-none\"
+                  placeholder="Let them know how you can help and when you're available..."
+                  className="resize-none"
                   rows={4}
                   maxLength={1000}
                 />
-                <div className=\"flex justify-between text-xs text-muted-foreground\">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Be specific about how you can help</span>
                   <span>{offerMessage.length}/1000</span>
                 </div>
@@ -342,41 +342,41 @@ export function HelpRequestCardWithMessaging({
 
               {/* Error Display */}
               {error && (
-                <Alert variant=\"destructive\">
-                  <AlertCircle className=\"w-4 h-4\" />
+                <Alert variant="destructive">
+                  <AlertCircle className="w-4 h-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               {/* Safety Notice */}
               <Alert>
-                <User className=\"w-4 h-4\" />
-                <AlertDescription className=\"text-sm\">
+                <User className="w-4 h-4" />
+                <AlertDescription className="text-sm">
                   <strong>Safety reminder:</strong> All conversations are monitored for community safety. 
                   Meet in public places and trust your instincts.
                 </AlertDescription>
               </Alert>
             </div>
           ) : (
-            <div className=\"text-center py-6\">
-              <div className=\"w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4\">
-                <CheckCircle className=\"w-8 h-8 text-green-600\" />
+            <div className="text-center py-6">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className=\"font-semibold text-lg mb-2\">Conversation started!</h3>
-              <p className=\"text-muted-foreground text-sm mb-4\">
+              <h3 className="font-semibold text-lg mb-2">Conversation started!</h3>
+              <p className="text-muted-foreground text-sm mb-4">
                 Your message has been sent to {request.profiles.name}. 
                 They'll be able to respond and coordinate with you directly.
               </p>
-              <div className=\"text-xs text-muted-foreground\">
+              <div className="text-xs text-muted-foreground">
                 Redirecting to messages...
               </div>
             </div>
           )}
 
           {!success && (
-            <DialogFooter className=\"flex gap-2\">
+            <DialogFooter className="flex gap-2">
               <Button
-                variant=\"outline\"
+                variant="outline"
                 onClick={() => setShowOfferDialog(false)}
                 disabled={submitting}
               >
@@ -385,16 +385,16 @@ export function HelpRequestCardWithMessaging({
               <Button
                 onClick={handleSubmitOffer}
                 disabled={!offerMessage.trim() || submitting}
-                className=\"bg-sage hover:bg-sage-dark text-white\"
+                className="bg-sage hover:bg-sage-dark text-white"
               >
                 {submitting ? (
                   <>
-                    <Loader2 className=\"w-4 h-4 mr-2 animate-spin\" />
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Starting conversation...
                   </>
                 ) : (
                   <>
-                    <Send className=\"w-4 h-4 mr-2\" />
+                    <Send className="w-4 h-4 mr-2" />
                     Send & Start Conversation
                   </>
                 )}
