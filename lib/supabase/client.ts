@@ -8,7 +8,8 @@ export const createClient = () =>
       auth: {
         // Improve session persistence
         persistSession: true,
-        autoRefreshToken: true,
+        // Disable auto-refresh to prevent cookie parsing issues in SSR contexts
+        autoRefreshToken: false,
         // Store session in both localStorage and cookies for better persistence
         storage: typeof window !== 'undefined' ? window.localStorage : undefined,
         // Reduce debug output to avoid console spam
