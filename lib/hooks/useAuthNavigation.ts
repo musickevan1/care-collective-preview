@@ -33,8 +33,17 @@ export function useAuthNavigation(): AuthNavigationState {
       try {
         setIsLoading(true)
         
-        // Get current session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        // Add timeout to prevent infinite loading
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Auth timeout')), 5000)
+        })
+        
+        // Race between auth check and timeout
+        const authPromise = supabase.auth.getSession()
+        const { data: { session }, error: sessionError } = await Promise.race([
+          authPromise,
+          timeoutPromise
+        ]) as any
         
         if (sessionError) {
           // Auth errors are common when not logged in - just log at debug level
@@ -47,17 +56,30 @@ export function useAuthNavigation(): AuthNavigationState {
         if (session?.user) {
           setUser(session.user)
           
-          // Fetch user profile
-          const { data: profileData, error: profileError } = await supabase
+          // Fetch user profile with timeout
+          const profilePromise = supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .single()
             
-          if (!profileError && profileData) {
-            setProfile(profileData)
-          } else if (profileError) {
-            console.debug('Profile query error:', profileError.message)
+          const profileTimeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Profile timeout')), 3000)
+          })
+          
+          try {
+            const { data: profileData, error: profileError } = await Promise.race([
+              profilePromise,
+              profileTimeoutPromise
+            ]) as any
+            
+            if (!profileError && profileData) {
+              setProfile(profileData)
+            } else if (profileError) {
+              console.debug('Profile query error:', profileError.message)
+            }
+          } catch (profileTimeoutError) {
+            console.debug('Profile query timed out, continuing without profile data')
           }
         } else {
           setUser(null)

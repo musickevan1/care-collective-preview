@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback, memo } from 'react'
+import React, { useState, useMemo, useCallback, memo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogoutButton } from '@/components/LogoutButton'
@@ -99,26 +99,8 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
     }
   }, [])
 
-  // Handle loading and error states for homepage variant
-  if (variant === 'homepage' && (isLoading || error)) {
-    return (
-      <div className="lg:hidden">
-        <div className="p-2 rounded-lg w-10 h-10 flex items-center justify-center bg-white/20 border border-white/30">
-          {isLoading ? (
-            <svg className="w-5 h-5 animate-spin text-white/70" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          ) : (
-            // Show fallback menu icon if auth fails
-            <svg className="w-5 h-5 text-white/70" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-              <path d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </div>
-      </div>
-    )
-  }
+  // Always show hamburger menu - don't block UI during auth loading
+  // The auth loading should not prevent navigation access
 
   return (
     <div className="lg:hidden">
@@ -249,7 +231,19 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
               {/* Authentication section */}
               <div className="mt-4 pt-6 border-t border-white/10 bg-secondary/20 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-4 sm:pb-6">
                 {variant === 'homepage' ? (
-                  isAuthenticated ? (
+                  isLoading ? (
+                    <div className="space-y-3">
+                      <div className="text-center pb-2">
+                        <p className="text-sm text-secondary-foreground/70">Loading...</p>
+                      </div>
+                      <div className="w-full px-4 py-3 bg-secondary/50 rounded-lg min-h-[48px] flex items-center justify-center">
+                        <svg className="w-5 h-5 animate-spin text-secondary-foreground/70" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  ) : isAuthenticated ? (
                     <div className="space-y-3">
                       <div className="text-center pb-2">
                         <p className="text-sm text-secondary-foreground/70">Signed in as:</p>
