@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/auth-context'
 
@@ -39,6 +40,7 @@ export default function NewRequestPage() {
   const [locationPrivacy, setLocationPrivacy] = useState('public')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [messagingData, setMessagingData] = useState({ unreadCount: 0, activeConversations: 0 })
 
   const router = useRouter()
   const supabase = createClient()
@@ -51,6 +53,41 @@ export default function NewRequestPage() {
       router.push(`/login?redirectTo=${encodeURIComponent('/requests/new')}`)
     }
   }, [user, authLoading, router])
+
+  // Fetch messaging data
+  useEffect(() => {
+    if (user) {
+      const fetchMessagingData = async () => {
+        try {
+          const { count: unreadCount } = await supabase
+            .from('messages')
+            .select('*', { count: 'exact' })
+            .eq('recipient_id', user.id)
+            .is('read_at', null);
+
+          const { data: conversations } = await supabase
+            .from('conversations')
+            .select(`
+              id,
+              conversation_participants!inner (
+                user_id
+              )
+            `)
+            .eq('conversation_participants.user_id', user.id)
+            .is('conversation_participants.left_at', null);
+
+          setMessagingData({
+            unreadCount: unreadCount || 0,
+            activeConversations: conversations?.length || 0
+          });
+        } catch (error) {
+          console.error('Error fetching messaging data:', error);
+        }
+      };
+
+      fetchMessagingData();
+    }
+  }, [user, supabase])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -93,8 +130,8 @@ export default function NewRequestPage() {
   // Show loading state while checking authentication
   if (authLoading) {
     return (
-      <main className="min-h-screen bg-background">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <PlatformLayout user={null} messagingData={messagingData}>
+        <div className="container mx-auto px-4 py-8">
           <Card>
             <CardContent className="flex items-center justify-center py-12">
               <div className="text-center">
@@ -104,15 +141,15 @@ export default function NewRequestPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
+      </PlatformLayout>
     )
   }
 
   // Show error state if not authenticated (fallback)
   if (!user) {
     return (
-      <main className="min-h-screen bg-background">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <PlatformLayout user={null} messagingData={messagingData}>
+        <div className="container mx-auto px-4 py-8">
           <Card>
             <CardContent className="py-12">
               <div className="text-center">
@@ -127,31 +164,36 @@ export default function NewRequestPage() {
             </CardContent>
           </Card>
         </div>
-      </main>
+      </PlatformLayout>
     )
   }
 
-  return (
-    <main className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-secondary text-secondary-foreground shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-            <Link href="/requests" className="inline-block">
-              <Button variant="ghost" size="sm">
-                ← Back
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold">Create Help Request</h1>
-              <p className="text-xs sm:text-sm text-secondary-foreground/70">Let the community know how they can help you</p>
-            </div>
-          </div>
-        </div>
-      </header>
+  const breadcrumbs = [
+    { label: 'Help Requests', href: '/requests' },
+    { label: 'New Request' }
+  ];
 
-      {/* Content */}
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+  return (
+    <PlatformLayout 
+      user={user} 
+      messagingData={messagingData}
+      breadcrumbs={breadcrumbs}
+    >
+      <div className="container mx-auto px-4 py-8">
+        {/* Page Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-secondary">Create Help Request</h1>
+            <p className="text-muted-foreground">Let the community know how they can help you</p>
+          </div>
+          <Link href="/requests">
+            <Button variant="outline">
+              ← Back to Requests
+            </Button>
+          </Link>
+        </div>
+
+        <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle>Request Details</CardTitle>
@@ -300,7 +342,8 @@ export default function NewRequestPage() {
             </form>
           </CardContent>
         </Card>
+        </div>
       </div>
-    </main>
+    </PlatformLayout>
   )
 }
