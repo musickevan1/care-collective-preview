@@ -99,6 +99,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <nav className="flex items-center gap-3 xl:gap-4">
                 <Link href="/dashboard" className="bg-accent/20 text-accent px-3 py-2 rounded-lg font-semibold min-h-[44px] flex items-center text-sm xl:text-base">Dashboard</Link>
                 <Link href="/requests" className="hover:text-accent transition-colors px-3 py-2 rounded-lg min-h-[44px] flex items-center text-sm xl:text-base focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-secondary">Requests</Link>
+                <Link href="/messages" className="hover:text-accent transition-colors px-3 py-2 rounded-lg min-h-[44px] flex items-center text-sm xl:text-base focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-secondary">Messages</Link>
                 {isAdmin && (
                   <Link href="/admin" className="hover:text-accent transition-colors px-3 py-2 rounded-lg min-h-[44px] flex items-center text-sm xl:text-base focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-secondary">
                     Admin
@@ -172,7 +173,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -210,6 +211,25 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </Link>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">💬</span>
+                Messages
+              </CardTitle>
+              <CardDescription className="text-base">
+                Connect and communicate with community members
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/messages">
+                <Button variant="sage" className="w-full">
+                  Open Messages
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Stats Cards */}
@@ -224,15 +244,17 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Messages</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-secondary mb-2">0</div>
-              <p className="text-sm text-muted-foreground">Unread messages</p>
-            </CardContent>
-          </Card>
+          <Link href="/messages">
+            <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">Messages</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-secondary mb-2">0</div>
+                <p className="text-sm text-muted-foreground">Unread messages</p>
+              </CardContent>
+            </Card>
+          </Link>
 
           <Card>
             <CardHeader className="pb-3">
