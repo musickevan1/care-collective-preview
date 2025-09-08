@@ -39,7 +39,6 @@ export default function LoginPage() {
 
       if (error) {
         setError(error.message)
-        setLoading(false)
         return
       }
 
@@ -48,42 +47,24 @@ export default function LoginPage() {
         const urlParams = new URLSearchParams(window.location.search)
         const redirectTo = urlParams.get('redirectTo')
 
-        // Check user verification status after successful login
-        try {
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('verification_status')
-            .eq('id', authData.user.id)
-            .single()
-
-          let destination = '/dashboard' // default
-
-          if (profileError) {
-            console.error('Error fetching profile:', profileError)
-            // If we can't get profile, use redirect or default to dashboard
-            destination = redirectTo || '/dashboard'
-          } else {
-            // Determine redirect based on verification status
-            if (profile.verification_status === 'approved') {
-              // Approved users can go to their intended destination or dashboard
-              destination = redirectTo || '/dashboard'
-            } else {
-              // Pending or rejected users go to waitlist, unless they're already there
-              destination = redirectTo === '/waitlist' ? '/waitlist' : '/waitlist'
-            }
-          }
-
-          // Use replace instead of href for better navigation
+        // Simplified approach: redirect to destination and let middleware handle verification
+        const destination = redirectTo || '/dashboard'
+        
+        console.log('Login successful, redirecting to:', destination)
+        
+        // Add small delay to ensure auth session is properly set
+        setTimeout(() => {
           window.location.replace(destination)
-        } catch (profileErr) {
-          console.error('Profile lookup failed:', profileErr)
-          window.location.replace(redirectTo || '/dashboard')
-        }
+        }, 100)
       }
     } catch (err) {
       console.error('Login error:', err)
       setError('An unexpected error occurred. Please try again.')
-      setLoading(false)
+    } finally {
+      // Always reset loading state after a brief delay to ensure user feedback
+      setTimeout(() => {
+        setLoading(false)
+      }, 500)
     }
   }
 
