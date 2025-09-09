@@ -70,6 +70,7 @@
     "jsdom": "^26.1.0",
     "lighthouse": "^12.2.1",
     "msw": "^2.10.5",
+    "node-mocks-http": "^1.17.2",
     "serve": "^14.2.3",
     "tailwindcss": "^4",
     "typescript": "^5",

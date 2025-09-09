@@ -6,10 +6,25 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
-  // Basic security checks without importing heavy modules
+  // Enhanced security checks
   const userAgent = request.headers.get('user-agent') || ''
+  const origin = request.headers.get('origin')
+  const referer = request.headers.get('referer')
+  
+  // Block requests without user agent in production
   if (!userAgent && process.env.NODE_ENV === 'production') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+  
+  // Basic bot detection
+  const suspiciousPaths = ['/admin', '/api/admin']
+  const isSuspiciousPath = suspiciousPaths.some(path => request.nextUrl.pathname.startsWith(path))
+  
+  if (isSuspiciousPath && process.env.NODE_ENV === 'production') {
+    const isBot = /bot|crawl|spider|scrape/i.test(userAgent)
+    if (isBot) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
   }
 
   const supabase = createServerClient(
@@ -27,17 +42,32 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           try {
             const cookies = request.cookies.getAll()
-            // Filter out any cookies with undefined values
-            return (cookies || []).filter(cookie => 
-              cookie && 
-              cookie.name && 
-              typeof cookie.name === 'string' && 
-              cookie.value !== undefined &&
-              cookie.value !== null &&
-              typeof cookie.value === 'string'
-            )
+            // Security: Only return Supabase auth cookies and validate them
+            return (cookies || []).filter(cookie => {
+              if (!cookie || !cookie.name || cookie.value === undefined) {
+                return false
+              }
+              
+              // Only process Supabase auth cookies for security
+              if (!cookie.name.startsWith('sb-')) {
+                return false
+              }
+              
+              // Validate cookie structure
+              if (typeof cookie.name !== 'string' || typeof cookie.value !== 'string') {
+                return false
+              }
+              
+              // Check for malicious patterns in cookie values
+              if (cookie.value.includes('<script>') || cookie.value.includes('javascript:')) {
+                console.warn('[Middleware] Malicious cookie detected:', cookie.name)
+                return false
+              }
+              
+              return true
+            })
           } catch (error) {
-            console.warn('[Middleware] Cookie parsing error:', error)
+            console.error('[Middleware] Critical cookie parsing error:', error)
             return []
           }
         },
@@ -102,25 +132,42 @@ export async function updateSession(request: NextRequest) {
   )
 
   try {
-    // Simple auth check - trust Supabase's session management
+    // Secure authentication check with proper error handling
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     
     if (authError) {
-      // Log once per error type to avoid spam
-      if (process.env.NODE_ENV === 'development' && !authError.message?.includes('JWT')) {
-        console.warn('[Middleware] Auth error:', authError.message)
+      // Log authentication errors securely (no sensitive data)
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('[Middleware] Auth error:', {
+          message: authError.message,
+          path: request.nextUrl.pathname,
+          hasJWTError: authError.message?.includes('JWT')
+        })
       }
-      // Don't force logout on auth errors - let client handle it
+      
+      // For JWT errors or invalid tokens, clear auth state and redirect
+      if (authError.message?.includes('JWT') || 
+          authError.message?.includes('invalid') || 
+          authError.message?.includes('expired')) {
+        const loginUrl = new URL('/login', request.url)
+        const response = NextResponse.redirect(loginUrl)
+        
+        // Clear potentially corrupted auth cookies
+        response.cookies.delete('sb-access-token')
+        response.cookies.delete('sb-refresh-token')
+        
+        return response
+      }
     }
 
-    // Debug logging for authentication issues (reduced verbosity)
-    if (process.env.NODE_ENV === 'development' && !authError?.message?.includes('Auth session missing')) {
+    // Secure debug logging (development only, no sensitive data)
+    if (process.env.NODE_ENV === 'development') {
       console.log('[Middleware] Auth state:', { 
         path: request.nextUrl.pathname,
         hasUser: !!user, 
-        userId: user?.id,
-        cookieCount: request.cookies.getAll().length,
-        authError: authError?.message 
+        userIdLength: user?.id ? user.id.length : 0, // Length only, not actual ID
+        authCookiesCount: request.cookies.getAll().filter(c => c.name.startsWith('sb-')).length,
+        hasAuthError: !!authError
       })
     }
 

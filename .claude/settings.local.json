@@ -26,7 +26,9 @@
       "Bash(find:*)",
       "Bash(sed:*)",
       "Read(//home/evan/Projects/Care-Collective/**)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

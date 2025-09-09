@@ -16,42 +16,36 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log error for debugging and monitoring
-    console.error('[Global Error Boundary]', {
-      message: error.message,
-      stack: error.stack,
-      digest: error.digest,
-      timestamp: new Date().toISOString(),
-      url: window.location.href,
-    })
+    // Use secure error logging - dynamic import to avoid SSR issues
+    const logSecureError = async () => {
+      try {
+        // Dynamic import to avoid SSR issues with secure error handling
+        const { logError, SecurityErrors, ErrorType, ErrorSeverity } = await import('@/lib/security/error-handling')
+        
+        // Create a secure error for logging
+        const secureError = SecurityErrors.securityViolation('UI Error Boundary Triggered', {
+          component: 'GlobalErrorBoundary',
+          digest: error.digest,
+          url: typeof window !== 'undefined' ? window.location.href : 'server-side',
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+          originalMessage: error.message,
+        })
+        
+        // Log using secure error handling system
+        logError(secureError)
+      } catch (secureLogError) {
+        // Fallback to basic logging if secure system fails
+        console.error('[Error Boundary] Secure logging failed:', {
+          message: error.message,
+          digest: error.digest,
+          timestamp: new Date().toISOString(),
+          fallbackReason: secureLogError,
+        })
+      }
+    }
     
-    // In production, send to error monitoring service
-    if (process.env.NODE_ENV === 'production') {
-      // Example: Send to monitoring service
-      logErrorToService({
-        message: error.message,
-        stack: error.stack,
-        digest: error.digest,
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        timestamp: new Date().toISOString(),
-        component: 'GlobalErrorBoundary',
-        severity: 'high',
-      }).catch(err => {
-        console.warn('Failed to log error to monitoring service:', err)
-      })
-    }
+    logSecureError()
   }, [error])
-  
-  // Error logging service function
-  async function logErrorToService(errorData: any) {
-    try {
-      // Replace with your actual error monitoring service
-      console.log('[Error Service] Would log to monitoring:', errorData)
-    } catch (err) {
-      console.warn('[Error Service] Failed to log error:', err)
-    }
-  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
