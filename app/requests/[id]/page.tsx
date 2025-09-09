@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { HelpRequestCardWithMessaging } from '@/components/help-requests/HelpRequestCardWithMessaging'
-import { MessagingStatusIndicator } from '@/components/messaging/MessagingStatusIndicator'
+// import { MessagingStatusIndicator } from '@/components/messaging/MessagingStatusIndicator' // Temporarily disabled
 import Link from 'next/link'
 import { RequestActions } from './RequestActions'
 import dynamic from 'next/dynamic'
@@ -352,13 +352,17 @@ export default async function RequestDetailPage({ params }: PageProps) {
         {/* Messaging Status */}
         {helpRequestMessagingStatus.conversationCount > 0 && (
           <div className="mb-6">
-            <MessagingStatusIndicator
-              helpRequestId={id}
-              status={helpRequestMessagingStatus}
-              isOwnRequest={isOwner}
-              size="lg"
-              showDetails={true}
-            />
+            <div className="bg-sage/10 border border-sage/20 rounded-lg p-4">
+              <h3 className="font-semibold text-secondary mb-2">Messaging Status</h3>
+              <p className="text-sm text-muted-foreground">
+                {helpRequestMessagingStatus.conversationCount} conversation{helpRequestMessagingStatus.conversationCount !== 1 ? 's' : ''} active
+                {helpRequestMessagingStatus.unreadCount > 0 && (
+                  <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs bg-sage text-white">
+                    {helpRequestMessagingStatus.unreadCount} unread
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
         )}
 
