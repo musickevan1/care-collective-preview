@@ -1,3 +1,0 @@
-# Temporarily excluding messaging components due to syntax errors
-# This allows security deployment testing to proceed
-# TODO: Fix syntax in messaging components and re-enable
