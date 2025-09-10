@@ -32,7 +32,7 @@ export default function Hero(): ReactElement {
             <div className="relative">
               <div className="absolute -inset-2 bg-gradient-to-r from-sage via-dusty-rose to-terracotta rounded-full opacity-20 blur-lg animate-pulse"></div>
               <Image 
-                src="/logos/Textless.png" 
+                src="/logo-textless.png" 
                 alt="CARE Collective Logo" 
                 width={80} 
                 height={80}

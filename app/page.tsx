@@ -27,7 +27,7 @@ export default function HomePage(): ReactElement {
             {/* Brand */}
             <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
               <Image 
-                src="/logos/Textless.png" 
+                src="/logo-textless.png" 
                 alt="CARE Collective Logo" 
                 width={32} 
                 height={32}
