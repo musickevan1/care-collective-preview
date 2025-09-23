@@ -19,27 +19,27 @@ const statusConfig: Record<RequestStatus, {
   open: {
     label: 'Open',
     variant: 'rose',
-    className: 'bg-dusty-rose-accessible text-white border-transparent font-medium shadow-sm'
+    className: 'font-medium shadow-sm'
   },
   in_progress: {
     label: 'In Progress',
     variant: 'sage',
-    className: 'bg-sage-accessible text-white border-transparent font-medium shadow-sm'
+    className: 'font-medium shadow-sm'
   },
   completed: {
     label: 'Completed',
     variant: 'success',
-    className: 'bg-green-600 text-white border-transparent font-medium shadow-sm'
+    className: 'font-medium shadow-sm'
   },
   cancelled: {
     label: 'Cancelled',
     variant: 'outline',
-    className: 'bg-gray-100 text-gray-700 border-gray-300 font-medium'
+    className: 'bg-gray-100 text-gray-700 border-gray-300 font-medium shadow-sm'
   },
   closed: {
     label: 'Closed',
     variant: 'outline',
-    className: 'bg-gray-50 text-gray-600 border-gray-200 font-medium'
+    className: 'bg-gray-50 text-gray-600 border-gray-200 font-medium shadow-sm'
   }
 } as const
 
