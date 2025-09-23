@@ -107,31 +107,36 @@ export const PerformanceMonitor = memo<PerformanceMonitorProps>(({
       }))
     }
 
-    // Load web vitals and measure Core Web Vitals
-    // Temporarily disabled to fix build issues with 'self is not defined'
-    // import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
-    //   onCLS((metric) => {
-    //     setMetrics(prev => ({ ...prev, cls: metric.value }))
-    //   })
+    // Load web vitals and measure Core Web Vitals (browser-only)
+    if (typeof window !== 'undefined' && 'performance' in window) {
+      // Dynamic import with proper error handling for browser environments
+      import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+        // Only initialize if we're in a browser with proper performance API support
+        if ('PerformanceObserver' in window) {
+          onCLS((metric) => {
+            setMetrics(prev => ({ ...prev, cls: metric.value }))
+          })
 
-    //   onFID((metric) => {
-    //     setMetrics(prev => ({ ...prev, fid: metric.value }))
-    //   })
+          onFID((metric) => {
+            setMetrics(prev => ({ ...prev, fid: metric.value }))
+          })
 
-    //   onFCP((metric) => {
-    //     setMetrics(prev => ({ ...prev, fcp: metric.value }))
-    //   })
+          onFCP((metric) => {
+            setMetrics(prev => ({ ...prev, fcp: metric.value }))
+          })
 
-    //   onLCP((metric) => {
-    //     setMetrics(prev => ({ ...prev, lcp: metric.value }))
-    //   })
+          onLCP((metric) => {
+            setMetrics(prev => ({ ...prev, lcp: metric.value }))
+          })
 
-    //   onTTFB((metric) => {
-    //     setMetrics(prev => ({ ...prev, ttfb: metric.value }))
-    //   })
-    // }).catch(error => {
-    //   console.warn('Failed to load web-vitals:', error)
-    // })
+          onTTFB((metric) => {
+            setMetrics(prev => ({ ...prev, ttfb: metric.value }))
+          })
+        }
+      }).catch(error => {
+        console.warn('Failed to load web-vitals (likely SSR environment):', error)
+      })
+    }
 
     // Estimate bundle size (approximation)
     const scriptElements = document.querySelectorAll('script[src]')
@@ -381,15 +386,18 @@ export function usePerformanceMetrics() {
       }))
     }
 
-    // Load and track web vitals
-    // Temporarily disabled to fix build issues with 'self is not defined'
-    // import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
-    //   onCLS((metric) => setMetrics(prev => ({ ...prev, cls: metric.value })))
-    //   onFID((metric) => setMetrics(prev => ({ ...prev, fid: metric.value })))
-    //   onFCP((metric) => setMetrics(prev => ({ ...prev, fcp: metric.value })))
-    //   onLCP((metric) => setMetrics(prev => ({ ...prev, lcp: metric.value })))
-    //   onTTFB((metric) => setMetrics(prev => ({ ...prev, ttfb: metric.value })))
-    // })
+    // Load and track web vitals (browser-only)
+    if (typeof window !== 'undefined' && 'performance' in window && 'PerformanceObserver' in window) {
+      import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+        onCLS((metric) => setMetrics(prev => ({ ...prev, cls: metric.value })))
+        onFID((metric) => setMetrics(prev => ({ ...prev, fid: metric.value })))
+        onFCP((metric) => setMetrics(prev => ({ ...prev, fcp: metric.value })))
+        onLCP((metric) => setMetrics(prev => ({ ...prev, lcp: metric.value })))
+        onTTFB((metric) => setMetrics(prev => ({ ...prev, ttfb: metric.value })))
+      }).catch(error => {
+        console.warn('Failed to load web-vitals in usePerformanceMetrics:', error)
+      })
+    }
   }, [])
 
   return metrics

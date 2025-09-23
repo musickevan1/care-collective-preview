@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { SecurityErrors, logError } from './error-handling'
 
 // In-memory store for rate limiting (use Redis in production)
-const requestCounts = new Map<string, { count: number; resetTime: number; blockedUntil?: number }>()
+const requestCounts = new Map<string, { count: number; resetTime: number }>()
 
 interface RateLimitConfig {
   windowMs: number // Time window in milliseconds

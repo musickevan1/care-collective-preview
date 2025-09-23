@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
+import { FilterPanel, FilterOptions } from '@/components/FilterPanel'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import Link from 'next/link'
 
@@ -62,7 +63,14 @@ function formatTimeAgo(dateString: string) {
 }
 
 interface PageProps {
-  searchParams: Promise<{ status?: string }>
+  searchParams: Promise<{ 
+    status?: string;
+    category?: string;
+    urgency?: string;
+    search?: string;
+    sort?: string;
+    order?: 'asc' | 'desc';
+  }>
 }
 
 async function getUser() {
@@ -122,7 +130,14 @@ async function getMessagingData(userId: string) {
 
 export default async function RequestsPage({ searchParams }: PageProps) {
   const params = await searchParams
-  const statusFilter = params.status || 'all'
+  const {
+    status: statusFilter = 'all',
+    category: categoryFilter = 'all',
+    urgency: urgencyFilter = 'all',
+    search: searchQuery = '',
+    sort: sortBy = 'created_at',
+    order: sortOrder = 'desc'
+  } = params;
   
   const user = await getUser();
   
@@ -133,22 +148,120 @@ export default async function RequestsPage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const messagingData = await getMessagingData(user.id);
 
-  let query = supabase
-    .from('help_requests')
-    .select(`
-      *,
-      profiles!user_id (name, location),
-      helper:profiles!helper_id (name, location)
-    `)
+  let query;
+  let requests = null;
+  let queryError = null;
+
+  try {
+    // Use optimized query based on filter combinations
+    if (searchQuery) {
+      // Use full-text search for text queries
+      query = supabase.rpc('search_help_requests', { 
+        search_query: searchQuery 
+      });
+      
+      // Apply additional filters to search results
+      if (statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
+      }
+      if (categoryFilter !== 'all') {
+        query = query.eq('category', categoryFilter);
+      }
+      if (urgencyFilter !== 'all') {
+        query = query.eq('urgency', urgencyFilter);
+      }
+    } else {
+      // Use optimized view for regular filtering
+      query = supabase
+        .from('help_requests')
+        .select(`
+          *,
+          profiles!user_id (name, location),
+          helper:profiles!helper_id (name, location)
+        `);
+      
+      // Apply filters in optimal order for index usage
+      if (statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
+      }
+      
+      if (categoryFilter !== 'all') {
+        query = query.eq('category', categoryFilter);
+      }
+      
+      if (urgencyFilter !== 'all') {
+        query = query.eq('urgency', urgencyFilter);
+      }
+    }
     
-  // Apply status filter
-  if (statusFilter !== 'all') {
-    query = query.eq('status', statusFilter)
+    // Apply sorting - optimized for our indexes
+    const isAscending = sortOrder === 'asc';
+    if (sortBy === 'urgency') {
+      // Use the urgency + created_at index
+      query = query.order('urgency', { ascending: false });
+      query = query.order('created_at', { ascending: false });
+    } else if (sortBy === 'created_at') {
+      query = query.order('created_at', { ascending: isAscending });
+    } else {
+      // For other sorting, use compound index
+      query = query.order(sortBy, { ascending: isAscending });
+      query = query.order('created_at', { ascending: false });
+    }
+    
+    // Limit results for performance (with pagination support in future)
+    query = query.limit(100);
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      console.error('[Help Requests Query Error]', error);
+      queryError = error;
+    } else {
+      requests = data;
+    }
+
+    // If search query failed, fall back to regular query
+    if (searchQuery && queryError) {
+      console.warn('[Search Fallback] Using ILIKE search due to full-text search error');
+      
+      const fallbackQuery = supabase
+        .from('help_requests')
+        .select(`
+          *,
+          profiles!user_id (name, location),
+          helper:profiles!helper_id (name, location)
+        `)
+        .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+      
+      // Apply other filters
+      if (statusFilter !== 'all') {
+        fallbackQuery.eq('status', statusFilter);
+      }
+      if (categoryFilter !== 'all') {
+        fallbackQuery.eq('category', categoryFilter);
+      }
+      if (urgencyFilter !== 'all') {
+        fallbackQuery.eq('urgency', urgencyFilter);
+      }
+      
+      fallbackQuery.order('created_at', { ascending: false });
+      fallbackQuery.limit(100);
+      
+      const { data: fallbackData } = await fallbackQuery;
+      requests = fallbackData;
+      queryError = null;
+    }
+    
+  } catch (error) {
+    console.error('[Help Requests Critical Error]', error);
+    queryError = error;
+    requests = [];
   }
-  
-  const { data: requests } = await query
-    .order('urgency', { ascending: false })
-    .order('created_at', { ascending: false })
+
+  // Ensure requests is always an array
+  if (!requests) {
+    requests = [];
+  }
 
   const breadcrumbs = [
     { label: 'Help Requests', href: '/requests' }
@@ -174,41 +287,15 @@ export default async function RequestsPage({ searchParams }: PageProps) {
           </Link>
         </div>
 
-        {/* Status Filter Tabs */}
-        <div className="mb-6 flex gap-2 flex-wrap">
-          <Link href="/requests">
-            <Button 
-              variant={statusFilter === 'all' ? 'default' : 'outline'}
-              size="sm"
-            >
-              All Requests
-            </Button>
-          </Link>
-          <Link href="/requests?status=open">
-            <Button 
-              variant={statusFilter === 'open' ? 'default' : 'outline'}
-              size="sm"
-            >
-              Open
-            </Button>
-          </Link>
-          <Link href="/requests?status=in_progress">
-            <Button 
-              variant={statusFilter === 'in_progress' ? 'default' : 'outline'}
-              size="sm"
-            >
-              In Progress
-            </Button>
-          </Link>
-          <Link href="/requests?status=completed">
-            <Button 
-              variant={statusFilter === 'completed' ? 'default' : 'outline'}
-              size="sm"
-            >
-              Completed
-            </Button>
-          </Link>
-        </div>
+        {/* Advanced Filtering Interface */}
+        <FilterPanel 
+          onFilterChange={() => {
+            // Filter changes are handled via URL navigation
+            // This is a server component so we don't need to handle state here
+          }}
+          className="mb-6"
+          showAdvanced={false}
+        />
 
         {!requests || requests.length === 0 ? (
           <Card className="text-center py-12">
@@ -230,9 +317,14 @@ export default async function RequestsPage({ searchParams }: PageProps) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">
-                  {requests.length} Active Request{requests.length !== 1 ? 's' : ''}
+                  {requests.length} Request{requests.length !== 1 ? 's' : ''} Found
                 </h2>
-                <p className="text-sm text-muted-foreground">People in your community who need help</p>
+                <p className="text-sm text-muted-foreground">
+                  {searchQuery ? `Results for "${searchQuery}"` : 
+                   statusFilter !== 'all' || categoryFilter !== 'all' || urgencyFilter !== 'all' ? 
+                   'Filtered results' : 
+                   'People in your community who need help'}
+                </p>
               </div>
             </div>
 

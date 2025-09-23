@@ -7,8 +7,7 @@ import Link from 'next/link'
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
 import Image from 'next/image'
-// Temporarily disabled to fix build issues
-// import { PerformanceMonitor } from '@/components/PerformanceMonitor'
+import { PerformanceMonitor } from '@/components/PerformanceMonitor'
 import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import { MobileNav } from '@/components/MobileNav'
 
@@ -89,11 +88,7 @@ export default async function PerformancePage() {
         </div>
 
         {/* Performance Monitor */}
-        {/* Temporarily disabled to fix build issues */}
-        {/* <PerformanceMonitor showDetails={true} /> */}
-        <div className="text-center text-muted-foreground py-8">
-          Performance monitoring temporarily disabled for deployment
-        </div>
+        <PerformanceMonitor showDetails={true} />
 
         {/* Performance Optimization Guide */}
         <Card className="mt-8">

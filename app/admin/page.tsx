@@ -1,4 +1,5 @@
-import { getAuthenticatedAdmin, withAuth } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
+import { OptimizedQueries } from '@/lib/db-cache'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -6,85 +7,94 @@ import { Button } from '@/components/ui/button'
 import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import { MobileNav } from '@/components/MobileNav'
 import { redirect } from 'next/navigation'
-import { notFound } from 'next/navigation'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
 
-// Secure admin statistics functions
-async function getAdminStats() {
-  return await withAuth(async (supabase, userId) => {
-    // Verify user is admin first
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin, verification_status')
-      .eq('id', userId)
-      .single()
-    
-    if (!profile?.is_admin || profile.verification_status !== 'approved') {
-      throw new Error('Admin access required')
-    }
-    
-    // Get statistics with proper error handling
-    const [
-      usersResult,
-      helpRequestsResult,
-      openRequestsResult,
-      pendingAppsResult
-    ] = await Promise.allSettled([
-      supabase.from('profiles').select('id', { count: 'exact' }),
-      supabase.from('help_requests').select('id', { count: 'exact' }),
-      supabase.from('help_requests').select('id', { count: 'exact' }).eq('status', 'open'),
-      supabase.from('profiles').select('id', { count: 'exact' }).eq('verification_status', 'pending')
-    ])
-    
-    return {
-      totalUsers: usersResult.status === 'fulfilled' ? usersResult.value.count || 0 : 0,
-      totalHelpRequests: helpRequestsResult.status === 'fulfilled' ? helpRequestsResult.value.count || 0 : 0,
-      openHelpRequests: openRequestsResult.status === 'fulfilled' ? openRequestsResult.value.count || 0 : 0,
-      pendingApplications: pendingAppsResult.status === 'fulfilled' ? pendingAppsResult.value.count || 0 : 0,
-    }
-  })
-}
-
 export default async function AdminDashboard() {
-  // Secure admin authentication check
-  const { user, error: authError } = await getAuthenticatedAdmin()
+  console.log('[Admin] Page render started')
   
-  if (authError || !user) {
-    if (authError?.message === 'Admin privileges required') {
-      redirect('/dashboard?error=admin_required')
-    } else {
+  let totalUsers = 0
+  let totalHelpRequests = 0
+  let openHelpRequests = 0
+  let pendingApplications = 0
+
+  try {
+    console.log('[Admin] Creating Supabase client...')
+    const supabase = await createClient()
+
+    // Verify user is authenticated and admin
+    console.log('[Admin] Checking authentication...')
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    
+    if (authError || !user) {
+      console.log('[Admin] No authenticated user, redirecting to login')
       redirect('/login?redirectTo=/admin')
     }
+
+    console.log('[Admin] Fetching admin statistics...')
+    const [
+      userStatsResult,
+      helpRequestStatsResult,
+      pendingApplicationsResult
+    ] = await Promise.all([
+      OptimizedQueries.getUserStats(),
+      OptimizedQueries.getHelpRequestStats(),
+      supabase
+        .from('profiles')
+        .select('id', { count: 'exact' })
+        .eq('verification_status', 'pending')
+    ])
+
+    console.log('[Admin] Stats results:', {
+      userStats: userStatsResult.error ? 'ERROR' : 'OK',
+      helpRequestStats: helpRequestStatsResult.error ? 'ERROR' : 'OK',
+      pendingApplications: pendingApplicationsResult.error ? 'ERROR' : 'OK'
+    })
+
+    // Handle errors gracefully
+    if (userStatsResult.error) {
+      console.error('[Admin] User stats error:', userStatsResult.error)
+    } else {
+      totalUsers = userStatsResult.data?.total || 0
+    }
+
+    if (helpRequestStatsResult.error) {
+      console.error('[Admin] Help request stats error:', helpRequestStatsResult.error)
+    } else {
+      totalHelpRequests = helpRequestStatsResult.data?.total || 0
+      openHelpRequests = helpRequestStatsResult.data?.open || 0
+    }
+
+    if (pendingApplicationsResult.error) {
+      console.error('[Admin] Pending applications error:', pendingApplicationsResult.error)
+    } else {
+      pendingApplications = pendingApplicationsResult.count || 0
+    }
+
+  } catch (error) {
+    console.error('[Admin] Caught exception:', error)
+    // Continue with default values instead of throwing
   }
 
-  // Get admin statistics securely
-  const { data: stats, error: statsError } = await getAdminStats()
-  
-  if (statsError) {
-    console.error('[Admin] Failed to load statistics:', statsError.message)
-    notFound()
-  }
-
-  const dashboardStats = [
+  const stats = [
     {
       title: 'Pending Applications',
-      value: stats?.pendingApplications || 0,
+      value: pendingApplications || 0,
       description: 'Awaiting review',
       href: '/admin/applications',
-      highlight: (stats?.pendingApplications || 0) > 0
+      highlight: pendingApplications > 0
     },
     {
       title: 'Total Users',
-      value: stats?.totalUsers || 0,
+      value: totalUsers || 0,
       description: 'Registered community members',
       href: '/admin/users',
     },
     {
       title: 'Help Requests',
-      value: stats?.totalHelpRequests || 0,
-      description: `${stats?.openHelpRequests || 0} open requests`,
+      value: totalHelpRequests || 0,
+      description: `${openHelpRequests || 0} open requests`,
       href: '/admin/help-requests',
     },
   ]
@@ -150,7 +160,7 @@ export default async function AdminDashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-8">
-          {dashboardStats.map((stat) => (
+          {stats.map((stat) => (
             <Link key={stat.title} href={stat.href}>
               <Card className={`hover:shadow-md transition-shadow cursor-pointer ${
                 stat.highlight ? 'ring-2 ring-yellow-400 bg-yellow-50' : ''

@@ -9,12 +9,26 @@ import { Label } from '@/components/ui/label'
 import { AlertTriangle, Shield, CheckCircle, Users } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
+interface HelpRequest {
+  id: string
+  title: string
+  description?: string
+  category: string
+  urgency: string
+  status: string
+  user_id: string
+  created_at: string
+  profiles: {
+    id: string
+    name: string
+    email?: string
+    phone?: string
+    location?: string
+  }
+}
+
 interface ContactExchangeProps {
-  requestId: string
-  helperId: string
-  requesterId: string
-  isHelper: boolean
-  isRequester: boolean
+  helpRequest: HelpRequest
 }
 
 interface ContactInfo {
@@ -30,11 +44,7 @@ interface ContactInfo {
 }
 
 export function ContactExchange({ 
-  requestId, 
-  helperId, 
-  requesterId,
-  isHelper,
-  isRequester 
+  helpRequest
 }: ContactExchangeProps) {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null)
   const [loading, setLoading] = useState(true)
@@ -44,20 +54,43 @@ export function ContactExchange({
   const [hasExistingExchange, setHasExistingExchange] = useState(false)
   const [consentMessage, setConsentMessage] = useState('')
   const [messageError, setMessageError] = useState<string | null>(null)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const supabase = createClient()
 
+  // Derive values from helpRequest and current user
+  const requestId = helpRequest.id
+  const requesterId = helpRequest.user_id
+  const helperId = currentUserId // Will be set when we get the current user
+  const isRequester = currentUserId === requesterId
+  const isHelper = currentUserId !== null && currentUserId !== requesterId
+
   useEffect(() => {
-    checkExistingExchange()
+    // Get current user first
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setCurrentUserId(user.id)
+      }
+    }
+    getCurrentUser()
+  }, [supabase.auth])
+
+  useEffect(() => {
+    if (currentUserId) {
+      checkExistingExchange()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [requestId, helperId, requesterId])
+  }, [requestId, currentUserId])
 
   const checkExistingExchange = async () => {
+    if (!currentUserId) return
+    
     try {
       const { data: exchange } = await supabase
         .from('contact_exchanges')
         .select('*')
         .eq('request_id', requestId)
-        .eq('helper_id', helperId)
+        .eq('helper_id', currentUserId)
         .eq('requester_id', requesterId)
         .single()
 
@@ -86,8 +119,12 @@ export function ContactExchange({
       const { validateContactExchange, validateRateLimit, createAuditEntry, canExchangeContacts } = 
         await import('@/lib/validations/contact-exchange');
       
+      if (!currentUserId) {
+        throw new Error('You must be logged in to exchange contact information');
+      }
+
       // Validate exchange eligibility
-      const eligibility = canExchangeContacts(helperId, requesterId, 'open');
+      const eligibility = canExchangeContacts(currentUserId, requesterId, 'open');
       if (!eligibility.canExchange) {
         throw new Error(eligibility.reason);
       }
@@ -95,7 +132,7 @@ export function ContactExchange({
       // Validate input data
       const validatedData = validateContactExchange({
         requestId,
-        helperId,
+        helperId: currentUserId,
         requesterId,
         message,
         consent: true,
@@ -105,18 +142,18 @@ export function ContactExchange({
       const { data: recentExchanges } = await supabase
         .from('contact_exchanges')
         .select('created_at')
-        .eq('helper_id', helperId)
+        .eq('helper_id', currentUserId)
         .gte('created_at', new Date(Date.now() - 60 * 60 * 1000).toISOString());
       
       const recentDates = recentExchanges?.map(e => new Date(e.created_at)) || [];
-      if (!validateRateLimit(helperId, recentDates)) {
+      if (!validateRateLimit(currentUserId, recentDates)) {
         throw new Error('Too many contact exchange attempts. Please try again later.');
       }
       
       // Create audit trail BEFORE revealing contact
       const auditEntry = createAuditEntry('CONTACT_EXCHANGE_INITIATED', {
         requestId,
-        helperId,
+        helperId: currentUserId,
         requesterId,
         metadata: { message: validatedData.message },
       });
@@ -143,7 +180,7 @@ export function ContactExchange({
         .from('contact_exchanges')
         .insert({
           request_id: requestId,
-          helper_id: helperId,
+          helper_id: currentUserId,
           requester_id: requesterId,
           message: validatedData.message,
           consent_given: true,
@@ -166,7 +203,7 @@ export function ContactExchange({
         const { createAuditEntry } = await import('@/lib/validations/contact-exchange');
         const auditEntry = createAuditEntry('CONTACT_EXCHANGE_FAILED', {
           requestId,
-          helperId,
+          helperId: currentUserId,
           requesterId,
           metadata: { error: errorMessage },
         });
@@ -188,11 +225,13 @@ export function ContactExchange({
   }
 
   const loadContactInfo = async () => {
+    if (!currentUserId) return
+    
     try {
       setLoading(true)
       
       // Determine which user's contact info to show
-      const targetUserId = isHelper ? requesterId : helperId
+      const targetUserId = isHelper ? requesterId : currentUserId
       
       // Fetch the user's profile
       const { data: profile, error: profileError } = await supabase
@@ -219,7 +258,7 @@ export function ContactExchange({
           completed_at: new Date().toISOString()
         })
         .eq('request_id', requestId)
-        .eq('helper_id', helperId)
+        .eq('helper_id', currentUserId)
         .eq('requester_id', requesterId)
 
     } catch (err) {
@@ -263,7 +302,7 @@ export function ContactExchange({
         // This will throw if message contains inappropriate content
         validateContactExchange({
           requestId,
-          helperId,
+          helperId: currentUserId || '',
           requesterId,
           message: sanitizedMessage,
           consent: true,

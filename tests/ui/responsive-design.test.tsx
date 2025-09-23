@@ -233,8 +233,16 @@ describe('Responsive Design', () => {
       const mockHelpRequest = {
         id: 'test-request',
         title: 'Test Request',
+        category: 'groceries',
+        urgency: 'normal',
+        status: 'open',
         user_id: 'other-user',
-        profiles: { name: 'Test User', email: 'test@example.com' },
+        created_at: '2025-01-20T10:00:00Z',
+        profiles: { 
+          id: 'other-user',
+          name: 'Test User', 
+          email: 'test@example.com' 
+        },
       };
 
       render(<ContactExchange helpRequest={mockHelpRequest} />);

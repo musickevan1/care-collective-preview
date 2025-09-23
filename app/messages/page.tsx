@@ -5,6 +5,7 @@
 
 import { ReactElement } from 'react';
 import { createClient } from '@/lib/supabase/server';
+import { MessagingDashboard } from '@/components/messaging/MessagingDashboard';
 import { PlatformLayout } from '@/components/layout/PlatformLayout';
 import { redirect } from 'next/navigation';
 
@@ -178,23 +179,12 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps):
       breadcrumbs={breadcrumbs}
     >
       <div className="h-[calc(100vh-64px)] overflow-hidden">
-        <div className="p-8 text-center">
-          <h1 className="text-2xl font-bold text-secondary mb-4">Messaging System</h1>
-          <p className="text-muted-foreground mb-6">
-            Secure messaging feature is currently being redesigned for enhanced security.
-          </p>
-          <div className="bg-background border rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Current Messaging Data</h2>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <strong>Active Conversations:</strong> {activeConversations}
-              </div>
-              <div>
-                <strong>Unread Messages:</strong> {unreadCount}
-              </div>
-            </div>
-          </div>
-        </div>
+        <MessagingDashboard 
+          initialConversations={conversations}
+          userId={user.id}
+          selectedConversationId={searchParams.conversation}
+          enableRealtime={true}
+        />
       </div>
     </PlatformLayout>
   );

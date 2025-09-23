@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { HelpRequestCardWithMessaging } from '@/components/help-requests/HelpRequestCardWithMessaging'
-// import { MessagingStatusIndicator } from '@/components/messaging/MessagingStatusIndicator' // Temporarily disabled
+import { MessagingStatusIndicator } from '@/components/messaging/MessagingStatusIndicator'
 import Link from 'next/link'
 import { RequestActions } from './RequestActions'
 import dynamic from 'next/dynamic'
@@ -58,13 +58,8 @@ async function getUser() {
   try {
     const supabase = await createClient();
     
-    // Wrap auth call with timeout to prevent hanging
-    const authPromise = supabase.auth.getUser();
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Auth timeout')), 3000)
-    );
-    
-    const { data: { user }, error } = await Promise.race([authPromise, timeoutPromise]) as any;
+    // Enhanced auth call with proper error handling
+    const { data: { user }, error } = await supabase.auth.getUser();
     
     if (error) {
       console.warn('[User Auth] Auth error:', error.message);
@@ -78,28 +73,42 @@ async function getUser() {
       return null;
     }
 
-    // Get user profile with error handling
-    try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('id, name, location')
-        .eq('id', user.id)
-        .single();
+    // Get user profile with retry mechanism
+    let profile = null;
+    let retryCount = 0;
+    const maxRetries = 2;
 
-      return {
-        id: user.id,
-        name: profile?.name || user.email?.split('@')[0] || 'Unknown',
-        email: user.email || ''
-      };
-    } catch (profileError) {
-      console.warn('[User Auth] Profile fetch error:', profileError);
-      // Return user without profile data if profile fetch fails
-      return {
-        id: user.id,
-        name: user.email?.split('@')[0] || 'Unknown',
-        email: user.email || ''
-      };
+    while (retryCount <= maxRetries && !profile) {
+      try {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('id, name, location')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          throw profileError;
+        }
+
+        profile = profileData;
+        break;
+
+      } catch (profileError) {
+        retryCount++;
+        console.warn(`[User Auth] Profile fetch attempt ${retryCount} failed:`, profileError);
+        
+        if (retryCount <= maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
     }
+
+    return {
+      id: user.id,
+      name: profile?.name || user.email?.split('@')[0] || 'Unknown',
+      email: user.email || ''
+    };
+
   } catch (error) {
     console.error('[User Auth] Critical auth error:', error);
     return null;
@@ -258,22 +267,49 @@ export default async function RequestDetailPage({ params }: PageProps) {
     messagingData = { unreadCount: 0, activeConversations: 0 };
   }
 
-  // Add timeout to database query to prevent hanging
-  const queryPromise = supabase
-    .from('help_requests')
-    .select(`
-      *,
-      profiles!user_id (id, name, location),
-      helper:profiles!helper_id (id, name, location)
-    `)
-    .eq('id', id)
-    .single();
-    
-  const timeoutPromise = new Promise((_, reject) => 
-    setTimeout(() => reject(new Error('Database query timeout')), 5000)
-  );
+  // Enhanced database query with proper error handling and retries
+  let request = null;
+  let requestError = null;
+  let retryCount = 0;
+  const maxRetries = 3;
 
-  const { data: request, error: requestError } = await Promise.race([queryPromise, timeoutPromise]) as any;
+  while (retryCount <= maxRetries && !request && !requestError) {
+    try {
+      const { data, error } = await supabase
+        .from('help_requests')
+        .select(`
+          *,
+          profiles!user_id (id, name, location),
+          helper:profiles!helper_id (id, name, location)
+        `)
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        requestError = error;
+        break;
+      }
+
+      request = data;
+      break;
+
+    } catch (error) {
+      retryCount++;
+      console.warn(`[Help Request] Query attempt ${retryCount} failed:`, error);
+      
+      if (retryCount <= maxRetries) {
+        // Exponential backoff: 500ms, 1s, 2s
+        const delay = Math.pow(2, retryCount - 1) * 500;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      } else {
+        requestError = {
+          message: 'Database connection failed after multiple retries',
+          code: 'CONNECTION_RETRY_FAILED',
+          details: error instanceof Error ? error.message : String(error)
+        };
+      }
+    }
+  }
 
   // Enhanced error handling with proper logging
   if (requestError) {
@@ -352,17 +388,13 @@ export default async function RequestDetailPage({ params }: PageProps) {
         {/* Messaging Status */}
         {helpRequestMessagingStatus.conversationCount > 0 && (
           <div className="mb-6">
-            <div className="bg-sage/10 border border-sage/20 rounded-lg p-4">
-              <h3 className="font-semibold text-secondary mb-2">Messaging Status</h3>
-              <p className="text-sm text-muted-foreground">
-                {helpRequestMessagingStatus.conversationCount} conversation{helpRequestMessagingStatus.conversationCount !== 1 ? 's' : ''} active
-                {helpRequestMessagingStatus.unreadCount > 0 && (
-                  <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs bg-sage text-white">
-                    {helpRequestMessagingStatus.unreadCount} unread
-                  </span>
-                )}
-              </p>
-            </div>
+            <MessagingStatusIndicator
+              helpRequestId={id}
+              status={helpRequestMessagingStatus}
+              isOwnRequest={isOwner}
+              size="lg"
+              showDetails={true}
+            />
           </div>
         )}
 
