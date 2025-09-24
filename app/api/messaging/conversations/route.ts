@@ -8,7 +8,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
+import { moderationService } from '@/lib/messaging/moderation';
 import { z } from 'zod';
+import { logger } from '@/lib/logger';
+import { errorTracker } from '@/lib/error-tracking';
 
 // Rate limiting setup (in production, use Redis or external service)
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
@@ -31,7 +34,7 @@ function checkRateLimit(userId: string, maxRequests: number = 30, windowMs: numb
 }
 
 async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error || !user) {
@@ -77,7 +80,23 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Error fetching conversations:', error);
+    logger.error('Messaging conversations fetch failed', error as Error, {
+      endpoint: '/api/messaging/conversations',
+      method: 'GET',
+      category: 'messaging_error'
+    });
+
+    errorTracker.captureError(error as Error, {
+      component: 'MessagingConversationsAPI',
+      action: 'fetch_conversations',
+      severity: 'medium',
+      tags: {
+        endpoint: '/api/messaging/conversations',
+        method: 'GET',
+        feature: 'messaging'
+      }
+    });
+
     return NextResponse.json(
       { error: 'Failed to fetch conversations' },
       { status: 500 }
@@ -94,6 +113,18 @@ export async function POST(request: NextRequest) {
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check user restrictions for starting conversations
+    const restrictionCheck = await moderationService.checkUserRestrictions(user.id, 'start_conversation');
+    if (!restrictionCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: restrictionCheck.reason || 'You are restricted from starting new conversations.',
+          restriction_level: restrictionCheck.restrictionLevel
+        },
+        { status: 403 }
+      );
     }
 
     // Check rate limit (stricter for creating conversations)
@@ -126,7 +157,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify recipient exists
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: recipient, error: recipientError } = await supabase
       .from('profiles')
       .select('id, name')
@@ -220,15 +251,52 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    console.error('Error creating conversation:', error);
-    
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    logger.error('Messaging conversation creation failed', error as Error, {
+      endpoint: '/api/messaging/conversations',
+      method: 'POST',
+      category: 'messaging_error'
+    });
+
     // Handle specific messaging errors
     if (error instanceof Error && error.message.includes('privacy settings')) {
+      logger.warn('Conversation creation blocked by privacy settings', {
+        endpoint: '/api/messaging/conversations',
+        reason: 'privacy_settings',
+        category: 'messaging_privacy'
+      });
+
+      errorTracker.captureWarning('Conversation creation blocked by privacy settings', {
+        component: 'MessagingConversationsAPI',
+        action: 'create_conversation_privacy_blocked',
+        severity: 'low',
+        tags: {
+          endpoint: '/api/messaging/conversations',
+          reason: 'privacy_settings'
+        }
+      });
+
       return NextResponse.json(
         { error: 'This user has restricted who can message them' },
         { status: 403 }
       );
     }
+
+    errorTracker.captureError(error as Error, {
+      component: 'MessagingConversationsAPI',
+      action: 'create_conversation',
+      severity: 'high',
+      tags: {
+        endpoint: '/api/messaging/conversations',
+        method: 'POST',
+        feature: 'messaging'
+      },
+      extra: {
+        errorMessage,
+        timestamp: new Date().toISOString()
+      }
+    });
 
     return NextResponse.json(
       { error: 'Failed to create conversation' },

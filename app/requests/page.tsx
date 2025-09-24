@@ -297,7 +297,40 @@ export default async function RequestsPage({ searchParams }: PageProps) {
           showAdvanced={false}
         />
 
-        {!requests || requests.length === 0 ? (
+        {queryError ? (
+          <Card className="text-center py-12 border-destructive/20">
+            <CardContent>
+              <div className="text-6xl mb-4">⚠️</div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">Service Temporarily Unavailable</h3>
+              <p className="text-muted-foreground mb-6">
+                We're having trouble connecting to our database. This is usually temporary.
+                Please try refreshing the page or check back in a few moments.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
+                <Link href="/requests">
+                  <Button className="bg-sage hover:bg-sage-dark">
+                    Try Again
+                  </Button>
+                </Link>
+                <Link href="/requests/new">
+                  <Button variant="outline" className="border-sage text-sage hover:bg-sage/5">
+                    Create Request Anyway
+                  </Button>
+                </Link>
+              </div>
+              {process.env.NODE_ENV === 'development' && (
+                <details className="mt-4 text-left">
+                  <summary className="cursor-pointer text-sm text-muted-foreground">
+                    Error details (development only)
+                  </summary>
+                  <div className="mt-2 p-3 bg-muted rounded text-xs">
+                    {String(queryError)}
+                  </div>
+                </details>
+              )}
+            </CardContent>
+          </Card>
+        ) : !requests || requests.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
               <div className="text-6xl mb-4">🤝</div>
