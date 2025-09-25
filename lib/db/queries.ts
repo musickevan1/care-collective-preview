@@ -8,6 +8,8 @@
 import { unstable_cache } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/database.types'
+import { logger } from '@/lib/logger'
+import { errorTracker } from '@/lib/error-tracking'
 
 // Type definitions for our queries
 type HelpRequest = Database['public']['Tables']['help_requests']['Row']
@@ -83,7 +85,29 @@ export const getHelpRequests = unstable_cache(
     const { data, error } = await query
     
     if (error) {
-      console.error('[DB Query] Error fetching help requests:', error)
+      logger.error('Database query failed for help requests', error, {
+        function: 'getHelpRequests',
+        filters,
+        table: 'help_requests',
+        category: 'database_error'
+      })
+
+      errorTracker.captureError(error, {
+        component: 'DatabaseQueries',
+        action: 'fetch_help_requests',
+        severity: 'high',
+        tags: {
+          table: 'help_requests',
+          query_type: 'paginated_fetch',
+          has_filters: Object.keys(filters).length > 0 ? 'true' : 'false'
+        },
+        extra: {
+          filters,
+          errorCode: error.code,
+          errorMessage: error.message
+        }
+      })
+
       throw new Error(`Failed to fetch help requests: ${error.message}`)
     }
     
@@ -130,7 +154,30 @@ export const getHelpRequestById = unstable_cache(
       if (error.code === 'PGRST116') {
         return null // Not found
       }
-      console.error('[DB Query] Error fetching help request:', error)
+
+      logger.error('Database query failed for help request by ID', error, {
+        function: 'getHelpRequestById',
+        requestId: id,
+        table: 'help_requests',
+        category: 'database_error'
+      })
+
+      errorTracker.captureError(error, {
+        component: 'DatabaseQueries',
+        action: 'fetch_help_request_by_id',
+        severity: 'high',
+        tags: {
+          table: 'help_requests',
+          query_type: 'single_fetch',
+          request_id: id
+        },
+        extra: {
+          requestId: id,
+          errorCode: error.code,
+          errorMessage: error.message
+        }
+      })
+
       throw new Error(`Failed to fetch help request: ${error.message}`)
     }
     

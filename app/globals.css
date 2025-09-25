@@ -67,7 +67,7 @@
 /* Smooth Scroll with offset for fixed header */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px; /* Accounts for fixed header height + extra space */
+  scroll-padding-top: 5rem; /* 80px - accounts for h-16 header (64px) + 16px buffer */
 }
 
 body {

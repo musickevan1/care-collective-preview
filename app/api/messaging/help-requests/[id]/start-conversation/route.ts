@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
+import { moderationService } from '@/lib/messaging/moderation';
 
 // Rate limiting for help request conversations
 const helpConversationCounts = new Map<string, { count: number; resetTime: number }>();
@@ -51,6 +52,18 @@ export async function POST(
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check user restrictions for starting conversations
+    const restrictionCheck = await moderationService.checkUserRestrictions(user.id, 'start_conversation');
+    if (!restrictionCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: restrictionCheck.reason || 'You are restricted from starting new conversations.',
+          restriction_level: restrictionCheck.restrictionLevel
+        },
+        { status: 403 }
+      );
     }
 
     // Check rate limit for starting help conversations (10 per hour)

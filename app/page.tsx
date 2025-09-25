@@ -6,9 +6,11 @@ import { ReactElement } from 'react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
 import { useAuthNavigation } from '@/lib/hooks/useAuthNavigation'
+import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
 export default function HomePage(): ReactElement {
   const { isAuthenticated, displayName, isLoading } = useAuthNavigation()
+  const handleSmoothScroll = useSmoothScroll()
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,12 +35,12 @@ export default function HomePage(): ReactElement {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
               <ul className="flex items-center gap-3 xl:gap-4 list-none">
-                <li><Link href="#home" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Home</Link></li>
-                <li><Link href="#mission" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Mission</Link></li>
-                <li><Link href="#how-it-works" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">How It Works</Link></li>
-                <li><Link href="#whats-happening" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What's Happening</Link></li>
-                <li><Link href="#about" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">About</Link></li>
-                <li><Link href="#contact" className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Contact</Link></li>
+                <li><Link href="#home" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Home</Link></li>
+                <li><Link href="#mission" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Mission</Link></li>
+                <li><Link href="#how-it-works" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">How It Works</Link></li>
+                <li><Link href="#whats-happening" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What's Happening</Link></li>
+                <li><Link href="#about" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">About</Link></li>
+                <li><Link href="#contact" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Contact</Link></li>
               </ul>
             </div>
             
@@ -311,7 +313,7 @@ export default function HomePage(): ReactElement {
               <ul className="space-y-2 list-none">
                 <li><Link href="/login" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Member Login</Link></li>
                 <li><Link href="/signup" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Join Community</Link></li>
-                <li><Link href="#contact" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Contact Us</Link></li>
+                <li><Link href="#contact" onClick={handleSmoothScroll} className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Contact Us</Link></li>
                 <li><Link href="/dashboard" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Member Portal</Link></li>
               </ul>
             </div>

@@ -192,6 +192,197 @@ class EmailService {
   }
 
   /**
+   * Send user status change notification to user
+   */
+  async sendUserStatusNotification(
+    to: string,
+    name: string,
+    newStatus: 'approved' | 'rejected' | 'suspended',
+    reason?: string,
+    adminName?: string
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    let subject: string
+    let html: string
+
+    switch (newStatus) {
+      case 'approved':
+        subject = '✅ Your Care Collective account has been activated'
+        html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #324158;">Welcome to Care Collective, ${name}! 🎉</h2>
+            <p>Your account has been activated and you now have full access to the platform.</p>
+            <div style="background: #A3C4BF; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+              <h3 style="color: #FFF; margin-top: 0;">You can now:</h3>
+              <ul style="color: #FFF; text-align: left; margin: 10px 0;">
+                <li>Create and respond to help requests</li>
+                <li>Connect with community members</li>
+                <li>Share resources and support</li>
+                <li>Access all platform features</li>
+              </ul>
+              <a href="${process.env.NEXT_PUBLIC_SITE_URL}/dashboard" style="display: inline-block; background: #BC6547; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Go to Dashboard</a>
+            </div>
+            <p>Thank you for being part of our mutual aid community!</p>
+            <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
+            <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+          </div>
+        `
+        break
+
+      case 'rejected':
+        subject = 'Update on your Care Collective account'
+        const reasonText = reason ? `\n\nReason: ${reason}` : ''
+        html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #324158;">Account Status Update</h2>
+            <p>Hello ${name},</p>
+            <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <p style="color: #483129;">Your account access has been suspended.${reasonText}</p>
+            </div>
+            <p>If you believe this is an error or would like to appeal this decision, please contact our support team.</p>
+            <p>Thank you for your understanding.</p>
+            <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
+            <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+          </div>
+        `
+        break
+
+      case 'suspended':
+        subject = 'Important: Your Care Collective account status'
+        const suspensionReason = reason ? `\n\nReason: ${reason}` : ''
+        html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #324158;">Account Suspension Notice</h2>
+            <p>Hello ${name},</p>
+            <div style="background: #FFF3CD; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FFC107;">
+              <p style="color: #856404;">Your account has been temporarily suspended.${suspensionReason}</p>
+            </div>
+            <p>This action was taken to ensure community safety and adherence to our guidelines.</p>
+            <p>If you have questions about this decision or would like to discuss reinstatement, please contact our support team.</p>
+            <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
+            <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+          </div>
+        `
+        break
+    }
+
+    return this.sendEmail({ to, subject, html })
+  }
+
+  /**
+   * Send application decision notification to applicant
+   */
+  async sendApplicationDecision(
+    to: string,
+    name: string,
+    decision: 'approved' | 'rejected',
+    notes?: string,
+    reviewerName?: string
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    if (decision === 'approved') {
+      return this.sendApprovalNotification(to, name, `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`)
+    } else {
+      return this.sendRejectionNotification(to, name, notes)
+    }
+  }
+
+  /**
+   * Send moderation alert to administrators
+   */
+  async sendModerationAlert(
+    reportId: string,
+    messageId: string,
+    reportReason: string,
+    reporterEmail: string,
+    messageSender: string,
+    messagePreview: string,
+    severity: 'low' | 'medium' | 'high' = 'medium'
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@carecollective.org'
+    const urgencyIcon = severity === 'high' ? '🚨' : severity === 'medium' ? '⚠️' : 'ℹ️'
+    const urgencyColor = severity === 'high' ? '#DC3545' : severity === 'medium' ? '#FFC107' : '#6C757D'
+
+    const subject = `${urgencyIcon} Moderation Alert: ${reportReason} report`
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: ${urgencyColor};">${urgencyIcon} Content Moderation Alert</h2>
+        <div style="background: #F8F9FA; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid ${urgencyColor};">
+          <h3 style="margin-top: 0; color: #324158;">Report Details</h3>
+          <p><strong>Report ID:</strong> ${reportId}</p>
+          <p><strong>Message ID:</strong> ${messageId}</p>
+          <p><strong>Reason:</strong> ${reportReason}</p>
+          <p><strong>Severity:</strong> ${severity.toUpperCase()}</p>
+          <p><strong>Reported by:</strong> ${reporterEmail}</p>
+          <p><strong>Message sender:</strong> ${messageSender}</p>
+        </div>
+        <div style="background: #FBF2E9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <h4 style="margin-top: 0; color: #BC6547;">Message Preview</h4>
+          <p style="color: #483129; font-style: italic;">"${messagePreview}..."</p>
+        </div>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.NEXT_PUBLIC_SITE_URL}/admin/messaging/moderation" style="display: inline-block; background: #BC6547; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">Review Report</a>
+        </div>
+        <p><strong>Action Required:</strong> Please review this report and take appropriate moderation action.</p>
+        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
+        <p style="font-size: 12px; color: #999;">Care Collective Admin System - Automated Moderation Alert</p>
+      </div>
+    `
+
+    return this.sendEmail({ to: adminEmail, subject, html })
+  }
+
+  /**
+   * Send bulk operation summary to admin
+   */
+  async sendBulkOperationSummary(
+    adminEmail: string,
+    adminName: string,
+    operationType: string,
+    totalCount: number,
+    successCount: number,
+    failureCount: number,
+    details?: string[]
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    const successRate = totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0
+    const statusColor = successRate >= 90 ? '#28A745' : successRate >= 70 ? '#FFC107' : '#DC3545'
+
+    const subject = `Bulk Operation Complete: ${operationType} (${successCount}/${totalCount} successful)`
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #324158;">Bulk Operation Summary</h2>
+        <p>Hello ${adminName},</p>
+        <p>Your bulk operation has been completed. Here's the summary:</p>
+
+        <div style="background: #F8F9FA; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="margin-top: 0; color: #324158;">Operation Details</h3>
+          <p><strong>Operation:</strong> ${operationType}</p>
+          <p><strong>Total Items:</strong> ${totalCount}</p>
+          <p><strong>Successful:</strong> <span style="color: #28A745;">${successCount}</span></p>
+          <p><strong>Failed:</strong> <span style="color: #DC3545;">${failureCount}</span></p>
+          <p><strong>Success Rate:</strong> <span style="color: ${statusColor}; font-weight: bold;">${successRate}%</span></p>
+        </div>
+
+        ${details && details.length > 0 ? `
+        <div style="background: #FBF2E9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+          <h4 style="margin-top: 0; color: #BC6547;">Operation Details</h4>
+          <ul style="color: #483129;">
+            ${details.map(detail => `<li>${detail}</li>`).join('')}
+          </ul>
+        </div>
+        ` : ''}
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${process.env.NEXT_PUBLIC_SITE_URL}/admin" style="display: inline-block; background: #7A9E99; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">View Admin Dashboard</a>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
+        <p style="font-size: 12px; color: #999;">Care Collective Admin System - Bulk Operation Report</p>
+      </div>
+    `
+
+    return this.sendEmail({ to: adminEmail, subject, html })
+  }
+
+  /**
    * Test email configuration
    */
   async testConfiguration(): Promise<{ success: boolean; message: string }> {

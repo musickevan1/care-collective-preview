@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
+import { moderationService } from '@/lib/messaging/moderation';
 import { z } from 'zod';
 
 // Rate limiting for message operations
@@ -129,6 +130,20 @@ export async function POST(
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check user restrictions first
+    const restrictionCheck = await moderationService.checkUserRestrictions(user.id, 'send_message');
+    if (!restrictionCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: restrictionCheck.reason || 'You are restricted from sending messages.',
+          restriction_level: restrictionCheck.restrictionLevel,
+          daily_count: restrictionCheck.dailyMessageCount,
+          daily_limit: restrictionCheck.dailyLimit
+        },
+        { status: 403 }
+      );
     }
 
     // Check rate limit for sending messages

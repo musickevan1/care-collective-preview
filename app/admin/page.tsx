@@ -221,6 +221,11 @@ export default async function AdminDashboard() {
                 📊 Performance Dashboard
               </Button>
             </Link>
+            <Link href="/admin/reports">
+              <Button variant="outline" className="w-full justify-start">
+                📈 Admin Reports & Analytics
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 

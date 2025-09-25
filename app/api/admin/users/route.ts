@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { emailService } from '@/lib/email-service'
 import { z } from 'zod'
 
 // Validation schema for user management actions
@@ -167,16 +168,55 @@ export async function POST(request: NextRequest) {
     }
 
     // Log admin action
-    console.log(`[Admin API] User ${action}:`, { 
-      userId, 
+    console.log(`[Admin API] User ${action}:`, {
+      userId,
       adminId: user.id,
-      reason 
+      reason
     })
 
-    // TODO: Send notification email to user about status change
+    // Send notification email to user about status change
+    try {
+      // Get user email and name for notification
+      const { data: targetUser } = await supabase.auth.admin.getUserById(userId)
+      const userEmail = targetUser?.user?.email
+      const userName = data.name || 'User'
 
-    return NextResponse.json({ 
-      success: true, 
+      if (userEmail && process.env.ENABLE_EMAIL_NOTIFICATIONS !== 'false') {
+        let emailStatus: 'approved' | 'rejected' | 'suspended'
+
+        switch (action) {
+          case 'activate':
+            emailStatus = 'approved'
+            break
+          case 'deactivate':
+            emailStatus = 'rejected'
+            break
+          default:
+            // For make_admin/remove_admin, send an account update notification
+            emailStatus = 'approved'
+            break
+        }
+
+        const emailResult = await emailService.sendUserStatusNotification(
+          userEmail,
+          userName,
+          emailStatus,
+          reason
+        )
+
+        if (!emailResult.success) {
+          console.error('[Admin API] Failed to send notification email:', emailResult.error)
+        } else {
+          console.log('[Admin API] Notification email sent successfully:', emailResult.messageId)
+        }
+      }
+    } catch (emailError) {
+      console.error('[Admin API] Error sending notification email:', emailError)
+      // Don't fail the request if email fails
+    }
+
+    return NextResponse.json({
+      success: true,
       user: data,
       action: action
     })

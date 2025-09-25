@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { logger } from '@/lib/logger'
+import { errorTracker } from '@/lib/error-tracking'
 
 // GET - Get admin dashboard statistics
 export async function GET() {
@@ -106,13 +108,45 @@ export async function GET() {
         .limit(10)
     ])
 
-    // Handle any errors
+    // Handle any errors with structured logging
     if (pendingApplicationsResult.error) {
-      console.error('[Admin Stats] Pending applications error:', pendingApplicationsResult.error)
+      logger.error('Admin stats pending applications query failed', pendingApplicationsResult.error, {
+        endpoint: '/api/admin/stats',
+        query: 'pending_applications',
+        userId: user.id,
+        category: 'database_error'
+      })
+
+      errorTracker.captureError(pendingApplicationsResult.error, {
+        component: 'AdminStatsAPI',
+        action: 'fetch_pending_applications',
+        severity: 'medium',
+        userId: user.id,
+        tags: {
+          endpoint: '/api/admin/stats',
+          query_type: 'pending_applications'
+        }
+      })
     }
 
     if (recentActivityResult.error) {
-      console.error('[Admin Stats] Recent activity error:', recentActivityResult.error)
+      logger.error('Admin stats recent activity query failed', recentActivityResult.error, {
+        endpoint: '/api/admin/stats',
+        query: 'recent_activity',
+        userId: user.id,
+        category: 'database_error'
+      })
+
+      errorTracker.captureError(recentActivityResult.error, {
+        component: 'AdminStatsAPI',
+        action: 'fetch_recent_activity',
+        severity: 'medium',
+        userId: user.id,
+        tags: {
+          endpoint: '/api/admin/stats',
+          query_type: 'recent_activity'
+        }
+      })
     }
 
     // Calculate platform health score (0-100)
@@ -163,7 +197,29 @@ export async function GET() {
 
     return NextResponse.json(stats)
   } catch (error) {
-    console.error('[Admin API] Stats error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+
+    logger.error('Admin stats API critical failure', error as Error, {
+      endpoint: '/api/admin/stats',
+      method: 'GET',
+      category: 'api_error'
+    })
+
+    errorTracker.captureError(error as Error, {
+      component: 'AdminStatsAPI',
+      action: 'get_stats',
+      severity: 'high',
+      tags: {
+        endpoint: '/api/admin/stats',
+        method: 'GET',
+        is_admin_endpoint: 'true'
+      },
+      extra: {
+        timestamp: new Date().toISOString(),
+        errorMessage
+      }
+    })
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

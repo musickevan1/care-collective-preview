@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { emailService } from '@/lib/email-service';
 import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
 
@@ -206,15 +207,14 @@ export async function POST(
 
 /**
  * Notify administrators of a new message report
- * In production, this would integrate with email/Slack notifications
+ * Integrates with email service for immediate admin alerts
  */
 async function notifyAdminsOfReport(
   report: any,
   message: any,
   reporter: any
 ): Promise<void> {
-  // In production, implement proper admin notification system
-  // For now, just log the incident
+  // Log the incident for audit trail
   console.warn('ADMIN ALERT: New message report', {
     reportId: report.id,
     messageId: message.id,
@@ -225,12 +225,40 @@ async function notifyAdminsOfReport(
     timestamp: new Date().toISOString()
   });
 
-  // TODO: Integrate with email service or admin dashboard notifications
-  // await emailService.sendAdminAlert({
-  //   type: 'message_report',
-  //   reportId: report.id,
-  //   ...reportDetails
-  // });
+  // Send email notification to administrators
+  if (process.env.ENABLE_EMAIL_NOTIFICATIONS !== 'false') {
+    try {
+      // Determine severity based on report reason
+      let severity: 'low' | 'medium' | 'high' = 'medium';
+
+      if (['harassment', 'scam', 'personal_info'].includes(report.reason)) {
+        severity = 'high';
+      } else if (['inappropriate', 'spam'].includes(report.reason)) {
+        severity = 'medium';
+      } else {
+        severity = 'low';
+      }
+
+      const emailResult = await emailService.sendModerationAlert(
+        report.id,
+        message.id,
+        report.reason,
+        reporter.email,
+        message.sender.name,
+        message.content.substring(0, 100), // Preview for context
+        severity
+      );
+
+      if (!emailResult.success) {
+        console.error('Failed to send admin notification email:', emailResult.error);
+      } else {
+        console.log('Admin notification email sent successfully:', emailResult.messageId);
+      }
+    } catch (error) {
+      console.error('Error sending admin notification email:', error);
+      // Don't fail the request if email fails
+    }
+  }
 }
 
 /**

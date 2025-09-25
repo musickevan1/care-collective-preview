@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { emailService } from '@/lib/email-service'
 import { z } from 'zod'
 
 // Validation schema for application actions
@@ -107,11 +108,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to update application' }, { status: 500 })
     }
 
-    // TODO: Send notification email to user about decision
+    // Send notification email to user about decision
+    try {
+      // Get user email for notification
+      const { data: targetUser } = await supabase.auth.admin.getUserById(applicationId)
+      const userEmail = targetUser?.user?.email
+      const userName = data.name || 'User'
+
+      if (userEmail && process.env.ENABLE_EMAIL_NOTIFICATIONS !== 'false') {
+        const emailResult = await emailService.sendApplicationDecision(
+          userEmail,
+          userName,
+          action,
+          reason
+        )
+
+        if (!emailResult.success) {
+          console.error('[Admin API] Failed to send application notification:', emailResult.error)
+        } else {
+          console.log('[Admin API] Application notification sent successfully:', emailResult.messageId)
+        }
+      }
+    } catch (emailError) {
+      console.error('[Admin API] Error sending application notification:', emailError)
+      // Don't fail the request if email fails
+    }
+
     console.log(`[Admin API] Application ${action}d:`, { applicationId, adminId: user.id })
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       application: data,
       action: action
     })

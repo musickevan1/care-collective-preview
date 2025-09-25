@@ -6,6 +6,8 @@ import { ConversationWithDetails, MessageWithSender } from '@/lib/messaging/type
 import { ConversationList } from './ConversationList'
 import { MessageBubble } from './MessageBubble'
 import { MessageInput } from './MessageInput'
+import { TypingIndicator } from './TypingIndicator'
+import { PresenceIndicator, usePresenceStatus } from './PresenceIndicator'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,6 +30,7 @@ import { createClient } from '@/lib/supabase/client'
 interface MessagingDashboardProps {
   initialConversations: ConversationWithDetails[]
   userId: string
+  userName?: string
   selectedConversationId?: string
   enableRealtime?: boolean
   className?: string
@@ -47,6 +50,7 @@ interface MessageThread {
 export function MessagingDashboard({
   initialConversations,
   userId,
+  userName,
   selectedConversationId,
   enableRealtime = true,
   className
@@ -63,6 +67,12 @@ export function MessagingDashboard({
   const [showConversationList, setShowConversationList] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
+
+  // Track current user's presence status
+  usePresenceStatus({
+    userId,
+    enabled: enableRealtime
+  })
 
   // Check if mobile layout needed
   useEffect(() => {
@@ -352,6 +362,12 @@ export function MessagingDashboard({
                       <h3 className="font-semibold flex items-center gap-2">
                         <Users className="w-4 h-4 text-muted-foreground" />
                         {otherParticipant?.name || 'Unknown User'}
+                        {otherParticipant && (
+                          <PresenceIndicator
+                            userId={otherParticipant.user_id}
+                            showStatus={false}
+                          />
+                        )}
                       </h3>
                       {currentConversation.help_request && (
                         <p className="text-sm text-muted-foreground mt-1">
@@ -397,19 +413,30 @@ export function MessagingDashboard({
                   </div>
                 </div>
               ) : (
-                <ScrollArea className="flex-1 p-4">
-                  <div className="space-y-4">
-                    {messageThread.messages.map((message) => (
-                      <MessageBubble
-                        key={message.id}
-                        message={message}
-                        isCurrentUser={message.sender_id === userId}
-                        showSenderName={true}
-                      />
-                    ))}
-                    <div ref={messagesEndRef} />
-                  </div>
-                </ScrollArea>
+                <>
+                  <ScrollArea className="flex-1 p-4">
+                    <div className="space-y-4">
+                      {messageThread.messages.map((message) => (
+                        <MessageBubble
+                          key={message.id}
+                          message={message}
+                          isCurrentUser={message.sender_id === userId}
+                          showSenderName={true}
+                        />
+                      ))}
+                      <div ref={messagesEndRef} />
+                    </div>
+                  </ScrollArea>
+
+                  {/* Typing Indicator */}
+                  {selectedConversation && (
+                    <TypingIndicator
+                      conversationId={selectedConversation}
+                      currentUserId={userId}
+                      className="border-t border-border"
+                    />
+                  )}
+                </>
               )}
 
               {/* Message Input */}
@@ -417,6 +444,8 @@ export function MessagingDashboard({
                 <MessageInput
                   onSendMessage={handleSendMessage}
                   conversationId={selectedConversation}
+                  userId={userId}
+                  userName={userName}
                   disabled={messageThread.error !== null}
                 />
               )}

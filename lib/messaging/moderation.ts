@@ -79,7 +79,23 @@ export class ContentModerationService {
   }
 
   /**
-   * Moderate message content using multiple screening methods
+   * Moderates message content using multi-layered screening algorithms
+   * Analyzes content for profanity, PII, spam, scams, and user reputation
+   *
+   * @param content - The message content to analyze
+   * @param userId - Optional user ID for reputation-based scoring
+   * @returns Promise resolving to comprehensive moderation result
+   *
+   * @example
+   * ```typescript
+   * const result = await moderationService.moderateContent(
+   *   "Check out this suspicious link",
+   *   "user123"
+   * );
+   * if (result.suggested_action === 'block') {
+   *   // Handle blocked content
+   * }
+   * ```
    */
   async moderateContent(content: string, userId?: string): Promise<ContentModerationResult> {
     const checks = [
@@ -127,7 +143,13 @@ export class ContentModerationService {
   }
 
   /**
-   * Check for profanity and inappropriate language
+   * Analyzes content for profanity and inappropriate language patterns
+   * Uses regex matching against known offensive terms and hate speech
+   *
+   * @param content - The text content to analyze
+   * @returns Moderation check result with confidence scoring
+   *
+   * @private
    */
   private checkProfanity(content: string): { flagged: boolean; confidence: number; category: string; explanation: string } {
     const matches = PROFANITY_PATTERNS.map(pattern => content.match(pattern)).filter(Boolean).flat();
@@ -141,7 +163,13 @@ export class ContentModerationService {
   }
 
   /**
-   * Check for personal information sharing
+   * Detects sharing of personal information (PII) in message content
+   * Identifies phone numbers, emails, SSN, credit cards, and addresses
+   *
+   * @param content - The text content to analyze for PII
+   * @returns Moderation check result with detected information types
+   *
+   * @private
    */
   private checkPersonalInformation(content: string): { flagged: boolean; confidence: number; category: string; explanation: string } {
     const matches = PERSONAL_INFO_PATTERNS.map(pattern => content.match(pattern)).filter(Boolean).flat();
@@ -180,6 +208,83 @@ export class ContentModerationService {
       category: 'potential_scam',
       explanation: matches.length > 0 ? 'Contains potential scam indicators' : 'No scam patterns detected'
     };
+  }
+
+  /**
+   * Check if user is restricted from performing an action
+   */
+  async checkUserRestrictions(userId: string, action: 'send_message' | 'start_conversation'): Promise<{
+    allowed: boolean;
+    reason?: string;
+    restrictionLevel: string;
+    dailyMessageCount?: number;
+    dailyLimit?: number;
+  }> {
+    // Get current user restrictions
+    const { data: restrictions, error } = await this.supabase
+      .rpc('get_user_restrictions', { target_user_id: userId });
+
+    if (error) {
+      console.error('Error checking user restrictions:', error);
+      // Fail open - allow action if we can't check restrictions
+      return { allowed: true, restrictionLevel: 'unknown' };
+    }
+
+    const userRestrictions = restrictions?.[0];
+    if (!userRestrictions) {
+      return { allowed: true, restrictionLevel: 'none' };
+    }
+
+    const {
+      restriction_level,
+      can_send_messages,
+      can_start_conversations,
+      message_limit_per_day
+    } = userRestrictions;
+
+    // Check action-specific restrictions
+    if (action === 'send_message' && !can_send_messages) {
+      return {
+        allowed: false,
+        reason: `You are currently ${restriction_level} and cannot send messages.`,
+        restrictionLevel: restriction_level
+      };
+    }
+
+    if (action === 'start_conversation' && !can_start_conversations) {
+      return {
+        allowed: false,
+        reason: `You are currently ${restriction_level} and cannot start new conversations.`,
+        restrictionLevel: restriction_level
+      };
+    }
+
+    // Check daily message limit for sending messages
+    if (action === 'send_message' && message_limit_per_day > 0) {
+      const { data: dailyCount } = await this.supabase
+        .rpc('get_daily_message_count', { target_user_id: userId });
+
+      const currentCount = dailyCount || 0;
+
+      if (currentCount >= message_limit_per_day) {
+        return {
+          allowed: false,
+          reason: `Daily message limit reached (${message_limit_per_day} messages per day).`,
+          restrictionLevel: restriction_level,
+          dailyMessageCount: currentCount,
+          dailyLimit: message_limit_per_day
+        };
+      }
+
+      return {
+        allowed: true,
+        restrictionLevel: restriction_level,
+        dailyMessageCount: currentCount,
+        dailyLimit: message_limit_per_day
+      };
+    }
+
+    return { allowed: true, restrictionLevel: restriction_level };
   }
 
   /**
@@ -252,29 +357,87 @@ export class ContentModerationService {
    * Apply moderation action to a user
    */
   async applyModerationAction(
-    userId: string, 
+    userId: string,
     action: 'warn' | 'limit' | 'suspend' | 'ban',
     reason: string,
-    duration?: string
+    duration?: string,
+    appliedBy?: string
   ): Promise<void> {
-    // Log the moderation action
+    let expiresAt: string | null = null;
+
+    // Calculate expiration time if duration is provided
+    if (duration && action !== 'ban') {
+      const now = new Date();
+      if (duration === '1 hour') {
+        expiresAt = new Date(now.getTime() + 60 * 60 * 1000).toISOString();
+      } else if (duration === '24 hours') {
+        expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+      } else if (duration === '7 days') {
+        expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (duration === '30 days') {
+        expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      }
+    }
+
+    // Map action to restriction level
+    let restrictionLevel: string;
+    let messageLimit = 100;
+
+    switch (action) {
+      case 'warn':
+        restrictionLevel = 'none'; // Warning doesn't change restrictions
+        break;
+      case 'limit':
+        restrictionLevel = 'limited';
+        messageLimit = 10;
+        break;
+      case 'suspend':
+        restrictionLevel = 'suspended';
+        messageLimit = 0;
+        break;
+      case 'ban':
+        restrictionLevel = 'banned';
+        messageLimit = 0;
+        expiresAt = null; // Permanent
+        break;
+      default:
+        throw new Error(`Invalid moderation action: ${action}`);
+    }
+
+    // Apply user restriction using database function
+    const { data: restrictionResult, error: restrictionError } = await this.supabase
+      .rpc('apply_user_restriction', {
+        target_user_id: userId,
+        new_restriction_level: restrictionLevel,
+        new_reason: reason,
+        applied_by_user_id: appliedBy || null,
+        expires_at_param: expiresAt,
+        message_limit: messageLimit
+      });
+
+    if (restrictionError) {
+      throw new Error(`Failed to apply user restriction: ${restrictionError.message}`);
+    }
+
+    // Log the moderation action with restriction reference
     await this.supabase
       .from('message_audit_log')
       .insert({
         user_id: userId,
         action_type: 'moderated',
+        restriction_id: restrictionResult || null,
         metadata: {
           moderation_action: action,
+          restriction_level: restrictionLevel,
           reason,
           duration,
-          applied_by: 'system', // In production, would be admin user ID
+          expires_at: expiresAt,
+          applied_by: appliedBy || 'system',
           applied_at: new Date().toISOString()
         }
       });
 
-    // TODO: Implement user restriction system
-    // This would involve creating a user_restrictions table and enforcing restrictions in API endpoints
-    console.log(`Moderation action applied: ${action} for user ${userId} - ${reason}`);
+    console.log(`Moderation action applied: ${action} (${restrictionLevel}) for user ${userId} - ${reason}${expiresAt ? ` (expires: ${expiresAt})` : ''}`);
   }
 
   /**
