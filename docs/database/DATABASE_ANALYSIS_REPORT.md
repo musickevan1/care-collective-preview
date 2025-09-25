@@ -23,7 +23,7 @@ The Care Collective database has undergone significant evolution through 12 migr
 ### Environment Configuration
 ```env
 # Supabase Connection
-NEXT_PUBLIC_SUPABASE_URL=https://kecureoyekeqhrxkmjuh.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=[Present - 512 chars]
 SUPABASE_SERVICE_ROLE=[Present - 512 chars]
 

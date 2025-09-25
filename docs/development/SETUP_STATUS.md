@@ -30,7 +30,7 @@ The database tables need to be created in Supabase.
 
 **To fix this:**
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
-2. Select your project: `fagwisxdmfyyagzihnvh`
+2. Select your project: `your_project_id_here`
 3. Navigate to "SQL Editor"
 4. Copy the contents of `scripts/init-database.sql`
 5. Paste and run the SQL script
@@ -159,7 +159,7 @@ Track these as you implement features:
 ## 📞 Support Resources
 
 - **Supabase Dashboard**: https://supabase.com/dashboard
-- **Project URL**: https://fagwisxdmfyyagzihnvh.supabase.co
+- **Project URL**: https://your_project_id_here.supabase.co
 - **Local Dev**: http://localhost:3000
 - **Documentation**: See `DEVELOPMENT_PLAN.md` for detailed implementation guides
 

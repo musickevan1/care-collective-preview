@@ -1,11 +1,13 @@
 # Deployment Checklist for Care Collective
 
+> **⚠️ SECURITY WARNING**: This checklist contains placeholder credentials. Replace ALL placeholder values with your actual Supabase project credentials before deployment. Never commit real credentials to version control.
+
 ## 📋 Pre-Deployment Steps
 
 ### 1. Database Migration (REQUIRED)
 **⚠️ Must be done BEFORE deploying to avoid errors**
 
-Go to [Supabase SQL Editor](https://supabase.com/dashboard/project/fagwisxdmfyyagzihnvh/sql/new) and run:
+Go to your Supabase SQL Editor (https://supabase.com/dashboard/project/YOUR_PROJECT_ID/sql/new) and run:
 
 ```sql
 -- Migration: Add enhanced request status tracking
@@ -39,12 +41,12 @@ Add these in Vercel project settings:
 
 ```env
 # Required
-NEXT_PUBLIC_SUPABASE_URL=https://fagwisxdmfyyagzihnvh.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ3dpc3hkbWZ5eWFnemlobnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1OTQyMDUsImV4cCI6MjA3MDE3MDIwNX0.AQkwUqSHySXm2GK6gEEiwzAe34f2ff1Gy8aO_f8iDyg
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 NEXT_PUBLIC_SITE_URL=[Will be updated after deployment]
 
 # Optional (for admin features)
-SUPABASE_SERVICE_ROLE=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ3dpc3hkbWZ5eWFnemlobnZoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDU5NDIwNSwiZXhwIjoyMDcwMTcwMjA1fQ.38OziF4QPRStGplNG-S3HytUIq7cW9Bozz32mejfxzM
+SUPABASE_SERVICE_ROLE=your_supabase_service_role_key_here
 NEXT_PUBLIC_PREVIEW_ADMIN=1
 NEXT_PUBLIC_ADMIN_ALLOWLIST=client@example.com,admin@example.com
 
@@ -70,7 +72,7 @@ NEXT_PUBLIC_FEATURE_PWA=false
 - [ ] Trigger redeploy from Vercel dashboard
 
 ### 2. Configure Supabase
-Go to [Supabase Auth Settings](https://supabase.com/dashboard/project/fagwisxdmfyyagzihnvh/auth/url-configuration):
+Go to your Supabase Auth Settings (https://supabase.com/dashboard/project/YOUR_PROJECT_ID/auth/url-configuration):
 - [ ] Set Site URL: `https://[your-app].vercel.app`
 - [ ] Add to Redirect URLs: `https://[your-app].vercel.app/auth/callback`
 

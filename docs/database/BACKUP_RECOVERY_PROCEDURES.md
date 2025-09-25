@@ -47,7 +47,7 @@ This document outlines comprehensive backup and disaster recovery procedures for
 set -e
 
 BACKUP_DIR="/backup/care-collective/$(date +%Y%m%d)"
-PROJECT_ID="kecureoyekeqhrxkmjuh"
+PROJECT_ID="your_project_id_here"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
 mkdir -p "$BACKUP_DIR"

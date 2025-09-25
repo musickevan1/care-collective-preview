@@ -55,7 +55,7 @@ config.json
 - Use placeholder values in all documentation
 - Examples:
   - ✅ `SUPABASE_URL=your_supabase_project_url`
-  - ❌ `SUPABASE_URL=https://fagwisxdmfyyagzihnvh.supabase.co`
+  - ❌ `SUPABASE_URL=https://your-project-id.supabase.co` (Never use real URLs in docs)
 
 ## 🛡️ Security Tools
 
@@ -70,7 +70,7 @@ A pre-commit hook is installed that scans for:
 To test the hook:
 ```bash
 # This should be blocked
-echo "SUPABASE_SERVICE_ROLE=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." > test.txt
+echo "SUPABASE_SERVICE_ROLE=your_supabase_service_role_key_here" > test.txt
 git add test.txt
 git commit -m "test"  # Should fail
 ```

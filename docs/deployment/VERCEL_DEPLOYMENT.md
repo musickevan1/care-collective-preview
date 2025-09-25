@@ -26,17 +26,19 @@ Add the following environment variables in Vercel Project Settings:
 
 #### Required Variables
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://fagwisxdmfyyagzihnvh.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ3dpc3hkbWZ5eWFnemlobnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1OTQyMDUsImV4cCI6MjA3MDE3MDIwNX0.AQkwUqSHySXm2GK6gEEiwzAe34f2ff1Gy8aO_f8iDyg
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 NEXT_PUBLIC_SITE_URL=https://your-vercel-app.vercel.app
 ```
 
 #### Optional Variables (for admin features)
 ```
-SUPABASE_SERVICE_ROLE=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ3dpc3hkbWZ5eWFnemlobnZoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDU5NDIwNSwiZXhwIjoyMDcwMTcwMjA1fQ.38OziF4QPRStGplNG-S3HytUIq7cW9Bozz32mejfxzM
+SUPABASE_SERVICE_ROLE=your_supabase_service_role_key_here
 NEXT_PUBLIC_PREVIEW_ADMIN=1
 NEXT_PUBLIC_ADMIN_ALLOWLIST=client@example.com,admin@example.com
 ```
+
+**⚠️ Security Note:** Replace the placeholder values above with your actual Supabase project credentials. Never commit real credentials to version control.
 
 ### 3. Deploy
 

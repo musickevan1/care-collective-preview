@@ -1,8 +1,10 @@
 # 🚀 Care Collective Production Deployment Instructions
 
-**Priority**: CRITICAL - Resolves authentication login issues  
-**Estimated Time**: 10-15 minutes  
-**Downtime**: None (users can continue using the site during deployment)  
+**Priority**: CRITICAL - Resolves authentication login issues
+**Estimated Time**: 10-15 minutes
+**Downtime**: None (users can continue using the site during deployment)
+
+> **⚠️ SECURITY WARNING**: This document references placeholder project IDs. Replace `your_project_id_here` with your actual Supabase project ID before following these instructions.  
 
 ## 📋 Pre-Deployment Checklist
 
@@ -16,7 +18,7 @@
 ### Step 1: Access Supabase Dashboard
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
 2. Log in to your account
-3. Select the **Care Collective Preview** project (`kecureoyekeqhrxkmjuh`)
+3. Select your **Care Collective Preview** project (`your_project_id_here`)
 4. Navigate to **SQL Editor** in the left sidebar
 
 ### Step 2: Apply Authentication Fixes

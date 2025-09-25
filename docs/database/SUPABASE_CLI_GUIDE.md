@@ -26,7 +26,7 @@ This created the `supabase/` directory with:
 
 ### 3. Link to Remote Project
 ```bash
-npx supabase link --project-ref fagwisxdmfyyagzihnvh
+npx supabase link --project-ref your_project_id_here
 ```
 You'll need your database password from the Supabase dashboard:
 1. Go to Settings → Database
@@ -145,7 +145,7 @@ npx supabase db reset
 npx supabase gen types typescript --local > lib/database.types.ts
 
 # Or from remote
-npx supabase gen types typescript --project-id fagwisxdmfyyagzihnvh > lib/database.types.ts
+npx supabase gen types typescript --project-id your_project_id_here > lib/database.types.ts
 ```
 
 ### Seed Data
@@ -254,7 +254,7 @@ CREATE TABLE user_skills (
 npx supabase status
 
 # Re-link project
-npx supabase link --project-ref fagwisxdmfyyagzihnvh
+npx supabase link --project-ref your_project_id_here
 ```
 
 ### Migration Conflicts
@@ -269,7 +269,7 @@ npx supabase migration repair --status applied
 ### Type Generation Issues
 ```bash
 # Regenerate types after schema changes
-npx supabase gen types typescript --project-id fagwisxdmfyyagzihnvh > lib/database.types.ts
+npx supabase gen types typescript --project-id your_project_id_here > lib/database.types.ts
 ```
 
 ## NPM Scripts
@@ -284,7 +284,7 @@ Add to `package.json`:
     "db:push": "supabase db push",
     "db:pull": "supabase db pull",
     "db:migration": "supabase migration new",
-    "db:types": "supabase gen types typescript --project-id fagwisxdmfyyagzihnvh > lib/database.types.ts",
+    "db:types": "supabase gen types typescript --project-id your_project_id_here > lib/database.types.ts",
     "db:seed": "supabase db seed"
   }
 }
@@ -309,13 +309,13 @@ npx supabase db push
 ### Production
 ```bash
 # Use production project
-npx supabase link --project-ref fagwisxdmfyyagzihnvh
+npx supabase link --project-ref your_project_id_here
 npx supabase db push --confirm
 ```
 
 ## Next Steps
 
-1. **Link your project**: Run `npx supabase link --project-ref fagwisxdmfyyagzihnvh` with your database password
+1. **Link your project**: Run `npx supabase link --project-ref your_project_id_here` with your database password
 2. **Generate types**: Run `npm run db:types` to get TypeScript types
 3. **Create migrations**: Use `npx supabase migration new` for all future schema changes
 4. **Test locally**: Use `npm run db:start` for local development

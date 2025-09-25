@@ -1,9 +1,11 @@
 # Care Collective - Testing Issues & Recommended Fixes
 
-**Generated**: January 2025  
-**Testing Framework Version**: 1.0  
-**Platform**: Care Collective Mutual Aid Platform  
+**Generated**: January 2025
+**Testing Framework Version**: 1.0
+**Platform**: Care Collective Mutual Aid Platform
 **Priority**: 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
+
+> **⚠️ SECURITY WARNING**: This document contains placeholder values for testing credentials. Never use real production API keys in test configurations. Always use dedicated test environment credentials.
 
 ---
 
@@ -84,7 +86,7 @@ process.env.NEXT_PUBLIC_SITE_URL = 'http://localhost:3000';
 // .env.test
 NODE_ENV=test
 NEXT_PUBLIC_SUPABASE_URL=https://test.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 

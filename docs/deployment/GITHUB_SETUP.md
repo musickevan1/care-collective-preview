@@ -31,7 +31,7 @@ git push -u origin main
 ## 📋 After Pushing to GitHub
 
 ### 1. Apply Database Migration (CRITICAL!)
-Go to [Supabase SQL Editor](https://supabase.com/dashboard/project/fagwisxdmfyyagzihnvh/sql/new) and run:
+Go to your [Supabase SQL Editor](https://supabase.com/dashboard) and run:
 ```sql
 -- Copy the entire content from:
 -- supabase/migrations/20250811082915_add_request_status_tracking.sql
@@ -51,14 +51,16 @@ Go to [Supabase SQL Editor](https://supabase.com/dashboard/project/fagwisxdmfyya
 
 ```env
 # Required
-NEXT_PUBLIC_SUPABASE_URL=https://fagwisxdmfyyagzihnvh.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ3dpc3hkbWZ5eWFnemlobnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1OTQyMDUsImV4cCI6MjA3MDE3MDIwNX0.AQkwUqSHySXm2GK6gEEiwzAe34f2ff1Gy8aO_f8iDyg
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
 NEXT_PUBLIC_SITE_URL=[Your Vercel URL - update after first deploy]
 
 # Admin Features
-SUPABASE_SERVICE_ROLE=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhZ3dpc3hkbWZ5eWFnemlobnZoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDU5NDIwNSwiZXhwIjoyMDcwMTcwMjA1fQ.38OziF4QPRStGplNG-S3HytUIq7cW9Bozz32mejfxzM
+SUPABASE_SERVICE_ROLE=your_supabase_service_role_key_here
 NEXT_PUBLIC_PREVIEW_ADMIN=1
 NEXT_PUBLIC_ADMIN_ALLOWLIST=client@example.com,admin@example.com
+
+# ⚠️ SECURITY: Replace placeholders with your actual Supabase credentials
 
 # Feature Flags (all false initially)
 NEXT_PUBLIC_FEATURE_REALTIME=false
@@ -79,7 +81,7 @@ After first deployment:
 3. Redeploy
 
 #### Configure Supabase
-Go to [Supabase Auth Settings](https://supabase.com/dashboard/project/fagwisxdmfyyagzihnvh/auth/url-configuration):
+Go to [Supabase Auth Settings](https://supabase.com/dashboard/project/your_project_id_here/auth/url-configuration):
 - **Site URL:** `https://[your-app].vercel.app`
 - **Redirect URLs:** Add `https://[your-app].vercel.app/auth/callback`
 

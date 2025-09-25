@@ -7,12 +7,31 @@
 
 const { createClient } = require('@supabase/supabase-js')
 
-// Remote Supabase credentials from production environment
-const SUPABASE_URL = 'https://kecureoyekeqhrxkmjuh.supabase.co'
-const SUPABASE_SERVICE_ROLE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlY3VyZW95ZWtlcWhyeGttanVoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDkzNzA5OCwiZXhwIjoyMDcwNTEzMDk4fQ.tIQDk7-GJsVAsX7qfYMivcSjYOV-d6Yc0WPrNt9fMi0'
+// Load environment variables
+require('dotenv').config()
 
-const adminEmail = 'evanmusick.dev@gmail.com'
-const adminPassword = 'AdminPass123!' // Strong temporary password
+// Supabase credentials from environment variables
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE
+
+// Admin credentials from environment variables or command line arguments
+const adminEmail = process.env.ADMIN_EMAIL || process.argv[2]
+const adminPassword = process.env.ADMIN_PASSWORD || process.argv[3]
+
+// Validation
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
+  console.error('❌ Missing required environment variables:')
+  console.error('   - NEXT_PUBLIC_SUPABASE_URL')
+  console.error('   - SUPABASE_SERVICE_ROLE')
+  process.exit(1)
+}
+
+if (!adminEmail || !adminPassword) {
+  console.error('❌ Admin credentials required. Provide via:')
+  console.error('   Environment variables: ADMIN_EMAIL, ADMIN_PASSWORD')
+  console.error('   Command line: node scripts/create-admin-user.js <email> <password>')
+  process.exit(1)
+}
 
 async function createAdminUser() {
   console.log('🚀 Creating admin user for Care Collective...')
@@ -112,7 +131,7 @@ async function createAdminUser() {
     console.log(`   Email: ${adminEmail}`)
     console.log(`   Password: ${adminPassword}`)
     console.log('\n🔗 Next Steps:')
-    console.log('   1. Visit: https://care-collective-preview-a09rfw33y-musickevan1s-projects.vercel.app/login')
+    console.log(`   1. Visit: ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/login`)
     console.log('   2. Login with the credentials above')
     console.log('   3. Access admin panel: /admin')
     console.log('   4. Test Phase 2.3 features: /admin/reports')

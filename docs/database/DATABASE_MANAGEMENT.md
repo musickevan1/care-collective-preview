@@ -36,7 +36,7 @@ The preview uses the following tables from the v9 schema:
 ### Option 1: Supabase Dashboard (Recommended)
 
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
-2. Select your project: `fagwisxdmfyyagzihnvh`
+2. Select your project: `your_project_id_here`
 3. Navigate to "SQL Editor"
 4. Run the following SQL to clear preview data:
 

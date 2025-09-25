@@ -21,9 +21,16 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 async function createMaureenAdmin() {
   console.log('Creating Maureen\'s admin account...');
-  
-  const email = 'maureen.templeman@demo.carecollective.org';
-  const password = 'CarePreview2025!';
+
+  const email = process.env.ADMIN_EMAIL || 'maureen.templeman@demo.carecollective.org';
+  const password = process.env.ADMIN_PASSWORD || process.argv[2];
+
+  if (!password) {
+    console.error('❌ Password required. Provide via:');
+    console.error('   Environment variable: ADMIN_PASSWORD');
+    console.error('   Command line: node scripts/development/create-maureen-admin.js <password>');
+    process.exit(1);
+  }
   
   try {
     // 1. Create auth user

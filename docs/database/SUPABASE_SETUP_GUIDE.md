@@ -1,8 +1,10 @@
 # Care Collective Supabase Setup Guide
 
-**Version**: 2.0  
-**Updated**: January 2025  
-**Target Audience**: Developers, DevOps, Project Maintainers  
+**Version**: 2.0
+**Updated**: January 2025
+**Target Audience**: Developers, DevOps, Project Maintainers
+
+> **⚠️ SECURITY WARNING**: This document contains placeholder values for sensitive credentials. Never commit real API keys, JWT tokens, or production URLs to version control. Always use environment variables for actual deployment credentials.  
 
 ## 🎯 Overview
 
@@ -64,7 +66,7 @@ cd /path/to/care-collective-preview
 supabase init
 
 # Link to existing project (Care Collective specific)
-supabase link --project-ref kecureoyekeqhrxkmjuh
+supabase link --project-ref your_project_id_here
 ```
 
 #### 2. Environment Variables Configuration
@@ -73,9 +75,9 @@ supabase link --project-ref kecureoyekeqhrxkmjuh
 ```env
 # === SUPABASE CONFIGURATION ===
 # Project: Care Collective Preview
-NEXT_PUBLIC_SUPABASE_URL=https://kecureoyekeqhrxkmjuh.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE=your_supabase_service_role_key_here
 
 # === APPLICATION CONFIGURATION ===
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -109,9 +111,9 @@ SUPABASE_DEBUG=true
 **File**: `.env.production` (Production)
 ```env
 # === SUPABASE CONFIGURATION ===
-NEXT_PUBLIC_SUPABASE_URL=https://kecureoyekeqhrxkmjuh.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+SUPABASE_SERVICE_ROLE=your_supabase_service_role_key_here
 
 # === APPLICATION CONFIGURATION ===
 NEXT_PUBLIC_SITE_URL=https://care-collective-preview.vercel.app
@@ -147,7 +149,7 @@ NEXT_PUBLIC_DEBUG_MODE=false
 ```toml
 # Care Collective Supabase Configuration
 
-project_id = "kecureoyekeqhrxkmjuh"
+project_id = "your_project_id_here"
 
 [api]
 enabled = true
@@ -274,7 +276,7 @@ supabase migration new your_migration_name
 supabase db reset  # Applies all migrations from scratch
 
 # Generate TypeScript types (run after schema changes)
-supabase gen types typescript --project-id kecureoyekeqhrxkmjuh > lib/database.types.ts
+supabase gen types typescript --project-id your_project_id_here > lib/database.types.ts
 ```
 
 #### Migration Management
@@ -295,16 +297,16 @@ supabase migration up --to 20240101000000
 #### Production Operations
 ```bash
 # Deploy migrations to production (⚠️ Use with caution)
-supabase db push --project-ref kecureoyekeqhrxkmjuh
+supabase db push --project-ref your_project_id_here
 
 # Create production backup before major changes
-pg_dump "postgresql://postgres:[PASSWORD]@db.kecureoyekeqhrxkmjuh.supabase.co:5432/postgres" > backup_$(date +%Y%m%d).sql
+pg_dump "postgresql://postgres:[PASSWORD]@db.your-project-id.supabase.co:5432/postgres" > backup_$(date +%Y%m%d).sql
 
 # Monitor production logs
-supabase logs --project-ref kecureoyekeqhrxkmjuh --level error
+supabase logs --project-ref your_project_id_here --level error
 
 # Check production health
-supabase inspect db --project-ref kecureoyekeqhrxkmjuh
+supabase inspect db --project-ref your_project_id_here
 ```
 
 ---
@@ -340,8 +342,8 @@ DB URL: postgresql://postgres:postgres@localhost:54322/postgres
 Studio URL: http://localhost:54323
 Inbucket URL: http://localhost:54324
 JWT secret: super-secret-jwt-token-with-at-least-32-characters-long
-anon key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-service_role key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+anon key: your_supabase_anon_key_here
+service_role key: your_supabase_service_role_key_here
 ```
 
 ### 2. Making Schema Changes
@@ -434,7 +436,7 @@ testRLSPolicies().catch(console.error)
 {
   "scripts": {
     "db:test-rls": "node scripts/test-rls-policies.js",
-    "db:security-audit": "supabase inspect db --schema=public --project-ref=kecureoyekeqhrxkmjuh"
+    "db:security-audit": "supabase inspect db --schema=public --project-ref=your_project_id_here"
   }
 }
 ```
@@ -485,7 +487,7 @@ AND schemaname = 'public';
 supabase logs --level=info | grep -i "slow"
 
 # Production monitoring
-supabase logs --project-ref kecureoyekeqhrxkmjuh --level=info | grep -i "slow"
+supabase logs --project-ref your_project_id_here --level=info | grep -i "slow"
 ```
 
 #### Index Optimization Script
@@ -538,7 +540,7 @@ echo "🔧 Starting database maintenance..."
 
 # 1. Update table statistics
 echo "📊 Updating table statistics..."
-supabase db remote commit --schema=public --project-ref=kecureoyekeqhrxkmjuh --message="Weekly maintenance: Update statistics"
+supabase db remote commit --schema=public --project-ref=your_project_id_here --message="Weekly maintenance: Update statistics"
 
 # 2. Check for unused indexes
 echo "🔍 Checking for unused indexes..."
@@ -554,7 +556,7 @@ AND schemaname = 'public';"
 
 # 3. Generate fresh TypeScript types
 echo "🔧 Updating TypeScript types..."
-supabase gen types typescript --project-id kecureoyekeqhrxkmjuh > lib/database.types.ts
+supabase gen types typescript --project-id your_project_id_here > lib/database.types.ts
 
 # 4. Run RLS policy tests
 echo "🔒 Testing RLS policies..."
@@ -572,7 +574,7 @@ echo "✅ Database maintenance completed!"
 #### Migration Testing Workflow
 ```bash
 # 1. Test migration on production data copy
-pg_dump "postgresql://postgres:[PASSWORD]@db.kecureoyekeqhrxkmjuh.supabase.co:5432/postgres" > test_data.sql
+pg_dump "postgresql://postgres:[PASSWORD]@db.your-project-id.supabase.co:5432/postgres" > test_data.sql
 supabase db reset
 psql "postgresql://postgres:postgres@localhost:54322/postgres" < test_data.sql
 
@@ -680,7 +682,7 @@ supabase db reset --linked
 #### Issue 3: TypeScript type errors after schema changes
 ```bash
 # Regenerate types
-supabase gen types typescript --project-id kecureoyekeqhrxkmjuh > lib/database.types.ts
+supabase gen types typescript --project-id your_project_id_here > lib/database.types.ts
 
 # If still errors, check for:
 # - Missing tables in generated types

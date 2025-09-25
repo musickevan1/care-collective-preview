@@ -1,8 +1,10 @@
 # CARE Collective Full Repo & Deployments Audit Report
 
-*Generated: January 2025*  
-*Repository: https://github.com/musickevan1/care-collective-preview*  
+*Generated: January 2025*
+*Repository: https://github.com/musickevan1/care-collective-preview*
 *Live Preview: https://care-collective-preview.vercel.app/*
+
+> **⚠️ SECURITY WARNING**: This audit report contains placeholder values for sensitive project identifiers. All exposed credentials and project IDs have been sanitized for security.
 
 ---
 
@@ -52,7 +54,7 @@ Ready for client preview but requires 15-20 hours of fixes for production.
 ### Supabase Configuration
 | Component | Status | Details |
 |-----------|--------|---------|
-| **Project URL** | ✅ Connected | kecureoyekeqhrxkmjuh.supabase.co |
+| **Project URL** | ✅ Connected | your-project-id.supabase.co |
 | **Database** | ✅ Active | PostgreSQL with 5 migrations applied |
 | **Auth Providers** | ✅ Email/Password | Basic auth functioning |
 | **RLS Policies** | ✅ Enabled | Policies on profiles, help_requests, messages |
@@ -301,7 +303,7 @@ care-collective-preview-v1/
 ## Appendix B: Environment Variables Required
 ```env
 # Core Configuration (REQUIRED)
-NEXT_PUBLIC_SUPABASE_URL=https://kecureoyekeqhrxkmjuh.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=[REDACTED]
 SUPABASE_SERVICE_ROLE=[REDACTED]
 NEXT_PUBLIC_SITE_URL=https://care-collective-preview.vercel.app
