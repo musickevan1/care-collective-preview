@@ -12,14 +12,6 @@ export default function HomePage(): ReactElement {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Skip Links for Accessibility */}
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
-      <a href="#mobile-navigation-menu" className="skip-link">
-        Skip to navigation
-      </a>
-      
       {/* Header/Navigation */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-navy text-white shadow-lg">
         <nav className="container mx-auto max-w-7xl">
