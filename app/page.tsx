@@ -237,35 +237,62 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-16 md:py-20 bg-background">
+        <section id="about" className="py-16 md:py-20 bg-gradient-to-br from-dusty-rose-light to-pink-50">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
-                About
+                About CARE Collective
               </h2>
-              <div className="max-w-4xl mx-auto text-left">
-                <div className="mb-8">
-                  <p className="text-lg leading-relaxed text-foreground mb-6">
-                    The CARE Collective (Caregiver Assistance and Resource Exchange) is a community for 
-                    caregivers in Southwest Missouri. The Collective is powered by caregivers themselves - 
-                    neighbors supporting neighbors - along with students and volunteers who help maintain 
-                    the site and coordinate resources.
-                  </p>
-                  <p className="text-lg leading-relaxed text-foreground">
-                    Together, we are building a space where caregivers can find connection, strength, 
-                    and the support they deserve.
-                  </p>
+              <p className="text-xl font-medium text-muted-foreground mb-12 max-w-3xl mx-auto">
+                Building stronger communities through caregiver support and mutual aid
+              </p>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                {/* Main Content */}
+                <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-center mb-6">
+                    <div className="text-5xl mb-4">🤲</div>
+                    <h3 className="text-2xl font-bold text-foreground mb-4">Our Story</h3>
+                  </div>
+                  <div className="text-left space-y-4">
+                    <p className="text-lg leading-relaxed text-foreground">
+                      The CARE Collective (Caregiver Assistance and Resource Exchange) is a community for
+                      caregivers in Southwest Missouri. The Collective is powered by caregivers themselves -
+                      neighbors supporting neighbors - along with students and volunteers who help maintain
+                      the site and coordinate resources.
+                    </p>
+                    <p className="text-lg leading-relaxed text-foreground font-medium text-sage-dark">
+                      Together, we are building a space where caregivers can find connection, strength,
+                      and the support they deserve.
+                    </p>
+                  </div>
                 </div>
-                
-                <div className="bg-white p-6 rounded-lg border-2 border-dusty-rose-light border-l-6 border-l-dusty-rose">
-                  <h3 className="text-xl font-bold text-dusty-rose-dark mb-4">Academic Partnership</h3>
-                  <p className="text-muted-foreground italic">
-                    This project was created by Dr. Maureen Templeman, Department of Sociology, 
-                    Anthropology, and Gerontology at Missouri State University, with support from 
-                    community partners and funding from the Southern Gerontological Society 
-                    Innovative Projects Grant.
-                  </p>
+
+                {/* Academic Partnership */}
+                <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
+                  <div className="text-center mb-6">
+                    <div className="text-5xl mb-4">🎓</div>
+                    <h3 className="text-2xl font-bold text-dusty-rose-dark mb-4">Academic Partnership</h3>
+                  </div>
+                  <div className="bg-dusty-rose-light/30 p-6 rounded-lg">
+                    <p className="text-foreground leading-relaxed">
+                      This project was created by <span className="font-semibold">Dr. Maureen Templeman</span>,
+                      Department of Sociology, Anthropology, and Gerontology at Missouri State University,
+                      with support from community partners and funding from the
+                      <span className="font-semibold"> Southern Gerontological Society Innovative Projects Grant</span>.
+                    </p>
+                  </div>
                 </div>
+              </div>
+
+              {/* Call to Action */}
+              <div className="mt-12">
+                <Link href="/signup" className="inline-flex items-center justify-center bg-dusty-rose text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-dusty-rose-dark transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-dusty-rose/20 min-h-[48px] group">
+                  <span>Join Our Community</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
               </div>
             </div>
           </div>
