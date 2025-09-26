@@ -8,6 +8,14 @@ import { FilterPanel, FilterOptions } from '@/components/FilterPanel'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import Link from 'next/link'
 
+type User = {
+  id: string
+  name: string
+  email: string
+  verification_status: string
+  is_admin: boolean
+}
+
 type HelpRequest = {
   id: string
   title: string
@@ -76,22 +84,29 @@ interface PageProps {
 async function getUser() {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
-  
+
   if (error || !user) {
     return null;
   }
 
-  // Get user profile
+  // Get user profile with verification status
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, name, location')
+    .select('id, name, location, verification_status, is_admin')
     .eq('id', user.id)
     .single();
+
+  // Check if user is approved or admin
+  if (!profile || (profile.verification_status !== 'approved' && !profile.is_admin)) {
+    return null; // This will trigger redirect to login/waiting page
+  }
 
   return {
     id: user.id,
     name: profile?.name || user.email?.split('@')[0] || 'Unknown',
-    email: user.email || ''
+    email: user.email || '',
+    verification_status: profile.verification_status,
+    is_admin: profile.is_admin
   };
 }
 
@@ -140,9 +155,19 @@ export default async function RequestsPage({ searchParams }: PageProps) {
   } = params;
   
   const user = await getUser();
-  
+
   if (!user) {
-    redirect('/login?redirect=/requests');
+    // Check if there's an authenticated user with pending status
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+
+    if (authUser) {
+      // User is authenticated but not approved - redirect to dashboard/waiting page
+      redirect('/dashboard?message=approval_required');
+    } else {
+      // User is not authenticated - redirect to login
+      redirect('/login?redirect=/requests');
+    }
   }
 
   const supabase = await createClient();
