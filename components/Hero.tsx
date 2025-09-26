@@ -3,8 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ReactElement } from 'react'
+import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
 export default function Hero(): ReactElement {
+  const handleSmoothScroll = useSmoothScroll()
+
   return (
     <section id="home" className="relative pt-24 pb-20 bg-gradient-to-br from-background via-background to-sage-light/20 overflow-hidden">
       {/* Background Pattern */}
@@ -87,8 +90,9 @@ export default function Hero(): ReactElement {
               </span>
             </Link>
 
-            <Link 
-              href="#how-it-works" 
+            <Link
+              href="#how-it-works"
+              onClick={handleSmoothScroll}
               className="group relative inline-flex items-center justify-center bg-white/90 backdrop-blur-sm text-sage-dark px-10 py-5 text-lg font-bold rounded-xl hover:bg-white hover:scale-[1.02] transition-all duration-200 transform hover:shadow-lg border-2 border-sage/20 hover:border-sage/40 min-h-[56px]"
             >
               <span className="flex items-center gap-3">
@@ -120,8 +124,9 @@ export default function Hero(): ReactElement {
 
           {/* Scroll Indicator */}
           <div className="mt-12 animate-pulse">
-            <Link 
-              href="#mission" 
+            <Link
+              href="#mission"
+              onClick={handleSmoothScroll}
               className="inline-block text-sage-dark hover:text-sage transition-all duration-300 hover:scale-110"
               aria-label="Scroll to learn more about our mission"
             >

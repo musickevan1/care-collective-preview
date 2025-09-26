@@ -41,16 +41,8 @@ CREATE TABLE IF NOT EXISTS contact_exchanges (
   UNIQUE(request_id, helper_id, requester_id)
 );
 
--- Messages table for in-app messaging
-CREATE TABLE IF NOT EXISTS messages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  request_id UUID REFERENCES help_requests(id) ON DELETE CASCADE,
-  sender_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  recipient_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
-  read BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Messages table - handled by comprehensive messaging migration
+-- The comprehensive messaging system creates a more advanced conversation-based schema
 
 -- ==============================================
 -- 3. ENSURE PROFILE COLUMNS EXIST
@@ -76,10 +68,8 @@ CREATE INDEX IF NOT EXISTS idx_contact_exchanges_helper ON contact_exchanges(hel
 CREATE INDEX IF NOT EXISTS idx_contact_exchanges_requester ON contact_exchanges(requester_id);
 CREATE INDEX IF NOT EXISTS idx_contact_exchanges_exchanged_at ON contact_exchanges(exchanged_at DESC);
 
--- Messages indexes
-CREATE INDEX IF NOT EXISTS idx_messages_request ON messages(request_id);
-CREATE INDEX IF NOT EXISTS idx_messages_recipient ON messages(recipient_id, read);
-CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(request_id, created_at DESC);
+-- Messages indexes - handled by comprehensive messaging migration
+-- The comprehensive messaging system has its own indexes for the conversation-based schema
 
 -- Profiles indexes
 CREATE INDEX IF NOT EXISTS idx_profiles_verification_status ON profiles(verification_status);

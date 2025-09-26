@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
+import { logger } from '@/lib/logger'
+import { errorTracker } from '@/lib/error-tracking'
 
 interface AuthContextType {
   user: User | null
@@ -37,8 +39,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { session: initialSession }, error } = await supabase.auth.getSession()
         
         if (error) {
-          console.warn('Initial session error:', error.message)
-          
+          logger.warn('Initial session retrieval failed', {
+            errorMessage: error.message,
+            retryCount,
+            maxRetries,
+            category: 'auth_session',
+            isJWTError: error.message.includes('JWT')
+          })
+
+          errorTracker.captureWarning('Initial session error', {
+            component: 'AuthProvider',
+            action: 'get_initial_session',
+            severity: 'low',
+            tags: {
+              error_type: error.message.includes('JWT') ? 'jwt_error' : 'session_error',
+              retry_count: retryCount.toString()
+            },
+            extra: {
+              errorMessage: error.message,
+              willRetry: error.message.includes('JWT') && retryCount < maxRetries
+            }
+          })
+
           // Retry on JWT errors
           if (error.message.includes('JWT') && retryCount < maxRetries) {
             retryCount++
@@ -51,7 +73,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(initialSession?.user ?? null)
         setLoading(false)
       } catch (error) {
-        console.error('Failed to get initial session:', error)
+        logger.error('Critical failure getting initial session', error as Error, {
+          retryCount,
+          maxRetries,
+          category: 'auth_critical'
+        })
+
+        errorTracker.captureError(error as Error, {
+          component: 'AuthProvider',
+          action: 'get_initial_session_failure',
+          severity: 'high',
+          tags: {
+            error_type: 'critical_auth_failure',
+            retry_count: retryCount.toString()
+          }
+        })
+
         setLoading(false)
       }
     }
@@ -61,15 +98,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, !!session?.user)
-        
+        logger.info('Auth state change detected', {
+          event,
+          hasUser: !!session?.user,
+          userId: session?.user?.id,
+          category: 'auth_state_change'
+        })
+
+        errorTracker.addBreadcrumb({
+          message: `Auth state changed: ${event}`,
+          category: 'auth',
+          level: 'info',
+          data: {
+            event,
+            hasUser: !!session?.user,
+            hasSession: !!session
+          }
+        })
+
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
 
         // Handle session refresh
         if (event === 'TOKEN_REFRESHED') {
-          console.log('Token refreshed successfully')
+          logger.info('Authentication token refreshed successfully', {
+            userId: session?.user?.id,
+            category: 'auth_token_refresh'
+          })
+
+          errorTracker.addBreadcrumb({
+            message: 'Auth token refreshed',
+            category: 'auth',
+            level: 'info',
+            data: {
+              event: 'TOKEN_REFRESHED',
+              userId: session?.user?.id
+            }
+          })
         }
       }
     )
@@ -80,11 +146,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       setLoading(true)
+
+      logger.info('User sign out initiated', {
+        userId: user?.id,
+        category: 'auth_signout'
+      })
+
       await supabase.auth.signOut()
       setUser(null)
       setSession(null)
+
+      logger.info('User signed out successfully', {
+        category: 'auth_signout'
+      })
+
+      errorTracker.addBreadcrumb({
+        message: 'User signed out',
+        category: 'auth',
+        level: 'info',
+        data: {
+          action: 'signout_success'
+        }
+      })
+
     } catch (error) {
-      console.error('Sign out error:', error)
+      logger.error('Sign out failed', error as Error, {
+        userId: user?.id,
+        category: 'auth_error'
+      })
+
+      errorTracker.captureError(error as Error, {
+        component: 'AuthProvider',
+        action: 'sign_out',
+        severity: 'medium',
+        userId: user?.id,
+        tags: {
+          error_type: 'signout_failure'
+        }
+      })
     } finally {
       setLoading(false)
     }

@@ -62,12 +62,18 @@ export const DynamicMobileNav = withDynamicLoading(
   () => <div className="md:hidden">Loading menu...</div>
 )
 
-// Performance monitoring components (disabled for deployment)
-// These components caused "self is not defined" errors during build
-// Providing null placeholders to prevent import errors
-export const DynamicWebVitals = () => null
+// Web Vitals monitoring - now properly handled with SSR safety
+export const DynamicWebVitals = withDynamicLoading(
+  () => Promise.resolve({ default: () => null }), // Web vitals are handled within PerformanceMonitor
+  () => null
+)
 
-export const DynamicServiceWorkerRegistration = () => null
+// Service Worker Registration - now properly implemented with environment detection
+export const DynamicServiceWorkerRegistration = withDynamicLoading(
+  () => import('@/components/ServiceWorkerRegistration').then(module => ({ default: module.ServiceWorkerRegistration })),
+  () => null,
+  'Service Worker registration failed'
+)
 
 // Form components that might be heavy
 export const DynamicSafeFormWrapper = withDynamicLoading(

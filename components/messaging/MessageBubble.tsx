@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useRef, useLayoutEffect } from 'react'
 import { ReactElement } from 'react'
 import { MessageWithSender } from '@/lib/messaging/types'
 import { formatDistanceToNow } from 'date-fns'
@@ -30,6 +30,7 @@ interface MessageBubbleProps {
   onReply?: () => void
   onReport?: (messageId: string) => void
   onDelete?: (messageId: string) => void
+  onHeightMeasured?: (height: number) => void
   showSenderName?: boolean
   className?: string
 }
@@ -44,9 +45,20 @@ export function MessageBubble({
   onReply,
   onReport,
   onDelete,
+  onHeightMeasured,
   showSenderName = true,
   className,
 }: MessageBubbleProps): ReactElement {
+  const messageRef = useRef<HTMLDivElement>(null)
+
+  // Measure height for virtualization
+  useLayoutEffect(() => {
+    if (onHeightMeasured && messageRef.current) {
+      const height = messageRef.current.offsetHeight
+      onHeightMeasured(height)
+    }
+  }, [onHeightMeasured, message.content])
+
   const handleCopyMessage = async () => {
     try {
       await navigator.clipboard.writeText(message.content)
@@ -102,7 +114,8 @@ export function MessageBubble({
   }
 
   return (
-    <div 
+    <div
+      ref={messageRef}
       className={cn(
         "flex w-full mb-4 group",
         isCurrentUser ? "justify-end" : "justify-start",

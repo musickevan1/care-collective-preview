@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Link from 'next/link'
 import Image from 'next/image'
-// Temporarily disabled to fix build issue
-// import { captureError } from '@/lib/error-tracking'
+import { errorTracker } from '@/lib/error-tracking'
+import { logger } from '@/lib/logger'
 
 export default function Error({
   error,
@@ -16,35 +16,45 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // Use secure error logging - dynamic import to avoid SSR issues
-    const logSecureError = async () => {
-      try {
-        // Dynamic import to avoid SSR issues with secure error handling
-        const { logError, SecurityErrors, ErrorType, ErrorSeverity } = await import('@/lib/security/error-handling')
-        
-        // Create a secure error for logging
-        const secureError = SecurityErrors.securityViolation('UI Error Boundary Triggered', {
-          component: 'GlobalErrorBoundary',
-          digest: error.digest,
-          url: typeof window !== 'undefined' ? window.location.href : 'server-side',
-          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
-          originalMessage: error.message,
-        })
-        
-        // Log using secure error handling system
-        logError(secureError)
-      } catch (secureLogError) {
-        // Fallback to basic logging if secure system fails
-        console.error('[Error Boundary] Secure logging failed:', {
-          message: error.message,
-          digest: error.digest,
-          timestamp: new Date().toISOString(),
-          fallbackReason: secureLogError,
-        })
+    // Capture error with comprehensive Care Collective context
+    const errorId = errorTracker.captureError(error, {
+      component: 'GlobalErrorBoundary',
+      severity: 'high',
+      url: window.location.href,
+      action: 'page_render',
+      tags: {
+        digest: error.digest || 'unknown',
+        platform: 'care-collective',
+        environment: process.env.NODE_ENV || 'development'
+      },
+      extra: {
+        userAgent: navigator.userAgent,
+        timestamp: new Date().toISOString(),
+        hasDigest: !!error.digest,
+        errorType: error.constructor.name
       }
-    }
-    
-    logSecureError()
+    }, true)
+
+    // Log the error for monitoring and debugging
+    logger.error('Global error boundary triggered', error, {
+      errorId,
+      component: 'GlobalErrorBoundary',
+      digest: error.digest,
+      url: window.location.href,
+      category: 'ui_error'
+    })
+
+    // Add breadcrumb for error context
+    errorTracker.addBreadcrumb({
+      message: 'Global error boundary caught error',
+      category: 'ui',
+      level: 'error',
+      data: {
+        errorMessage: error.message,
+        hasStack: !!error.stack,
+        digest: error.digest
+      }
+    })
   }, [error])
 
   return (

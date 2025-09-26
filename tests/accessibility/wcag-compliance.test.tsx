@@ -11,7 +11,15 @@ import { render, screen, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 
-// Extend expect with jest-axe matchers
+// Extend expect with jest-axe matchers for vitest
+declare global {
+  namespace Vi {
+    interface AsymmetricMatchersContaining {
+      toHaveNoViolations(): any;
+    }
+  }
+}
+
 expect.extend(toHaveNoViolations);
 
 // Components to test
@@ -144,8 +152,15 @@ describe('WCAG 2.1 AA Compliance', () => {
       const mockHelpRequest = {
         id: 'test-request',
         title: 'Test Request',
+        category: 'groceries',
+        urgency: 'normal',
+        status: 'open',
         user_id: 'other-user',
-        profiles: { name: 'Test User' },
+        created_at: '2025-01-20T10:00:00Z',
+        profiles: { 
+          id: 'other-user',
+          name: 'Test User' 
+        },
       };
 
       render(<ContactExchange helpRequest={mockHelpRequest} />);
@@ -305,8 +320,15 @@ describe('WCAG 2.1 AA Compliance', () => {
       const mockHelpRequest = {
         id: 'test-request',
         title: 'Test Request',
+        category: 'groceries',
+        urgency: 'normal',
+        status: 'open',
         user_id: 'other-user',
-        profiles: { name: 'Test User' },
+        created_at: '2025-01-20T10:00:00Z',
+        profiles: { 
+          id: 'other-user',
+          name: 'Test User' 
+        },
       };
 
       render(<ContactExchange helpRequest={mockHelpRequest} />);
@@ -375,8 +397,15 @@ describe('WCAG 2.1 AA Compliance', () => {
       const mockHelpRequest = {
         id: 'test-request',
         title: 'Test Request',
+        category: 'groceries',
+        urgency: 'normal',
+        status: 'open',
         user_id: 'other-user',
-        profiles: { name: 'Test User' },
+        created_at: '2025-01-20T10:00:00Z',
+        profiles: { 
+          id: 'other-user',
+          name: 'Test User' 
+        },
       };
 
       render(<ContactExchange helpRequest={mockHelpRequest} />);
@@ -571,8 +600,16 @@ describe('WCAG 2.1 AA Compliance', () => {
       const mockHelpRequest = {
         id: 'test-request',
         title: 'Test Request',
+        category: 'groceries',
+        urgency: 'normal',
+        status: 'open',
         user_id: 'other-user',
-        profiles: { name: 'Test User', email: 'test@example.com' },
+        created_at: '2025-01-20T10:00:00Z',
+        profiles: { 
+          id: 'other-user',
+          name: 'Test User', 
+          email: 'test@example.com' 
+        },
       };
 
       render(<ContactExchange helpRequest={mockHelpRequest} />);

@@ -1,6 +1,6 @@
 # CLAUDE.md - Care Collective Platform
 
-This file provides comprehensive guidance to Claude Code when working with the Care Collective mutual aid platform built with Next.js 15, Supabase, and TypeScript.
+This file provides comprehensive guidance to Claude Code when working with the Care Collective mutual aid platform built with Next.js 14.2.32, Supabase, and TypeScript.
 
 ## 🤝 Project Overview
 
@@ -36,6 +36,16 @@ Build features only when community needs are validated, not anticipated.
 
 ## 🤖 AI Assistant Guidelines
 
+### Advanced Context Engineering & Master Planning Integration
+**CRITICAL**: Use the advanced context engineering system for efficient development:
+1. **Check Master Plan First**: Review [`docs/context-engineering/master-plan.md`](./docs/context-engineering/master-plan.md) for current project status and priorities
+2. **Apply PRP Method**: Use Planning, Research, Production phases from [`docs/context-engineering/prp-method/`](./docs/context-engineering/prp-method/) for complex tasks
+3. **Use Phase Plans**: Reference specific phase documentation in [`docs/context-engineering/phase-plans/`](./docs/context-engineering/phase-plans/) for targeted development
+4. **Update Status**: Maintain real-time progress tracking in master plan and project status
+
+**Current Status**: Phase 2.3 (Admin Panel Completion) - Next Priority
+**Success Probability**: 85% - All prerequisites complete, clear implementation path
+
 ### Git Workflow for Changes (MANDATORY)
 **CRITICAL**: After completing any request that involves code changes, modifications, or new features:
 1. **Always ask the user if they want to commit and push changes**
@@ -50,6 +60,63 @@ Assistant: I've completed the admin panel improvements. Would you like me to com
 User: [yes/no response]
 Assistant: [commits and pushes if approved, or explains what changes were made if declined]
 ```
+
+### Post-Request Deployment System (MANDATORY)
+**CRITICAL**: After every completed request involving code changes:
+1. **ALWAYS offer to commit changes** - Never assume the user doesn't want changes saved
+2. **ALWAYS offer to push to repository** - Ensure changes are backed up and available for deployment
+3. **ALWAYS offer deployment guidance** - Help user understand next steps for going live
+4. **PROVIDE deployment status check** - Verify current deployment state and suggest updates
+
+Required Post-Request Workflow:
+```
+Assistant: Request completed successfully! Here's what I've changed:
+[Brief summary of changes made]
+
+Next steps to deploy these changes:
+1. Would you like me to commit these changes? (git commit)
+2. Should I push to the repository? (git push)
+3. Do you want me to check the current deployment status?
+4. Should we deploy these changes to production?
+
+Choose your preference:
+- All steps (recommended)
+- Just commit and push
+- Review changes first
+- Deploy later
+
+Ready to proceed?
+```
+
+### Deployment Integration Patterns
+**For Production Deployments**:
+```bash
+# Check current deployment status
+npx vercel inspect
+
+# Deploy to preview (staging)
+npx vercel --prebuilt
+
+# Deploy to production (after verification)
+npx vercel --prod
+
+# Monitor deployment logs
+npx vercel logs
+```
+
+**Post-Deployment Verification**:
+1. **Functionality testing** - Core features work as expected
+2. **Performance check** - Load times and responsiveness
+3. **Mobile compatibility** - Touch interactions and responsive design
+4. **Accessibility validation** - Screen reader and keyboard navigation
+5. **Security verification** - No exposed sensitive information
+
+### Context Engineering Workflow
+**For Development Sessions**:
+1. **Pre-Session**: Check [`PROJECT_STATUS.md`](./PROJECT_STATUS.md) for quick status overview
+2. **Session Planning**: Use PRP method from context engineering documentation
+3. **Progress Tracking**: Update todo status and phase completion continuously
+4. **Post-Session**: Record progress in master plan and document lessons learned
 
 ### Care Collective Context Awareness
 - **Help Requests** are the core entity - handle with care and validate thoroughly
@@ -91,35 +158,54 @@ rg --files -g "*.tsx" | rg "components"
 ### Care Collective Project Structure
 
 ```
-care-collective-preview-v1/
-├── app/                    # Next.js 15 App Router
+care-collective-preview/
+├── app/                    # Next.js 14.2.32 App Router
 │   ├── auth/              # Authentication flows (login/signup)
 │   ├── dashboard/         # User dashboard with community overview
 │   ├── requests/          # Help request management
 │   │   ├── page.tsx       # Browse requests
 │   │   ├── new/           # Create new request
 │   │   └── [id]/          # Individual request details
-│   ├── admin/             # Community management (read-only preview)
+│   ├── admin/             # Community management and moderation
+│   ├── messages/          # Real-time messaging system
+│   ├── privacy/           # Privacy dashboard and controls
 │   ├── design-system/     # Brand showcase and guidelines
 │   └── api/               # API routes
 ├── components/            # Shared UI components
 │   ├── ui/                # Base shadcn/ui components
+│   ├── messaging/         # Real-time messaging components
+│   ├── admin/             # Admin panel components
+│   ├── privacy/           # Privacy control components
 │   ├── ContactExchange.tsx # Privacy-first contact sharing
 │   ├── StatusBadge.tsx    # Request status indicators
 │   └── ReadableModeToggle.tsx # Accessibility enhancement
 ├── lib/                   # Core utilities
 │   ├── supabase/          # Database client configuration
+│   ├── messaging/         # Messaging and moderation services
+│   ├── privacy/           # Privacy and encryption services
+│   ├── security/          # Security and audit services
 │   ├── database.types.ts  # Generated Supabase types
 │   ├── features.ts        # Feature flag management
 │   └── utils.ts           # Utility functions
+├── docs/                  # Comprehensive documentation
+│   ├── context-engineering/ # Advanced context engineering strategy
+│   │   ├── master-plan.md   # Master planning and status tracking
+│   │   ├── prp-method/      # PRP methodology documentation
+│   │   ├── phase-plans/     # Individual phase planning docs
+│   │   └── session-templates/ # Reusable session templates
+│   ├── development/       # Development process documentation
+│   ├── database/          # Database documentation and guides
+│   ├── security/          # Security documentation
+│   └── deployment/        # Deployment guides
+├── PROJECT_STATUS.md      # Always-updated project status overview
 └── supabase/              # Database schema and migrations
 ```
 
 ## 🚀 Technology Stack
 
 ### Core Technologies
-- **Next.js 15**: App Router with Turbopack development
-- **React 19**: Server Components and modern React features
+- **Next.js 14.2.32**: App Router with stable production features
+- **React 18.3.1**: Server Components and modern React features
 - **TypeScript 5**: Strict type safety for community safety
 - **Supabase**: PostgreSQL database with real-time features
 - **Tailwind CSS 4**: Custom design system with Care Collective branding
@@ -147,9 +233,9 @@ function HelpRequestCard(): JSX.Element {  // Cannot find namespace 'JSX'
 ```json
 {
   "dependencies": {
-    "next": "15.4.6",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "next": "^14.2.32",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "@supabase/supabase-js": "^2.54.0",
     "@supabase/ssr": "^0.6.1",
     "zod": "^4.0.17",
@@ -476,6 +562,296 @@ const { data } = await supabase
   .limit(20);
 ```
 
+## 🔄 Real-time Messaging Architecture (Phase 2.1)
+
+### WebSocket Connection Management
+The messaging system uses Supabase real-time subscriptions for live communication:
+
+```typescript
+// hooks/useRealTimeMessages.ts - Real-time message handling
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
+export function useRealTimeMessages(conversationId: string) {
+  const [messages, setMessages] = useState([]);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`messages:${conversationId}`)
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          setMessages(prev => [...prev, payload.new]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId]);
+
+  return { messages };
+}
+```
+
+### VirtualizedMessageList Performance Pattern
+For conversations with 1000+ messages, use virtualization:
+
+```typescript
+// components/messaging/VirtualizedMessageList.tsx
+import { FixedSizeList as List } from 'react-window';
+
+interface VirtualizedMessageListProps {
+  messages: Message[];
+  height: number;
+  itemHeight: number;
+}
+
+export function VirtualizedMessageList({
+  messages,
+  height,
+  itemHeight
+}: VirtualizedMessageListProps): ReactElement {
+  const ItemRenderer = ({ index, style }) => (
+    <div style={style}>
+      <MessageBubble message={messages[index]} />
+    </div>
+  );
+
+  return (
+    <List
+      height={height}
+      itemCount={messages.length}
+      itemSize={itemHeight}
+      overscanCount={5} // Pre-render 5 items above/below viewport
+    >
+      {ItemRenderer}
+    </List>
+  );
+}
+```
+
+### Typing Indicators & Presence
+Real-time presence system with automatic cleanup:
+
+```typescript
+// Database trigger for presence cleanup
+-- Automatically removes stale presence records
+CREATE OR REPLACE FUNCTION cleanup_stale_presence()
+RETURNS trigger AS $$
+BEGIN
+  DELETE FROM user_presence
+  WHERE last_seen < NOW() - INTERVAL '5 minutes';
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+// Component usage
+export function TypingIndicator({ conversationId }: { conversationId: string }) {
+  const { typingUsers } = useTypingIndicators(conversationId);
+
+  if (typingUsers.length === 0) return null;
+
+  return (
+    <div className="text-sm text-muted-foreground italic">
+      {typingUsers.map(user => user.name).join(', ')}
+      {typingUsers.length === 1 ? ' is' : ' are'} typing...
+    </div>
+  );
+}
+```
+
+## 🛡️ Content Moderation Framework (Phase 2.1)
+
+### Automated Content Detection
+Multi-layered content screening with escalation:
+
+```typescript
+// lib/messaging/moderation.ts - Content moderation service
+export interface ModerationResult {
+  flagged: boolean;
+  confidence: number;
+  categories: string[];
+  suggested_action: 'allow' | 'review' | 'block';
+  explanation: string;
+}
+
+export class ContentModerationService {
+  async moderateContent(content: string, userId: string): Promise<ModerationResult> {
+    // 1. Pattern-based detection (profanity, PII)
+    const patternResult = this.checkPatterns(content);
+
+    // 2. User reputation scoring
+    const userScore = await this.getUserModerationScore(userId);
+
+    // 3. Context-aware scoring
+    const contextScore = this.analyzeContext(content, userScore);
+
+    return this.calculateFinalResult(patternResult, contextScore);
+  }
+}
+```
+
+### User Restriction System
+Database-backed user restrictions with graduated responses:
+
+```sql
+-- User restriction levels
+CREATE TYPE restriction_level AS ENUM ('none', 'limited', 'suspended', 'banned');
+
+-- User restrictions table
+CREATE TABLE user_restrictions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES auth.users(id),
+  restriction_level restriction_level DEFAULT 'none',
+  can_send_messages boolean DEFAULT true,
+  can_start_conversations boolean DEFAULT true,
+  requires_pre_approval boolean DEFAULT false,
+  message_limit_per_day integer DEFAULT 50,
+  restriction_reason text,
+  expires_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now()
+);
+```
+
+### Admin Moderation Dashboard
+Comprehensive moderation queue with analytics:
+
+```typescript
+// components/admin/ModerationDashboard.tsx
+export function ModerationDashboard(): ReactElement {
+  const {
+    pendingReports,
+    recentActions,
+    moderationStats
+  } = useModerationQueue();
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <ModerationQueue
+        reports={pendingReports}
+        onAction={handleModerationAction}
+      />
+      <ModerationStats stats={moderationStats} />
+      <RecentActions actions={recentActions} />
+    </div>
+  );
+}
+```
+
+## 🔐 Message Encryption Integration (Phase 2.2)
+
+### Encryption Service Integration
+Leverages Phase 2.2 contact encryption infrastructure:
+
+```typescript
+// lib/messaging/encryption.ts - Message encryption using Phase 2.2 infrastructure
+import { ContactEncryptionService } from '@/lib/security/contact-encryption';
+
+export class MessageEncryptionService {
+  private contactEncryption: ContactEncryptionService;
+
+  async encryptMessage(
+    content: string,
+    senderId: string,
+    recipientId: string,
+    conversationId: string
+  ): Promise<MessageEncryptionResult> {
+    // Determine if message contains sensitive content
+    const sensitivityLevel = this.analyzeSensitivity(content);
+
+    if (sensitivityLevel === 'high') {
+      // Use Phase 2.2 encryption for sensitive content
+      return await this.contactEncryption.encryptSensitiveData(
+        content,
+        `conversation:${conversationId}`,
+        { senderId, recipientId }
+      );
+    }
+
+    return { encrypted_content: content, encryption_status: 'none' };
+  }
+}
+```
+
+### Privacy Event Integration
+Automatic privacy violation detection:
+
+```typescript
+// Integrate with Phase 2.2 privacy event tracking
+import { privacyEventTracker } from '@/lib/security/privacy-event-tracker';
+
+export async function sendMessage(messageData: MessageData) {
+  // Check for privacy violations before sending
+  const privacyCheck = await privacyEventTracker.detectViolation({
+    action: 'message_send',
+    content: messageData.content,
+    userId: messageData.senderId,
+    context: { conversationId: messageData.conversationId }
+  });
+
+  if (privacyCheck.violation_detected) {
+    throw new Error('Message blocked due to privacy policy violation');
+  }
+
+  // Proceed with sending...
+}
+```
+
+## 📊 Performance Optimization Patterns (Phase 2.1)
+
+### Message Threading Optimization
+Efficient conversation structure with threading support:
+
+```typescript
+// Optimized database queries for threaded conversations
+export async function getConversationWithThreads(conversationId: string) {
+  const { data } = await supabase
+    .from('messages')
+    .select(`
+      id,
+      content,
+      created_at,
+      sender_id,
+      thread_id,
+      profiles!inner (name),
+      message_reactions (emoji, count),
+      message_threads!left (
+        id,
+        title,
+        message_count
+      )
+    `)
+    .eq('conversation_id', conversationId)
+    .order('created_at', { ascending: true });
+
+  // Group messages by thread for efficient rendering
+  return groupMessagesByThread(data);
+}
+```
+
+### Memory Management for Long Sessions
+Implement message pagination and cleanup:
+
+```typescript
+// Automatic memory cleanup for long-running messaging sessions
+export function useMessageMemoryManagement(conversationId: string) {
+  const [messageBuffer, setMessageBuffer] = useState<Message[]>([]);
+  const BUFFER_SIZE = 500; // Keep last 500 messages in memory
+
+  useEffect(() => {
+    if (messageBuffer.length > BUFFER_SIZE) {
+      // Keep only the most recent messages
+      setMessageBuffer(prev => prev.slice(-BUFFER_SIZE));
+    }
+  }, [messageBuffer]);
+
+  return { messageBuffer, setMessageBuffer };
+}
+```
+
 ## 📱 Mobile-First & Accessibility
 
 ### Mobile Considerations
@@ -546,8 +922,132 @@ function HelpRequestCard({ request }: { request: HelpRequest }): ReactElement {
     
     // Verification and setup
     "verify": "node scripts/verify-setup.js",
-    "setup:check": "node scripts/verify-setup.js"
+    "setup:check": "node scripts/verify-setup.js",
+
+    // Real-time messaging testing
+    "test:messaging": "vitest run tests/messaging/",
+    "test:messaging:watch": "vitest watch tests/messaging/",
+    "test:realtime": "vitest run tests/realtime/",
+    "test:moderation": "vitest run tests/moderation/"
   }
+}
+```
+
+## 🔄 Real-time Development Guidelines (Phase 2.1)
+
+### Real-time Testing Procedures
+Test real-time messaging functionality with proper WebSocket mocking:
+
+```typescript
+// tests/messaging/realtime.test.ts
+import { createMockSupabase } from '@/lib/testing/supabase-mock';
+import { useRealTimeMessages } from '@/hooks/useRealTimeMessages';
+
+describe('Real-time messaging', () => {
+  it('handles message encryption in real-time', async () => {
+    const mockSupabase = createMockSupabase();
+
+    const { result } = renderHook(() =>
+      useRealTimeMessages('conv123', 'user456', 'Test User', {
+        encryptionEnabled: true
+      })
+    );
+
+    // Test encrypted message flow
+    await result.current.sendMessage('Sensitive info', 'sensitive');
+
+    expect(mockSupabase.channel).toHaveBeenCalledWith('conversation:conv123');
+  });
+});
+```
+
+### Moderation Testing Workflows
+Test content moderation with realistic scenarios:
+
+```typescript
+// tests/moderation/content-screening.test.ts
+import { ContentModerationService } from '@/lib/messaging/moderation';
+
+describe('Content moderation', () => {
+  it('detects and flags PII in messages', async () => {
+    const moderation = new ContentModerationService();
+
+    const result = await moderation.moderateContent(
+      'My phone number is 555-123-4567',
+      'user123'
+    );
+
+    expect(result.flagged).toBe(true);
+    expect(result.categories).toContain('personal_info');
+    expect(result.suggested_action).toBe('review');
+  });
+});
+```
+
+### Virtualized Component Guidelines
+Follow performance patterns for large data sets:
+
+```typescript
+// Performance considerations for VirtualizedMessageList
+const messageList = useMemo(() => {
+  // Group messages by date for efficient rendering
+  return groupMessagesByDate(messages);
+}, [messages]);
+
+// Auto-detect when to enable virtualization
+const shouldVirtualize = messages.length > 100;
+
+return (
+  <VirtualizedMessageList
+    messages={messageList}
+    enableVirtualization={shouldVirtualize}
+    itemHeight={calculateDynamicHeight(messageList)}
+  />
+);
+```
+
+## 🛡️ Moderation Development Patterns (Phase 2.1)
+
+### User Restriction Implementation
+Implement graduated user restrictions with database backing:
+
+```typescript
+// Database functions for user restrictions
+await supabase.rpc('apply_user_restriction', {
+  user_uuid: userId,
+  restriction_type: 'limited',
+  duration_hours: 24,
+  reason: 'Inappropriate content detected'
+});
+
+// Check restrictions before message sending
+const restrictions = await getUserRestrictions(userId);
+if (restrictions.requires_pre_approval) {
+  // Queue message for moderation review
+  await queueMessageForReview(messageContent, userId);
+}
+```
+
+### Admin Dashboard Integration
+Create moderation interfaces with real-time updates:
+
+```typescript
+// components/admin/ModerationQueue.tsx
+export function ModerationQueue() {
+  const { pendingItems, approveItem, rejectItem } = useModerationQueue();
+
+  return (
+    <div className="moderation-queue">
+      {pendingItems.map(item => (
+        <ModerationItem
+          key={item.id}
+          item={item}
+          onApprove={() => approveItem(item.id)}
+          onReject={(reason) => rejectItem(item.id, reason)}
+        />
+      ))}
+    </div>
+  );
 }
 ```
 
@@ -634,6 +1134,6 @@ function HelpRequestCard({ request }: { request: HelpRequest }): ReactElement {
 - Trust and safety maintained
 - Community growth and engagement
 
-*This guide is optimized for the Care Collective mutual aid platform built with Next.js 15, Supabase, and TypeScript. Focus on community safety, accessibility, and trust in all development decisions.*
+*This guide is optimized for the Care Collective mutual aid platform built with Next.js 14.2.32, Supabase, and TypeScript. Focus on community safety, accessibility, and trust in all development decisions.*
 
 *Last updated: January 2025*

@@ -67,7 +67,7 @@
 /* Smooth Scroll with offset for fixed header */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px; /* Accounts for fixed header height + extra space */
+  scroll-padding-top: 5rem; /* 80px - accounts for h-16 header (64px) + 16px buffer */
 }
 
 body {
@@ -155,24 +155,6 @@ p {
   }
 }
 
-/* Skip link for keyboard navigation */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: var(--color-primary);
-  color: var(--color-primary-foreground);
-  padding: 8px;
-  border-radius: 4px;
-  text-decoration: none;
-  z-index: 100;
-  font-weight: bold;
-  transition: top 0.3s;
-}
-
-.skip-link:focus {
-  top: 6px;
-}
 
 /* Mobile-specific improvements */
 @media (max-width: 640px) {

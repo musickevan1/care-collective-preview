@@ -4,6 +4,8 @@ import React, { Component, ErrorInfo, ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Link from 'next/link'
+import { errorTracker } from '@/lib/error-tracking'
+import { logger } from '@/lib/logger'
 
 interface Props {
   children: ReactNode
@@ -39,14 +41,43 @@ export class ErrorBoundary extends Component<Props, State> {
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo)
 
-    // Log error for monitoring
-    console.error('ErrorBoundary caught an error:', error, errorInfo)
-    
-    // In production, send to error tracking service
-    if (process.env.NODE_ENV === 'production') {
-      // This would integrate with your error tracking service
-      // Example: Sentry.captureException(error, { extra: errorInfo })
-    }
+    // Capture error with Care Collective specific context
+    const errorId = errorTracker.captureError(error, {
+      component: 'ErrorBoundary',
+      severity: 'medium',
+      action: 'component_render',
+      tags: {
+        platform: 'care-collective',
+        environment: process.env.NODE_ENV || 'development',
+        hasComponentStack: !!errorInfo.componentStack
+      },
+      extra: {
+        componentStack: errorInfo.componentStack,
+        errorBoundaryStack: errorInfo.errorBoundary,
+        errorBoundaryName: errorInfo.errorBoundaryName,
+        timestamp: new Date().toISOString()
+      }
+    }, true)
+
+    // Log error with structured logging
+    logger.error('Component error boundary triggered', error, {
+      errorId,
+      component: 'ErrorBoundary',
+      componentStack: errorInfo.componentStack,
+      category: 'component_error'
+    })
+
+    // Add breadcrumb for debugging context
+    errorTracker.addBreadcrumb({
+      message: 'Component error boundary caught error',
+      category: 'ui',
+      level: 'error',
+      data: {
+        errorMessage: error.message,
+        componentStack: errorInfo.componentStack ? 'present' : 'missing',
+        errorType: error.constructor.name
+      }
+    })
   }
 
   render() {

@@ -1,4 +1,4 @@
-import { getAuthenticatedUser, withAuth } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -13,97 +13,114 @@ interface DashboardPageProps {
   searchParams: Promise<{ error?: string }>
 }
 
-// Secure dashboard data fetching
-async function getDashboardData() {
-  return await withAuth(async (supabase, userId) => {
-    try {
-      // Get user's help requests count
-      const { count: userRequestsCount } = await supabase
-        .from('help_requests')
-        .select('*', { count: 'exact' })
-        .eq('user_id', userId)
-        .neq('status', 'closed');
+async function getUser() {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  
+  if (error || !user) {
+    return null;
+  }
 
-      // Get unread messages count (graceful fallback if messages table doesn't exist)
-      const { count: unreadCount } = await supabase
-        .from('messages')
-        .select('*', { count: 'exact' })
-        .eq('recipient_id', userId)
-        .is('read_at', null)
-        .maybeSingle();
+  // Get user profile
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
 
-      // Get number of people helped
-      const { count: helpedCount } = await supabase
-        .from('help_requests')
-        .select('*', { count: 'exact' })
-        .eq('helper_id', userId)
-        .eq('status', 'completed');
+  return {
+    id: user.id,
+    name: profile?.name || user.email?.split('@')[0] || 'Unknown',
+    email: user.email || '',
+    isAdmin: profile?.is_admin || false,
+    profile
+  };
+}
 
-      // Get recent activity - help requests
-      const { data: recentRequests } = await supabase
-        .from('help_requests')
-        .select(`
-          id,
-          title,
-          status,
-          urgency,
-          created_at,
-          profiles!user_id (name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(5);
+async function getDashboardData(userId: string) {
+  const supabase = await createClient();
+  
+  try {
+    // Get user's help requests count
+    const { count: userRequestsCount, error: requestsError } = await supabase
+      .from('help_requests')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId)
+      .neq('status', 'closed');
 
-      return {
-        userRequestsCount: userRequestsCount || 0,
-        unreadCount: unreadCount || 0,
-        activeConversations: 0, // Simplified for now
-        helpedCount: helpedCount || 0,
-        recentRequests: recentRequests || []
-      };
-    } catch (error) {
-      console.error('[Dashboard] Error fetching data:', error);
-      return {
-        userRequestsCount: 0,
-        unreadCount: 0,
-        activeConversations: 0,
-        helpedCount: 0,
-        recentRequests: []
-      };
-    }
-  });
+    // Get unread messages count
+    const { count: unreadCount, error: unreadError } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact' })
+      .eq('recipient_id', userId)
+      .is('read_at', null);
+
+    // Get active conversations count
+    const { data: conversations, error: conversationsError } = await supabase
+      .from('conversations')
+      .select(`
+        id,
+        conversation_participants!inner (
+          user_id
+        )
+      `)
+      .eq('conversation_participants.user_id', userId)
+      .is('conversation_participants.left_at', null);
+
+    // Get number of people helped
+    const { count: helpedCount, error: helpedError } = await supabase
+      .from('help_requests')
+      .select('*', { count: 'exact' })
+      .eq('helper_id', userId)
+      .eq('status', 'completed');
+
+    // Get recent activity - help requests and conversations
+    const { data: recentRequests } = await supabase
+      .from('help_requests')
+      .select(`
+        id,
+        title,
+        status,
+        urgency,
+        created_at,
+        profiles!user_id (name)
+      `)
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    return {
+      userRequestsCount: userRequestsCount || 0,
+      unreadCount: unreadCount || 0,
+      activeConversations: conversations?.length || 0,
+      helpedCount: helpedCount || 0,
+      recentRequests: recentRequests || []
+    };
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    return {
+      userRequestsCount: 0,
+      unreadCount: 0,
+      activeConversations: 0,
+      helpedCount: 0,
+      recentRequests: []
+    };
+  }
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
-  // Secure authentication check
-  const { user, error } = await getAuthenticatedUser();
+  const user = await getUser();
   
-  if (error || !user) {
-    redirect('/login?redirectTo=/dashboard');
+  if (!user) {
+    redirect('/login?redirect=/dashboard');
   }
 
   const resolvedSearchParams = await searchParams;
   const hasAdminError = resolvedSearchParams.error === 'admin_required';
   
-  // Get dashboard data securely
-  const { data: dashboardData, error: dataError } = await getDashboardData();
-  
-  const defaultData = {
-    userRequestsCount: 0,
-    unreadCount: 0,
-    activeConversations: 0,
-    helpedCount: 0,
-    recentRequests: []
-  };
-  
-  const data = dashboardData || defaultData;
-  
-  if (dataError) {
-    console.error('[Dashboard] Failed to load data:', dataError.message);
-  }
-  
+  const dashboardData = await getDashboardData(user.id);
   const messagingData = {
-    unreadCount: data.unreadCount,
-    activeConversations: data.activeConversations
+    unreadCount: dashboardData.unreadCount,
+    activeConversations: dashboardData.activeConversations
   };
 
   return (
@@ -194,9 +211,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <CardTitle className="flex items-center gap-2">
                 <span className="text-2xl">💬</span>
                 Messages
-                {data.unreadCount > 0 && (
+                {dashboardData.unreadCount > 0 && (
                   <Badge variant="destructive" className="ml-2">
-                    {data.unreadCount}
+                    {dashboardData.unreadCount}
                   </Badge>
                 )}
               </CardTitle>
@@ -208,9 +225,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <Link href="/messages">
                 <Button variant="sage" className="w-full">
                   Open Messages
-                  {data.unreadCount > 0 && (
+                  {dashboardData.unreadCount > 0 && (
                     <Badge variant="secondary" className="ml-2">
-                      {data.unreadCount} unread
+                      {dashboardData.unreadCount} unread
                     </Badge>
                   )}
                 </Button>
@@ -227,7 +244,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <CardTitle className="text-lg">Your Requests</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-primary mb-2">{data.userRequestsCount}</div>
+                <div className="text-3xl font-bold text-primary mb-2">{dashboardData.userRequestsCount}</div>
                 <p className="text-sm text-muted-foreground">Active help requests</p>
               </CardContent>
             </Card>
@@ -239,10 +256,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 <CardTitle className="text-lg">Messages</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-sage mb-2">{data.unreadCount}</div>
+                <div className="text-3xl font-bold text-sage mb-2">{dashboardData.unreadCount}</div>
                 <p className="text-sm text-muted-foreground">Unread messages</p>
                 <div className="text-xs text-muted-foreground mt-1">
-                  {data.activeConversations} active conversation{data.activeConversations !== 1 ? 's' : ''}
+                  {dashboardData.activeConversations} active conversation{dashboardData.activeConversations !== 1 ? 's' : ''}
                 </div>
               </CardContent>
             </Card>
@@ -253,7 +270,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <CardTitle className="text-lg">Community Impact</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-accent mb-2">{data.helpedCount}</div>
+              <div className="text-3xl font-bold text-accent mb-2">{dashboardData.helpedCount}</div>
               <p className="text-sm text-muted-foreground">People helped</p>
             </CardContent>
           </Card>
@@ -268,9 +285,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {data.recentRequests.length > 0 ? (
+            {dashboardData.recentRequests.length > 0 ? (
               <div className="space-y-4">
-                {data.recentRequests.map((request: any) => (
+                {dashboardData.recentRequests.map((request: any) => (
                   <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">

@@ -5,15 +5,16 @@ import { ReactElement } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { 
-  Send, 
-  Paperclip, 
+import {
+  Send,
+  Paperclip,
   Smile,
   AlertTriangle,
   Loader2
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { messagingValidation } from '@/lib/messaging/types'
+import { useTypingStatus } from './TypingIndicator'
 
 interface MessageInputProps {
   onSendMessage: (content: string, messageType?: 'text' | 'help_request_update') => Promise<void>
@@ -25,6 +26,9 @@ interface MessageInputProps {
   autoFocus?: boolean
   className?: string
   conversationId?: string
+  userId?: string
+  userName?: string
+  enableTypingStatus?: boolean
 }
 
 /**
@@ -40,12 +44,23 @@ export function MessageInput({
   showCharacterCount = true,
   autoFocus = false,
   className,
-  conversationId
+  conversationId,
+  userId,
+  userName,
+  enableTypingStatus = true
 }: MessageInputProps): ReactElement {
   const [content, setContent] = useState('')
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Typing status management
+  const { broadcastTypingStart, broadcastTypingStop } = useTypingStatus({
+    conversationId: conversationId || '',
+    userId: userId || '',
+    userName: userName || '',
+    enabled: enableTypingStatus && !!conversationId && !!userId && !!userName
+  })
 
   // Auto-resize textarea as content grows
   const adjustTextareaHeight = useCallback(() => {
@@ -64,12 +79,21 @@ export function MessageInput({
   // Handle content changes
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value
-    
+
     if (newContent.length <= maxLength) {
       setContent(newContent)
       setError(null)
+
+      // Broadcast typing status if user is typing
+      if (newContent.trim().length > 0 && content.trim().length === 0) {
+        broadcastTypingStart()
+      } else if (newContent.trim().length === 0 && content.trim().length > 0) {
+        broadcastTypingStop()
+      } else if (newContent.trim().length > 0) {
+        broadcastTypingStart() // Continue typing signal
+      }
     }
-    
+
     adjustTextareaHeight()
   }
 
@@ -89,9 +113,12 @@ export function MessageInput({
     try {
       setIsSending(true)
       setError(null)
-      
+
+      // Stop typing indicator before sending
+      broadcastTypingStop()
+
       await onSendMessage(content.trim())
-      
+
       // Clear input after successful send
       setContent('')
       if (textareaRef.current) {

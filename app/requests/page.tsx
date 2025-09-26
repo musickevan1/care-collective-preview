@@ -4,8 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
+import { FilterPanel, FilterOptions } from '@/components/FilterPanel'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import Link from 'next/link'
+
+type User = {
+  id: string
+  name: string
+  email: string
+  verification_status: string
+  is_admin: boolean
+}
 
 type HelpRequest = {
   id: string
@@ -62,28 +71,42 @@ function formatTimeAgo(dateString: string) {
 }
 
 interface PageProps {
-  searchParams: Promise<{ status?: string }>
+  searchParams: Promise<{ 
+    status?: string;
+    category?: string;
+    urgency?: string;
+    search?: string;
+    sort?: string;
+    order?: 'asc' | 'desc';
+  }>
 }
 
 async function getUser() {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
-  
+
   if (error || !user) {
     return null;
   }
 
-  // Get user profile
+  // Get user profile with verification status
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, name, location')
+    .select('id, name, location, verification_status, is_admin')
     .eq('id', user.id)
     .single();
+
+  // Check if user is approved or admin
+  if (!profile || (profile.verification_status !== 'approved' && !profile.is_admin)) {
+    return null; // This will trigger redirect to login/waiting page
+  }
 
   return {
     id: user.id,
     name: profile?.name || user.email?.split('@')[0] || 'Unknown',
-    email: user.email || ''
+    email: user.email || '',
+    verification_status: profile.verification_status,
+    is_admin: profile.is_admin
   };
 }
 
@@ -122,33 +145,148 @@ async function getMessagingData(userId: string) {
 
 export default async function RequestsPage({ searchParams }: PageProps) {
   const params = await searchParams
-  const statusFilter = params.status || 'all'
+  const {
+    status: statusFilter = 'all',
+    category: categoryFilter = 'all',
+    urgency: urgencyFilter = 'all',
+    search: searchQuery = '',
+    sort: sortBy = 'created_at',
+    order: sortOrder = 'desc'
+  } = params;
   
   const user = await getUser();
-  
+
   if (!user) {
-    redirect('/login?redirect=/requests');
+    // Check if there's an authenticated user with pending status
+    const supabase = await createClient();
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+
+    if (authUser) {
+      // User is authenticated but not approved - redirect to dashboard/waiting page
+      redirect('/dashboard?message=approval_required');
+    } else {
+      // User is not authenticated - redirect to login
+      redirect('/login?redirect=/requests');
+    }
   }
 
   const supabase = await createClient();
   const messagingData = await getMessagingData(user.id);
 
-  let query = supabase
-    .from('help_requests')
-    .select(`
-      *,
-      profiles!user_id (name, location),
-      helper:profiles!helper_id (name, location)
-    `)
+  let query;
+  let requests = null;
+  let queryError = null;
+
+  try {
+    // Use optimized query based on filter combinations
+    if (searchQuery) {
+      // Use full-text search for text queries
+      query = supabase.rpc('search_help_requests', { 
+        search_query: searchQuery 
+      });
+      
+      // Apply additional filters to search results
+      if (statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
+      }
+      if (categoryFilter !== 'all') {
+        query = query.eq('category', categoryFilter);
+      }
+      if (urgencyFilter !== 'all') {
+        query = query.eq('urgency', urgencyFilter);
+      }
+    } else {
+      // Use optimized view for regular filtering
+      query = supabase
+        .from('help_requests')
+        .select(`
+          *,
+          profiles!user_id (name, location),
+          helper:profiles!helper_id (name, location)
+        `);
+      
+      // Apply filters in optimal order for index usage
+      if (statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
+      }
+      
+      if (categoryFilter !== 'all') {
+        query = query.eq('category', categoryFilter);
+      }
+      
+      if (urgencyFilter !== 'all') {
+        query = query.eq('urgency', urgencyFilter);
+      }
+    }
     
-  // Apply status filter
-  if (statusFilter !== 'all') {
-    query = query.eq('status', statusFilter)
+    // Apply sorting - optimized for our indexes
+    const isAscending = sortOrder === 'asc';
+    if (sortBy === 'urgency') {
+      // Use the urgency + created_at index
+      query = query.order('urgency', { ascending: false });
+      query = query.order('created_at', { ascending: false });
+    } else if (sortBy === 'created_at') {
+      query = query.order('created_at', { ascending: isAscending });
+    } else {
+      // For other sorting, use compound index
+      query = query.order(sortBy, { ascending: isAscending });
+      query = query.order('created_at', { ascending: false });
+    }
+    
+    // Limit results for performance (with pagination support in future)
+    query = query.limit(100);
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      console.error('[Help Requests Query Error]', error);
+      queryError = error;
+    } else {
+      requests = data;
+    }
+
+    // If search query failed, fall back to regular query
+    if (searchQuery && queryError) {
+      console.warn('[Search Fallback] Using ILIKE search due to full-text search error');
+      
+      const fallbackQuery = supabase
+        .from('help_requests')
+        .select(`
+          *,
+          profiles!user_id (name, location),
+          helper:profiles!helper_id (name, location)
+        `)
+        .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+      
+      // Apply other filters
+      if (statusFilter !== 'all') {
+        fallbackQuery.eq('status', statusFilter);
+      }
+      if (categoryFilter !== 'all') {
+        fallbackQuery.eq('category', categoryFilter);
+      }
+      if (urgencyFilter !== 'all') {
+        fallbackQuery.eq('urgency', urgencyFilter);
+      }
+      
+      fallbackQuery.order('created_at', { ascending: false });
+      fallbackQuery.limit(100);
+      
+      const { data: fallbackData } = await fallbackQuery;
+      requests = fallbackData;
+      queryError = null;
+    }
+    
+  } catch (error) {
+    console.error('[Help Requests Critical Error]', error);
+    queryError = error;
+    requests = [];
   }
-  
-  const { data: requests } = await query
-    .order('urgency', { ascending: false })
-    .order('created_at', { ascending: false })
+
+  // Ensure requests is always an array
+  if (!requests) {
+    requests = [];
+  }
 
   const breadcrumbs = [
     { label: 'Help Requests', href: '/requests' }
@@ -174,43 +312,50 @@ export default async function RequestsPage({ searchParams }: PageProps) {
           </Link>
         </div>
 
-        {/* Status Filter Tabs */}
-        <div className="mb-6 flex gap-2 flex-wrap">
-          <Link href="/requests">
-            <Button 
-              variant={statusFilter === 'all' ? 'default' : 'outline'}
-              size="sm"
-            >
-              All Requests
-            </Button>
-          </Link>
-          <Link href="/requests?status=open">
-            <Button 
-              variant={statusFilter === 'open' ? 'default' : 'outline'}
-              size="sm"
-            >
-              Open
-            </Button>
-          </Link>
-          <Link href="/requests?status=in_progress">
-            <Button 
-              variant={statusFilter === 'in_progress' ? 'default' : 'outline'}
-              size="sm"
-            >
-              In Progress
-            </Button>
-          </Link>
-          <Link href="/requests?status=completed">
-            <Button 
-              variant={statusFilter === 'completed' ? 'default' : 'outline'}
-              size="sm"
-            >
-              Completed
-            </Button>
-          </Link>
-        </div>
+        {/* Advanced Filtering Interface */}
+        <FilterPanel 
+          onFilterChange={() => {
+            // Filter changes are handled via URL navigation
+            // This is a server component so we don't need to handle state here
+          }}
+          className="mb-6"
+          showAdvanced={false}
+        />
 
-        {!requests || requests.length === 0 ? (
+        {queryError ? (
+          <Card className="text-center py-12 border-destructive/20">
+            <CardContent>
+              <div className="text-6xl mb-4">⚠️</div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">Service Temporarily Unavailable</h3>
+              <p className="text-muted-foreground mb-6">
+                We're having trouble connecting to our database. This is usually temporary.
+                Please try refreshing the page or check back in a few moments.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
+                <Link href="/requests">
+                  <Button className="bg-sage hover:bg-sage-dark">
+                    Try Again
+                  </Button>
+                </Link>
+                <Link href="/requests/new">
+                  <Button variant="outline" className="border-sage text-sage hover:bg-sage/5">
+                    Create Request Anyway
+                  </Button>
+                </Link>
+              </div>
+              {process.env.NODE_ENV === 'development' && (
+                <details className="mt-4 text-left">
+                  <summary className="cursor-pointer text-sm text-muted-foreground">
+                    Error details (development only)
+                  </summary>
+                  <div className="mt-2 p-3 bg-muted rounded text-xs">
+                    {String(queryError)}
+                  </div>
+                </details>
+              )}
+            </CardContent>
+          </Card>
+        ) : !requests || requests.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
               <div className="text-6xl mb-4">🤝</div>
@@ -230,9 +375,14 @@ export default async function RequestsPage({ searchParams }: PageProps) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">
-                  {requests.length} Active Request{requests.length !== 1 ? 's' : ''}
+                  {requests.length} Request{requests.length !== 1 ? 's' : ''} Found
                 </h2>
-                <p className="text-sm text-muted-foreground">People in your community who need help</p>
+                <p className="text-sm text-muted-foreground">
+                  {searchQuery ? `Results for "${searchQuery}"` : 
+                   statusFilter !== 'all' || categoryFilter !== 'all' || urgencyFilter !== 'all' ? 
+                   'Filtered results' : 
+                   'People in your community who need help'}
+                </p>
               </div>
             </div>
 

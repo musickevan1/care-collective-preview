@@ -4,13 +4,17 @@ import React, { ReactElement, useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { UserDetailModal } from '@/components/admin/UserDetailModal'
 import { UserActionDropdown } from '@/components/admin/UserActionDropdown'
+import { BulkUserActions } from '@/components/admin/BulkUserActions'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Database } from '@/lib/database.types'
 
-type Profile = Database['public']['Tables']['profiles']['Row']
+type Profile = Database['public']['Tables']['profiles']['Row'] & {
+  email?: string // Add email for bulk operations
+}
 
 function formatTimeAgo(dateString: string): string {
   const now = new Date()
@@ -33,6 +37,7 @@ interface UsersPageState {
   loading: boolean
   error: string | null
   selectedUserId: string | null
+  selectedUserIds: Set<string>
   searchTerm: string
   filterStatus: 'all' | 'pending' | 'approved' | 'rejected'
 }
@@ -43,6 +48,7 @@ export default function UsersPage(): ReactElement {
     loading: true,
     error: null,
     selectedUserId: null,
+    selectedUserIds: new Set<string>(),
     searchTerm: '',
     filterStatus: 'all'
   })
@@ -74,14 +80,42 @@ export default function UsersPage(): ReactElement {
 
   // Filter users based on search and status filter
   const filteredUsers = state.users.filter(user => {
-    const matchesSearch = state.searchTerm === '' || 
+    const matchesSearch = state.searchTerm === '' ||
       user.name.toLowerCase().includes(state.searchTerm.toLowerCase()) ||
       (user.location && user.location.toLowerCase().includes(state.searchTerm.toLowerCase()))
-    
+
     const matchesStatus = state.filterStatus === 'all' || user.verification_status === state.filterStatus
-    
+
     return matchesSearch && matchesStatus
   })
+
+  // Bulk selection handlers
+  const handleSelectUser = (userId: string, checked: boolean) => {
+    setState(prev => {
+      const newSelectedUserIds = new Set(prev.selectedUserIds)
+      if (checked) {
+        newSelectedUserIds.add(userId)
+      } else {
+        newSelectedUserIds.delete(userId)
+      }
+      return { ...prev, selectedUserIds: newSelectedUserIds }
+    })
+  }
+
+  const handleSelectAll = (checked: boolean) => {
+    setState(prev => ({
+      ...prev,
+      selectedUserIds: checked ? new Set(filteredUsers.map(u => u.id)) : new Set()
+    }))
+  }
+
+  const handleClearSelection = () => {
+    setState(prev => ({ ...prev, selectedUserIds: new Set() }))
+  }
+
+  const selectedUsers = state.users.filter(user => state.selectedUserIds.has(user.id))
+  const allFilteredSelected = filteredUsers.length > 0 && filteredUsers.every(user => state.selectedUserIds.has(user.id))
+  const someFilteredSelected = filteredUsers.some(user => state.selectedUserIds.has(user.id))
 
   const getVerificationStatusBadge = (status: string) => {
     const config = {
@@ -148,13 +182,45 @@ export default function UsersPage(): ReactElement {
           </select>
         </div>
 
+        {/* Bulk User Actions */}
+        {selectedUsers.length > 0 && (
+          <div className="mb-6">
+            <BulkUserActions
+              selectedUsers={selectedUsers}
+              onClearSelection={handleClearSelection}
+              onRefresh={fetchUsers}
+            />
+          </div>
+        )}
+
         {/* Users List */}
         <Card>
           <CardHeader>
-            <CardTitle>Community Members ({state.users?.length || 0})</CardTitle>
-            <CardDescription>
-              All registered users in the CARE Collective
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Community Members ({filteredUsers.length || 0})</CardTitle>
+                <CardDescription>
+                  All registered users in the CARE Collective
+                  {state.selectedUserIds.size > 0 && (
+                    <span className="ml-2 font-medium text-blue-600">
+                      • {state.selectedUserIds.size} selected
+                    </span>
+                  )}
+                </CardDescription>
+              </div>
+              {filteredUsers.length > 0 && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={allFilteredSelected}
+                    onCheckedChange={handleSelectAll}
+                    className="data-[state=checked]:bg-blue-600"
+                  />
+                  <label className="text-sm font-medium cursor-pointer" onClick={() => handleSelectAll(!allFilteredSelected)}>
+                    Select All ({filteredUsers.length})
+                  </label>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {state.loading ? (
@@ -181,7 +247,12 @@ export default function UsersPage(): ReactElement {
                     className="flex flex-col sm:flex-row sm:items-start sm:justify-between p-4 sm:p-5 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow gap-4"
                   >
                     <div className="flex items-start gap-3 sm:gap-4 flex-1">
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 flex items-center gap-3">
+                        <Checkbox
+                          checked={state.selectedUserIds.has(user.id)}
+                          onCheckedChange={(checked) => handleSelectUser(user.id, checked as boolean)}
+                          className="data-[state=checked]:bg-blue-600"
+                        />
                         <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-full flex items-center justify-center">
                           <span className="text-primary-foreground font-semibold text-sm sm:text-base">
                             {(user.name || 'U').charAt(0).toUpperCase()}

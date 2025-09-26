@@ -218,4 +218,4 @@ GRANT SELECT ON demo_summary TO anon, authenticated;
 COMMENT ON VIEW demo_summary IS 'Summary view for demo data. Uses SECURITY INVOKER to respect the querying user''s permissions and RLS policies.';
 
 -- Display summary
-SELECT * FROM demo_summary;
+-- SELECT * FROM demo_summary;

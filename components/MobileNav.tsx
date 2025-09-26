@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogoutButton } from '@/components/LogoutButton'
 import { useAuthNavigation } from '@/lib/hooks/useAuthNavigation'
+import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
 interface MobileNavProps {
   isAdmin?: boolean
@@ -51,6 +52,7 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const { isAuthenticated, isAdmin: userIsAdmin, displayName, isLoading, error } = useAuthNavigation()
+  const handleSmoothScroll = useSmoothScroll()
   
   // Use prop isAdmin for dashboard variant, userIsAdmin for homepage variant
   const effectiveIsAdmin = variant === 'dashboard' ? isAdmin : userIsAdmin
@@ -215,7 +217,12 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
                     <li key={item.href} style={{ animationDelay: `${index * 50}ms` }} className="animate-in slide-in-from-right-4 duration-300">
                       <Link
                         href={item.href}
-                        onClick={handleClose}
+                        onClick={(e) => {
+                          if (item.href.startsWith('#')) {
+                            handleSmoothScroll(e);
+                          }
+                          handleClose();
+                        }}
                         className={linkClassName}
                       >
                         <span className="flex-1">{item.label}</span>

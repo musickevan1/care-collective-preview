@@ -195,19 +195,57 @@ class ErrorTracker {
     if (this.queue.length === 0) return
 
     try {
-      const endpoint = process.env.NEXT_PUBLIC_ERROR_TRACKING_ENDPOINT
+      // Import here to avoid circular dependency issues
+      const { careCollectiveErrorConfig } = await import('@/lib/config/error-tracking')
+
+      if (!careCollectiveErrorConfig.isEnabled()) {
+        return
+      }
+
+      const serviceConfig = careCollectiveErrorConfig.getServiceConfig()
+      let endpoint: string | null = null
+
+      if (serviceConfig.type === 'sentry' && serviceConfig.dsn) {
+        // For Sentry, we would use their SDK instead of raw HTTP
+        // This is a simplified version - in production use @sentry/nextjs
+        endpoint = serviceConfig.dsn
+      } else if (serviceConfig.type === 'custom' && serviceConfig.endpoint) {
+        endpoint = serviceConfig.endpoint
+      } else if (serviceConfig.type === 'development') {
+        // Use our local error tracking endpoint for testing
+        endpoint = `${window.location.origin}/api/error-tracking`
+      }
+
       if (!endpoint) return
 
       const eventsToSend = this.queue.splice(0, 10) // Send up to 10 at a time
-      
+
+      // Sanitize events before sending
+      const sanitizedEvents = eventsToSend.map(event => ({
+        ...event,
+        context: careCollectiveErrorConfig.sanitizeContext(event.context)
+      }))
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json'
+      }
+
+      // Add API key if available
+      if (serviceConfig.type === 'custom' && serviceConfig.apiKey) {
+        headers['Authorization'] = `Bearer ${serviceConfig.apiKey}`
+      }
+
       await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ events: eventsToSend })
+        headers,
+        body: JSON.stringify({ events: sanitizedEvents })
       })
     } catch (error) {
       // Put events back in queue if sending failed
-      this.queue.unshift(...(arguments[0] as ErrorEvent[]))
+      const eventsToRequeue = arguments[0] as ErrorEvent[]
+      if (eventsToRequeue) {
+        this.queue.unshift(...eventsToRequeue)
+      }
       console.warn('Failed to send errors to tracking service:', error)
     }
   }

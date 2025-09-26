@@ -14,19 +14,8 @@ CREATE TABLE IF NOT EXISTS contact_exchanges (
   UNIQUE(request_id, helper_id, requester_id)
 );
 
--- Messages table for in-app messaging (if message type is selected)
-CREATE TABLE IF NOT EXISTS messages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  request_id UUID REFERENCES help_requests(id) ON DELETE CASCADE,
-  sender_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  recipient_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
-  read BOOLEAN DEFAULT FALSE,
-  read_at TIMESTAMPTZ,
-  sent_at TIMESTAMPTZ DEFAULT NOW(),
-  edited_at TIMESTAMPTZ,
-  deleted_at TIMESTAMPTZ
-);
+-- Messages table compatibility - check if it exists from comprehensive messaging migration
+-- This table is created by the comprehensive messaging system migration
 
 -- Message threads for organizing conversations
 CREATE TABLE IF NOT EXISTS message_threads (
@@ -60,15 +49,13 @@ ADD COLUMN IF NOT EXISTS location_privacy TEXT CHECK (location_privacy IN ('publ
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_contact_exchanges_request ON contact_exchanges(request_id);
 CREATE INDEX IF NOT EXISTS idx_contact_exchanges_helper ON contact_exchanges(helper_id);
-CREATE INDEX IF NOT EXISTS idx_messages_request ON messages(request_id);
-CREATE INDEX IF NOT EXISTS idx_messages_recipient ON messages(recipient_id, read);
-CREATE INDEX IF NOT EXISTS idx_messages_thread ON messages(request_id, sent_at DESC);
+-- Message indexes handled by comprehensive messaging migration
 CREATE INDEX IF NOT EXISTS idx_threads_participants ON message_threads USING GIN(participant_ids);
 
 -- RLS Policies
 ALTER TABLE contact_exchanges ENABLE ROW LEVEL SECURITY;
-ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE message_threads ENABLE ROW LEVEL SECURITY;
+-- messages table RLS handled by comprehensive messaging migration
 
 -- Contact exchanges policies
 CREATE POLICY "Users can view their own contact exchanges" ON contact_exchanges
@@ -80,15 +67,7 @@ CREATE POLICY "Helpers can create contact exchanges" ON contact_exchanges
 CREATE POLICY "Users can update their own contact exchanges" ON contact_exchanges
   FOR UPDATE USING (auth.uid() IN (helper_id, requester_id));
 
--- Messages policies
-CREATE POLICY "Users can view their own messages" ON messages
-  FOR SELECT USING (auth.uid() IN (sender_id, recipient_id));
-
-CREATE POLICY "Users can send messages" ON messages
-  FOR INSERT WITH CHECK (auth.uid() = sender_id);
-
-CREATE POLICY "Users can update their own messages" ON messages
-  FOR UPDATE USING (auth.uid() = sender_id AND deleted_at IS NULL);
+-- Messages policies handled by comprehensive messaging migration
 
 -- Message threads policies
 CREATE POLICY "Users can view their own threads" ON message_threads
@@ -101,24 +80,8 @@ CREATE POLICY "Users can update their own threads" ON message_threads
   FOR UPDATE USING (auth.uid() = ANY(participant_ids));
 
 -- Function to automatically create contact exchange when help is offered
-CREATE OR REPLACE FUNCTION create_contact_exchange()
-RETURNS TRIGGER AS $$
-BEGIN
-  -- When helper_id is set (someone offers help), create a contact exchange record
-  IF NEW.helper_id IS NOT NULL AND OLD.helper_id IS NULL THEN
-    INSERT INTO contact_exchanges (request_id, helper_id, requester_id, exchange_type)
-    VALUES (NEW.id, NEW.helper_id, NEW.user_id, 'display')
-    ON CONFLICT (request_id, helper_id, requester_id) DO NOTHING;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Trigger to create contact exchange
-CREATE TRIGGER trigger_create_contact_exchange
-  AFTER UPDATE OF helper_id ON help_requests
-  FOR EACH ROW
-  EXECUTE FUNCTION create_contact_exchange();
+-- Note: This function and trigger will be created properly in the add_request_status_tracking migration
+-- after the helper_id column is added to help_requests table
 
 -- Add comment for documentation
 COMMENT ON TABLE contact_exchanges IS 'Tracks when contact information is exchanged between helpers and requesters';
