@@ -122,7 +122,7 @@ SELECT
   -- Help request metrics
   COUNT(DISTINCT hr.id) as total_help_requests,
   COUNT(DISTINCT CASE WHEN hr.status = 'open' THEN hr.id END) as open_requests,
-  COUNT(DISTINCT CASE WHEN hr.status = 'closed' THEN hr.id END) as completed_requests,
+  COUNT(DISTINCT CASE WHEN hr.status = 'completed' THEN hr.id END) as completed_requests,
   COUNT(DISTINCT CASE WHEN hr.created_at >= NOW() - INTERVAL '7 days' THEN hr.id END) as new_requests_7d,
 
   -- Messaging metrics
@@ -132,8 +132,8 @@ SELECT
   COUNT(DISTINCT CASE WHEN mr.status = 'pending' THEN mr.id END) as pending_reports,
 
   -- Engagement metrics
-  ROUND(AVG(CASE WHEN hr.status = 'closed' AND hr.closed_at IS NOT NULL
-    THEN EXTRACT(EPOCH FROM hr.closed_at - hr.created_at) / 3600 END), 2) as avg_resolution_hours,
+  ROUND(AVG(CASE WHEN hr.status = 'completed' AND hr.completed_at IS NOT NULL
+    THEN EXTRACT(EPOCH FROM hr.completed_at - hr.created_at) / 3600 END), 2) as avg_resolution_hours,
 
   -- Last updated
   NOW() as last_updated

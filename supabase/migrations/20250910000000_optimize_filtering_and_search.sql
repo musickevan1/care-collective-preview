@@ -17,54 +17,54 @@ ALTER TABLE help_requests
 -- These support our FilterPanel functionality efficiently
 
 -- Index for status + category filtering (most common combination)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_status_category 
+CREATE INDEX IF NOT EXISTS idx_help_requests_status_category
   ON help_requests(status, category);
 
 -- Index for status + urgency filtering
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_status_urgency 
+CREATE INDEX IF NOT EXISTS idx_help_requests_status_urgency
   ON help_requests(status, urgency);
 
--- Index for category + urgency filtering  
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_category_urgency 
+-- Index for category + urgency filtering
+CREATE INDEX IF NOT EXISTS idx_help_requests_category_urgency
   ON help_requests(category, urgency);
 
 -- Index for urgency-based sorting (critical > urgent > normal)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_urgency_created 
+CREATE INDEX IF NOT EXISTS idx_help_requests_urgency_created
   ON help_requests(urgency DESC, created_at DESC);
 
 -- Composite index for multiple filter combinations
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_multi_filter 
+CREATE INDEX IF NOT EXISTS idx_help_requests_multi_filter
   ON help_requests(status, category, urgency, created_at DESC);
 
 -- Text search indexes for title and description
 -- Enable full-text search capabilities
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_title_search 
+CREATE INDEX IF NOT EXISTS idx_help_requests_title_search
   ON help_requests USING gin(to_tsvector('english', title));
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_description_search 
+CREATE INDEX IF NOT EXISTS idx_help_requests_description_search
   ON help_requests USING gin(to_tsvector('english', COALESCE(description, '')));
 
 -- Combined text search index for title + description
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_full_text_search 
+CREATE INDEX IF NOT EXISTS idx_help_requests_full_text_search
   ON help_requests USING gin(
     to_tsvector('english', title || ' ' || COALESCE(description, ''))
   );
 
 -- Index for user's own requests (dashboard optimization)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_user_status 
+CREATE INDEX IF NOT EXISTS idx_help_requests_user_status
   ON help_requests(user_id, status, created_at DESC);
 
 -- Index for helper assignments and status tracking
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_helper_status 
+CREATE INDEX IF NOT EXISTS idx_help_requests_helper_status
   ON help_requests(helper_id, status) WHERE helper_id IS NOT NULL;
 
 -- Partial indexes for active requests (status filtering optimization)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_open 
-  ON help_requests(created_at DESC, urgency DESC) 
+CREATE INDEX IF NOT EXISTS idx_help_requests_open
+  ON help_requests(created_at DESC, urgency DESC)
   WHERE status = 'open';
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_help_requests_in_progress 
-  ON help_requests(created_at DESC) 
+CREATE INDEX IF NOT EXISTS idx_help_requests_in_progress
+  ON help_requests(created_at DESC)
   WHERE status = 'in_progress';
 
 -- Create function for optimized text search
@@ -131,7 +131,7 @@ FROM help_requests
 WHERE created_at > NOW() - INTERVAL '30 days'; -- Focus on recent activity
 
 -- Index for materialized view refresh
-CREATE UNIQUE INDEX IF NOT EXISTS idx_dashboard_stats_refresh 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_dashboard_stats_refresh
   ON dashboard_stats(last_updated);
 
 -- Grant access to materialized view
@@ -141,7 +141,7 @@ GRANT SELECT ON dashboard_stats TO anon, authenticated;
 CREATE OR REPLACE FUNCTION refresh_dashboard_stats()
 RETURNS void AS $$
 BEGIN
-  REFRESH MATERIALIZED VIEW CONCURRENTLY dashboard_stats;
+  REFRESH MATERIALIZED VIEW dashboard_stats;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
