@@ -60,7 +60,7 @@ export default function HomePage(): ReactElement {
               ) : (
                 <>
                   <Link href="/signup" className="border border-sage text-sage px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Join Community</Link>
-                  <Link href="/login" className="bg-sage text-white px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Member Login</Link>
+                  <Link href="/login" className="bg-sage-accessible text-white px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Member Login</Link>
                 </>
               )}
             </div>
@@ -122,7 +122,7 @@ export default function HomePage(): ReactElement {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
                 <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage text-white rounded-full flex items-center justify-center font-bold">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage-accessible text-white rounded-full flex items-center justify-center font-bold">
                     1
                   </div>
                   <div className="text-5xl mb-6 mt-4">👥</div>
@@ -133,7 +133,7 @@ export default function HomePage(): ReactElement {
                 </div>
                 
                 <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage text-white rounded-full flex items-center justify-center font-bold">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage-accessible text-white rounded-full flex items-center justify-center font-bold">
                     2
                   </div>
                   <div className="text-5xl mb-6 mt-4">🙋‍♀️</div>
@@ -144,7 +144,7 @@ export default function HomePage(): ReactElement {
                 </div>
                 
                 <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage text-white rounded-full flex items-center justify-center font-bold">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sage-accessible text-white rounded-full flex items-center justify-center font-bold">
                     3
                   </div>
                   <div className="text-5xl mb-6 mt-4">🤝</div>
@@ -181,7 +181,7 @@ export default function HomePage(): ReactElement {
                   </h3>
                   <div className="space-y-4">
                     <div className="flex gap-4 p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
-                      <div className="bg-sage text-white px-3 py-2 rounded text-sm font-semibold text-center min-w-[60px] flex-shrink-0">
+                      <div className="bg-sage-accessible text-white px-3 py-2 rounded text-sm font-semibold text-center min-w-[60px] flex-shrink-0">
                         Jan 15
                       </div>
                       <div>
@@ -190,7 +190,7 @@ export default function HomePage(): ReactElement {
                       </div>
                     </div>
                     <div className="flex gap-4 p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
-                      <div className="bg-sage text-white px-3 py-2 rounded text-sm font-semibold text-center min-w-[60px] flex-shrink-0">
+                      <div className="bg-sage-accessible text-white px-3 py-2 rounded text-sm font-semibold text-center min-w-[60px] flex-shrink-0">
                         Jan 22
                       </div>
                       <div>
@@ -266,7 +266,7 @@ export default function HomePage(): ReactElement {
                 <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
                   <div className="text-center mb-6">
                     <div className="text-5xl mb-4">🎓</div>
-                    <h3 className="text-2xl font-bold text-dusty-rose-dark mb-4">Academic Partnership</h3>
+                    <h3 className="text-2xl font-bold text-dusty-rose-accessible mb-4">Academic Partnership</h3>
                   </div>
                   <div className="bg-dusty-rose-light/30 p-6 rounded-lg">
                     <p className="text-foreground leading-relaxed">
@@ -281,7 +281,7 @@ export default function HomePage(): ReactElement {
 
               {/* Call to Action */}
               <div className="mt-12">
-                <Link href="/signup" className="inline-flex items-center justify-center bg-dusty-rose text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-dusty-rose-dark transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-dusty-rose/20 min-h-[48px] group">
+                <Link href="/signup" className="inline-flex items-center justify-center bg-dusty-rose-accessible text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-dusty-rose-accessible transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-dusty-rose/20 min-h-[48px] group">
                   <span>Join Our Community</span>
                   <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

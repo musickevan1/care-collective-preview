@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
 import { FilterPanel, FilterOptions } from '@/components/FilterPanel'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
+import { getOptimizedHelpRequests, type OptimizedHelpRequest } from '@/lib/queries/help-requests-optimized'
 import Link from 'next/link'
 
 type User = {
@@ -16,24 +17,8 @@ type User = {
   is_admin: boolean
 }
 
-type HelpRequest = {
-  id: string
-  title: string
-  description: string | null
-  category: string
-  urgency: string
-  status: string
-  created_at: string
-  helper_id: string | null
-  profiles: {
-    name: string
-    location: string | null
-  } | null
-  helper: {
-    name: string
-    location: string | null
-  } | null
-}
+// Use optimized type from our query module
+type HelpRequest = OptimizedHelpRequest
 
 const categoryColors = {
   groceries: 'default',
@@ -173,120 +158,19 @@ export default async function RequestsPage({ searchParams }: PageProps) {
   const supabase = await createClient();
   const messagingData = await getMessagingData(user.id);
 
-  let query;
-  let requests = null;
-  let queryError = null;
-
-  try {
-    // Use optimized query based on filter combinations
-    if (searchQuery) {
-      // Use full-text search for text queries
-      query = supabase.rpc('search_help_requests', { 
-        search_query: searchQuery 
-      });
-      
-      // Apply additional filters to search results
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-      if (categoryFilter !== 'all') {
-        query = query.eq('category', categoryFilter);
-      }
-      if (urgencyFilter !== 'all') {
-        query = query.eq('urgency', urgencyFilter);
-      }
-    } else {
-      // Use optimized view for regular filtering
-      query = supabase
-        .from('help_requests')
-        .select(`
-          *,
-          profiles!user_id (name, location),
-          helper:profiles!helper_id (name, location)
-        `);
-      
-      // Apply filters in optimal order for index usage
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-      
-      if (categoryFilter !== 'all') {
-        query = query.eq('category', categoryFilter);
-      }
-      
-      if (urgencyFilter !== 'all') {
-        query = query.eq('urgency', urgencyFilter);
-      }
-    }
-    
-    // Apply sorting - optimized for our indexes
-    const isAscending = sortOrder === 'asc';
-    if (sortBy === 'urgency') {
-      // Use the urgency + created_at index
-      query = query.order('urgency', { ascending: false });
-      query = query.order('created_at', { ascending: false });
-    } else if (sortBy === 'created_at') {
-      query = query.order('created_at', { ascending: isAscending });
-    } else {
-      // For other sorting, use compound index
-      query = query.order(sortBy, { ascending: isAscending });
-      query = query.order('created_at', { ascending: false });
-    }
-    
-    // Limit results for performance (with pagination support in future)
-    query = query.limit(100);
-    
-    const { data, error } = await query;
-    
-    if (error) {
-      console.error('[Help Requests Query Error]', error);
-      queryError = error;
-    } else {
-      requests = data;
-    }
-
-    // If search query failed, fall back to regular query
-    if (searchQuery && queryError) {
-      console.warn('[Search Fallback] Using ILIKE search due to full-text search error');
-      
-      const fallbackQuery = supabase
-        .from('help_requests')
-        .select(`
-          *,
-          profiles!user_id (name, location),
-          helper:profiles!helper_id (name, location)
-        `)
-        .or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
-      
-      // Apply other filters
-      if (statusFilter !== 'all') {
-        fallbackQuery.eq('status', statusFilter);
-      }
-      if (categoryFilter !== 'all') {
-        fallbackQuery.eq('category', categoryFilter);
-      }
-      if (urgencyFilter !== 'all') {
-        fallbackQuery.eq('urgency', urgencyFilter);
-      }
-      
-      fallbackQuery.order('created_at', { ascending: false });
-      fallbackQuery.limit(100);
-      
-      const { data: fallbackData } = await fallbackQuery;
-      requests = fallbackData;
-      queryError = null;
-    }
-    
-  } catch (error) {
-    console.error('[Help Requests Critical Error]', error);
-    queryError = error;
-    requests = [];
-  }
+  // Use optimized query functions - Phase 3.1 Performance Enhancement
+  const { data: requests, error: queryError } = await getOptimizedHelpRequests({
+    status: statusFilter,
+    category: categoryFilter,
+    urgency: urgencyFilter,
+    search: searchQuery,
+    sort: sortBy,
+    order: sortOrder,
+    limit: 100
+  });
 
   // Ensure requests is always an array
-  if (!requests) {
-    requests = [];
-  }
+  const safeRequests = requests || [];
 
   const breadcrumbs = [
     { label: 'Help Requests', href: '/requests' }
@@ -355,7 +239,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
               )}
             </CardContent>
           </Card>
-        ) : !requests || requests.length === 0 ? (
+        ) : !safeRequests || safeRequests.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
               <div className="text-6xl mb-4">🤝</div>
@@ -375,7 +259,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">
-                  {requests.length} Request{requests.length !== 1 ? 's' : ''} Found
+                  {safeRequests.length} Request{safeRequests.length !== 1 ? 's' : ''} Found
                 </h2>
                 <p className="text-sm text-muted-foreground">
                   {searchQuery ? `Results for "${searchQuery}"` : 
@@ -387,7 +271,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {requests.map((request: HelpRequest) => (
+              {safeRequests.map((request: HelpRequest) => (
                 <Card key={request.id} className="hover:shadow-md transition-shadow">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-2 mb-2">

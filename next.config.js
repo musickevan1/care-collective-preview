@@ -147,8 +147,70 @@ const nextConfig = {
     } : false,
   },
 
-  // Minimal webpack config to avoid build issues
-  webpack: (config) => {
+  // Enhanced webpack config for bundle optimization
+  webpack: (config, { buildId, dev, isServer }) => {
+    // Enable bundle analyzer in development when ANALYZE=true
+    if (process.env.ANALYZE === 'true') {
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'server',
+          analyzerPort: isServer ? 8888 : 8889,
+          openAnalyzer: true,
+        })
+      )
+    }
+
+    // Optimize bundle splitting for Care Collective specific routes
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        ...config.optimization.splitChunks,
+        cacheGroups: {
+          ...config.optimization.splitChunks?.cacheGroups,
+          // Admin dashboard components
+          admin: {
+            test: /[\\/]components[\\/]admin[\\/]/,
+            name: 'admin-components',
+            chunks: 'all',
+            priority: 20,
+          },
+          // Messaging components
+          messaging: {
+            test: /[\\/]components[\\/]messaging[\\/]/,
+            name: 'messaging-components',
+            chunks: 'all',
+            priority: 20,
+          },
+          // UI components
+          ui: {
+            test: /[\\/]components[\\/]ui[\\/]/,
+            name: 'ui-components',
+            chunks: 'all',
+            priority: 15,
+          },
+          // Supabase client
+          supabase: {
+            test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+            name: 'supabase',
+            chunks: 'all',
+            priority: 10,
+          },
+          // Large vendor libraries
+          vendor: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: 'react-vendor',
+            chunks: 'all',
+            priority: 10,
+          },
+        },
+      },
+    }
+
+    // Tree shaking optimization
+    config.optimization.usedExports = true
+    config.optimization.sideEffects = false
+
     return config
   },
 

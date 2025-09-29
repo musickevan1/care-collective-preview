@@ -37,7 +37,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+  // Remove maximumScale to allow zooming for accessibility (WCAG 2.1 AA requirement)
 };
 
 export default function RootLayout({
