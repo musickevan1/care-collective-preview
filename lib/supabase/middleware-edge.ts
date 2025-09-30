@@ -203,9 +203,11 @@ export async function updateSession(request: NextRequest) {
         // Check verification status for all protected routes
         if (profile.verification_status !== 'approved') {
           if (process.env.NODE_ENV === 'development') {
-            console.log('[Middleware] Redirecting to waitlist - not approved')
+            console.log('[Middleware] Redirecting to dashboard - not approved')
           }
-          return NextResponse.redirect(new URL('/waitlist', request.url))
+          const redirectUrl = new URL('/dashboard', request.url)
+          redirectUrl.searchParams.set('message', 'approval_required')
+          return NextResponse.redirect(redirectUrl)
         }
 
         // User is approved, allow access

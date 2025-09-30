@@ -75,14 +75,24 @@ async function getUser() {
   }
 
   // Get user profile with verification status
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('id, name, location, verification_status, is_admin')
     .eq('id', user.id)
     .single();
 
+  if (profileError) {
+    console.error('[Browse Requests] Profile query error:', profileError);
+    return null;
+  }
+
   // Check if user is approved or admin
   if (!profile || (profile.verification_status !== 'approved' && !profile.is_admin)) {
+    console.log('[Browse Requests] User not approved:', {
+      userId: user.id,
+      verificationStatus: profile?.verification_status,
+      isAdmin: profile?.is_admin
+    });
     return null; // This will trigger redirect to login/waiting page
   }
 
