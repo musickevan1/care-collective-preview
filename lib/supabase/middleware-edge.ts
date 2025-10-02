@@ -113,14 +113,16 @@ export async function updateSession(request: NextRequest) {
       // Don't force logout on auth errors - let client handle it
     }
 
-    // Debug logging for authentication issues (reduced verbosity)
-    if (process.env.NODE_ENV === 'development' && !authError?.message?.includes('Auth session missing')) {
-      console.log('[Middleware] Auth state:', { 
+    // PRODUCTION DEBUG: Critical auth tracing
+    if (!authError?.message?.includes('Auth session missing')) {
+      console.log('[Middleware] Auth state:', {
         path: request.nextUrl.pathname,
-        hasUser: !!user, 
+        hasUser: !!user,
         userId: user?.id,
+        userEmail: user?.email,
         cookieCount: request.cookies.getAll().length,
-        authError: authError?.message 
+        authError: authError?.message,
+        timestamp: new Date().toISOString()
       })
     }
 
@@ -202,9 +204,14 @@ export async function updateSession(request: NextRequest) {
 
         // CRITICAL SECURITY: Block rejected users first
         if (profile.verification_status === 'rejected') {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('[Middleware] Blocking rejected user access')
-          }
+          console.log('[Middleware] BLOCKING REJECTED USER:', {
+            userId: user.id,
+            userEmail: user?.email,
+            profileId: profile.id,
+            verificationStatus: profile.verification_status,
+            path: request.nextUrl.pathname,
+            timestamp: new Date().toISOString()
+          })
 
           // Sign out the user to clear their session
           await supabase.auth.signOut()

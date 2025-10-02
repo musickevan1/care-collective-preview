@@ -9,6 +9,12 @@ import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { getOptimizedHelpRequests, type OptimizedHelpRequest } from '@/lib/queries/help-requests-optimized'
 import Link from 'next/link'
 
+// Force dynamic rendering - no caching for authenticated pages
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+export const runtime = 'nodejs'
+
 type User = {
   id: string
   name: string
@@ -70,6 +76,15 @@ async function getUser() {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
+  // PRODUCTION DEBUG: Auth check
+  console.log('[Browse Requests] Auth check:', {
+    hasUser: !!user,
+    userId: user?.id,
+    userEmail: user?.email,
+    error: error?.message,
+    timestamp: new Date().toISOString()
+  });
+
   if (error || !user) {
     return null;
   }
@@ -81,8 +96,31 @@ async function getUser() {
     .eq('id', user.id)
     .single();
 
+  // PRODUCTION DEBUG: Profile fetch
+  console.log('[Browse Requests] Profile fetched:', {
+    profileId: profile?.id,
+    profileName: profile?.name,
+    verificationStatus: profile?.verification_status,
+    queryUserId: user.id,
+    matchesAuthUser: profile?.id === user.id,
+    profileError: profileError?.message,
+    timestamp: new Date().toISOString()
+  });
+
   if (profileError) {
     console.error('[Browse Requests] Profile query error:', profileError);
+    return null;
+  }
+
+  // CRITICAL SECURITY: Validate profile ID matches authenticated user ID
+  if (profile && profile.id !== user.id) {
+    console.error('[Browse Requests] SECURITY ALERT: Profile ID mismatch!', {
+      authUserId: user.id,
+      profileId: profile.id,
+      authEmail: user.email,
+      profileName: profile.name,
+      timestamp: new Date().toISOString()
+    });
     return null;
   }
 
@@ -94,6 +132,12 @@ async function getUser() {
       isAdmin: profile?.is_admin
     });
     return null; // This will trigger redirect to login/waiting page
+  }
+
+  // Additional security check: Block rejected users explicitly
+  if (profile.verification_status === 'rejected') {
+    console.log('[Browse Requests] BLOCKING rejected user');
+    return null;
   }
 
   return {

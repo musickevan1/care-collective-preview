@@ -14,24 +14,45 @@ export async function GET(request: NextRequest) {
       // Get user profile to determine where to redirect based on verification status
       try {
         const { data: { user } } = await supabase.auth.getUser()
-        
+
+        // PRODUCTION DEBUG: Auth callback user check
+        console.log('[Auth Callback] User authenticated:', {
+          hasUser: !!user,
+          userId: user?.id,
+          userEmail: user?.email,
+          timestamp: new Date().toISOString()
+        })
+
         if (user) {
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('verification_status, email_confirmed')
             .eq('id', user.id)
             .single()
 
+          // PRODUCTION DEBUG: Profile fetch in callback
+          console.log('[Auth Callback] Profile fetched:', {
+            profileId: profile?.id,
+            verificationStatus: profile?.verification_status,
+            queryUserId: user.id,
+            matchesAuthUser: profile?.id === user.id,
+            profileError: profileError?.message,
+            timestamp: new Date().toISOString()
+          })
+
           // Determine redirect destination based on user status
           if (profile) {
             if (profile.verification_status === 'rejected') {
               // CRITICAL SECURITY: Block rejected users immediately
+              console.log('[Auth Callback] BLOCKING REJECTED USER - signing out')
               // Sign out and redirect to access denied page
               await supabase.auth.signOut()
               next = '/access-denied?reason=rejected'
             } else if (profile.verification_status === 'pending') {
+              console.log('[Auth Callback] Redirecting pending user to waitlist')
               next = '/waitlist'
             } else if (profile.verification_status === 'approved') {
+              console.log('[Auth Callback] Approved user, proceeding to:', next)
               // If email was just confirmed or already confirmed, go to dashboard
               // The middleware will handle any additional checks
               next = next === '/dashboard' ? '/dashboard' : next
@@ -39,7 +60,7 @@ export async function GET(request: NextRequest) {
           }
         }
       } catch (profileError) {
-        console.error('Error fetching user profile in callback:', profileError)
+        console.error('[Auth Callback] Error fetching user profile:', profileError)
         // If there's an error getting profile, use the original next parameter
       }
 

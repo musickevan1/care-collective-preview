@@ -8,6 +8,9 @@ import Link from 'next/link'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+export const runtime = 'nodejs' // Ensure server-side rendering
 
 interface DashboardPageProps {
   searchParams: Promise<{ error?: string }>
@@ -17,18 +20,53 @@ async function getUser() {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
+  // PRODUCTION DEBUG: Critical auth debugging
+  console.log('[Dashboard] getUser() called - Auth User:', {
+    hasUser: !!user,
+    userId: user?.id,
+    userEmail: user?.email,
+    error: error?.message,
+    timestamp: new Date().toISOString()
+  });
+
   if (error || !user) {
+    console.log('[Dashboard] No user found, returning null');
     return null;
   }
 
   // Get user profile with verification status
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single();
 
-  return {
+  // PRODUCTION DEBUG: Profile fetch result
+  console.log('[Dashboard] Profile fetched:', {
+    profileId: profile?.id,
+    profileName: profile?.name,
+    verificationStatus: profile?.verification_status,
+    queryUserId: user.id,
+    matchesAuthUser: profile?.id === user.id,
+    profileError: profileError?.message,
+    timestamp: new Date().toISOString()
+  });
+
+  // CRITICAL SECURITY: Validate profile ID matches authenticated user ID
+  if (profile && profile.id !== user.id) {
+    console.error('[Dashboard] SECURITY ALERT: Profile ID mismatch!', {
+      authUserId: user.id,
+      profileId: profile.id,
+      authEmail: user.email,
+      profileName: profile.name,
+      timestamp: new Date().toISOString()
+    });
+    // This should never happen - indicates a serious bug
+    // For security, treat as if no profile exists
+    return null;
+  }
+
+  const userData = {
     id: user.id,
     name: profile?.name || user.email?.split('@')[0] || 'Unknown',
     email: user.email || '',
@@ -36,6 +74,16 @@ async function getUser() {
     verificationStatus: profile?.verification_status,
     profile
   };
+
+  // PRODUCTION DEBUG: Final user data
+  console.log('[Dashboard] Returning user data:', {
+    id: userData.id,
+    name: userData.name,
+    verificationStatus: userData.verificationStatus,
+    timestamp: new Date().toISOString()
+  });
+
+  return userData;
 }
 
 async function getDashboardData(userId: string) {
