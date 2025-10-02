@@ -269,5 +269,11 @@ export async function updateSession(request: NextRequest) {
   supabaseResponse.headers.set('X-Content-Type-Options', 'nosniff')
   supabaseResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
 
+  // CRITICAL: Prevent caching of authenticated pages
+  // Fixes bug where rejected users see cached approved user pages
+  supabaseResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, private, max-age=0')
+  supabaseResponse.headers.set('Pragma', 'no-cache')
+  supabaseResponse.headers.set('Expires', '0')
+
   return supabaseResponse
 }

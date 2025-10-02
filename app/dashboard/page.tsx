@@ -61,9 +61,10 @@ async function getUser() {
       profileName: profile.name,
       timestamp: new Date().toISOString()
     });
-    // This should never happen - indicates a serious bug
-    // For security, treat as if no profile exists
-    return null;
+    // This should never happen - indicates a serious bug (RLS policy issue or caching)
+    // FORCE LOGOUT to clear the corrupted session
+    await supabase.auth.signOut();
+    redirect('/login?error=session_mismatch');
   }
 
   const userData = {

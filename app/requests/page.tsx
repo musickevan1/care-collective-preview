@@ -121,7 +121,10 @@ async function getUser() {
       profileName: profile.name,
       timestamp: new Date().toISOString()
     });
-    return null;
+    // This should never happen - indicates a serious bug (RLS policy issue or caching)
+    // FORCE LOGOUT to clear the corrupted session
+    await supabase.auth.signOut();
+    redirect('/login?error=session_mismatch');
   }
 
   // Check if user is approved or admin
