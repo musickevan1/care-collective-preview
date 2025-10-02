@@ -169,18 +169,44 @@ export default async function RequestsPage({ searchParams }: PageProps) {
   const messagingData = await getMessagingData(user.id);
 
   // Use optimized query functions - Phase 3.1 Performance Enhancement
-  const { data: requests, error: queryError } = await getOptimizedHelpRequests({
-    status: statusFilter,
-    category: categoryFilter,
-    urgency: urgencyFilter,
-    search: searchQuery,
-    sort: sortBy,
-    order: sortOrder,
-    limit: 100
-  });
+  let requests: typeof OptimizedHelpRequest[] | null = null
+  let queryError: any = null
 
-  // Ensure requests is always an array
-  const safeRequests = requests || [];
+  try {
+    const queryResult = await getOptimizedHelpRequests({
+      status: statusFilter,
+      category: categoryFilter,
+      urgency: urgencyFilter,
+      search: searchQuery,
+      sort: sortBy,
+      order: sortOrder,
+      limit: 100
+    })
+
+    requests = queryResult.data
+    queryError = queryResult.error
+
+    // Enhanced logging for debugging
+    if (queryError) {
+      console.error('[Browse Requests] Query error:', {
+        error: queryError,
+        userId: user.id,
+        verificationStatus: user.verification_status,
+        filters: { statusFilter, categoryFilter, urgencyFilter, searchQuery }
+      })
+    }
+
+  } catch (error) {
+    console.error('[Browse Requests] Unexpected error:', error)
+    queryError = error
+  }
+
+  // Ensure requests is always an array with null checks
+  const safeRequests = (requests || []).map(req => ({
+    ...req,
+    profiles: req.profiles || { name: 'Unknown User', location: null },
+    helper: req.helper_id && req.helper ? req.helper : null
+  }));
 
   const breadcrumbs = [
     { label: 'Help Requests', href: '/requests' }
@@ -281,59 +307,67 @@ export default async function RequestsPage({ searchParams }: PageProps) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {safeRequests.map((request: HelpRequest) => (
-                <Card key={request.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <CardTitle className="text-lg line-clamp-2">
-                        {request.title}
-                      </CardTitle>
-                      <Badge variant={urgencyColors[request.urgency as keyof typeof urgencyColors]} className="text-xs whitespace-nowrap">
-                        {request.urgency}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>{request.profiles?.name || 'Anonymous'}</span>
-                      {request.profiles?.location && (
-                        <>
-                          <span>•</span>
-                          <span>{request.profiles.location}</span>
-                        </>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    {request.description && (
-                      <CardDescription className="mb-4 line-clamp-3">
-                        {request.description}
-                      </CardDescription>
-                    )}
-                    <div className="flex items-center justify-between">
-                      <div className="flex gap-2">
-                        <Badge variant={categoryColors[request.category as keyof typeof categoryColors]} className="text-xs">
-                          {request.category}
+              {safeRequests.map((request: HelpRequest) => {
+                // Defensive null checks for rendering
+                const title = request.title || 'Untitled Request'
+                const urgency = request.urgency || 'normal'
+                const profileName = request.profiles?.name || 'Anonymous'
+                const profileLocation = request.profiles?.location
+
+                return (
+                  <Card key={request.id} className="hover:shadow-md transition-shadow">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <CardTitle className="text-lg line-clamp-2">
+                          {title}
+                        </CardTitle>
+                        <Badge variant={urgencyColors[urgency as keyof typeof urgencyColors] || 'outline'} className="text-xs whitespace-nowrap">
+                          {urgency}
                         </Badge>
-                        <StatusBadge status={request.status as any} />
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {formatTimeAgo(request.created_at)}
-                      </span>
-                    </div>
-                    {request.helper && request.status === 'in_progress' && (
-                      <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
-                        Being helped by {request.helper.name}
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>{profileName}</span>
+                        {profileLocation && (
+                          <>
+                            <span>•</span>
+                            <span>{profileLocation}</span>
+                          </>
+                        )}
                       </div>
-                    )}
-                    <div className="mt-4 pt-4 border-t">
-                      <Link href={`/requests/${request.id}`}>
-                        <Button variant="outline" size="sm" className="w-full">
-                          View Details {request.status === 'open' && '& Offer Help'}
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      {request.description && (
+                        <CardDescription className="mb-4 line-clamp-3">
+                          {request.description}
+                        </CardDescription>
+                      )}
+                      <div className="flex items-center justify-between">
+                        <div className="flex gap-2">
+                          <Badge variant={categoryColors[request.category as keyof typeof categoryColors] || 'outline'} className="text-xs">
+                            {request.category}
+                          </Badge>
+                          <StatusBadge status={request.status as any} />
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {formatTimeAgo(request.created_at)}
+                        </span>
+                      </div>
+                      {request.helper && request.status === 'in_progress' && (
+                        <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
+                          Being helped by {request.helper.name}
+                        </div>
+                      )}
+                      <div className="mt-4 pt-4 border-t">
+                        <Link href={`/requests/${request.id}`}>
+                          <Button variant="outline" size="sm" className="w-full">
+                            View Details {request.status === 'open' && '& Offer Help'}
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           </div>
         )}

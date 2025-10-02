@@ -16,12 +16,12 @@ interface DashboardPageProps {
 async function getUser() {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
-  
+
   if (error || !user) {
     return null;
   }
 
-  // Get user profile
+  // Get user profile with verification status
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -33,6 +33,7 @@ async function getUser() {
     name: profile?.name || user.email?.split('@')[0] || 'Unknown',
     email: user.email || '',
     isAdmin: profile?.is_admin || false,
+    verificationStatus: profile?.verification_status,
     profile
   };
 }
@@ -109,9 +110,19 @@ async function getDashboardData(userId: string) {
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   const user = await getUser();
-  
+
   if (!user) {
     redirect('/login?redirect=/dashboard');
+  }
+
+  // CRITICAL SECURITY: Block rejected users (defensive check)
+  if (user.verificationStatus === 'rejected') {
+    redirect('/access-denied?reason=rejected');
+  }
+
+  // Redirect pending users to waitlist page
+  if (user.verificationStatus === 'pending') {
+    redirect('/waitlist');
   }
 
   const resolvedSearchParams = await searchParams;

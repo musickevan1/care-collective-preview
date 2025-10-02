@@ -200,12 +200,36 @@ export async function updateSession(request: NextRequest) {
           }
         }
 
-        // Check verification status for all protected routes
+        // CRITICAL SECURITY: Block rejected users first
+        if (profile.verification_status === 'rejected') {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[Middleware] Blocking rejected user access')
+          }
+
+          // Sign out the user to clear their session
+          await supabase.auth.signOut()
+
+          // Redirect to access denied page
+          const redirectUrl = new URL('/access-denied', request.url)
+          redirectUrl.searchParams.set('reason', 'rejected')
+          return NextResponse.redirect(redirectUrl)
+        }
+
+        // Check verification status for pending users
+        if (profile.verification_status === 'pending') {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[Middleware] Redirecting pending user to waitlist')
+          }
+          const redirectUrl = new URL('/waitlist', request.url)
+          return NextResponse.redirect(redirectUrl)
+        }
+
+        // Check if user is approved
         if (profile.verification_status !== 'approved') {
           if (process.env.NODE_ENV === 'development') {
-            console.log('[Middleware] Redirecting to dashboard - not approved')
+            console.log('[Middleware] User not approved - unknown status')
           }
-          const redirectUrl = new URL('/dashboard', request.url)
+          const redirectUrl = new URL('/waitlist', request.url)
           redirectUrl.searchParams.set('message', 'approval_required')
           return NextResponse.redirect(redirectUrl)
         }

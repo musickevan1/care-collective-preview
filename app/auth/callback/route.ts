@@ -24,9 +24,12 @@ export async function GET(request: NextRequest) {
 
           // Determine redirect destination based on user status
           if (profile) {
-            if (profile.verification_status === 'pending') {
-              next = '/waitlist'
-            } else if (profile.verification_status === 'rejected') {
+            if (profile.verification_status === 'rejected') {
+              // CRITICAL SECURITY: Block rejected users immediately
+              // Sign out and redirect to access denied page
+              await supabase.auth.signOut()
+              next = '/access-denied?reason=rejected'
+            } else if (profile.verification_status === 'pending') {
               next = '/waitlist'
             } else if (profile.verification_status === 'approved') {
               // If email was just confirmed or already confirmed, go to dashboard
