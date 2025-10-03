@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { getProfileWithServiceRole } from '@/lib/supabase/admin'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -24,35 +25,26 @@ export async function GET(request: NextRequest) {
         })
 
         if (user) {
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('verification_status, email_confirmed')
-            .eq('id', user.id)
-            .single()
+          // Use service role to bypass RLS and get guaranteed accurate data
+          let profile
+          try {
+            profile = await getProfileWithServiceRole(user.id)
 
-          // PRODUCTION DEBUG: Profile fetch in callback
-          console.log('[Auth Callback] Profile fetched:', {
-            profileId: profile?.id,
-            verificationStatus: profile?.verification_status,
-            queryUserId: user.id,
-            matchesAuthUser: profile?.id === user.id,
-            profileError: profileError?.message,
-            timestamp: new Date().toISOString()
-          })
-
-          // SECURITY: If profile query failed, sign out and block
-          if (profileError || !profile) {
-            console.error('[Auth Callback] CRITICAL: Cannot verify user status - signing out', {
-              error: profileError?.message,
+            console.log('[Auth Callback] Profile verified (service role):', {
               userId: user.id,
+              verificationStatus: profile.verification_status,
               timestamp: new Date().toISOString()
-            });
+            })
+          } catch (error) {
+            console.error('[Auth Callback] Service role query failed:', error)
+            // Sign out on any error - secure by default
             await supabase.auth.signOut()
             next = '/login?error=verification_failed'
+            profile = null
           }
 
           // Determine redirect destination based on user status
-          else if (profile) {
+          if (profile) {
             if (profile.verification_status === 'rejected') {
               // CRITICAL SECURITY: Block rejected users immediately
               console.log('[Auth Callback] BLOCKING REJECTED USER - signing out')

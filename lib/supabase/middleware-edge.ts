@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { getProfileWithServiceRole } from '@/lib/supabase/admin'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -167,28 +168,17 @@ export async function updateSession(request: NextRequest) {
       }
 
       // Check user verification status for protected routes
+      // Use service role to bypass RLS and get guaranteed accurate data
       try {
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('verification_status, is_admin')
-          .eq('id', user.id)
-          .single()
+        const profile = await getProfileWithServiceRole(user.id)
 
-        if (profileError) {
-          console.error('[Middleware] CRITICAL: Profile query failed!', {
-            error: profileError.message,
-            userId: user.id,
-            path: request.nextUrl.pathname,
-            timestamp: new Date().toISOString()
-          });
-
-          // SECURITY: If we can't verify user status, BLOCK ACCESS (secure by default)
-          // This prevents RLS policy issues from allowing unauthorized access
-          const redirectUrl = new URL('/login', request.url)
-          redirectUrl.searchParams.set('error', 'verification_failed')
-          redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
-          return NextResponse.redirect(redirectUrl)
-        }
+        console.log('[Middleware] Profile verified (service role):', {
+          userId: user.id,
+          verificationStatus: profile.verification_status,
+          isAdmin: profile.is_admin,
+          path: request.nextUrl.pathname,
+          timestamp: new Date().toISOString()
+        })
 
         // Check admin routes specifically (both UI and API)
         if (request.nextUrl.pathname.startsWith('/admin') || 
@@ -253,10 +243,20 @@ export async function updateSession(request: NextRequest) {
         if (process.env.NODE_ENV === 'development') {
           console.log('[Middleware] User approved, allowing access to:', request.nextUrl.pathname)
         }
-        
+
       } catch (error) {
-        console.error('[Middleware] Verification check error:', error)
-        // Graceful degradation - allow access if verification check fails
+        console.error('[Middleware] CRITICAL: Service role profile query failed!', {
+          error,
+          userId: user?.id,
+          path: request.nextUrl.pathname,
+          timestamp: new Date().toISOString()
+        });
+
+        // SECURITY: If service role query fails, BLOCK ACCESS (secure by default)
+        const redirectUrl = new URL('/login', request.url)
+        redirectUrl.searchParams.set('error', 'verification_failed')
+        redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+        return NextResponse.redirect(redirectUrl)
       }
     }
 
