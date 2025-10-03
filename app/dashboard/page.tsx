@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getProfileWithServiceRole } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -35,36 +36,40 @@ async function getUser() {
   }
 
   // Get user profile with verification status
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+  // CRITICAL: Use service role to bypass RLS and get guaranteed accurate data
+  let profile;
+  try {
+    profile = await getProfileWithServiceRole(user.id);
 
-  // PRODUCTION DEBUG: Profile fetch result
-  console.log('[Dashboard] Profile fetched:', {
-    profileId: profile?.id,
-    profileName: profile?.name,
-    verificationStatus: profile?.verification_status,
-    queryUserId: user.id,
-    matchesAuthUser: profile?.id === user.id,
-    profileError: profileError?.message,
-    timestamp: new Date().toISOString()
-  });
-
-  // CRITICAL SECURITY: Validate profile ID matches authenticated user ID
-  if (profile && profile.id !== user.id) {
-    console.error('[Dashboard] SECURITY ALERT: Profile ID mismatch!', {
-      authUserId: user.id,
+    // PRODUCTION DEBUG: Profile fetch result
+    console.log('[Dashboard] Profile fetched (service role):', {
       profileId: profile.id,
-      authEmail: user.email,
       profileName: profile.name,
+      verificationStatus: profile.verification_status,
+      queryUserId: user.id,
+      matchesAuthUser: profile.id === user.id,
       timestamp: new Date().toISOString()
     });
-    // This should never happen - indicates a serious bug (RLS policy issue or caching)
-    // FORCE LOGOUT to clear the corrupted session
+
+    // CRITICAL SECURITY: Validate profile ID matches authenticated user ID
+    if (profile.id !== user.id) {
+      console.error('[Dashboard] SECURITY ALERT: Profile ID mismatch!', {
+        authUserId: user.id,
+        profileId: profile.id,
+        authEmail: user.email,
+        profileName: profile.name,
+        timestamp: new Date().toISOString()
+      });
+      // This should never happen with service role - indicates serious bug
+      // FORCE LOGOUT to clear the corrupted session
+      await supabase.auth.signOut();
+      redirect('/login?error=session_mismatch');
+    }
+  } catch (error) {
+    console.error('[Dashboard] Service role profile query failed:', error);
+    // Sign out on error - secure by default
     await supabase.auth.signOut();
-    redirect('/login?error=session_mismatch');
+    redirect('/login?error=verification_failed');
   }
 
   const userData = {
