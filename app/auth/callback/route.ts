@@ -40,8 +40,19 @@ export async function GET(request: NextRequest) {
             timestamp: new Date().toISOString()
           })
 
+          // SECURITY: If profile query failed, sign out and block
+          if (profileError || !profile) {
+            console.error('[Auth Callback] CRITICAL: Cannot verify user status - signing out', {
+              error: profileError?.message,
+              userId: user.id,
+              timestamp: new Date().toISOString()
+            });
+            await supabase.auth.signOut()
+            next = '/login?error=verification_failed'
+          }
+
           // Determine redirect destination based on user status
-          if (profile) {
+          else if (profile) {
             if (profile.verification_status === 'rejected') {
               // CRITICAL SECURITY: Block rejected users immediately
               console.log('[Auth Callback] BLOCKING REJECTED USER - signing out')

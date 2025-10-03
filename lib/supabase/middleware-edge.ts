@@ -175,11 +175,19 @@ export async function updateSession(request: NextRequest) {
           .single()
 
         if (profileError) {
-          if (process.env.NODE_ENV === 'development') {
-            console.warn('[Middleware] Profile query error:', profileError.message)
-          }
-          // If we can't determine status, allow through (graceful degradation)
-          return supabaseResponse
+          console.error('[Middleware] CRITICAL: Profile query failed!', {
+            error: profileError.message,
+            userId: user.id,
+            path: request.nextUrl.pathname,
+            timestamp: new Date().toISOString()
+          });
+
+          // SECURITY: If we can't verify user status, BLOCK ACCESS (secure by default)
+          // This prevents RLS policy issues from allowing unauthorized access
+          const redirectUrl = new URL('/login', request.url)
+          redirectUrl.searchParams.set('error', 'verification_failed')
+          redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+          return NextResponse.redirect(redirectUrl)
         }
 
         // Check admin routes specifically (both UI and API)
