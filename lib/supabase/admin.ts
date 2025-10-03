@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/lib/database.types'
 
 /**
@@ -13,6 +13,8 @@ import type { Database } from '@/lib/database.types'
  * - Checking user verification status in middleware
  * - Fetching profile for auth decisions in auth callback
  * - Admin operations that need to bypass RLS
+ *
+ * EDGE RUNTIME COMPATIBLE: Uses standard Supabase client with service role
  */
 export function createAdminClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -24,10 +26,15 @@ export function createAdminClient() {
     )
   }
 
-  return createClient<Database>(supabaseUrl, supabaseServiceKey, {
+  return createSupabaseClient<Database>(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false
+    },
+    global: {
+      headers: {
+        'X-Client-Info': 'care-collective-admin'
+      }
     }
   })
 }
@@ -37,18 +44,42 @@ export function createAdminClient() {
  * Returns GUARANTEED accurate profile data
  */
 export async function getProfileWithServiceRole(userId: string) {
-  const admin = createAdminClient()
+  try {
+    const admin = createAdminClient()
 
-  const { data: profile, error } = await admin
-    .from('profiles')
-    .select('id, name, verification_status, is_admin, email_confirmed')
-    .eq('id', userId)
-    .single()
+    console.log('[Admin Client] Querying profile for user:', userId)
 
-  if (error) {
-    console.error('[Admin Client] Profile query failed:', error)
+    const { data: profile, error } = await admin
+      .from('profiles')
+      .select('id, name, verification_status, is_admin, email_confirmed')
+      .eq('id', userId)
+      .single()
+
+    if (error) {
+      console.error('[Admin Client] Profile query failed:', {
+        error: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+        userId
+      })
+      throw error
+    }
+
+    console.log('[Admin Client] Profile retrieved successfully:', {
+      userId: profile.id,
+      name: profile.name,
+      verificationStatus: profile.verification_status,
+      isAdmin: profile.is_admin
+    })
+
+    return profile
+  } catch (error) {
+    console.error('[Admin Client] CRITICAL: getProfileWithServiceRole failed:', {
+      error,
+      userId,
+      errorMessage: error instanceof Error ? error.message : String(error)
+    })
     throw error
   }
-
-  return profile
 }
