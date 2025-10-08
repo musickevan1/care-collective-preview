@@ -2,8 +2,13 @@ import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware-edge'
 
 export async function middleware(request: NextRequest) {
+  // CRITICAL DEBUG: Verify middleware executes
+  console.log('[Middleware] 🎯 ENTRY POINT - Path:', request.nextUrl.pathname)
+
   try {
-    return await updateSession(request)
+    const result = await updateSession(request)
+    console.log('[Middleware] ✅ EXIT - Returning response for:', request.nextUrl.pathname)
+    return result
   } catch (error) {
     console.error('[Middleware] CRITICAL ERROR - Blocking request for security:', error)
 
