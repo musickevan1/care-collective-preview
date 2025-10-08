@@ -44,10 +44,17 @@ export function createAdminClient() {
  * Returns GUARANTEED accurate profile data
  */
 export async function getProfileWithServiceRole(userId: string) {
+  // ENHANCED DEBUG LOGGING - Track data flow
+  console.log('[Service Role] INPUT userId:', userId)
+  console.log('[Service Role] Env check:', {
+    hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasKey: !!process.env.SUPABASE_SERVICE_ROLE,
+    urlValue: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    timestamp: new Date().toISOString()
+  })
+
   try {
     const admin = createAdminClient()
-
-    console.log('[Admin Client] Querying profile for user:', userId)
 
     const { data: profile, error } = await admin
       .from('profiles')
@@ -55,8 +62,21 @@ export async function getProfileWithServiceRole(userId: string) {
       .eq('id', userId)
       .single()
 
+    // ENHANCED DEBUG LOGGING - Track query result
+    console.log('[Service Role] RESULT:', {
+      success: !!profile,
+      profileId: profile?.id,
+      profileName: profile?.name,
+      profileStatus: profile?.verification_status,
+      matchesInput: profile?.id === userId,
+      mismatchDetected: profile && profile.id !== userId,
+      error: error?.message,
+      errorCode: error?.code,
+      timestamp: new Date().toISOString()
+    })
+
     if (error) {
-      console.error('[Admin Client] Profile query failed:', {
+      console.error('[Service Role] Profile query failed:', {
         error: error.message,
         code: error.code,
         details: error.details,
@@ -66,16 +86,20 @@ export async function getProfileWithServiceRole(userId: string) {
       throw error
     }
 
-    console.log('[Admin Client] Profile retrieved successfully:', {
-      userId: profile.id,
-      name: profile.name,
-      verificationStatus: profile.verification_status,
-      isAdmin: profile.is_admin
-    })
+    // CRITICAL: Verify profile ID matches input user ID
+    if (profile.id !== userId) {
+      console.error('[Service Role] 🚨 CRITICAL MISMATCH DETECTED:', {
+        inputUserId: userId,
+        returnedProfileId: profile.id,
+        returnedProfileName: profile.name,
+        THIS_SHOULD_NEVER_HAPPEN: true,
+        timestamp: new Date().toISOString()
+      })
+    }
 
     return profile
   } catch (error) {
-    console.error('[Admin Client] CRITICAL: getProfileWithServiceRole failed:', {
+    console.error('[Service Role] CRITICAL: getProfileWithServiceRole failed:', {
       error,
       userId,
       errorMessage: error instanceof Error ? error.message : String(error)

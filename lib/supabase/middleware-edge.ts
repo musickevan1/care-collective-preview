@@ -170,12 +170,25 @@ export async function updateSession(request: NextRequest) {
       // Check user verification status for protected routes
       // Use service role to bypass RLS and get guaranteed accurate data
       try {
+        // ENHANCED DEBUG LOGGING - BEFORE service role query
+        console.log('[Middleware] BEFORE service role query:', {
+          authenticatedUserId: user.id,
+          authenticatedUserEmail: user.email,
+          path: request.nextUrl.pathname,
+          timestamp: new Date().toISOString()
+        })
+
         const profile = await getProfileWithServiceRole(user.id)
 
-        console.log('[Middleware] Profile verified (service role):', {
-          userId: user.id,
-          verificationStatus: profile.verification_status,
-          isAdmin: profile.is_admin,
+        // ENHANCED DEBUG LOGGING - AFTER service role query
+        console.log('[Middleware] AFTER service role query:', {
+          profileReturned: !!profile,
+          profileId: profile?.id,
+          profileName: profile?.name,
+          profileStatus: profile?.verification_status,
+          matchesAuthUser: profile?.id === user.id,
+          shouldBlock: profile?.verification_status === 'rejected',
+          willRedirect: profile?.verification_status === 'rejected' ? '/access-denied' : 'continue',
           path: request.nextUrl.pathname,
           timestamp: new Date().toISOString()
         })

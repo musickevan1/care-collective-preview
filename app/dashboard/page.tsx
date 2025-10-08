@@ -19,10 +19,16 @@ interface DashboardPageProps {
 
 async function getUser() {
   const supabase = await createClient();
+
+  // ENHANCED DEBUG LOGGING - AUTH CHECK START
+  console.log('[Dashboard] AUTH CHECK START:', {
+    timestamp: new Date().toISOString(),
+    message: 'Beginning authentication check'
+  })
+
   const { data: { user }, error } = await supabase.auth.getUser();
 
-  // PRODUCTION DEBUG: Critical auth debugging
-  console.log('[Dashboard] getUser() called - Auth User:', {
+  console.log('[Dashboard] Auth User Retrieved:', {
     hasUser: !!user,
     userId: user?.id,
     userEmail: user?.email,
@@ -35,19 +41,28 @@ async function getUser() {
     return null;
   }
 
+  // ENHANCED DEBUG LOGGING - BEFORE profile fetch
+  console.log('[Dashboard] BEFORE profile fetch:', {
+    queryingUserId: user.id,
+    queryingUserEmail: user.email,
+    timestamp: new Date().toISOString()
+  })
+
   // Get user profile with verification status
   // CRITICAL: Use service role to bypass RLS and get guaranteed accurate data
   let profile;
   try {
     profile = await getProfileWithServiceRole(user.id);
 
-    // PRODUCTION DEBUG: Profile fetch result
-    console.log('[Dashboard] Profile fetched (service role):', {
+    // ENHANCED DEBUG LOGGING - AFTER profile fetch
+    console.log('[Dashboard] AFTER profile fetch:', {
       profileId: profile.id,
       profileName: profile.name,
-      verificationStatus: profile.verification_status,
-      queryUserId: user.id,
+      profileStatus: profile.verification_status,
       matchesAuthUser: profile.id === user.id,
+      CRITICAL_MISMATCH: profile.name,
+      expectedUserId: user.id,
+      actualProfileId: profile.id,
       timestamp: new Date().toISOString()
     });
 
