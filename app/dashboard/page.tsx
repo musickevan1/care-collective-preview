@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
+import { DiagnosticPanel } from '@/components/DiagnosticPanel'
 import Link from 'next/link'
 
 // Force dynamic rendering since this page uses authentication
@@ -93,7 +94,17 @@ async function getUser() {
     email: user.email || '',
     isAdmin: profile?.is_admin || false,
     verificationStatus: profile?.verification_status,
-    profile
+    profile,
+    // ADD DIAGNOSTIC DATA
+    diagnosticData: {
+      authUserId: user.id,
+      authUserEmail: user.email || '',
+      profileId: profile.id,
+      profileName: profile.name,
+      profileStatus: profile.verification_status,
+      idsMatch: profile.id === user.id,
+      timestamp: new Date().toISOString()
+    }
   };
 
   // PRODUCTION DEBUG: Final user data
@@ -101,6 +112,7 @@ async function getUser() {
     id: userData.id,
     name: userData.name,
     verificationStatus: userData.verificationStatus,
+    diagnosticData: userData.diagnosticData,
     timestamp: new Date().toISOString()
   });
 
@@ -419,6 +431,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </CardContent>
         </Card>
       </div>
+
+      {/* DIAGNOSTIC PANEL - Always visible during debugging */}
+      <DiagnosticPanel data={user.diagnosticData} />
     </PlatformLayout>
   )
 }
