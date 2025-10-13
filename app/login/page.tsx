@@ -43,19 +43,43 @@ export default function LoginPage() {
       }
 
       if (authData?.user) {
-        // Get redirect destination from URL params
-        const urlParams = new URLSearchParams(window.location.search)
-        const redirectTo = urlParams.get('redirectTo')
+        // SECURITY: Check verification status BEFORE redirecting
+        // Fetch user profile to determine verification status
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('verification_status')
+          .eq('id', authData.user.id)
+          .single()
 
-        // Simplified approach: redirect to destination and let middleware handle verification
-        const destination = redirectTo || '/dashboard'
-        
-        console.log('Login successful, redirecting to:', destination)
-        
-        // Add small delay to ensure auth session is properly set
-        setTimeout(() => {
-          window.location.replace(destination)
-        }, 100)
+        console.log('Login successful - verification status:', profile?.verification_status)
+
+        // Route based on verification status
+        if (profile?.verification_status === 'rejected') {
+          // Rejected users: sign out immediately and show access denied
+          await supabase.auth.signOut()
+          window.location.replace('/access-denied?reason=rejected')
+          return
+        } else if (profile?.verification_status === 'pending') {
+          // Pending users: redirect to waitlist
+          window.location.replace('/waitlist')
+          return
+        } else if (profile?.verification_status === 'approved') {
+          // Approved users: proceed to dashboard or requested page
+          const urlParams = new URLSearchParams(window.location.search)
+          const redirectTo = urlParams.get('redirectTo')
+          const destination = redirectTo || '/dashboard'
+
+          console.log('Approved user, redirecting to:', destination)
+
+          // Add small delay to ensure auth session is properly set
+          setTimeout(() => {
+            window.location.replace(destination)
+          }, 100)
+        } else {
+          // Unknown status: redirect to waitlist for safety
+          setError('Account verification pending. Please wait for approval.')
+          window.location.replace('/waitlist')
+        }
       }
     } catch (err) {
       console.error('Login error:', err)
