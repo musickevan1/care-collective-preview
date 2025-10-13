@@ -14,6 +14,17 @@ export const revalidate = 0
 export const fetchCache = 'force-no-store'
 export const runtime = 'nodejs' // Ensure server-side rendering
 
+// CRITICAL: Prevent ANY caching of this authenticated page
+export async function generateMetadata() {
+  return {
+    other: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, private, max-age=0',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    }
+  }
+}
+
 interface DashboardPageProps {
   searchParams: Promise<{ error?: string }>
 }
@@ -196,14 +207,35 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     redirect('/login?redirect=/dashboard');
   }
 
+  // CRITICAL SECURITY: Triple verification with explicit logging
+  console.log('[Dashboard Page] CRITICAL SECURITY CHECK:', {
+    userId: user.id,
+    userName: user.name,
+    verificationStatus: user.verificationStatus,
+    isApproved: user.verificationStatus === 'approved',
+    shouldBlock: user.verificationStatus !== 'approved',
+    timestamp: new Date().toISOString()
+  });
+
   // CRITICAL SECURITY: Block rejected users (defensive check)
   if (user.verificationStatus === 'rejected') {
+    console.error('[Dashboard Page] BLOCKING REJECTED USER:', user.id);
     redirect('/access-denied?reason=rejected');
   }
 
   // Redirect pending users to waitlist page
   if (user.verificationStatus === 'pending') {
+    console.log('[Dashboard Page] REDIRECTING PENDING USER:', user.id);
     redirect('/waitlist');
+  }
+
+  // CRITICAL SECURITY: Only approved users past this point
+  if (user.verificationStatus !== 'approved') {
+    console.error('[Dashboard Page] BLOCKING NON-APPROVED USER:', {
+      userId: user.id,
+      status: user.verificationStatus
+    });
+    redirect('/waitlist?message=approval_required');
   }
 
   const resolvedSearchParams = await searchParams;
