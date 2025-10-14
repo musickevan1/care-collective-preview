@@ -1,6 +1,10 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { getProfileWithServiceRole } from '@/lib/supabase/admin'
+import {
+  getProfileWithServiceRole,
+  hasPendingSessionInvalidation,
+  markSessionInvalidated
+} from '@/lib/supabase/admin'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -192,6 +196,29 @@ export async function updateSession(request: NextRequest) {
           path: request.nextUrl.pathname,
           timestamp: new Date().toISOString()
         })
+
+        // SECURITY: Check for pending session invalidation (status was changed by admin)
+        const hasPendingInvalidation = await hasPendingSessionInvalidation(user.id)
+        if (hasPendingInvalidation) {
+          console.log('[Middleware] PENDING SESSION INVALIDATION DETECTED:', {
+            userId: user.id,
+            userEmail: user?.email,
+            verificationStatus: profile?.verification_status,
+            path: request.nextUrl.pathname,
+            timestamp: new Date().toISOString()
+          })
+
+          // Sign out the user
+          await supabase.auth.signOut()
+
+          // Mark session as invalidated
+          await markSessionInvalidated(user.id)
+
+          // Redirect to access denied page
+          const redirectUrl = new URL('/access-denied', request.url)
+          redirectUrl.searchParams.set('reason', 'session_invalidated')
+          return NextResponse.redirect(redirectUrl)
+        }
 
         // Check admin routes specifically (both UI and API)
         if (request.nextUrl.pathname.startsWith('/admin') || 

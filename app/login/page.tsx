@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -14,13 +13,11 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const supabase = createClient()
-
   // Check for error messages from redirects
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const errorParam = urlParams.get('error')
-    
+
     if (errorParam === 'session_error') {
       setError('Your session expired. Please log in again.')
     }
@@ -32,54 +29,64 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const { data: authData, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Call rate-limited login API endpoint
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       })
 
-      if (error) {
-        setError(error.message)
+      const data = await response.json()
+
+      // Handle rate limiting
+      if (response.status === 429) {
+        setError(data.message || 'Too many login attempts. Please try again later.')
         return
       }
 
-      if (authData?.user) {
-        // SECURITY: Check verification status BEFORE redirecting
-        // Fetch user profile to determine verification status
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('verification_status')
-          .eq('id', authData.user.id)
-          .single()
+      // Handle validation or authentication errors
+      if (!response.ok) {
+        setError(data.message || 'Login failed. Please check your credentials.')
+        return
+      }
 
-        console.log('Login successful - verification status:', profile?.verification_status)
+      // Handle successful authentication with different verification statuses
+      if (data.success && data.data) {
+        const { status, redirect, message } = data.data
 
-        // Route based on verification status
-        if (profile?.verification_status === 'rejected') {
-          // Rejected users: sign out immediately and show access denied
-          await supabase.auth.signOut()
-          window.location.replace('/access-denied?reason=rejected')
+        console.log('Login successful:', { status, redirect })
+
+        // Handle different verification statuses
+        if (status === 'rejected') {
+          setError(message || 'Access denied: Account has been rejected')
+          setTimeout(() => {
+            window.location.replace(redirect || '/access-denied?reason=rejected')
+          }, 1000)
           return
-        } else if (profile?.verification_status === 'pending') {
-          // Pending users: redirect to waitlist
-          window.location.replace('/waitlist')
+        }
+
+        if (status === 'pending') {
+          window.location.replace(redirect || '/waitlist')
           return
-        } else if (profile?.verification_status === 'approved') {
-          // Approved users: proceed to dashboard or requested page
+        }
+
+        if (status === 'approved') {
+          // Check for redirect parameter from URL
           const urlParams = new URLSearchParams(window.location.search)
           const redirectTo = urlParams.get('redirectTo')
-          const destination = redirectTo || '/dashboard'
-
-          console.log('Approved user, redirecting to:', destination)
+          const destination = redirectTo || redirect || '/dashboard'
 
           // Add small delay to ensure auth session is properly set
           setTimeout(() => {
             window.location.replace(destination)
           }, 100)
-        } else {
-          // Unknown status: redirect to waitlist for safety
-          setError('Account verification pending. Please wait for approval.')
-          window.location.replace('/waitlist')
+          return
         }
+
+        // Unknown status: redirect to waitlist for safety
+        window.location.replace(redirect || '/waitlist')
       }
     } catch (err) {
       console.error('Login error:', err)

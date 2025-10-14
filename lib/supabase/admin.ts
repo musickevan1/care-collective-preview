@@ -107,3 +107,53 @@ export async function getProfileWithServiceRole(userId: string) {
     throw error
   }
 }
+
+/**
+ * Check if user has pending session invalidation
+ * Returns true if user's session should be invalidated due to status change
+ */
+export async function hasPendingSessionInvalidation(userId: string): Promise<boolean> {
+  try {
+    const admin = createAdminClient()
+
+    // Call RPC function with parameters
+    // @ts-ignore - Type will be updated when database types are regenerated
+    const { data, error } = await admin.rpc('has_pending_session_invalidation', {
+      user_uuid: userId
+    })
+
+    if (error) {
+      console.error('[Service Role] Failed to check pending session invalidation:', error)
+      // On error, assume no pending invalidation (fail open for this check)
+      return false
+    }
+
+    return data === true
+  } catch (error) {
+    console.error('[Service Role] Exception checking pending session invalidation:', error)
+    return false
+  }
+}
+
+/**
+ * Mark user session as invalidated after successful sign out
+ */
+export async function markSessionInvalidated(userId: string): Promise<void> {
+  try {
+    const admin = createAdminClient()
+
+    // Call RPC function with parameters
+    // @ts-ignore - Type will be updated when database types are regenerated
+    const { error } = await admin.rpc('mark_session_invalidated', {
+      user_uuid: userId
+    })
+
+    if (error) {
+      console.error('[Service Role] Failed to mark session as invalidated:', error)
+    } else {
+      console.log('[Service Role] Session marked as invalidated for user:', userId)
+    }
+  } catch (error) {
+    console.error('[Service Role] Exception marking session as invalidated:', error)
+  }
+}
