@@ -25,19 +25,23 @@ export interface OptimizedHelpRequest {
   created_at: string
   user_id: string
   helper_id: string | null
-  // Flat structure from help_requests_with_profiles view
-  requester_name: string | null
-  requester_location: string | null
-  helper_name: string | null
-  helper_location: string | null
+  // Nested profiles from foreign key join (RLS now fixed)
+  profiles: {
+    name: string
+    location: string | null
+  } | null
+  helper: {
+    name: string
+    location: string | null
+  } | null
   // For search results
   rank?: number
 }
 
 /**
  * Optimized query for browsing help requests
- * Uses help_requests_with_profiles view to bypass RLS policy conflicts
- * This view pre-joins help_requests with profiles, avoiding RLS issues
+ * Uses direct table query with foreign key joins
+ * RLS policy now fixed to allow approved users to view other approved users' profiles
  */
 export async function getOptimizedHelpRequests(
   filters: HelpRequestFilters = {}
@@ -55,11 +59,15 @@ export async function getOptimizedHelpRequests(
   try {
     const supabase = await createClient()
 
-    // Query the help_requests_with_profiles view instead of help_requests table
-    // This view bypasses RLS policy conflicts by pre-joining with profiles
+    // Query help_requests table with foreign key joins to profiles
+    // RLS now allows approved users to see other approved users' profiles
     let query = supabase
-      .from('help_requests_with_profiles')
-      .select('*')
+      .from('help_requests')
+      .select(`
+        *,
+        profiles!user_id (name, location),
+        helper:profiles!helper_id (name, location)
+      `)
 
     // Apply search filter using ILIKE
     if (search.trim()) {
@@ -148,7 +156,7 @@ export async function getHelpRequestStats(): Promise<{
 
 /**
  * Get urgent help requests for dashboard
- * Uses help_requests_with_profiles view to bypass RLS
+ * Uses direct table query (RLS now fixed)
  */
 export async function getUrgentHelpRequests(limit: number = 10): Promise<{
   data: OptimizedHelpRequest[] | null
@@ -158,8 +166,12 @@ export async function getUrgentHelpRequests(limit: number = 10): Promise<{
     const supabase = await createClient()
 
     const { data, error } = await supabase
-      .from('help_requests_with_profiles')
-      .select('*')
+      .from('help_requests')
+      .select(`
+        *,
+        profiles!user_id (name, location),
+        helper:profiles!helper_id (name, location)
+      `)
       .in('urgency', ['urgent', 'critical'])
       .eq('status', 'open')
       .order('urgency', { ascending: false })
