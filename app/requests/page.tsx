@@ -248,12 +248,8 @@ export default async function RequestsPage({ searchParams }: PageProps) {
     queryError = error
   }
 
-  // Ensure requests is always an array with null checks
-  const safeRequests = (requests || []).map(req => ({
-    ...req,
-    profiles: req.profiles || { name: 'Unknown User', location: null },
-    helper: req.helper_id && req.helper ? req.helper : null
-  }));
+  // Ensure requests is always an array (view returns flat structure)
+  const safeRequests = requests || [];
 
   const breadcrumbs = [
     { label: 'Help Requests', href: '/requests' }
@@ -355,11 +351,11 @@ export default async function RequestsPage({ searchParams }: PageProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {safeRequests.map((request: HelpRequest) => {
-                // Defensive null checks for rendering
+                // Defensive null checks for rendering (flat structure from view)
                 const title = request.title || 'Untitled Request'
                 const urgency = request.urgency || 'normal'
-                const profileName = request.profiles?.name || 'Anonymous'
-                const profileLocation = request.profiles?.location
+                const requesterName = request.requester_name || 'Anonymous'
+                const requesterLocation = request.requester_location
 
                 return (
                   <Card key={request.id} className="hover:shadow-md transition-shadow">
@@ -373,11 +369,11 @@ export default async function RequestsPage({ searchParams }: PageProps) {
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>{profileName}</span>
-                        {profileLocation && (
+                        <span>{requesterName}</span>
+                        {requesterLocation && (
                           <>
                             <span>•</span>
-                            <span>{profileLocation}</span>
+                            <span>{requesterLocation}</span>
                           </>
                         )}
                       </div>
@@ -399,9 +395,9 @@ export default async function RequestsPage({ searchParams }: PageProps) {
                           {formatTimeAgo(request.created_at)}
                         </span>
                       </div>
-                      {request.helper && request.status === 'in_progress' && (
+                      {request.helper_name && request.status === 'in_progress' && (
                         <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
-                          Being helped by {request.helper.name}
+                          Being helped by {request.helper_name}
                         </div>
                       )}
                       <div className="mt-4 pt-4 border-t">

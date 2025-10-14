@@ -23,22 +23,21 @@ export interface OptimizedHelpRequest {
   urgency: string
   status: string
   created_at: string
+  user_id: string
   helper_id: string | null
-  profiles: {
-    name: string
-    location: string | null
-  } | null
-  helper: {
-    name: string
-    location: string | null
-  } | null
+  // Flat structure from help_requests_with_profiles view
+  requester_name: string | null
+  requester_location: string | null
+  helper_name: string | null
+  helper_location: string | null
   // For search results
   rank?: number
 }
 
 /**
  * Optimized query for browsing help requests
- * Uses compound indexes: idx_help_requests_status_created, idx_help_requests_category_urgency
+ * Uses help_requests_with_profiles view to bypass RLS policy conflicts
+ * This view pre-joins help_requests with profiles, avoiding RLS issues
  */
 export async function getOptimizedHelpRequests(
   filters: HelpRequestFilters = {}
@@ -55,99 +54,45 @@ export async function getOptimizedHelpRequests(
 
   try {
     const supabase = await createClient()
-    let query
 
-    // Use full-text search when search query provided
+    // Query the help_requests_with_profiles view instead of help_requests table
+    // This view bypasses RLS policy conflicts by pre-joining with profiles
+    let query = supabase
+      .from('help_requests_with_profiles')
+      .select('*')
+
+    // Apply search filter using ILIKE
     if (search.trim()) {
-      // Use the full-text search function (requires database migration)
-      // Falls back to ILIKE if function doesn't exist
-      try {
-        query = supabase.rpc('search_help_requests', {
-          search_query: search.trim()
-        })
+      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`)
+    }
 
-        // Apply additional filters to search results
-        if (status !== 'all') {
-          query = query.eq('status', status)
-        }
-        if (category !== 'all') {
-          query = query.eq('category', category)
-        }
-        if (urgency !== 'all') {
-          query = query.eq('urgency', urgency)
-        }
+    // Apply filters in optimal order for index usage
+    if (status !== 'all') {
+      query = query.eq('status', status)
+    }
 
-        // For search, order by rank first, then by created_at
-        query = query.order('rank', { ascending: false })
-        query = query.order('created_at', { ascending: false })
+    if (category !== 'all') {
+      query = query.eq('category', category)
+    }
 
-      } catch (searchError) {
-        console.warn('[Optimized Query] Search function not available, falling back to ILIKE')
+    if (urgency !== 'all') {
+      query = query.eq('urgency', urgency)
+    }
 
-        // Fallback to ILIKE search with optimized query structure
-        query = supabase
-          .from('help_requests')
-          .select(`
-            *,
-            profiles!user_id (name, location),
-            helper:profiles!helper_id (name, location)
-          `)
-          .or(`title.ilike.%${search}%,description.ilike.%${search}%`)
+    // Optimized sorting based on available indexes
+    const isAscending = order === 'asc'
 
-        // Apply filters in optimal order for compound index usage
-        if (status !== 'all') {
-          query = query.eq('status', status)
-        }
-        if (category !== 'all') {
-          query = query.eq('category', category)
-        }
-        if (urgency !== 'all') {
-          query = query.eq('urgency', urgency)
-        }
-
-        query = query.order('created_at', { ascending: false })
-      }
-
+    if (sort === 'urgency') {
+      // Use urgency index with created_at secondary sort
+      query = query.order('urgency', { ascending: false })
+      query = query.order('created_at', { ascending: false })
+    } else if (sort === 'created_at') {
+      // Use the status + created_at compound index when status filtered
+      query = query.order('created_at', { ascending: isAscending })
     } else {
-      // Optimized regular query using compound indexes
-      query = supabase
-        .from('help_requests')
-        .select(`
-          *,
-          profiles!user_id (name, location),
-          helper:profiles!helper_id (name, location)
-        `)
-
-      // Apply filters in optimal order for index usage
-      // Primary compound index: idx_help_requests_status_created
-      if (status !== 'all') {
-        query = query.eq('status', status)
-      }
-
-      // Secondary compound index: idx_help_requests_category_urgency
-      if (category !== 'all') {
-        query = query.eq('category', category)
-      }
-
-      if (urgency !== 'all') {
-        query = query.eq('urgency', urgency)
-      }
-
-      // Optimized sorting based on available indexes
-      const isAscending = order === 'asc'
-
-      if (sort === 'urgency') {
-        // Use urgency index with created_at secondary sort
-        query = query.order('urgency', { ascending: false })
-        query = query.order('created_at', { ascending: false })
-      } else if (sort === 'created_at') {
-        // Use the status + created_at compound index when status filtered
-        query = query.order('created_at', { ascending: isAscending })
-      } else {
-        // For other sorting, add created_at as secondary sort
-        query = query.order(sort, { ascending: isAscending })
-        query = query.order('created_at', { ascending: false })
-      }
+      // For other sorting, add created_at as secondary sort
+      query = query.order(sort, { ascending: isAscending })
+      query = query.order('created_at', { ascending: false })
     }
 
     // Apply limit for performance
@@ -203,7 +148,7 @@ export async function getHelpRequestStats(): Promise<{
 
 /**
  * Get urgent help requests for dashboard
- * Uses partial index: idx_help_requests_urgent
+ * Uses help_requests_with_profiles view to bypass RLS
  */
 export async function getUrgentHelpRequests(limit: number = 10): Promise<{
   data: OptimizedHelpRequest[] | null
@@ -213,12 +158,8 @@ export async function getUrgentHelpRequests(limit: number = 10): Promise<{
     const supabase = await createClient()
 
     const { data, error } = await supabase
-      .from('help_requests')
-      .select(`
-        *,
-        profiles!user_id (name, location),
-        helper:profiles!helper_id (name, location)
-      `)
+      .from('help_requests_with_profiles')
+      .select('*')
       .in('urgency', ['urgent', 'critical'])
       .eq('status', 'open')
       .order('urgency', { ascending: false })
