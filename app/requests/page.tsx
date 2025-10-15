@@ -240,7 +240,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
   const messagingData = { unreadCount: 0, activeConversations: 0 };
 
   // Use optimized query functions - Phase 3.1 Performance Enhancement
-  let requests: typeof OptimizedHelpRequest[] | null = null
+  let requests: OptimizedHelpRequest[] | null = null
   let queryError: any = null
 
   try {
