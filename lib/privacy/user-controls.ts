@@ -50,9 +50,9 @@ const privacySettingsSchema = z.object({
 
   // GDPR and legal compliance
   gdpr_consent_given: z.boolean().default(false),
-  gdpr_consent_date: z.string().datetime().optional(),
-  privacy_policy_version: z.string().optional(),
-  privacy_policy_accepted_at: z.string().datetime().optional()
+  gdpr_consent_date: z.string().nullable().optional(),
+  privacy_policy_version: z.string().nullable().optional(),
+  privacy_policy_accepted_at: z.string().nullable().optional()
 });
 
 export type UserPrivacySettings = z.infer<typeof privacySettingsSchema>;
