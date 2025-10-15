@@ -220,6 +220,15 @@ export default async function RequestsPage({ searchParams }: PageProps) {
   let queryError: any = null
 
   try {
+    // DIAGNOSTIC: Log query start
+    console.log('[BROWSE DEBUG] Starting query:', {
+      userId: user.id,
+      userName: user.name,
+      verificationStatus: user.verification_status,
+      filters: { statusFilter, categoryFilter, urgencyFilter, searchQuery, sortBy, sortOrder },
+      timestamp: new Date().toISOString()
+    })
+
     const queryResult = await getOptimizedHelpRequests({
       status: statusFilter,
       category: categoryFilter,
@@ -228,6 +237,27 @@ export default async function RequestsPage({ searchParams }: PageProps) {
       sort: sortBy,
       order: sortOrder,
       limit: 100
+    })
+
+    // DIAGNOSTIC: Log query completion with detailed structure analysis
+    console.log('[BROWSE DEBUG] Query completed:', {
+      success: !queryResult.error,
+      hasData: !!queryResult.data,
+      dataLength: queryResult.data?.length,
+      firstItemStructure: queryResult.data?.[0] ? {
+        hasId: !!queryResult.data[0].id,
+        hasTitle: !!queryResult.data[0].title,
+        hasProfiles: !!queryResult.data[0].profiles,
+        profileType: typeof queryResult.data[0].profiles,
+        profileValue: queryResult.data[0].profiles,
+        profileKeys: queryResult.data[0].profiles ? Object.keys(queryResult.data[0].profiles) : null,
+        hasHelper: !!queryResult.data[0].helper,
+        helperType: typeof queryResult.data[0].helper,
+      } : null,
+      errorMessage: queryResult.error?.message,
+      errorCode: queryResult.error?.code,
+      errorDetails: queryResult.error ? JSON.stringify(queryResult.error) : null,
+      timestamp: new Date().toISOString()
     })
 
     requests = queryResult.data
@@ -244,6 +274,14 @@ export default async function RequestsPage({ searchParams }: PageProps) {
     }
 
   } catch (error) {
+    // DIAGNOSTIC: Capture detailed exception information
+    console.error('[BROWSE DEBUG] EXCEPTION:', {
+      name: error?.constructor?.name,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack?.split('\n').slice(0, 10).join('\n') : undefined,
+      fullError: error,
+      timestamp: new Date().toISOString()
+    })
     console.error('[Browse Requests] Unexpected error:', error)
     queryError = error
   }
