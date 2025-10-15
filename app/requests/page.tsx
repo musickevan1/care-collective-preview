@@ -235,16 +235,9 @@ export default async function RequestsPage({ searchParams }: PageProps) {
     }
   }
 
-  const supabase = await createClient();
-
-  // Get messaging data with failsafe - should never crash the page
-  let messagingData = { unreadCount: 0, activeConversations: 0 };
-  try {
-    messagingData = await getMessagingData(user.id);
-  } catch (error) {
-    console.error('[Browse Requests] Messaging data error (non-fatal, using defaults):', error);
-    // messagingData already set to safe defaults above
-  }
+  // TEMPORARY FIX: Skip messaging data entirely to unblock page rendering
+  // The messaging RLS policies have issues that need to be fixed separately
+  const messagingData = { unreadCount: 0, activeConversations: 0 };
 
   // Use optimized query functions - Phase 3.1 Performance Enhancement
   let requests: typeof OptimizedHelpRequest[] | null = null
