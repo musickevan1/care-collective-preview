@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
-import { FilterPanel, FilterOptions } from '@/components/FilterPanel'
+import { FilterPanel } from '@/components/FilterPanel'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { getOptimizedHelpRequests, type OptimizedHelpRequest } from '@/lib/queries/help-requests-optimized'
 import Link from 'next/link'
