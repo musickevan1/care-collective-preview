@@ -49,6 +49,7 @@ const privacySettingsSchema = z.object({
   }),
 
   // GDPR and legal compliance
+  // NOTE: nullable().optional() handles both null and undefined from database
   gdpr_consent_given: z.boolean().default(false),
   gdpr_consent_date: z.string().nullable().optional(),
   privacy_policy_version: z.string().nullable().optional(),
