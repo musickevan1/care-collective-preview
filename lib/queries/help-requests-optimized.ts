@@ -40,8 +40,11 @@ export interface OptimizedHelpRequest {
 
 /**
  * Optimized query for browsing help requests
- * Uses direct table query with foreign key joins
- * RLS policy now fixed to allow approved users to view other approved users' profiles
+ * Uses separate queries to work around RLS foreign key join limitations
+ *
+ * BACKGROUND: Foreign key joins with RLS policies don't always work as expected.
+ * Even with correct policies, Supabase may return null for joined tables.
+ * This implementation fetches help requests first, then fetches profiles separately.
  */
 export async function getOptimizedHelpRequests(
   filters: HelpRequestFilters = {}
@@ -59,15 +62,10 @@ export async function getOptimizedHelpRequests(
   try {
     const supabase = await createClient()
 
-    // Query help_requests table with foreign key joins to profiles
-    // RLS now allows approved users to see other approved users' profiles
+    // Step 1: Query help_requests table WITHOUT foreign key joins
     let query = supabase
       .from('help_requests')
-      .select(`
-        *,
-        profiles!user_id (name, location),
-        helper:profiles!helper_id (name, location)
-      `)
+      .select('*')
 
     // Apply search filter using ILIKE
     if (search.trim()) {
@@ -106,14 +104,65 @@ export async function getOptimizedHelpRequests(
     // Apply limit for performance
     query = query.limit(limit)
 
-    const { data, error } = await query
+    const { data: requests, error: requestsError } = await query
 
-    if (error) {
-      console.error('[Optimized Query] Error:', error)
-      return { data: null, error }
+    if (requestsError) {
+      console.error('[Optimized Query] Help requests error:', requestsError)
+      return { data: null, error: requestsError }
     }
 
-    return { data: data as OptimizedHelpRequest[], error: null }
+    if (!requests || requests.length === 0) {
+      console.log('[Optimized Query] No help requests found')
+      return { data: [], error: null }
+    }
+
+    // Step 2: Extract unique user IDs and helper IDs
+    const userIds = new Set<string>()
+    requests.forEach(req => {
+      if (req.user_id) userIds.add(req.user_id)
+      if (req.helper_id) userIds.add(req.helper_id)
+    })
+
+    console.log('[Optimized Query] Fetching profiles for user IDs:', Array.from(userIds))
+
+    // Step 3: Fetch all needed profiles in a single query
+    const { data: profiles, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, name, location')
+      .in('id', Array.from(userIds))
+
+    if (profilesError) {
+      console.warn('[Optimized Query] Profiles error (non-fatal):', profilesError)
+      // Continue even if profiles fetch fails - we'll use fallback names
+    }
+
+    console.log('[Optimized Query] Fetched profiles:', profiles?.length || 0)
+
+    // Step 4: Create a lookup map for fast profile access
+    const profileMap = new Map<string, { name: string; location: string | null }>()
+    profiles?.forEach(profile => {
+      profileMap.set(profile.id, {
+        name: profile.name || 'Unknown User',
+        location: profile.location
+      })
+    })
+
+    // Step 5: Merge profiles with help requests
+    const mergedData: OptimizedHelpRequest[] = requests.map(req => ({
+      ...req,
+      profiles: profileMap.get(req.user_id) || {
+        name: 'Unknown User',
+        location: null
+      },
+      helper: req.helper_id ? (profileMap.get(req.helper_id) || {
+        name: 'Unknown Helper',
+        location: null
+      }) : null
+    }))
+
+    console.log('[Optimized Query] Successfully merged data:', mergedData.length)
+
+    return { data: mergedData, error: null }
 
   } catch (error) {
     console.error('[Optimized Query] Exception:', error)
@@ -156,7 +205,7 @@ export async function getHelpRequestStats(): Promise<{
 
 /**
  * Get urgent help requests for dashboard
- * Uses direct table query (RLS now fixed)
+ * Uses separate queries to work around RLS foreign key join limitations
  */
 export async function getUrgentHelpRequests(limit: number = 10): Promise<{
   data: OptimizedHelpRequest[] | null
@@ -165,20 +214,54 @@ export async function getUrgentHelpRequests(limit: number = 10): Promise<{
   try {
     const supabase = await createClient()
 
-    const { data, error } = await supabase
+    // Step 1: Get urgent/critical help requests
+    const { data: requests, error: requestsError } = await supabase
       .from('help_requests')
-      .select(`
-        *,
-        profiles!user_id (name, location),
-        helper:profiles!helper_id (name, location)
-      `)
+      .select('*')
       .in('urgency', ['urgent', 'critical'])
       .eq('status', 'open')
       .order('urgency', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit)
 
-    return { data: data as OptimizedHelpRequest[], error }
+    if (requestsError) {
+      return { data: null, error: requestsError }
+    }
+
+    if (!requests || requests.length === 0) {
+      return { data: [], error: null }
+    }
+
+    // Step 2: Extract unique user IDs
+    const userIds = new Set<string>()
+    requests.forEach(req => {
+      if (req.user_id) userIds.add(req.user_id)
+      if (req.helper_id) userIds.add(req.helper_id)
+    })
+
+    // Step 3: Fetch profiles
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, name, location')
+      .in('id', Array.from(userIds))
+
+    // Step 4: Create profile map
+    const profileMap = new Map<string, { name: string; location: string | null }>()
+    profiles?.forEach(profile => {
+      profileMap.set(profile.id, {
+        name: profile.name || 'Unknown User',
+        location: profile.location
+      })
+    })
+
+    // Step 5: Merge data
+    const mergedData: OptimizedHelpRequest[] = requests.map(req => ({
+      ...req,
+      profiles: profileMap.get(req.user_id) || { name: 'Unknown User', location: null },
+      helper: req.helper_id ? (profileMap.get(req.helper_id) || { name: 'Unknown Helper', location: null }) : null
+    }))
+
+    return { data: mergedData, error: null }
 
   } catch (error) {
     console.error('[Urgent Requests Query] Exception:', error)
