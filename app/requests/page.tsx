@@ -154,33 +154,56 @@ async function getUser() {
 
 async function getMessagingData(userId: string) {
   const supabase = await createClient();
-  
-  try {
-    // Get unread count
-    const { count: unreadCount, error: unreadError } = await supabase
-      .from('messages')
-      .select('*', { count: 'exact' })
-      .eq('recipient_id', userId)
-      .is('read_at', null);
 
-    // Get active conversations count
-    const { data: conversations, error: conversationsError } = await supabase
-      .from('conversations')
-      .select(`
-        id,
-        conversation_participants!inner (
-          user_id
-        )
-      `)
-      .eq('conversation_participants.user_id', userId)
-      .is('conversation_participants.left_at', null);
+  try {
+    // Get unread count (catch individual errors to prevent page crash)
+    let unreadCount = 0;
+    try {
+      const { count, error: unreadError } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('recipient_id', userId)
+        .is('read_at', null);
+
+      if (unreadError) {
+        console.warn('[Messaging Data] Unread count error (non-fatal):', unreadError.message);
+      } else {
+        unreadCount = count || 0;
+      }
+    } catch (err) {
+      console.warn('[Messaging Data] Unread count exception (non-fatal):', err);
+    }
+
+    // Get active conversations count (catch individual errors to prevent page crash)
+    let activeConversations = 0;
+    try {
+      const { data: conversations, error: conversationsError } = await supabase
+        .from('conversations')
+        .select(`
+          id,
+          conversation_participants!inner (
+            user_id
+          )
+        `)
+        .eq('conversation_participants.user_id', userId)
+        .is('conversation_participants.left_at', null);
+
+      if (conversationsError) {
+        console.warn('[Messaging Data] Conversations error (non-fatal):', conversationsError.message);
+      } else {
+        activeConversations = conversations?.length || 0;
+      }
+    } catch (err) {
+      console.warn('[Messaging Data] Conversations exception (non-fatal):', err);
+    }
 
     return {
-      unreadCount: unreadCount || 0,
-      activeConversations: conversations?.length || 0
+      unreadCount,
+      activeConversations
     };
   } catch (error) {
-    console.error('Error fetching messaging data:', error);
+    console.error('[Messaging Data] Fatal error:', error);
+    // Return safe defaults instead of throwing
     return { unreadCount: 0, activeConversations: 0 };
   }
 }
