@@ -53,7 +53,7 @@ export interface FilterOptions {
 }
 
 export interface FilterPanelProps {
-  onFilterChange: (filters: FilterOptions) => void;
+  onFilterChange?: (filters: FilterOptions) => void;
   className?: string;
   showAdvanced?: boolean;
 }
@@ -119,7 +119,7 @@ export function FilterPanel({
   const updateFilters = useCallback((newFilters: Partial<FilterOptions>) => {
     const updatedFilters = { ...filters, ...newFilters };
     setFilters(updatedFilters);
-    onFilterChange(updatedFilters);
+    onFilterChange?.(updatedFilters);
 
     // Update URL with new filters
     const params = new URLSearchParams();
@@ -128,7 +128,7 @@ export function FilterPanel({
         params.set(key, value);
       }
     });
-    
+
     const newUrl = params.toString() ? `/requests?${params.toString()}` : '/requests';
     router.push(newUrl, { scroll: false });
   }, [filters, onFilterChange, router]);
@@ -143,7 +143,7 @@ export function FilterPanel({
       sortOrder: 'desc',
     };
     setFilters(clearedFilters);
-    onFilterChange(clearedFilters);
+    onFilterChange?.(clearedFilters);
     router.push('/requests', { scroll: false });
   }, [onFilterChange, router]);
 

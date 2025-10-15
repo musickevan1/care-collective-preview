@@ -343,11 +343,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
         </div>
 
         {/* Advanced Filtering Interface */}
-        <FilterPanel 
-          onFilterChange={() => {
-            // Filter changes are handled via URL navigation
-            // This is a server component so we don't need to handle state here
-          }}
+        <FilterPanel
           className="mb-6"
           showAdvanced={false}
         />
