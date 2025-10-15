@@ -236,7 +236,15 @@ export default async function RequestsPage({ searchParams }: PageProps) {
   }
 
   const supabase = await createClient();
-  const messagingData = await getMessagingData(user.id);
+
+  // Get messaging data with failsafe - should never crash the page
+  let messagingData = { unreadCount: 0, activeConversations: 0 };
+  try {
+    messagingData = await getMessagingData(user.id);
+  } catch (error) {
+    console.error('[Browse Requests] Messaging data error (non-fatal, using defaults):', error);
+    // messagingData already set to safe defaults above
+  }
 
   // Use optimized query functions - Phase 3.1 Performance Enhancement
   let requests: typeof OptimizedHelpRequest[] | null = null
