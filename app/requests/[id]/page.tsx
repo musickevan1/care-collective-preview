@@ -302,10 +302,14 @@ export default async function RequestDetailPage({ params }: PageProps) {
         helperProfile = helperData;
       }
 
-      // Combine the data
+      // Combine the data with fallback for profiles
       request = {
         ...requestData,
-        profiles: requesterProfile,
+        profiles: requesterProfile || {
+          id: requestData.user_id,
+          name: 'Unknown User',
+          location: null
+        },
         helper: helperProfile
       };
     }
