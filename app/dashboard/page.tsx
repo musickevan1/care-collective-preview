@@ -38,6 +38,26 @@ async function getUser() {
     message: 'Beginning authentication check'
   })
 
+  // BUG #4 FIX: Force session refresh to ensure we have the latest auth state
+  // Server client has autoRefreshToken: false, so we must manually refresh
+  console.log('[Dashboard] Refreshing session to ensure fresh auth state...')
+  const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
+
+  if (refreshError) {
+    console.error('[Dashboard] Session refresh failed:', refreshError.message)
+    // Continue anyway - refreshSession may fail if no session exists yet
+    // This is expected behavior when session is missing or expired
+  } else if (refreshData?.session) {
+    console.log('[Dashboard] Session refreshed successfully:', {
+      userId: refreshData.session.user.id,
+      userEmail: refreshData.session.user.email,
+      expiresAt: refreshData.session.expires_at,
+      timestamp: new Date().toISOString()
+    })
+  } else {
+    console.log('[Dashboard] No session to refresh (user may not be logged in)')
+  }
+
   const { data: { user }, error } = await supabase.auth.getUser();
 
   console.log('[Dashboard] Auth User Retrieved:', {
