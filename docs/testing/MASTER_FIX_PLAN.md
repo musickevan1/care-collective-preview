@@ -508,7 +508,7 @@ npx lighthouse https://care-collective-preview.vercel.app/messages --view
 | Bug #1 | P0 | ✅ **FIXED** | Session 2-5 (Oct 14, 2025) | ✅ Yes - Page loads, filters work |
 | Bug #2 | P0 | ✅ **FIXED** | Session 6 (Oct 15, 2025) | ✅ Yes - Privacy page renders with all controls |
 | Bug #3 | P0 | ✅ **FIXED** | Session 8 (Oct 15, 2025) | ✅ Yes - Admin page shows all 18 users with correct counts |
-| Bug #4 | P0 | ✅ **FIXED** | Session 9 (Oct 19, 2025) | ⏳ Pending - Deployed, awaiting production test |
+| Bug #4 | P0 | ✅ **FIXED** | Session 9 (Oct 19, 2025) | ✅ Yes - Logout clears cookies, login shows correct user |
 | Bug #5 | P1 | ❌ Open | - | - |
 | Bug #6 | P1 | ❌ Open | - | - |
 
