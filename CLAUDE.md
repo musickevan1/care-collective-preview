@@ -147,6 +147,144 @@ rg "ContactExchange" -A 5
 rg --files -g "*.tsx" | rg "components"
 ```
 
+### Subagent Usage for Efficient Development (MANDATORY)
+**CRITICAL**: Use the Task tool with specialized subagents for complex, multi-step tasks and codebase exploration. This dramatically improves efficiency and context management.
+
+#### When to Use Subagents
+1. **Codebase Exploration** (Use Explore agent)
+   - Understanding project structure
+   - Finding patterns across multiple files
+   - Researching how features are implemented
+   - Answering "where" and "how" questions about code
+
+2. **Complex Multi-Step Tasks** (Use general-purpose agent)
+   - Tasks requiring multiple independent operations
+   - Research followed by implementation
+   - Multi-file refactoring operations
+   - Tasks that need autonomous decision-making
+
+3. **Specialized Workflows** (Use specialized agents)
+   - Status line configuration (statusline-setup agent)
+   - Output style creation (output-style-setup agent)
+
+#### Parallel Execution for Maximum Efficiency
+**CRITICAL**: When tasks are independent, ALWAYS run subagents in parallel by making multiple Task tool calls in a SINGLE message.
+
+```typescript
+// ❌ INEFFICIENT: Sequential subagent calls
+Assistant: Let me explore the messaging system first...
+[Task call 1 - Explore messaging]
+[Wait for result]
+Assistant: Now let me explore the admin panel...
+[Task call 2 - Explore admin]
+[Wait for result]
+
+// ✅ EFFICIENT: Parallel subagent calls
+Assistant: I'll explore both systems simultaneously...
+[Single message with multiple Task calls:
+  - Task call 1: Explore messaging
+  - Task call 2: Explore admin
+  - Task call 3: Explore privacy features
+]
+```
+
+#### Care Collective Specific Use Cases
+
+**Example 1: Exploring Multiple Feature Areas**
+```
+User: "How do help requests, messaging, and privacy features work together?"
+
+✅ CORRECT Approach:
+Assistant: I'll explore all three areas in parallel for efficiency.
+[Single message with 3 Task calls:
+  - Explore subagent: "Investigate help request implementation"
+  - Explore subagent: "Research messaging system architecture"
+  - Explore subagent: "Examine privacy feature integration"
+]
+```
+
+**Example 2: Codebase Structure Investigation**
+```
+User: "What's the structure of this codebase?"
+
+✅ CORRECT Approach:
+Assistant: Let me explore the codebase structure comprehensively.
+[Task call with Explore subagent - thoroughness level: "medium"]
+```
+
+**Example 3: Finding Implementation Patterns**
+```
+User: "Where are errors from the client handled?"
+
+✅ CORRECT Approach:
+Assistant: I'll use the Explore agent to find error handling patterns.
+[Task call with Explore subagent - thoroughness level: "quick"]
+
+❌ WRONG Approach:
+Using Grep/Glob directly without the Explore agent for this type of question.
+```
+
+#### Thoroughness Levels for Explore Agent
+Choose the appropriate thoroughness level based on the scope:
+
+- **"quick"**: Basic searches, specific file/function lookups
+  - Example: "Find the ContactExchange component"
+
+- **"medium"**: Moderate exploration, understanding a feature
+  - Example: "How does the messaging system work?"
+
+- **"very thorough"**: Comprehensive analysis, architectural understanding
+  - Example: "Analyze the entire privacy and security architecture"
+
+#### Best Practices for Care Collective Development
+
+1. **Default to Explore Agent for Research**
+   ```
+   ✅ Use Task tool with Explore agent for:
+   - "How does X work?"
+   - "Where is Y implemented?"
+   - "What's the structure of Z?"
+   - "Find all components that use X"
+   ```
+
+2. **Use Direct Tools Only for Specific Targets**
+   ```
+   ✅ Use Read/Glob/Grep directly for:
+   - Reading a specific known file path
+   - Finding a specific class definition
+   - Searching within 2-3 known files
+   ```
+
+3. **Parallelize Independent Tasks**
+   ```
+   ✅ Run in parallel:
+   - Exploring different feature areas
+   - Researching unrelated components
+   - Multiple independent code searches
+
+   ❌ Don't parallelize:
+   - Tasks with dependencies (one needs results from another)
+   - Sequential operations (must complete in order)
+   ```
+
+4. **Care Collective Workflow Examples**
+   ```
+   User: "Review the help requests and messaging features for accessibility"
+
+   ✅ Efficient approach:
+   [Single message with 2 parallel Task calls:
+     - Explore: "Analyze help request components for WCAG compliance"
+     - Explore: "Review messaging components for accessibility"
+   ]
+   ```
+
+#### Critical Reminders
+- **NEVER use Bash grep/find** when Grep/Glob tools are available
+- **ALWAYS use Explore agent** for open-ended codebase questions
+- **ALWAYS parallelize** independent subagent tasks in one message
+- **CHOOSE appropriate thoroughness** level for Explore agent
+- **TRUST subagent results** - they are specialized for these tasks
+
 ## 🧱 Code Structure & Modularity
 
 ### File and Component Limits
