@@ -14,6 +14,14 @@ export interface RealtimeMessagingOptions {
   onMessageStatusUpdate?: (event: MessageStatusEvent) => void;
   onTypingUpdate?: (event: TypingEvent) => void;
   onUserPresenceUpdate?: (users: Array<{ userId: string; status: 'online' | 'away' }>) => void;
+  onConnectionStatusChange?: (status: 'connected' | 'disconnected' | 'reconnecting' | 'error') => void;
+}
+
+interface ReconnectionState {
+  conversationId: string;
+  retryCount: number;
+  lastAttempt: number;
+  timeout: NodeJS.Timeout | null;
 }
 
 export class RealtimeMessaging {
@@ -21,11 +29,79 @@ export class RealtimeMessaging {
   private subscriptions: Map<string, any> = new Map();
   private userId: string;
   private options: RealtimeMessagingOptions;
+  private reconnectionStates: Map<string, ReconnectionState> = new Map();
+  private readonly MAX_RETRY_ATTEMPTS = 5;
+  private readonly INITIAL_RETRY_DELAY = 1000; // 1 second
+  private readonly MAX_RETRY_DELAY = 30000; // 30 seconds
 
   constructor(options: RealtimeMessagingOptions) {
     this.supabase = createClient();
     this.userId = options.userId;
     this.options = options;
+  }
+
+  /**
+   * Calculate exponential backoff delay for reconnection attempts
+   */
+  private getReconnectionDelay(retryCount: number): number {
+    const delay = Math.min(
+      this.INITIAL_RETRY_DELAY * Math.pow(2, retryCount),
+      this.MAX_RETRY_DELAY
+    );
+    // Add jitter to prevent thundering herd
+    return delay + Math.random() * 1000;
+  }
+
+  /**
+   * Attempt to reconnect to a conversation after connection failure
+   */
+  private async attemptReconnection(conversationId: string): Promise<void> {
+    const state = this.reconnectionStates.get(conversationId);
+
+    if (!state) {
+      console.warn(`No reconnection state found for conversation ${conversationId}`);
+      return;
+    }
+
+    if (state.retryCount >= this.MAX_RETRY_ATTEMPTS) {
+      console.error(`❌ Max retry attempts (${this.MAX_RETRY_ATTEMPTS}) reached for conversation ${conversationId}`);
+      this.notifyConnectionStatus('error');
+      this.reconnectionStates.delete(conversationId);
+      return;
+    }
+
+    state.retryCount++;
+    state.lastAttempt = Date.now();
+
+    const delay = this.getReconnectionDelay(state.retryCount);
+    console.log(`🔄 Reconnecting to conversation ${conversationId} (attempt ${state.retryCount}/${this.MAX_RETRY_ATTEMPTS}) in ${Math.round(delay / 1000)}s`);
+
+    this.notifyConnectionStatus('reconnecting');
+
+    state.timeout = setTimeout(() => {
+      console.log(`🔌 Attempting reconnection to conversation ${conversationId}`);
+      this.subscribeToConversation(conversationId);
+    }, delay);
+  }
+
+  /**
+   * Notify connection status change to listeners
+   */
+  private notifyConnectionStatus(status: 'connected' | 'disconnected' | 'reconnecting' | 'error'): void {
+    if (this.options.onConnectionStatusChange) {
+      this.options.onConnectionStatusChange(status);
+    }
+  }
+
+  /**
+   * Reset reconnection state after successful connection
+   */
+  private resetReconnectionState(conversationId: string): void {
+    const state = this.reconnectionStates.get(conversationId);
+    if (state?.timeout) {
+      clearTimeout(state.timeout);
+    }
+    this.reconnectionStates.delete(conversationId);
   }
 
   /**
@@ -96,11 +172,56 @@ export class RealtimeMessaging {
           }
         }
       )
-      .subscribe((status) => {
+      .subscribe((status, err) => {
         if (status === 'SUBSCRIBED') {
           console.log(`✅ Subscribed to conversation ${conversationId} messages`);
+          // Reset reconnection state on successful connection
+          this.resetReconnectionState(conversationId);
+          this.notifyConnectionStatus('connected');
         } else if (status === 'CLOSED') {
           console.log(`❌ Connection closed for conversation ${conversationId}`);
+          this.notifyConnectionStatus('disconnected');
+
+          // Initialize reconnection state if not already present
+          if (!this.reconnectionStates.has(conversationId)) {
+            this.reconnectionStates.set(conversationId, {
+              conversationId,
+              retryCount: 0,
+              lastAttempt: Date.now(),
+              timeout: null
+            });
+            this.attemptReconnection(conversationId);
+          }
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error(`❌ Channel error for conversation ${conversationId}:`, err);
+          this.notifyConnectionStatus('error');
+
+          // Attempt reconnection on channel error
+          if (!this.reconnectionStates.has(conversationId)) {
+            this.reconnectionStates.set(conversationId, {
+              conversationId,
+              retryCount: 0,
+              lastAttempt: Date.now(),
+              timeout: null
+            });
+            this.attemptReconnection(conversationId);
+          }
+        } else if (status === 'TIMED_OUT') {
+          console.warn(`⏱️ Connection timed out for conversation ${conversationId}`);
+          this.notifyConnectionStatus('disconnected');
+
+          // Attempt reconnection on timeout
+          if (!this.reconnectionStates.has(conversationId)) {
+            this.reconnectionStates.set(conversationId, {
+              conversationId,
+              retryCount: 0,
+              lastAttempt: Date.now(),
+              timeout: null
+            });
+            this.attemptReconnection(conversationId);
+          }
+        } else {
+          console.log(`ℹ️ Subscription status for conversation ${conversationId}: ${status}`);
         }
       });
 
@@ -195,10 +316,13 @@ export class RealtimeMessaging {
       .channel(`conversation:${conversationId}:presence`)
       .on('presence', { event: 'sync' }, () => {
         const state = presenceChannel.presenceState();
-        const users = Object.keys(state).map(userId => ({
-          userId,
-          status: state[userId][0]?.status || 'away'
-        }));
+        const users = Object.keys(state).map(userId => {
+          const presenceData: any = state[userId][0];
+          return {
+            userId,
+            status: presenceData?.status || 'away'
+          };
+        });
 
         if (this.options.onUserPresenceUpdate) {
           this.options.onUserPresenceUpdate(users);
@@ -257,6 +381,16 @@ export class RealtimeMessaging {
    * Clean up all subscriptions
    */
   cleanup(): void {
+    // Cancel all pending reconnection attempts
+    for (const [conversationId, state] of this.reconnectionStates) {
+      if (state.timeout) {
+        clearTimeout(state.timeout);
+        console.log(`🧹 Cancelled reconnection attempt for conversation ${conversationId}`);
+      }
+    }
+    this.reconnectionStates.clear();
+
+    // Remove all channel subscriptions
     for (const [key, channel] of this.subscriptions) {
       this.supabase.removeChannel(channel);
       console.log(`🧹 Cleaned up subscription: ${key}`);
@@ -268,7 +402,8 @@ export class RealtimeMessaging {
 /**
  * React hook for real-time messaging
  */
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 
 interface UseRealtimeMessagingOptions extends RealtimeMessagingOptions {
   conversationId?: string;
@@ -279,10 +414,39 @@ interface UseRealtimeMessagingOptions extends RealtimeMessagingOptions {
 export function useRealtimeMessaging(options: UseRealtimeMessagingOptions) {
   const realtimeRef = useRef<RealtimeMessaging | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'reconnecting' | 'error'>('disconnected');
 
-  // Initialize realtime messaging
+  // Monitor network status
+  const { networkStatus } = useNetworkStatus({
+    enablePing: true,
+    pingInterval: 30000,
+    onConnectionChange: (isOnline) => {
+      console.log(`🌐 Network status changed: ${isOnline ? 'online' : 'offline'}`);
+
+      if (isOnline && options.conversationId && realtimeRef.current) {
+        // Reconnect when network comes back online
+        console.log('🔌 Network restored, resubscribing to conversation...');
+        realtimeRef.current.subscribeToConversation(options.conversationId);
+
+        if (options.enablePresence) {
+          realtimeRef.current.subscribeToPresence(options.conversationId);
+        }
+      } else if (!isOnline) {
+        // Update connection status when offline
+        setConnectionStatus('disconnected');
+      }
+    }
+  });
+
+  // Initialize realtime messaging with connection status callback
   useEffect(() => {
-    realtimeRef.current = new RealtimeMessaging(options);
+    realtimeRef.current = new RealtimeMessaging({
+      ...options,
+      onConnectionStatusChange: (status) => {
+        console.log(`🔌 Realtime connection status: ${status}`);
+        setConnectionStatus(status);
+      }
+    });
 
     // Subscribe to global user conversations if enabled
     if (options.enableGlobalUpdates) {
@@ -294,9 +458,10 @@ export function useRealtimeMessaging(options: UseRealtimeMessagingOptions) {
     };
   }, [options.userId]);
 
-  // Subscribe to specific conversation
+  // Subscribe to specific conversation (only when online)
   useEffect(() => {
-    if (options.conversationId && realtimeRef.current) {
+    if (options.conversationId && realtimeRef.current && networkStatus.isOnline) {
+      console.log(`🔌 Subscribing to conversation ${options.conversationId} (network online)`);
       realtimeRef.current.subscribeToConversation(options.conversationId);
 
       if (options.enablePresence) {
@@ -308,8 +473,10 @@ export function useRealtimeMessaging(options: UseRealtimeMessagingOptions) {
           realtimeRef.current.unsubscribeFromConversation(options.conversationId);
         }
       };
+    } else if (options.conversationId && !networkStatus.isOnline) {
+      console.log(`⚠️ Cannot subscribe to conversation ${options.conversationId}: network offline`);
     }
-  }, [options.conversationId, options.enablePresence]);
+  }, [options.conversationId, options.enablePresence, networkStatus.isOnline]);
 
   // Handle page visibility changes for presence
   useEffect(() => {
@@ -365,6 +532,9 @@ export function useRealtimeMessaging(options: UseRealtimeMessagingOptions) {
       if (options.conversationId) {
         realtimeRef.current?.updatePresenceStatus(options.conversationId, status);
       }
-    }
+    },
+    connectionStatus,
+    isOnline: networkStatus.isOnline,
+    networkStatus
   };
 }

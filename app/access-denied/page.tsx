@@ -4,7 +4,80 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
-export default function AccessDeniedPage(): ReactElement {
+// Force dynamic rendering to ensure fresh data on each request
+export const dynamic = 'force-dynamic'
+
+interface AccessDeniedPageProps {
+  searchParams: Promise<{ reason?: string }>
+}
+
+export default async function AccessDeniedPage({ searchParams }: AccessDeniedPageProps): Promise<ReactElement> {
+  // Await searchParams (required in Next.js 14+)
+  const { reason } = await searchParams
+
+  // Define messages for different denial reasons
+  const messages = {
+    rejected: {
+      title: 'Application Not Approved',
+      description: 'Your application to join the Care Collective has been reviewed.',
+      icon: '🚫',
+      color: 'yellow',
+      details: 'After careful review, we\'re unable to approve your membership at this time. This decision is made to ensure the safety and trust of our community.',
+      action: 'If you believe this was made in error or have questions, please contact our support team.',
+    },
+    not_admin: {
+      title: 'Admin Access Required',
+      description: 'You do not have administrator privileges for this area.',
+      icon: '🔒',
+      color: 'red',
+      details: 'This section is restricted to Care Collective administrators only.',
+      action: 'If you need admin access, please contact a current administrator.',
+    },
+    session_invalidated: {
+      title: 'Session Expired',
+      description: 'Your session has been invalidated.',
+      icon: '⏱️',
+      color: 'blue',
+      details: 'This may occur if your account status changed or you logged in from another device.',
+      action: 'Please log in again to continue using Care Collective.',
+    },
+    default: {
+      title: 'Access Denied',
+      description: 'You do not have permission to access this resource.',
+      icon: '🚫',
+      color: 'yellow',
+      details: 'Access to this area is restricted.',
+      action: 'If you believe this is an error, please contact support.',
+    },
+  }
+
+  // Select appropriate message based on reason
+  const message = messages[reason as keyof typeof messages] || messages.default
+
+  // Color classes for different reasons
+  const colorClasses = {
+    yellow: {
+      bg: 'bg-yellow-50',
+      border: 'border-yellow-200',
+      textTitle: 'text-yellow-900',
+      textBody: 'text-yellow-800',
+    },
+    red: {
+      bg: 'bg-red-50',
+      border: 'border-red-200',
+      textTitle: 'text-red-900',
+      textBody: 'text-red-800',
+    },
+    blue: {
+      bg: 'bg-blue-50',
+      border: 'border-blue-200',
+      textTitle: 'text-blue-900',
+      textBody: 'text-blue-800',
+    },
+  }
+
+  const colors = colorClasses[message.color as keyof typeof colorClasses] || colorClasses.yellow
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="max-w-md w-full">
@@ -21,33 +94,34 @@ export default function AccessDeniedPage(): ReactElement {
           </div>
 
           {/* Main Icon */}
-          <div className="text-6xl">🚫</div>
+          <div className="text-6xl" role="img" aria-label={message.title}>
+            {message.icon}
+          </div>
 
           <CardTitle className="text-3xl font-bold text-secondary">
-            Access Not Available
+            {message.title}
           </CardTitle>
 
           <CardDescription className="text-lg">
-            Your application to join the Care Collective has been reviewed.
+            {message.description}
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
           {/* Information Panel */}
-          <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-6 text-left">
-            <h2 className="font-semibold text-yellow-900 mb-2">
+          <div className={`${colors.bg} border-2 ${colors.border} rounded-lg p-6 text-left`}>
+            <h2 className={`font-semibold ${colors.textTitle} mb-2`}>
               What this means
             </h2>
-            <p className="text-sm text-yellow-800 mb-4">
-              After careful review, we're unable to approve your membership at this time.
-              This decision is made to ensure the safety and trust of our community.
+            <p className={`text-sm ${colors.textBody} mb-4`}>
+              {message.details}
             </p>
-            <p className="text-sm text-yellow-800">
-              If you believe this was made in error or have questions, please contact our support team.
+            <p className={`text-sm ${colors.textBody}`}>
+              {message.action}
             </p>
           </div>
 
-          {/* Contact Support */}
+          {/* Action Buttons */}
           <div className="space-y-4">
             <a
               href="mailto:swmocarecollective@gmail.com"
@@ -56,9 +130,16 @@ export default function AccessDeniedPage(): ReactElement {
               Contact Support
             </a>
 
-            <div className="text-sm text-muted-foreground text-center">
-              <Link href="/" className="text-sage hover:underline">
-                Return to homepage
+            <div className="flex flex-col gap-2">
+              <Link href="/" className="text-center">
+                <Button variant="outline" className="w-full">
+                  Return to Homepage
+                </Button>
+              </Link>
+              <Link href="/login" className="text-center">
+                <Button variant="ghost" className="w-full">
+                  Back to Login
+                </Button>
               </Link>
             </div>
           </div>

@@ -130,7 +130,7 @@ export default function NewRequestPage() {
   // Show loading state while checking authentication
   if (authLoading) {
     return (
-      <PlatformLayout user={null} messagingData={messagingData}>
+      <PlatformLayout user={undefined} messagingData={messagingData}>
         <div className="container mx-auto px-4 py-8">
           <Card>
             <CardContent className="flex items-center justify-center py-12">
@@ -148,7 +148,7 @@ export default function NewRequestPage() {
   // Show error state if not authenticated (fallback)
   if (!user) {
     return (
-      <PlatformLayout user={null} messagingData={messagingData}>
+      <PlatformLayout user={undefined} messagingData={messagingData}>
         <div className="container mx-auto px-4 py-8">
           <Card>
             <CardContent className="py-12">
@@ -173,9 +173,16 @@ export default function NewRequestPage() {
     { label: 'New Request' }
   ];
 
+  // Transform Supabase User to PlatformLayout user format
+  const platformUser = user ? {
+    id: user.id,
+    name: user.user_metadata?.name || user.email?.split('@')[0] || 'User',
+    email: user.email || ''
+  } : undefined;
+
   return (
-    <PlatformLayout 
-      user={user} 
+    <PlatformLayout
+      user={platformUser}
       messagingData={messagingData}
       breadcrumbs={breadcrumbs}
     >

@@ -267,48 +267,55 @@ export default async function RequestDetailPage({ params }: PageProps) {
     messagingData = { unreadCount: 0, activeConversations: 0 };
   }
 
-  // Enhanced database query with proper error handling and retries
+  // Enhanced database query with proper error handling
+  // NOTE: Using separate queries instead of foreign key joins to work around RLS limitations
+  // Foreign key joins with RLS policies can fail even with correct policies
   let request = null;
   let requestError = null;
-  let retryCount = 0;
-  const maxRetries = 3;
 
-  while (retryCount <= maxRetries && !request && !requestError) {
-    try {
-      const { data, error } = await supabase
-        .from('help_requests')
-        .select(`
-          *,
-          profiles!user_id (id, name, location),
-          helper:profiles!helper_id (id, name, location)
-        `)
-        .eq('id', id)
+  try {
+    // Step 1: Fetch the help request without joins
+    const { data: requestData, error: requestQueryError } = await supabase
+      .from('help_requests')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (requestQueryError) {
+      requestError = requestQueryError;
+    } else if (requestData) {
+      // Step 2: Fetch requester profile separately
+      const { data: requesterProfile } = await supabase
+        .from('profiles')
+        .select('id, name, location')
+        .eq('id', requestData.user_id)
         .single();
 
-      if (error) {
-        requestError = error;
-        break;
+      // Step 3: Fetch helper profile separately (if exists)
+      let helperProfile = null;
+      if (requestData.helper_id) {
+        const { data: helperData } = await supabase
+          .from('profiles')
+          .select('id, name, location')
+          .eq('id', requestData.helper_id)
+          .single();
+        helperProfile = helperData;
       }
 
-      request = data;
-      break;
-
-    } catch (error) {
-      retryCount++;
-      console.warn(`[Help Request] Query attempt ${retryCount} failed:`, error);
-      
-      if (retryCount <= maxRetries) {
-        // Exponential backoff: 500ms, 1s, 2s
-        const delay = Math.pow(2, retryCount - 1) * 500;
-        await new Promise(resolve => setTimeout(resolve, delay));
-      } else {
-        requestError = {
-          message: 'Database connection failed after multiple retries',
-          code: 'CONNECTION_RETRY_FAILED',
-          details: error instanceof Error ? error.message : String(error)
-        };
-      }
+      // Combine the data
+      request = {
+        ...requestData,
+        profiles: requesterProfile,
+        helper: helperProfile
+      };
     }
+  } catch (error) {
+    console.error('[Help Request] Unexpected error:', error);
+    requestError = {
+      message: 'Failed to fetch help request',
+      code: 'QUERY_FAILED',
+      details: error instanceof Error ? error.message : String(error)
+    };
   }
 
   // Enhanced error handling with proper logging
@@ -499,11 +506,7 @@ export default async function RequestDetailPage({ params }: PageProps) {
                     {/* Contact Exchange - Show when someone is helping */}
                     {request.helper_id && (isOwner || isHelper) && (
                       <ContactExchange
-                        requestId={request.id}
-                        helperId={request.helper_id}
-                        requesterId={request.user_id}
-                        isHelper={isHelper}
-                        isRequester={isOwner}
+                        helpRequest={request}
                       />
                     )}
                   </div>

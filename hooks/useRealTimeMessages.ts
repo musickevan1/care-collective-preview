@@ -10,7 +10,16 @@ import { createClient } from '@/lib/supabase/client';
 import { MessageWithSender } from '@/lib/messaging/types';
 import { messageEncryption } from '@/lib/messaging/encryption';
 import { errorTracker } from '@/lib/error-tracking';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+
+interface QueuedMessage {
+  id: string; // Temporary client-side ID
+  content: string;
+  messageType: 'standard' | 'contact_exchange' | 'sensitive';
+  timestamp: number;
+  retryCount: number;
+}
 
 export interface RealTimeMessagingState {
   messages: MessageWithSender[];
@@ -26,6 +35,8 @@ export interface RealTimeMessagingState {
     total_participants: number;
   };
   unreadCount: number;
+  queuedMessages: QueuedMessage[]; // Messages waiting to be sent when online
+  isOnline: boolean;
 }
 
 export interface UseRealTimeMessagesOptions {
@@ -104,7 +115,9 @@ export function useRealTimeMessages(
     hasMore: true,
     typing: { users: [], isTyping: false },
     presence: { online_users: [], total_participants: 0 },
-    unreadCount: 0
+    unreadCount: 0,
+    queuedMessages: [],
+    isOnline: true
   });
 
   const supabase = createClient();
@@ -112,6 +125,16 @@ export function useRealTimeMessages(
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastMessageIdRef = useRef<string | null>(null);
   const isInitialLoadRef = useRef(true);
+
+  // Monitor network status for offline message queue
+  const { networkStatus } = useNetworkStatus({
+    enablePing: true,
+    pingInterval: 30000,
+    onConnectionChange: (isOnline) => {
+      console.log(`🌐 Network status changed in useRealTimeMessages: ${isOnline ? 'online' : 'offline'}`);
+      setState(prev => ({ ...prev, isOnline }));
+    }
+  });
 
   // Load messages for conversation
   const loadMessages = useCallback(async (append = false) => {
@@ -247,8 +270,56 @@ export function useRealTimeMessages(
     }
   }, [conversationId, userId, supabase]);
 
-  // Send message
-  const sendMessage = useCallback(async (
+  // Process queued messages when back online
+  const processQueuedMessages = useCallback(async () => {
+    if (!conversationId || state.queuedMessages.length === 0) return;
+
+    console.log(`📤 Processing ${state.queuedMessages.length} queued messages...`);
+
+    const queue = [...state.queuedMessages];
+    const MAX_RETRIES = 3;
+
+    for (const queuedMsg of queue) {
+      try {
+        // Attempt to send the queued message
+        await sendMessageInternal(queuedMsg.content, queuedMsg.messageType);
+
+        // Remove from queue on success
+        setState(prev => ({
+          ...prev,
+          queuedMessages: prev.queuedMessages.filter(m => m.id !== queuedMsg.id)
+        }));
+
+        console.log(`✅ Sent queued message ${queuedMsg.id}`);
+
+      } catch (error) {
+        console.error(`❌ Failed to send queued message ${queuedMsg.id}:`, error);
+
+        // Increment retry count
+        setState(prev => ({
+          ...prev,
+          queuedMessages: prev.queuedMessages.map(m =>
+            m.id === queuedMsg.id
+              ? { ...m, retryCount: m.retryCount + 1 }
+              : m
+          )
+        }));
+
+        // Remove if max retries reached
+        if (queuedMsg.retryCount >= MAX_RETRIES) {
+          console.warn(`⚠️ Max retries reached for message ${queuedMsg.id}, removing from queue`);
+          setState(prev => ({
+            ...prev,
+            queuedMessages: prev.queuedMessages.filter(m => m.id !== queuedMsg.id),
+            error: `Failed to send message after ${MAX_RETRIES} attempts`
+          }));
+        }
+      }
+    }
+  }, [conversationId, state.queuedMessages]);
+
+  // Internal send function (used by both direct send and queue processor)
+  const sendMessageInternal = useCallback(async (
     content: string,
     messageType: 'standard' | 'contact_exchange' | 'sensitive' = 'standard'
   ) => {
@@ -353,6 +424,83 @@ export function useRealTimeMessages(
       throw error;
     }
   }, [conversationId, userId, encryptionEnabled, supabase]);
+
+  // Public sendMessage function with offline queue support
+  const sendMessage = useCallback(async (
+    content: string,
+    messageType: 'standard' | 'contact_exchange' | 'sensitive' = 'standard'
+  ) => {
+    if (!conversationId || !userId || !content.trim()) return;
+
+    // Check if online
+    if (!networkStatus.isOnline) {
+      // Add to offline queue
+      const queuedMessage: QueuedMessage = {
+        id: `queued-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        content,
+        messageType,
+        timestamp: Date.now(),
+        retryCount: 0
+      };
+
+      setState(prev => ({
+        ...prev,
+        queuedMessages: [...prev.queuedMessages, queuedMessage]
+      }));
+
+      console.log(`📥 Message queued for sending when online: ${queuedMessage.id}`);
+
+      // Show optimistic message with "sending..." indicator
+      const tempMessage = {
+        id: queuedMessage.id,
+        content,
+        sender_id: userId,
+        recipient_id: '', // Will be filled when actually sent
+        conversation_id: conversationId,
+        created_at: new Date().toISOString(),
+        message_type: messageType,
+        status: 'sending' as const,
+        sender: { id: userId, name: userName || 'You', location: null }
+      };
+
+      setState(prev => ({
+        ...prev,
+        messages: [...prev.messages, tempMessage as any]
+      }));
+
+      return;
+    }
+
+    // Online - send immediately
+    try {
+      await sendMessageInternal(content, messageType);
+    } catch (error) {
+      // On error, queue the message for retry
+      console.warn('Failed to send message, adding to queue for retry');
+      const queuedMessage: QueuedMessage = {
+        id: `queued-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        content,
+        messageType,
+        timestamp: Date.now(),
+        retryCount: 0
+      };
+
+      setState(prev => ({
+        ...prev,
+        queuedMessages: [...prev.queuedMessages, queuedMessage]
+      }));
+
+      throw error;
+    }
+  }, [conversationId, userId, userName, networkStatus.isOnline, sendMessageInternal]);
+
+  // Process queue when network comes back online
+  useEffect(() => {
+    if (networkStatus.isOnline && state.queuedMessages.length > 0) {
+      console.log(`🌐 Network online - processing ${state.queuedMessages.length} queued messages`);
+      processQueuedMessages();
+    }
+  }, [networkStatus.isOnline, state.queuedMessages.length, processQueuedMessages]);
 
   // Reply to message (threading)
   const replyToMessage = useCallback(async (parentMessageId: string, content: string) => {
