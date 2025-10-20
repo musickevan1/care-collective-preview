@@ -22,7 +22,7 @@ const ContactExchange = dynamic(() =>
 )
 
 interface PageProps {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }
 
 const categoryColors = {
@@ -251,8 +251,8 @@ async function getHelpRequestMessagingStatus(requestId: string, userId: string) 
 }
 
 export default async function RequestDetailPage({ params }: PageProps) {
-  const { id } = await params
-  
+  const { id } = params
+
   const user = await getUser();
   
   if (!user) {
@@ -369,19 +369,190 @@ export default async function RequestDetailPage({ params }: PageProps) {
   const canHelp = !isOwner && !request.helper_id && request.status === 'open'
   const canUpdateStatus = isOwner || isHelper
 
-  // MINIMAL PAGE TEST - Bug #7 Test #4
-  // Testing if error is in PlatformLayout or components
+  const breadcrumbs = [
+    { label: 'Help Requests', href: '/requests' },
+    { label: request.title }
+  ];
+
+  // Transform request for HelpRequestCardWithMessaging
+  const transformedRequest = {
+    id: request.id,
+    user_id: request.user_id,
+    title: request.title,
+    description: request.description || undefined,
+    category: request.category,
+    urgency: request.urgency as 'normal' | 'urgent' | 'critical',
+    status: request.status as 'open' | 'in_progress' | 'closed',
+    created_at: request.created_at,
+    profiles: {
+      id: request.profiles?.id || request.user_id,
+      name: request.profiles?.name || 'Anonymous',
+      location: request.profiles?.location
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">{request.title}</h1>
-      <p className="mb-4">{request.description || 'No description'}</p>
-      <p className="mb-2"><strong>Status:</strong> {request.status}</p>
-      <p className="mb-2"><strong>Category:</strong> {request.category}</p>
-      <p className="mb-2"><strong>Urgency:</strong> {request.urgency}</p>
-      <p className="mb-2"><strong>Requester:</strong> {request.profiles?.name || 'Unknown'}</p>
-      <p className="text-sm text-muted-foreground mt-4">
-        Test #4: Minimal page to isolate error location
-      </p>
-    </div>
+    <PlatformLayout 
+      user={user} 
+      messagingData={messagingData}
+      breadcrumbs={breadcrumbs}
+    >
+      <div className="container mx-auto px-4 py-8">
+        {/* Messaging Status */}
+        {helpRequestMessagingStatus.conversationCount > 0 && (
+          <div className="mb-6">
+            <MessagingStatusIndicator
+              helpRequestId={id}
+              status={helpRequestMessagingStatus}
+              isOwnRequest={isOwner}
+              size="lg"
+              showDetails={true}
+            />
+          </div>
+        )}
+
+        <div className="space-y-6">
+          {/* Use HelpRequestCardWithMessaging for consistent experience */}
+          <HelpRequestCardWithMessaging
+            request={transformedRequest}
+            currentUserId={user.id}
+            onConversationStarted={(conversationId) => {
+              // Could redirect to messages or show success state
+              console.log('Conversation started:', conversationId);
+            }}
+          />
+
+          {/* Additional Details Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Additional Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Description */}
+              <div>
+                <h3 className="font-semibold mb-2">Full Description</h3>
+                <p className="text-muted-foreground whitespace-pre-wrap">
+                  {request.description || 'No additional description provided.'}
+                </p>
+              </div>
+
+              {/* Category */}
+              <div>
+                <h3 className="font-semibold mb-2">Category</h3>
+                <Badge variant={categoryColors[request.category as keyof typeof categoryColors]}>
+                  {request.category}
+                </Badge>
+              </div>
+
+              {/* Request Timeline */}
+              <div>
+                <h3 className="font-semibold mb-2">Timeline</h3>
+                <div className="text-sm space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Created:</span>
+                    <span suppressHydrationWarning>{formatDate(request.created_at)}</span>
+                  </div>
+                  {request.helped_at && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Help started:</span>
+                      <span suppressHydrationWarning>{formatDate(request.helped_at)}</span>
+                    </div>
+                  )}
+                  {request.completed_at && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Completed:</span>
+                      <span suppressHydrationWarning>{formatDate(request.completed_at)}</span>
+                    </div>
+                  )}
+                  {request.cancelled_at && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Cancelled:</span>
+                      <span suppressHydrationWarning>{formatDate(request.cancelled_at)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Messaging and Communication */}
+          {(isOwner || isHelper) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Communication</CardTitle>
+                <CardDescription>
+                  {isOwner 
+                    ? "Manage conversations with people offering help"
+                    : "Communicate with the person who needs help"
+                  }
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {helpRequestMessagingStatus.conversationCount > 0 ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-sage/5 rounded-lg border">
+                      <div>
+                        <h4 className="font-medium text-secondary">
+                          {helpRequestMessagingStatus.conversationCount} active conversation{helpRequestMessagingStatus.conversationCount !== 1 ? 's' : ''}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {helpRequestMessagingStatus.unreadCount > 0 
+                            ? `${helpRequestMessagingStatus.unreadCount} unread message${helpRequestMessagingStatus.unreadCount !== 1 ? 's' : ''}`
+                            : 'All messages read'
+                          }
+                        </p>
+                      </div>
+                      <Button asChild>
+                        <Link href={`/messages?help_request=${id}`}>
+                          View Messages
+                        </Link>
+                      </Button>
+                    </div>
+                    
+                    {/* Contact Exchange - Show when someone is helping */}
+                    {request.helper_id && (isOwner || isHelper) && (
+                      <ContactExchange
+                        helpRequest={request}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <p className="text-muted-foreground mb-4">
+                      {isOwner 
+                        ? "No one has offered help yet. Share this request to get more visibility."
+                        : "Start a conversation to offer help and coordinate assistance."
+                      }
+                    </p>
+                    {!isOwner && canHelp && (
+                      <p className="text-sm text-muted-foreground">
+                        Use the "Offer Help" button above to start messaging.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Legacy Actions (for compatibility) */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Request Actions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RequestActions
+                request={request}
+                userId={user.id}
+                isOwner={isOwner}
+                isHelper={isHelper}
+                canHelp={canHelp}
+                canUpdateStatus={canUpdateStatus}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </PlatformLayout>
   )
 }
