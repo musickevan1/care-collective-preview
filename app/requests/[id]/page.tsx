@@ -440,24 +440,24 @@ export default async function RequestDetailPage({ params }: PageProps) {
                 <div className="text-sm space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Created:</span>
-                    <span>{formatDate(request.created_at)}</span>
+                    <span suppressHydrationWarning>{formatDate(request.created_at)}</span>
                   </div>
                   {request.helped_at && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Help started:</span>
-                      <span>{formatDate(request.helped_at)}</span>
+                      <span suppressHydrationWarning>{formatDate(request.helped_at)}</span>
                     </div>
                   )}
                   {request.completed_at && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Completed:</span>
-                      <span>{formatDate(request.completed_at)}</span>
+                      <span suppressHydrationWarning>{formatDate(request.completed_at)}</span>
                     </div>
                   )}
                   {request.cancelled_at && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Cancelled:</span>
-                      <span>{formatDate(request.cancelled_at)}</span>
+                      <span suppressHydrationWarning>{formatDate(request.cancelled_at)}</span>
                     </div>
                   )}
                 </div>
