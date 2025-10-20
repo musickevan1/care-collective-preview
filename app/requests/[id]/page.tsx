@@ -374,7 +374,7 @@ export default async function RequestDetailPage({ params }: PageProps) {
     { label: request.title }
   ];
 
-  // Transform request for HelpRequestCardWithMessaging
+  // Transform request for HelpRequestCardWithMessaging with defensive null checks
   const transformedRequest = {
     id: request.id,
     user_id: request.user_id,
@@ -387,9 +387,30 @@ export default async function RequestDetailPage({ params }: PageProps) {
     profiles: {
       id: request.profiles?.id || request.user_id,
       name: request.profiles?.name || 'Anonymous',
-      location: request.profiles?.location
+      location: request.profiles?.location || null
     }
   };
+
+  // Transform request for ContactExchange with all required fields
+  // Only create this if there's actually a helper assigned
+  const contactExchangeRequest = request.helper_id ? {
+    id: request.id,
+    title: request.title,
+    description: request.description || '',
+    category: request.category,
+    urgency: request.urgency,
+    status: request.status,
+    user_id: request.user_id,
+    helper_id: request.helper_id,
+    created_at: request.created_at,
+    profiles: {
+      id: request.profiles?.id || request.user_id,
+      name: request.profiles?.name || 'Anonymous',
+      email: request.profiles?.email || null,
+      phone: request.profiles?.phone || null,
+      location: request.profiles?.location || null
+    }
+  } : null;
 
   return (
     <PlatformLayout 
@@ -510,9 +531,9 @@ export default async function RequestDetailPage({ params }: PageProps) {
                     </div>
                     
                     {/* Contact Exchange - Show when someone is helping */}
-                    {request.helper_id && (isOwner || isHelper) && (
+                    {contactExchangeRequest && (isOwner || isHelper) && (
                       <ContactExchange
-                        helpRequest={request}
+                        helpRequest={contactExchangeRequest}
                       />
                     )}
                   </div>
