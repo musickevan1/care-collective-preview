@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/auth-context'
+import { helpRequestSchema } from '@/lib/validations'
+import { z } from 'zod'
 
 const categories = [
   { value: 'groceries', label: 'Groceries & Shopping', icon: '🛒' },
@@ -40,6 +42,7 @@ export default function NewRequestPage() {
   const [locationPrivacy, setLocationPrivacy] = useState('public')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [messagingData, setMessagingData] = useState({ unreadCount: 0, activeConversations: 0 })
 
   const router = useRouter()
@@ -93,6 +96,7 @@ export default function NewRequestPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setFieldErrors({})
 
     try {
       if (!user) {
@@ -101,16 +105,29 @@ export default function NewRequestPage() {
         return
       }
 
+      // SECURITY: Validate and sanitize input data using Zod schema
+      const formData = {
+        title: title.trim(),
+        description: description.trim() || null,
+        category,
+        urgency,
+        locationOverride: locationOverride.trim() || null,
+        locationPrivacy
+      }
+
+      const validatedData = helpRequestSchema.parse(formData)
+
+      // Insert validated data into database
       const { error } = await supabase
         .from('help_requests')
         .insert({
-          title,
-          description: description || null,
-          category,
-          urgency,
+          title: validatedData.title,
+          description: validatedData.description,
+          category: validatedData.category,
+          urgency: validatedData.urgency,
           user_id: user.id,
-          location_override: locationOverride || null,
-          location_privacy: locationPrivacy,
+          location_override: validatedData.locationOverride || null,
+          location_privacy: validatedData.locationPrivacy,
         })
 
       if (error) {
@@ -118,10 +135,22 @@ export default function NewRequestPage() {
       } else {
         router.push('/dashboard')
       }
-      
+
     } catch (err) {
       console.error('Request creation error:', err)
-      setError('Failed to create request. Please try again.')
+
+      // Handle Zod validation errors
+      if (err instanceof z.ZodError) {
+        const errors: Record<string, string> = {}
+        err.issues.forEach((issue: z.ZodIssue) => {
+          const path = issue.path[0] as string
+          errors[path] = issue.message
+        })
+        setFieldErrors(errors)
+        setError('Please fix the errors below')
+      } else {
+        setError('Failed to create request. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
@@ -228,11 +257,15 @@ export default function NewRequestPage() {
                   placeholder="What do you need help with?"
                   required
                   disabled={loading}
+                  className={fieldErrors.title ? 'border-red-500' : ''}
                   maxLength={100}
                 />
                 <p className="text-xs text-muted-foreground">
                   Be clear and specific. For example: &quot;Need groceries picked up&quot; or &quot;Help moving furniture&quot;
                 </p>
+                {fieldErrors.title && (
+                  <p className="text-sm text-red-600">{fieldErrors.title}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -245,7 +278,7 @@ export default function NewRequestPage() {
                   onChange={(e) => setCategory(e.target.value)}
                   required
                   disabled={loading}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${fieldErrors.category ? 'border-red-500' : ''}`}
                 >
                   <option value="">Select a category</option>
                   {categories.map((cat) => (
@@ -254,6 +287,9 @@ export default function NewRequestPage() {
                     </option>
                   ))}
                 </select>
+                {fieldErrors.category && (
+                  <p className="text-sm text-red-600">{fieldErrors.category}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -267,12 +303,15 @@ export default function NewRequestPage() {
                   placeholder="Provide more details about what you need help with..."
                   disabled={loading}
                   rows={4}
-                  maxLength={500}
-                  className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                  maxLength={1000}
+                  className={`flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none ${fieldErrors.description ? 'border-red-500' : ''}`}
                 />
                 <p className="text-xs text-muted-foreground">
                   Include any specific requirements, timing, or other helpful details
                 </p>
+                {fieldErrors.description && (
+                  <p className="text-sm text-red-600">{fieldErrors.description}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -311,10 +350,15 @@ export default function NewRequestPage() {
                   onChange={(e) => setLocationOverride(e.target.value)}
                   placeholder="e.g., Downtown, ZIP 65802, or specific address"
                   disabled={loading}
+                  maxLength={100}
+                  className={fieldErrors.locationOverride ? 'border-red-500' : ''}
                 />
                 <p className="text-xs text-muted-foreground">
                   Override your profile location for this specific request if needed
                 </p>
+                {fieldErrors.locationOverride && (
+                  <p className="text-sm text-red-600">{fieldErrors.locationOverride}</p>
+                )}
               </div>
 
               <div className="space-y-2">
