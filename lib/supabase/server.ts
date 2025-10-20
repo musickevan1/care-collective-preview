@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-export async function createClient() {
+export function createClient() {
   const cookieStore = cookies()
 
   const client = createServerClient(
@@ -66,7 +66,7 @@ export async function createClient() {
                 path: '/', // Ensure cookies are available for all paths
               })
             })
-            
+
             // Debug logging for cookie operations
             if (process.env.NODE_ENV === 'development' && validCookies.length > 0) {
               console.log('[Server Client] Setting cookies:', validCookies.map(c => c.name))
@@ -83,38 +83,6 @@ export async function createClient() {
       },
     }
   )
-
-  // Add authentication state logging for debugging (reduced verbosity)
-  if (process.env.NODE_ENV === 'development') {
-    try {
-      // Wrap auth check in timeout to prevent hanging
-      const authCheckPromise = client.auth.getUser()
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Auth check timeout')), 2000)
-      )
-      
-      const { data: { user }, error } = await Promise.race([authCheckPromise, timeoutPromise]) as any
-      
-      // Only log if there's an actual user or a non-session error
-      if (user || (error && !error.message?.includes('Auth session missing'))) {
-        console.log('[Server Client] Auth state:', { 
-          hasUser: !!user, 
-          userId: user?.id, 
-          error: error?.message 
-        })
-      }
-    } catch (authError) {
-      // Handle different types of auth errors more gracefully
-      const errorMessage = String(authError)
-      if (!errorMessage.includes('Auth session missing') && 
-          !errorMessage.includes('Auth check timeout') &&
-          !errorMessage.includes('Cannot read properties of undefined')) {
-        console.error('[Server Client] Auth check failed:', authError)
-      } else if (errorMessage.includes('Auth check timeout')) {
-        console.warn('[Server Client] Auth check timed out - this may indicate connection issues')
-      }
-    }
-  }
 
   return client
 }
