@@ -60,7 +60,7 @@ export async function getOptimizedHelpRequests(
   } = filters
 
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Step 1: Query help_requests table WITHOUT foreign key joins
     let query = supabase
@@ -178,7 +178,7 @@ export async function getHelpRequestStats(): Promise<{
   error: any
 }> {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Use optimized parallel queries
     const [totalResult, openResult, inProgressResult, completedResult] = await Promise.all([
@@ -212,7 +212,7 @@ export async function getUrgentHelpRequests(limit: number = 10): Promise<{
   error: any
 }> {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Step 1: Get urgent/critical help requests
     const { data: requests, error: requestsError } = await supabase

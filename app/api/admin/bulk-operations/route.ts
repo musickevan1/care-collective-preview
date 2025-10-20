@@ -20,7 +20,7 @@ const bulkOperationSchema = z.object({
 // GET - Get bulk operation history
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
 // POST - Execute bulk operation
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()

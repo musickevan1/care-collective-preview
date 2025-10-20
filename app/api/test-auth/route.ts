@@ -13,7 +13,7 @@ import { getProfileWithServiceRole } from '@/lib/supabase/admin'
 export async function GET(request: NextRequest) {
   try {
     // Get authenticated user
-    const supabase = await createClient()
+    const supabase = createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {

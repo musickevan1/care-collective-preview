@@ -34,7 +34,7 @@ function checkRateLimit(userId: string, maxRequests: number = 30, windowMs: numb
 }
 
 async function getCurrentUser() {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error || !user) {
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify recipient exists
-    const supabase = await createClient();
+    const supabase = createClient();
     const { data: recipient, error: recipientError } = await supabase
       .from('profiles')
       .select('id, name')

@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 // GET - Get community health metrics for admin dashboard
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -172,7 +172,7 @@ export async function GET(request: NextRequest) {
 // POST - Refresh metrics manually
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()

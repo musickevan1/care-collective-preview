@@ -13,7 +13,7 @@ const applicationActionSchema = z.object({
 // GET - Get all pending applications
 export async function GET() {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -62,7 +62,7 @@ export async function GET() {
 // POST - Approve or reject an application
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()

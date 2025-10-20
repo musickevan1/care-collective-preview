@@ -17,7 +17,7 @@ interface MessagesPageProps {
 }
 
 async function getUser() {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error || !user) {
@@ -39,7 +39,7 @@ async function getUser() {
 }
 
 async function getMessagingData(userId: string) {
-  const supabase = await createClient();
+  const supabase = createClient();
   
   try {
     // Get user's conversations

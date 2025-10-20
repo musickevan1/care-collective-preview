@@ -28,7 +28,7 @@ async function checkDatabaseConnectivity(): Promise<HealthCheckResult> {
   const start = Date.now()
   
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Test basic connectivity
     const { data, error } = await supabase
@@ -70,7 +70,7 @@ async function checkDatabasePerformance(): Promise<HealthCheckResult> {
   const start = Date.now()
   
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Test multiple queries to check performance
     const queries = [
@@ -117,7 +117,7 @@ async function checkAuthentication(): Promise<HealthCheckResult> {
   const start = Date.now()
   
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Test auth service is responding
     const { data: { session }, error } = await supabase.auth.getSession()
@@ -156,7 +156,7 @@ async function checkCriticalTables(): Promise<HealthCheckResult> {
   const start = Date.now()
   
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Check critical tables exist and are accessible
     const criticalTables = ['profiles', 'help_requests', 'request_responses']

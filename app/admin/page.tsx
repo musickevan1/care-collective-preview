@@ -21,7 +21,7 @@ export default async function AdminDashboard() {
 
   try {
     console.log('[Admin] Creating Supabase client...')
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Verify user is authenticated and admin
     console.log('[Admin] Checking authentication...')

@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: { type: string } }
 ) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()

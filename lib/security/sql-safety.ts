@@ -217,7 +217,7 @@ export class SafeDataWriter {
  */
 
 export async function createSafeProfileQuery() {
-  const supabase = await createClient()
+  const supabase = createClient()
   return new SafeQueryBuilder(supabase, {
     table: 'profiles',
     allowedColumns: ['id', 'name', 'location', 'created_at', 'is_admin'],
@@ -227,7 +227,7 @@ export async function createSafeProfileQuery() {
 }
 
 export async function createSafeHelpRequestQuery() {
-  const supabase = await createClient()
+  const supabase = createClient()
   return new SafeQueryBuilder(supabase, {
     table: 'help_requests',
     allowedColumns: [
@@ -241,7 +241,7 @@ export async function createSafeHelpRequestQuery() {
 }
 
 export async function createSafeMessageQuery() {
-  const supabase = await createClient()
+  const supabase = createClient()
   return new SafeQueryBuilder(supabase, {
     table: 'messages',
     allowedColumns: [
@@ -254,7 +254,7 @@ export async function createSafeMessageQuery() {
 }
 
 export async function createSafeProfileWriter() {
-  const supabase = await createClient()
+  const supabase = createClient()
   return new SafeDataWriter(supabase, {
     table: 'profiles',
     allowedColumns: ['name', 'location'],
@@ -263,7 +263,7 @@ export async function createSafeProfileWriter() {
 }
 
 export async function createSafeHelpRequestWriter() {
-  const supabase = await createClient()
+  const supabase = createClient()
   return new SafeDataWriter(supabase, {
     table: 'help_requests',
     allowedColumns: [
@@ -275,7 +275,7 @@ export async function createSafeHelpRequestWriter() {
 }
 
 export async function createSafeMessageWriter() {
-  const supabase = await createClient()
+  const supabase = createClient()
   return new SafeDataWriter(supabase, {
     table: 'messages',
     allowedColumns: ['request_id', 'recipient_id', 'content'],

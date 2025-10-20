@@ -51,7 +51,7 @@ function getStatusBadge(status: string): ReactElement {
 }
 
 export default async function ApplicationsPage(): Promise<ReactElement> {
-  const supabase = await createClient()
+  const supabase = createClient()
 
   // Verify user is authenticated and admin
   const { data: { user }, error: authError } = await supabase.auth.getUser()

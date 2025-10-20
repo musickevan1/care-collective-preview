@@ -12,7 +12,7 @@ async function handleLogout(request: NextRequest) {
   }
 
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
 
     // Sign out the user
     const { error } = await supabase.auth.signOut()

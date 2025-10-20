@@ -36,7 +36,7 @@ async function checkDatabase(): Promise<HealthCheckResult> {
   const start = Date.now()
   
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Simple query to test database connectivity
     const { data, error } = await supabase

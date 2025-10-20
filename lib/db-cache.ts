@@ -57,7 +57,7 @@ export class OptimizedQueries {
   // Remove static client caching to prevent auth state issues
   private static async getClient() {
     // Always create a fresh client to ensure proper auth state
-    return await createClient()
+    return createClient()
   }
 
   /**
@@ -303,7 +303,7 @@ export class ConnectionManager {
   
   static async getConnection(key: string = 'default') {
     if (!this.connections.has(key)) {
-      const supabase = await createClient()
+      const supabase = createClient()
       this.connections.set(key, supabase)
     }
     return this.connections.get(key)

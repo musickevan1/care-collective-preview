@@ -13,7 +13,7 @@ const userActionSchema = z.object({
 // GET - Get all users with pagination
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
 // POST - Perform user management actions
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = createClient()
     
     // Verify admin authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser()

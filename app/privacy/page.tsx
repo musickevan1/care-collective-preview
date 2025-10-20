@@ -12,7 +12,7 @@ import { PrivacyDashboard } from '@/components/privacy/PrivacyDashboard';
 export const dynamic = 'force-dynamic';
 
 async function getUser() {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
