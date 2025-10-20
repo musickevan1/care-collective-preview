@@ -4,9 +4,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
+import { Database } from '@/lib/database.types'
+
+type HelpRequest = Database['public']['Tables']['help_requests']['Row']
 
 interface RequestActionsProps {
-  request: any
+  request: HelpRequest
   userId: string
   isOwner: boolean
   isHelper: boolean
