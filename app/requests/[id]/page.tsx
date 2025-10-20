@@ -399,7 +399,6 @@ export default async function RequestDetailPage({ params }: PageProps) {
     >
       <div className="container mx-auto px-4 py-8">
         {/* Messaging Status */}
-        {/* TEMPORARILY DISABLED FOR TESTING - Bug #7 investigation
         {helpRequestMessagingStatus.conversationCount > 0 && (
           <div className="mb-6">
             <MessagingStatusIndicator
@@ -411,7 +410,6 @@ export default async function RequestDetailPage({ params }: PageProps) {
             />
           </div>
         )}
-        */}
 
         <div className="space-y-6">
           {/* Use HelpRequestCardWithMessaging for consistent experience */}
@@ -510,13 +508,15 @@ export default async function RequestDetailPage({ params }: PageProps) {
                         </Link>
                       </Button>
                     </div>
-                    
+
                     {/* Contact Exchange - Show when someone is helping */}
+                    {/* TEMPORARILY DISABLED FOR TESTING - Bug #7 Test #2
                     {request.helper_id && (isOwner || isHelper) && (
                       <ContactExchange
                         helpRequest={request}
                       />
                     )}
+                    */}
                   </div>
                 ) : (
                   <div className="text-center py-6">
