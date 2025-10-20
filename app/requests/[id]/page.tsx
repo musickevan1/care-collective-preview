@@ -11,11 +11,10 @@ import Link from 'next/link'
 import { RequestActions } from './RequestActions'
 import dynamic from 'next/dynamic'
 
-const ContactExchange = dynamic(() => 
+const ContactExchange = dynamic(() =>
   import('@/components/ContactExchange').then(mod => ({ default: mod.ContactExchange })),
-  { 
-    loading: () => <div className="p-4">Loading contact exchange...</div>,
-    ssr: false 
+  {
+    loading: () => <div className="p-4">Loading contact exchange...</div>
   }
 )
 
