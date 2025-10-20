@@ -9,7 +9,17 @@ import { HelpRequestCardWithMessaging } from '@/components/help-requests/HelpReq
 import { MessagingStatusIndicator } from '@/components/messaging/MessagingStatusIndicator'
 import Link from 'next/link'
 import { RequestActions } from './RequestActions'
-import { ContactExchange } from '@/components/ContactExchange'
+import dynamic from 'next/dynamic'
+
+// ContactExchange must be client-only (ssr: false) because it calls createClient()
+// at the module level (outside useEffect), which uses browser APIs
+const ContactExchange = dynamic(() =>
+  import('@/components/ContactExchange').then(mod => ({ default: mod.ContactExchange })),
+  {
+    loading: () => <div className="p-4 text-center text-muted-foreground">Loading contact exchange...</div>,
+    ssr: false
+  }
+)
 
 interface PageProps {
   params: Promise<{ id: string }>
