@@ -413,6 +413,7 @@ export default async function RequestDetailPage({ params }: PageProps) {
 
         <div className="space-y-6">
           {/* Use HelpRequestCardWithMessaging for consistent experience */}
+          {/* TEMPORARILY DISABLED FOR TESTING - Bug #7 Test #3
           <HelpRequestCardWithMessaging
             request={transformedRequest}
             currentUserId={user.id}
@@ -421,6 +422,7 @@ export default async function RequestDetailPage({ params }: PageProps) {
               console.log('Conversation started:', conversationId);
             }}
           />
+          */}
 
           {/* Additional Details Card */}
           <Card>
@@ -510,13 +512,11 @@ export default async function RequestDetailPage({ params }: PageProps) {
                     </div>
 
                     {/* Contact Exchange - Show when someone is helping */}
-                    {/* TEMPORARILY DISABLED FOR TESTING - Bug #7 Test #2
                     {request.helper_id && (isOwner || isHelper) && (
                       <ContactExchange
                         helpRequest={request}
                       />
                     )}
-                    */}
                   </div>
                 ) : (
                   <div className="text-center py-6">
