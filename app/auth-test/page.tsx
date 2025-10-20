@@ -17,7 +17,7 @@ export default async function AuthTestPage() {
   try {
     // Test client creation
     console.log('[Auth Test] Creating Supabase client...')
-    client = createClient()
+    client = await createClient()
     console.log('[Auth Test] Client created successfully')
 
     // Test auth.getUser()

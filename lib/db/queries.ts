@@ -34,7 +34,7 @@ interface HelpRequestFilters {
  */
 export const getHelpRequests = unstable_cache(
   async (filters: HelpRequestFilters = {}): Promise<HelpRequestWithProfile[]> => {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     const {
       status = 'open',

@@ -58,7 +58,7 @@ function formatDate(dateString: string) {
 
 async function getUser() {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Enhanced auth call with proper error handling
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -118,7 +118,7 @@ async function getUser() {
 }
 
 async function getMessagingData(userId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Get unread count
@@ -173,7 +173,7 @@ async function getMessagingData(userId: string) {
 }
 
 async function getHelpRequestMessagingStatus(requestId: string, userId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Get conversations for this help request
@@ -259,7 +259,7 @@ export default async function RequestDetailPage({ params }: PageProps) {
     redirect('/login?redirect=/requests/' + id);
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   
   let messagingData;
   try {

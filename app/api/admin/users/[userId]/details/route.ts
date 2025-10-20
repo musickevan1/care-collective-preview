@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: { userId: string } }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { userId } = params
 
     // Verify admin access

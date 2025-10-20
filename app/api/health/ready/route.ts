@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET() {
   try {
     // Quick database connectivity check
-    const supabase = createClient()
+    const supabase = await createClient()
     const { error } = await supabase
       .from('profiles')
       .select('id')

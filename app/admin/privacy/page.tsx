@@ -12,7 +12,7 @@ import { AdminPrivacyDashboard } from '@/components/admin/PrivacyDashboard';
 export const dynamic = 'force-dynamic';
 
 async function getAdminUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {

@@ -6,7 +6,7 @@ export async function POST(
   { params }: { params: { userId: string } }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { userId } = params
     const body = await request.json()
     const { action, reason } = body

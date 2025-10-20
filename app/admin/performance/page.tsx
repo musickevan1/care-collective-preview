@@ -12,7 +12,7 @@ import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import { MobileNav } from '@/components/MobileNav'
 
 export default async function PerformancePage() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Check if user is admin
   const { data: { user }, error } = await supabase.auth.getUser()

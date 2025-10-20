@@ -30,7 +30,7 @@ interface DashboardPageProps {
 }
 
 async function getUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // ENHANCED DEBUG LOGGING - AUTH CHECK START
   console.log('[Dashboard] AUTH CHECK START:', {
@@ -151,7 +151,7 @@ async function getUser() {
 }
 
 async function getDashboardData(userId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   try {
     // Get user's help requests count

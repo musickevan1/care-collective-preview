@@ -75,7 +75,7 @@ interface PageProps {
 }
 
 async function getUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
   // PRODUCTION DEBUG: Auth check
@@ -154,7 +154,7 @@ async function getUser() {
 }
 
 async function getMessagingData(userId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     // Get unread count (catch individual errors to prevent page crash)
@@ -224,7 +224,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
 
   if (!user) {
     // Check if there's an authenticated user with pending status
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
 
     if (authUser) {
