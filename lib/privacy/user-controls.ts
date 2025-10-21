@@ -633,7 +633,9 @@ export class UserPrivacyControlsService {
 }
 
 // Export singleton instance
-export const userPrivacyControls = UserPrivacyControlsService.getInstance();
+// COMMENTED OUT: Module-level getInstance() triggers cookies() error (React #419)
+// Use UserPrivacyControlsService.getInstance() directly in your code instead
+// export const userPrivacyControls = UserPrivacyControlsService.getInstance();
 
 // Helper functions for easier usage
 export async function getUserPrivacySettings(userId: string): Promise<UserPrivacySettings> {
