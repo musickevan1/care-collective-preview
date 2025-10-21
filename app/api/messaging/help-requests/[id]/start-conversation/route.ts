@@ -30,7 +30,7 @@ function checkHelpConversationRateLimit(userId: string, maxConversations: number
 }
 
 async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error || !user) {
@@ -106,7 +106,7 @@ export async function POST(
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Fetch help request details and verify it exists and is accessible
     const { data: helpRequest, error: helpError } = await supabase
@@ -275,7 +275,7 @@ export async function GET(
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Verify user owns this help request
     const { data: helpRequest, error: helpError } = await supabase

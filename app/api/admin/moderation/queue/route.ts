@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 import { moderationService } from '@/lib/messaging/moderation';
 
 async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) {
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     const queueItems = await moderationService.getModerationQueue(limit);
 
     // Get moderation statistics
-    const supabase = createClient();
+    const supabase = await createClient();
 
     // Total pending reports
     const { count: totalPending } = await supabase

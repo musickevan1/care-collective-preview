@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 import { moderationService } from '@/lib/messaging/moderation';
 
 async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error || !user) {
@@ -74,7 +74,7 @@ export async function POST(
     }
 
     // Verify the report exists and is pending
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: report, error: reportError } = await supabase
       .from('message_reports')
       .select(`

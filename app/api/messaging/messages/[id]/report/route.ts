@@ -30,7 +30,7 @@ function checkReportRateLimit(userId: string, maxReports: number = 5, windowMs: 
 }
 
 async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error || !user) {
@@ -98,7 +98,7 @@ export async function POST(
     }
 
     // Verify the message exists and user has access to it
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: message, error: messageError } = await supabase
       .from('messages')
       .select(`
@@ -283,7 +283,7 @@ export async function GET(
       );
     }
 
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get reports for this message that the user created
     const { data: reports, error } = await supabase

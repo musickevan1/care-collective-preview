@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
       include_deleted_data: includeDeleted
     });
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedRequest = dataExportRequestSchema.parse(body);
 
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {

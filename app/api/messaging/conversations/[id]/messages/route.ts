@@ -32,7 +32,7 @@ function checkMessageRateLimit(userId: string, maxMessages: number = 50, windowM
 }
 
 async function getCurrentUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error || !user) {
@@ -203,7 +203,7 @@ export async function POST(
     });
 
     // Get the message with sender details for response
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: messageWithSender } = await supabase
       .from('messages')
       .select(`
