@@ -639,14 +639,14 @@ export class UserPrivacyControlsService {
 
 // Helper functions for easier usage
 export async function getUserPrivacySettings(userId: string): Promise<UserPrivacySettings> {
-  return await userPrivacyControls.getUserPrivacySettings(userId);
+  return await UserPrivacyControlsService.getInstance().getUserPrivacySettings(userId);
 }
 
 export async function updateUserPrivacySettings(
   userId: string,
   settings: Partial<UserPrivacySettings>
 ): Promise<UserPrivacySettings> {
-  return await userPrivacyControls.updateUserPrivacySettings(userId, settings);
+  return await UserPrivacyControlsService.getInstance().updateUserPrivacySettings(userId, settings);
 }
 
 export async function getContactSharingPreferences(
@@ -655,7 +655,7 @@ export async function getContactSharingPreferences(
   category: string,
   urgency: 'normal' | 'urgent' | 'critical'
 ): Promise<ContactSharingPreference> {
-  return await userPrivacyControls.getContactSharingPreferences(userId, helpRequestId, category, urgency);
+  return await UserPrivacyControlsService.getInstance().getContactSharingPreferences(userId, helpRequestId, category, urgency);
 }
 
 export async function revokeContactSharing(
@@ -663,14 +663,14 @@ export async function revokeContactSharing(
   exchangeId: string,
   reason?: string
 ): Promise<boolean> {
-  return await userPrivacyControls.revokeContactSharing(userId, exchangeId, reason);
+  return await UserPrivacyControlsService.getInstance().revokeContactSharing(userId, exchangeId, reason);
 }
 
 export async function requestDataExport(
   userId: string,
   exportRequest: DataExportRequest
 ): Promise<string> {
-  return await userPrivacyControls.requestDataExport(userId, exportRequest);
+  return await UserPrivacyControlsService.getInstance().requestDataExport(userId, exportRequest);
 }
 
 // Export types and schemas
