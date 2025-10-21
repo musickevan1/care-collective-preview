@@ -22,10 +22,9 @@ import {
 import { z } from 'zod';
 
 export class MessagingClient {
-  private supabase;
-
-  constructor() {
-    this.supabase = createClient();
+  // Lazy-load Supabase client to avoid calling cookies() at module load time
+  private async getClient() {
+    return await createClient();
   }
 
   /**
@@ -38,7 +37,8 @@ export class MessagingClient {
     const { page = 1, limit = 20 } = pagination;
     const offset = (page - 1) * limit;
 
-    const { data: conversations, error, count } = await this.supabase
+    const supabase = await this.getClient();
+    const { data: conversations, error, count } = await supabase
       .from('conversations')
       .select(`
         *,
@@ -125,7 +125,8 @@ export class MessagingClient {
       );
     }
 
-    let query = this.supabase
+    const supabase = await this.getClient();
+    let query = supabase
       .from('messages')
       .select(`
         *,
@@ -199,8 +200,9 @@ export class MessagingClient {
       );
     }
 
+    const supabase = await this.getClient();
     // Create conversation
-    const { data: conversation, error: convError } = await this.supabase
+    const { data: conversation, error: convError } = await supabase
       .from('conversations')
       .insert({
         help_request_id: validated.help_request_id,
@@ -218,7 +220,7 @@ export class MessagingClient {
     }
 
     // Add participants
-    const { error: participantsError } = await this.supabase
+    const { error: participantsError } = await supabase
       .from('conversation_participants')
       .insert([
         { conversation_id: conversation.id, user_id: creatorId },
@@ -227,7 +229,7 @@ export class MessagingClient {
 
     if (participantsError) {
       // Clean up conversation if participants insertion fails
-      await this.supabase
+      await supabase
         .from('conversations')
         .delete()
         .eq('id', conversation.id);
@@ -277,14 +279,15 @@ export class MessagingClient {
       );
     }
 
+    const supabase = await this.getClient();
     // Get help request ID if this conversation is related to one
-    const { data: conversation } = await this.supabase
+    const { data: conversation } = await supabase
       .from('conversations')
       .select('help_request_id')
       .eq('id', validated.conversation_id)
       .single();
 
-    const { data: message, error } = await this.supabase
+    const { data: message, error } = await supabase
       .from('messages')
       .insert({
         conversation_id: validated.conversation_id,
@@ -312,7 +315,8 @@ export class MessagingClient {
    * Mark a message as read
    */
   async markMessageAsRead(messageId: string, userId: string): Promise<void> {
-    const { error } = await this.supabase
+    const supabase = await this.getClient();
+    const { error } = await supabase
       .from('messages')
       .update({ 
         read_at: new Date().toISOString(),
@@ -335,7 +339,8 @@ export class MessagingClient {
    * Get user's messaging preferences
    */
   async getMessagingPreferences(userId: string): Promise<MessagingPreferences> {
-    const { data: preferences, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data: preferences, error } = await supabase
       .from('messaging_preferences')
       .select('*')
       .eq('user_id', userId)
@@ -372,7 +377,8 @@ export class MessagingClient {
   ): Promise<MessagingPreferences> {
     const validated = messagingValidation.messagingPreferences.parse(preferences);
 
-    const { data, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data, error } = await supabase
       .from('messaging_preferences')
       .upsert({
         user_id: userId,
@@ -402,8 +408,9 @@ export class MessagingClient {
   ): Promise<MessageReport> {
     const validated = messagingValidation.reportMessage.parse(params);
 
+    const supabase = await this.getClient();
     // Verify the message exists and reporter has access
-    const { data: message, error: messageError } = await this.supabase
+    const { data: message, error: messageError } = await supabase
       .from('messages')
       .select('conversation_id')
       .eq('id', validated.message_id)
@@ -426,7 +433,7 @@ export class MessagingClient {
       );
     }
 
-    const { data: report, error } = await this.supabase
+    const { data: report, error } = await supabase
       .from('message_reports')
       .insert({
         message_id: validated.message_id,
@@ -446,7 +453,7 @@ export class MessagingClient {
     }
 
     // Flag the message for review
-    await this.supabase
+    await supabase
       .from('messages')
       .update({ 
         is_flagged: true, 
@@ -461,7 +468,8 @@ export class MessagingClient {
   // Helper methods
 
   private async verifyConversationAccess(conversationId: string, userId: string): Promise<boolean> {
-    const { count } = await this.supabase
+    const supabase = await this.getClient();
+    const { count } = await supabase
       .from('conversation_participants')
       .select('*', { count: 'exact' })
       .eq('conversation_id', conversationId)
@@ -472,7 +480,8 @@ export class MessagingClient {
   }
 
   private async getUnreadMessageCount(conversationId: string, userId: string): Promise<number> {
-    const { count } = await this.supabase
+    const supabase = await this.getClient();
+    const { count } = await supabase
       .from('messages')
       .select('*', { count: 'exact' })
       .eq('conversation_id', conversationId)
@@ -483,7 +492,8 @@ export class MessagingClient {
   }
 
   private async getLastMessage(conversationId: string): Promise<MessageWithSender | undefined> {
-    const { data: message } = await this.supabase
+    const supabase = await this.getClient();
+    const { data: message } = await supabase
       .from('messages')
       .select(`
         *,
@@ -503,7 +513,8 @@ export class MessagingClient {
   }
 
   private async getConversationDetails(conversationId: string, userId: string): Promise<ConversationWithDetails> {
-    const { data: conversation, error } = await this.supabase
+    const supabase = await this.getClient();
+    const { data: conversation, error } = await supabase
       .from('conversations')
       .select(`
         *,
@@ -555,7 +566,8 @@ export class MessagingClient {
   }
 
   private async getConversationRecipient(conversationId: string, senderId: string): Promise<string | null> {
-    const { data: participants } = await this.supabase
+    const supabase = await this.getClient();
+    const { data: participants } = await supabase
       .from('conversation_participants')
       .select('user_id')
       .eq('conversation_id', conversationId)
@@ -577,7 +589,8 @@ export class MessagingClient {
         return true;
       case 'help_connections':
         // Check if users have interacted through help requests
-        const { count } = await this.supabase
+        const supabase = await this.getClient();
+        const { count } = await supabase
           .from('conversations')
           .select('id', { count: 'exact' })
           .not('help_request_id', 'is', null)
@@ -599,8 +612,9 @@ export class MessagingClient {
   ): Promise<Conversation> {
     const validated = messagingValidation.helpRequestConversation.parse(params);
 
+    const supabase = await this.getClient();
     // Verify help request exists
-    const { data: helpRequest, error: helpError } = await this.supabase
+    const { data: helpRequest, error: helpError } = await supabase
       .from('help_requests')
       .select('user_id, status')
       .eq('id', validated.help_request_id)
