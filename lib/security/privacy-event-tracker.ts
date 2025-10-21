@@ -641,7 +641,9 @@ export class PrivacyEventTracker {
 }
 
 // Export singleton instance
-export const privacyEventTracker = PrivacyEventTracker.getInstance();
+// COMMENTED OUT: Module-level getInstance() triggers cookies() error (React #419)
+// Use PrivacyEventTracker.getInstance() directly in your code instead
+// export const privacyEventTracker = PrivacyEventTracker.getInstance();
 
 // Helper functions for easier usage
 export async function trackContactExchange(

@@ -359,7 +359,9 @@ export class ContactEncryptionService {
 }
 
 // Export singleton instance
-export const contactEncryption = ContactEncryptionService.getInstance();
+// COMMENTED OUT: Module-level getInstance() triggers cookies() error (React #419)
+// Use ContactEncryptionService.getInstance() directly in your code instead
+// export const contactEncryption = ContactEncryptionService.getInstance();
 
 // Helper functions for easier usage
 export async function encryptContact(
