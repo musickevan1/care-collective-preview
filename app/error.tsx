@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card'
 import Link from 'next/link'
 import Image from 'next/image'
 import { errorTracker } from '@/lib/error-tracking'
-import { logger } from '@/lib/logger'
+// REMOVED: logger import causes React Error #419 (module-level singleton)
+// import { logger } from '@/lib/logger'
 
 export default function Error({
   error,
@@ -36,13 +37,15 @@ export default function Error({
     }, true)
 
     // Log the error for monitoring and debugging
-    logger.error('Global error boundary triggered', error, {
-      errorId,
-      component: 'GlobalErrorBoundary',
-      digest: error.digest,
-      url: window.location.href,
-      category: 'ui_error'
-    })
+    // REMOVED: logger causes React Error #419 (module-level singleton)
+    // errorTracker already captures this error above, so logger is redundant
+    // logger.error('Global error boundary triggered', error, {
+    //   errorId,
+    //   component: 'GlobalErrorBoundary',
+    //   digest: error.digest,
+    //   url: window.location.href,
+    //   category: 'ui_error'
+    // })
 
     // Add breadcrumb for error context
     errorTracker.addBreadcrumb({

@@ -197,7 +197,10 @@ class Logger {
 }
 
 // Export singleton instance
+// NOTE: Safe for API routes and client components
+// DO NOT import in Server Components - causes React Error #419
 export const logger = new Logger()
 
-// Export types for use in other modules
+// Export class and types for use in other modules
+export { Logger }
 export type { LogEntry }
