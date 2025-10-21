@@ -72,10 +72,9 @@ const SCAM_PATTERNS = [
 ];
 
 export class ContentModerationService {
-  private supabase;
-
-  constructor() {
-    this.supabase = createClient();
+  // Lazy-load Supabase client to avoid calling cookies() at module load time
+  private async getClient() {
+    return await createClient();
   }
 
   /**
@@ -221,7 +220,7 @@ export class ContentModerationService {
     dailyLimit?: number;
   }> {
     // Get current user restrictions
-    const { data: restrictions, error } = await this.supabase
+    const { data: restrictions, error } = await (await this.getClient())
       .rpc('get_user_restrictions', { target_user_id: userId });
 
     if (error) {
@@ -261,7 +260,7 @@ export class ContentModerationService {
 
     // Check daily message limit for sending messages
     if (action === 'send_message' && message_limit_per_day > 0) {
-      const { data: dailyCount } = await this.supabase
+      const { data: dailyCount } = await (await this.getClient())
         .rpc('get_daily_message_count', { target_user_id: userId });
 
       const currentCount = dailyCount || 0;
@@ -292,7 +291,7 @@ export class ContentModerationService {
    */
   async getUserModerationScore(userId: string): Promise<UserModerationScore> {
     // Get report counts
-    const { data: reportData } = await this.supabase
+    const { data: reportData } = await (await this.getClient())
       .from('message_reports')
       .select(`
         id,
@@ -405,7 +404,7 @@ export class ContentModerationService {
     }
 
     // Apply user restriction using database function
-    const { data: restrictionResult, error: restrictionError } = await this.supabase
+    const { data: restrictionResult, error: restrictionError } = await (await this.getClient())
       .rpc('apply_user_restriction', {
         target_user_id: userId,
         new_restriction_level: restrictionLevel,
@@ -420,7 +419,7 @@ export class ContentModerationService {
     }
 
     // Log the moderation action with restriction reference
-    await this.supabase
+    await (await this.getClient())
       .from('message_audit_log')
       .insert({
         user_id: userId,
@@ -450,7 +449,7 @@ export class ContentModerationService {
     reporter: any;
     context: any;
   }>> {
-    const { data: reports } = await this.supabase
+    const { data: reports } = await (await this.getClient())
       .from('message_reports')
       .select(`
         id,
@@ -514,7 +513,7 @@ export class ContentModerationService {
     notes?: string
   ): Promise<void> {
     // Update the report status
-    await this.supabase
+    await (await this.getClient())
       .from('message_reports')
       .update({
         status: action === 'dismiss' ? 'dismissed' : 'action_taken',
@@ -524,7 +523,7 @@ export class ContentModerationService {
       .eq('id', reportId);
 
     // Apply the action based on the decision
-    const { data: report } = await this.supabase
+    const { data: report } = await (await this.getClient())
       .from('message_reports')
       .select(`
         message_id,
@@ -540,7 +539,7 @@ export class ContentModerationService {
 
     switch (action) {
       case 'hide_message':
-        await this.supabase
+        await (await this.getClient())
           .from('messages')
           .update({
             moderation_status: 'hidden',
@@ -578,7 +577,7 @@ export class ContentModerationService {
     }
 
     // Log the moderation decision
-    await this.supabase
+    await (await this.getClient())
       .from('message_audit_log')
       .insert({
         message_id: report.message_id,
