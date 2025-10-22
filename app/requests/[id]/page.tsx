@@ -198,7 +198,13 @@ async function getHelpRequestMessagingStatus(requestId: string, userId: string) 
         code: conversationsError.code,
         timestamp: new Date().toISOString(),
       });
-      throw conversationsError;
+      // Return default values instead of throwing during SSR
+      // Throwing causes React Error #419: "Cannot update component during render"
+      return {
+        conversationCount: 0,
+        unreadCount: 0,
+        hasActiveConversations: false
+      };
     }
 
     // Get unread count for this help request's conversations
