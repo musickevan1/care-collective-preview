@@ -27,13 +27,30 @@ Care Collective: Mutual aid platform connecting community members for support an
 3. Never commit without explicit consent
 
 ### Deployment System (MANDATORY)
-After every code change request, offer:
+**CRITICAL - Production Domain Updates**: The main production URL (`https://care-collective-preview.vercel.app`) ONLY updates when explicitly deployed with `npx vercel --prod`. Regular git pushes create preview deployments but DO NOT update the main domain.
+
+**Required Workflow After Every Code Change**:
+```bash
+# 1. Commit changes with descriptive message
+git add .
+git commit -m "feat: description 🤖 Generated with Claude Code"
+
+# 2. Push to main branch (creates preview deployment)
+git push origin main
+
+# 3. Deploy to production (REQUIRED to update main domain)
+npx vercel --prod
+
+# 4. Verify production deployment
+npx vercel inspect <deployment-url> --logs
 ```
-1. Commit changes (git commit)
-2. Push to repository (git push)
-3. Check deployment status (npx vercel inspect)
-4. Deploy to production (npx vercel --prod)
-```
+
+**Branch Strategy**:
+- **main** - Production branch, always push here for production updates
+- All commits to `main` should be immediately deployed with `npx vercel --prod`
+- Preview deployments (musickevan1s-projects.vercel.app URLs) are automatic but NOT production
+
+**NEVER skip `npx vercel --prod`** - Without it, the main domain will show old code!
 
 ### Domain Context
 - **Help Requests**: Core entity, validate thoroughly
