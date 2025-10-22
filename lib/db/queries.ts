@@ -8,7 +8,7 @@
 import { unstable_cache } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import type { Database } from '@/lib/database.types'
-import { logger } from '@/lib/logger'
+import { Logger } from '@/lib/logger'
 import { errorTracker } from '@/lib/error-tracking'
 
 // Type definitions for our queries
@@ -85,7 +85,7 @@ export const getHelpRequests = unstable_cache(
     const { data, error } = await query
     
     if (error) {
-      logger.error('Database query failed for help requests', error, {
+      Logger.getInstance().error('Database query failed for help requests', error, {
         function: 'getHelpRequests',
         filters,
         table: 'help_requests',
@@ -155,7 +155,7 @@ export const getHelpRequestById = unstable_cache(
         return null // Not found
       }
 
-      logger.error('Database query failed for help request by ID', error, {
+      Logger.getInstance().error('Database query failed for help request by ID', error, {
         function: 'getHelpRequestById',
         requestId: id,
         table: 'help_requests',

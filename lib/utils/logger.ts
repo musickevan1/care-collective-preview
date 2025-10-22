@@ -90,7 +90,7 @@ class Logger {
   /**
    * Get appropriate console method for log level
    */
-  private getConsoleMethod(level: LogLevel): Console[keyof Console] {
+  private getConsoleMethod(level: LogLevel): (...args: any[]) => void {
     switch (level) {
       case 'error':
         return console.error
@@ -217,15 +217,27 @@ class Logger {
 }
 
 // Create and export default logger instance
-export const logger = new Logger()
+// CRITICAL: Singleton export commented out to fix React Error #419
+// Use Logger class directly or create instance as needed
+// export const logger = new Logger()
+
+// Internal helper to get logger instance
+let _internalLogger: Logger | null = null
+function getLogger(): Logger {
+  if (!_internalLogger) {
+    _internalLogger = new Logger()
+  }
+  return _internalLogger
+}
 
 /**
  * Component-specific loggers for better organization
  */
-export const authLogger = logger.child({ component: 'auth' })
-export const dbLogger = logger.child({ component: 'database' })
-export const apiLogger = logger.child({ component: 'api' })
-export const uiLogger = logger.child({ component: 'ui' })
+// CRITICAL: Child logger exports commented out to fix React Error #419
+// export const authLogger = getLogger().child({ component: 'auth' })
+// export const dbLogger = getLogger().child({ component: 'database' })
+// export const apiLogger = getLogger().child({ component: 'api' })
+// export const uiLogger = getLogger().child({ component: 'ui' })
 
 /**
  * Utility functions for common logging patterns
@@ -239,7 +251,7 @@ export function logUserAction(
   userId?: string,
   metadata?: Record<string, any>
 ): void {
-  logger.info('User action', {
+  getLogger().info('User action', {
     action,
     userId,
     ...metadata,
@@ -258,8 +270,8 @@ export function logApiCall(
 ): void {
   const level = error ? 'error' : statusCode && statusCode >= 400 ? 'warn' : 'info'
   const message = `${method} ${url} ${statusCode || 'pending'}`
-  
-  logger[level](message, {
+
+  getLogger()[level](message, {
     method,
     url,
     statusCode,
@@ -279,8 +291,8 @@ export function logDatabaseOperation(
 ): void {
   const level = error ? 'error' : 'debug'
   const message = `Database ${operation} on ${table}`
-  
-  dbLogger[level](message, {
+
+  getLogger().child({ component: 'database' })[level](message, {
     operation,
     table,
     duration,
@@ -298,8 +310,8 @@ export function logAuthEvent(
 ): void {
   const level = error || event === 'error' ? 'error' : 'info'
   const message = `Authentication ${event}`
-  
-  authLogger[level](message, {
+
+  getLogger().child({ component: 'auth' })[level](message, {
     event,
     userId,
   }, error)
@@ -320,8 +332,8 @@ export function logComponentEvent(
   
   const level = error ? 'error' : 'debug'
   const message = `Component ${component} ${event}`
-  
-  uiLogger[level](message, {
+
+  getLogger().child({ component: 'ui' })[level](message, {
     component,
     event,
     props,
@@ -337,7 +349,7 @@ export function logPerformance(
   unit: 'ms' | 'bytes' | 'count' = 'ms',
   context?: LogContext
 ): void {
-  logger.info(`Performance: ${metric}`, {
+  getLogger().info(`Performance: ${metric}`, {
     metric,
     value,
     unit,
@@ -355,8 +367,8 @@ export function logSecurityEvent(
   details?: Record<string, any>
 ): void {
   const level = severity === 'critical' || severity === 'high' ? 'error' : 'warn'
-  
-  logger[level](`Security event: ${event}`, {
+
+  getLogger()[level](`Security event: ${event}`, {
     securityEvent: event,
     severity,
     userId,
@@ -369,7 +381,7 @@ export function logSecurityEvent(
  */
 export function debugLog(message: string, data?: any): void {
   if (process.env.NODE_ENV === 'development') {
-    logger.debug(message, { debugData: data })
+    getLogger().debug(message, { debugData: data })
   }
 }
 
@@ -377,14 +389,14 @@ export function debugLog(message: string, data?: any): void {
  * Create a logger for a specific feature or module
  */
 export function createFeatureLogger(feature: string): Logger {
-  return logger.child({ feature })
+  return getLogger().child({ feature })
 }
 
 /**
  * Middleware for request logging
  */
 export function createRequestLogger(requestId: string, userId?: string): Logger {
-  return logger.child({ requestId, userId })
+  return getLogger().child({ requestId, userId })
 }
 
 /**
@@ -395,7 +407,7 @@ export function logErrorBoundary(
   errorInfo: { componentStack: string },
   component?: string
 ): void {
-  logger.error('React Error Boundary', {
+  getLogger().error('React Error Boundary', {
     component: component || 'Unknown',
     componentStack: errorInfo.componentStack,
   }, error)
@@ -426,5 +438,4 @@ export function suppressConsoleWarnings(): () => void {
   }
 }
 
-// Export types for external use
-export type { LogLevel, LogContext, LogEntry }
+// Types already exported at the top of the file (lines 16-36)

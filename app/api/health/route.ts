@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { logger } from '@/lib/logger'
+import { Logger } from '@/lib/logger'
 import { createErrorResponse, createSuccessResponse } from '@/lib/api-error'
 import { apiRateLimiter } from '@/lib/security/rate-limiter'
 import { addSecurityHeaders } from '@/lib/security/middleware'
@@ -47,7 +47,7 @@ async function checkDatabase(): Promise<HealthCheckResult> {
     const responseTime = Date.now() - start
     
     if (error) {
-      logger.error('Database health check failed', error)
+      Logger.getInstance().error('Database health check failed', error)
       return {
         status: 'unhealthy',
         response_time_ms: responseTime,
@@ -67,7 +67,7 @@ async function checkDatabase(): Promise<HealthCheckResult> {
     }
     
   } catch (error) {
-    logger.error('Database health check error', error as Error)
+    Logger.getInstance().error('Database health check error', error as Error)
     return {
       status: 'unhealthy',
       response_time_ms: Date.now() - start,
@@ -102,7 +102,7 @@ function checkMemory(): HealthCheckResult {
     }
     
   } catch (error) {
-    logger.error('Memory health check error', error as Error)
+    Logger.getInstance().error('Memory health check error', error as Error)
     return {
       status: 'unhealthy',
       message: 'Failed to check memory usage',
@@ -136,7 +136,7 @@ function checkEnvironment(): HealthCheckResult {
     }
     
   } catch (error) {
-    logger.error('Environment health check error', error as Error)
+    Logger.getInstance().error('Environment health check error', error as Error)
     return {
       status: 'unhealthy',
       message: 'Failed to check environment configuration',
@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    logger.info('Health check requested')
+    Logger.getInstance().info('Health check requested')
     
     // Run all health checks
     const [databaseCheck, memoryCheck, environmentCheck] = await Promise.all([
@@ -196,7 +196,7 @@ export async function GET(request: NextRequest) {
     
     // Log degraded/unhealthy states
     if (overallStatus !== 'healthy') {
-      logger.warn(`Health check status: ${overallStatus}`, { healthData })
+      Logger.getInstance().warn(`Health check status: ${overallStatus}`, { healthData })
     }
     
     // Return appropriate HTTP status code
@@ -211,7 +211,7 @@ export async function GET(request: NextRequest) {
     return response
     
   } catch (error) {
-    logger.error('Health check failed', error as Error)
+    Logger.getInstance().error('Health check failed', error as Error)
     
     const response = NextResponse.json({
       status: 'unhealthy',

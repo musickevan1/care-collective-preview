@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { logger } from './logger'
+import { Logger } from './logger'
 import { ZodError } from 'zod'
 
 // Standard error codes for the Care Collective
@@ -227,7 +227,7 @@ export function createErrorResponse(
   }
 
   // Log the error
-  logger.error(
+  Logger.getInstance().error(
     `API Error: ${careError.code}`,
     careError,
     {

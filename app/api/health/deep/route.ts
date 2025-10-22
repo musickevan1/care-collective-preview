@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { logger } from '@/lib/logger'
+import { Logger } from '@/lib/logger'
 
 // Force dynamic rendering since this API uses authentication
 export const dynamic = 'force-dynamic'
@@ -217,7 +217,7 @@ async function checkCriticalTables(): Promise<HealthCheckResult> {
 
 export async function GET() {
   try {
-    logger.info('Deep health check requested')
+    Logger.getInstance().info('Deep health check requested')
     
     // Run all deep health checks
     const [
@@ -259,7 +259,7 @@ export async function GET() {
     
     // Log degraded/unhealthy states
     if (overallStatus !== 'healthy') {
-      logger.warn(`Deep health check status: ${overallStatus}`, { healthData })
+      Logger.getInstance().warn(`Deep health check status: ${overallStatus}`, { healthData })
     }
     
     // Return appropriate HTTP status code
@@ -269,7 +269,7 @@ export async function GET() {
     return NextResponse.json(healthData, { status: httpStatus })
     
   } catch (error) {
-    logger.error('Deep health check failed', error as Error)
+    Logger.getInstance().error('Deep health check failed', error as Error)
     
     return NextResponse.json({
       status: 'unhealthy',

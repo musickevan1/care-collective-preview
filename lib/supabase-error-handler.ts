@@ -1,5 +1,5 @@
 import { PostgrestError } from '@supabase/supabase-js'
-import { logger } from './logger'
+import { Logger } from './logger'
 // Temporarily disabled to fix build issue
 // import { captureError } from './error-tracking'
 import { CareCollectiveError, ErrorCode } from './api-error'
@@ -21,7 +21,7 @@ export class SupabaseErrorHandler {
     context: SupabaseErrorContext
   ): CareCollectiveError {
     // Log the original error
-    logger.databaseOperation(
+    Logger.getInstance().databaseOperation(
       context.operation,
       context.table,
       false,
@@ -135,7 +135,7 @@ export class SupabaseErrorHandler {
 
       default:
         // Log unknown error codes for future handling
-        logger.warn(`Unknown Supabase error code: ${code}`, {
+        Logger.getInstance().warn(`Unknown Supabase error code: ${code}`, {
           code,
           message,
           details,
@@ -175,7 +175,7 @@ export class SupabaseErrorHandler {
       }
 
       // Log successful operations
-      logger.databaseOperation(context.operation, context.table, true)
+      Logger.getInstance().databaseOperation(context.operation, context.table, true)
 
       return data as T
     } catch (error) {
@@ -203,7 +203,7 @@ export class SupabaseErrorHandler {
       }
 
       // Log successful operations
-      logger.databaseOperation(context.operation, context.table, true)
+      Logger.getInstance().databaseOperation(context.operation, context.table, true)
 
       return data
     } catch (error) {

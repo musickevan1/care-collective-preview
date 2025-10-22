@@ -194,12 +194,23 @@ class Logger {
       category: 'performance'
     })
   }
+  // Singleton pattern for logger
+  private static instance: Logger | null = null
+
+  static getInstance(): Logger {
+    if (!Logger.instance) {
+      Logger.instance = new Logger()
+    }
+    return Logger.instance
+  }
 }
 
 // Export singleton instance
 // NOTE: Safe for API routes and client components
 // DO NOT import in Server Components - causes React Error #419
-export const logger = new Logger()
+// CRITICAL: Singleton export commented out to fix React Error #419
+// Use Logger.getInstance() instead
+// export const logger = new Logger()
 
 // Export class and types for use in other modules
 export { Logger }

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { logger } from '@/lib/logger'
+import { Logger } from '@/lib/logger'
 import { errorTracker } from '@/lib/error-tracking'
 
 // GET - Get admin dashboard statistics
@@ -110,7 +110,7 @@ export async function GET() {
 
     // Handle any errors with structured logging
     if (pendingApplicationsResult.error) {
-      logger.error('Admin stats pending applications query failed', pendingApplicationsResult.error, {
+      Logger.getInstance().error('Admin stats pending applications query failed', pendingApplicationsResult.error, {
         endpoint: '/api/admin/stats',
         query: 'pending_applications',
         userId: user.id,
@@ -130,7 +130,7 @@ export async function GET() {
     }
 
     if (recentActivityResult.error) {
-      logger.error('Admin stats recent activity query failed', recentActivityResult.error, {
+      Logger.getInstance().error('Admin stats recent activity query failed', recentActivityResult.error, {
         endpoint: '/api/admin/stats',
         query: 'recent_activity',
         userId: user.id,
@@ -199,7 +199,7 @@ export async function GET() {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
 
-    logger.error('Admin stats API critical failure', error as Error, {
+    Logger.getInstance().error('Admin stats API critical failure', error as Error, {
       endpoint: '/api/admin/stats',
       method: 'GET',
       category: 'api_error'

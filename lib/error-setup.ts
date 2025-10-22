@@ -1,7 +1,7 @@
 'use client'
 
 import { errorTracker, setUser, setTag } from './error-tracking'
-import { logger } from './logger'
+import { Logger } from './logger'
 
 /**
  * Initialize error handling and monitoring for the Care Collective
@@ -14,7 +14,7 @@ export function initializeErrorHandling() {
   setTag('service', 'care-collective-preview')
 
   // Log initialization
-  logger.info('Error handling initialized', {
+  Logger.getInstance().info('Error handling initialized', {
     environment: process.env.NODE_ENV,
     timestamp: new Date().toISOString()
   })
@@ -50,7 +50,7 @@ export function setUserContext(user: {
   setUser(user)
   setTag('user_role', user.role || 'user')
   
-  logger.info('User context set for error tracking', {
+  Logger.getInstance().info('User context set for error tracking', {
     userId: user.id,
     userRole: user.role
   })
@@ -64,7 +64,7 @@ export function clearUserContext() {
   setUser({})
   setTag('user_role', 'anonymous')
   
-  logger.info('User context cleared from error tracking')
+  Logger.getInstance().info('User context cleared from error tracking')
 }
 
 /**
@@ -86,11 +86,11 @@ export function setupPerformanceMonitoring() {
         const navigationTiming = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
         if (navigationTiming) {
           const pageLoadTime = navigationTiming.loadEventEnd - navigationTiming.fetchStart
-          logger.performanceMetric('page_load_time', pageLoadTime)
+          Logger.getInstance().performanceMetric('page_load_time', pageLoadTime)
         }
       } catch (error) {
         // Performance API might not be available
-        logger.warn('Performance monitoring failed:', error as Record<string, any>)
+        Logger.getInstance().warn('Performance monitoring failed:', error as Record<string, any>)
       }
     })
 
@@ -113,19 +113,19 @@ export function setupPerformanceMonitoring() {
         const observer = new PerformanceObserver((list) => {
           list.getEntries().forEach((entry) => {
             if (entry.duration > 50) { // Tasks longer than 50ms
-              logger.performanceMetric('long_task', entry.duration)
+              Logger.getInstance().performanceMetric('long_task', entry.duration)
             }
           })
         })
         observer.observe({ entryTypes: ['longtask'] })
       } catch (e) {
         // PerformanceObserver not supported or failed
-        logger.warn('PerformanceObserver setup failed:', e as Record<string, any>)
+        Logger.getInstance().warn('PerformanceObserver setup failed:', e as Record<string, any>)
       }
     }
   } catch (error) {
     // Entire performance monitoring setup failed
-    logger.warn('Performance monitoring setup failed:', error as Record<string, any>)
+    Logger.getInstance().warn('Performance monitoring setup failed:', error as Record<string, any>)
   }
 }
 
@@ -152,11 +152,11 @@ export function setupApiMonitoring() {
       const response = await originalFetch(...args)
       const duration = Date.now() - startTime
       
-      logger.apiCall(method, url, response.status, duration)
+      Logger.getInstance().apiCall(method, url, response.status, duration)
       
       // Track API errors
       if (!response.ok) {
-        logger.error(`API Error: ${method} ${url}`, new Error(`${response.status} ${response.statusText}`), {
+        Logger.getInstance().error(`API Error: ${method} ${url}`, new Error(`${response.status} ${response.statusText}`), {
           statusCode: response.status,
           duration,
           url,
@@ -167,7 +167,7 @@ export function setupApiMonitoring() {
       return response
     } catch (error) {
       const duration = Date.now() - startTime
-      logger.error(`API Network Error: ${method} ${url}`, error as Error, {
+      Logger.getInstance().error(`API Network Error: ${method} ${url}`, error as Error, {
         duration,
         url,
         method
@@ -177,7 +177,7 @@ export function setupApiMonitoring() {
   }
   } catch (error) {
     // API monitoring setup failed
-    logger.warn('API monitoring setup failed:', error as Record<string, any>)
+    Logger.getInstance().warn('API monitoring setup failed:', error as Record<string, any>)
   }
 }
 
@@ -230,7 +230,7 @@ export function setupConsoleMonitoring() {
   }
   } catch (error) {
     // Console monitoring setup failed
-    logger.warn('Console monitoring setup failed:', error as Record<string, any>)
+    Logger.getInstance().warn('Console monitoring setup failed:', error as Record<string, any>)
   }
 }
 
@@ -244,7 +244,7 @@ export function setupErrorHandlingAndMonitoring() {
   setupApiMonitoring()
   setupConsoleMonitoring()
   
-  logger.info('All error handling and monitoring systems initialized')
+  Logger.getInstance().info('All error handling and monitoring systems initialized')
 }
 
 /**
@@ -260,9 +260,9 @@ export function testErrorHandling() {
   console.log('Testing error handling systems...')
   
   // Test logger
-  logger.info('Test info message')
-  logger.warn('Test warning message')
-  logger.error('Test error message', new Error('Test error'))
+  Logger.getInstance().info('Test info message')
+  Logger.getInstance().warn('Test warning message')
+  Logger.getInstance().error('Test error message', new Error('Test error'))
   
   // Test error tracker
   errorTracker.captureInfo('Test info tracking')

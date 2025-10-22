@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { logger } from '@/lib/logger'
+import { Logger } from '@/lib/logger'
 import { careCollectiveErrorConfig } from '@/lib/config/error-tracking'
 
 interface ErrorTrackingEvent {
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
         // Log the error event
         if (event.level === 'error') {
-          logger.error(`Error tracking: ${event.message}`, new Error(event.message), {
+          Logger.getInstance().error(`Error tracking: ${event.message}`, new Error(event.message), {
             errorId: event.id,
             fingerprint: event.fingerprint,
             handled: event.handled,
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
             sanitizedContext
           })
         } else if (event.level === 'warning') {
-          logger.warn(`Warning tracking: ${event.message}`, {
+          Logger.getInstance().warn(`Warning tracking: ${event.message}`, {
             errorId: event.id,
             fingerprint: event.fingerprint,
             component: event.context.component,
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
             sanitizedContext
           })
         } else {
-          logger.info(`Info tracking: ${event.message}`, {
+          Logger.getInstance().info(`Info tracking: ${event.message}`, {
             errorId: event.id,
             component: event.context.component,
             action: event.context.action,
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
         // 4. Forward to external services if needed
 
       } catch (processingError) {
-        logger.error('Failed to process error tracking event', processingError as Error, {
+        Logger.getInstance().error('Failed to process error tracking event', processingError as Error, {
           eventId: event.id,
           category: 'error_tracking_processing'
         })
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    logger.error('Error tracking endpoint failed', error as Error, {
+    Logger.getInstance().error('Error tracking endpoint failed', error as Error, {
       endpoint: '/api/error-tracking',
       method: 'POST',
       category: 'api_error'

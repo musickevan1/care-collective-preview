@@ -10,7 +10,7 @@ import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
 import { z } from 'zod';
-import { logger } from '@/lib/logger';
+import { Logger } from '@/lib/logger';
 import { errorTracker } from '@/lib/error-tracking';
 
 // Rate limiting setup (in production, use Redis or external service)
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    logger.error('Messaging conversations fetch failed', error as Error, {
+    Logger.getInstance().error('Messaging conversations fetch failed', error as Error, {
       endpoint: '/api/messaging/conversations',
       method: 'GET',
       category: 'messaging_error'
@@ -253,7 +253,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
-    logger.error('Messaging conversation creation failed', error as Error, {
+    Logger.getInstance().error('Messaging conversation creation failed', error as Error, {
       endpoint: '/api/messaging/conversations',
       method: 'POST',
       category: 'messaging_error'
@@ -261,7 +261,7 @@ export async function POST(request: NextRequest) {
 
     // Handle specific messaging errors
     if (error instanceof Error && error.message.includes('privacy settings')) {
-      logger.warn('Conversation creation blocked by privacy settings', {
+      Logger.getInstance().warn('Conversation creation blocked by privacy settings', {
         endpoint: '/api/messaging/conversations',
         reason: 'privacy_settings',
         category: 'messaging_privacy'

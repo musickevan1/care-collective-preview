@@ -1,4 +1,4 @@
-import { logger } from './logger'
+import { Logger } from './logger'
 
 export interface ErrorContext {
   userId?: string
@@ -97,7 +97,7 @@ class ErrorTracker {
     }
 
     // Log the error
-    logger.error(`Error tracked: ${error.message}`, error, {
+    Logger.getInstance().error(`Error tracked: ${error.message}`, error, {
       errorId,
       context,
       handled
@@ -129,9 +129,9 @@ class ErrorTracker {
       handled: true
     }
 
-    logger.warn(`Warning tracked: ${message}`, { 
-      warningId: errorId, 
-      context 
+    Logger.getInstance().warn(`Warning tracked: ${message}`, {
+      warningId: errorId,
+      context
     })
 
     this.queue.push(warningEvent)
@@ -159,9 +159,9 @@ class ErrorTracker {
       handled: true
     }
 
-    logger.info(`Info tracked: ${message}`, { 
-      infoId: errorId, 
-      context 
+    Logger.getInstance().info(`Info tracked: ${message}`, {
+      infoId: errorId,
+      context
     })
 
     this.queue.push(infoEvent)

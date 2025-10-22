@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Link from 'next/link'
 import { errorTracker } from '@/lib/error-tracking'
-import { logger } from '@/lib/logger'
+// REMOVED: logger import causes React Error #419 (module-level singleton)
+// import { logger } from '@/lib/logger'
 
 interface Props {
   children: ReactNode
@@ -60,12 +61,13 @@ export class ErrorBoundary extends Component<Props, State> {
     }, true)
 
     // Log error with structured logging
-    logger.error('Component error boundary triggered', error, {
-      errorId,
-      component: 'ErrorBoundary',
-      componentStack: errorInfo.componentStack,
-      category: 'component_error'
-    })
+    // REMOVED: logger causes React Error #419 - errorTracker handles this
+    // logger.error('Component error boundary triggered', error, {
+    //   errorId,
+    //   component: 'ErrorBoundary',
+    //   componentStack: errorInfo.componentStack,
+    //   category: 'component_error'
+    // })
 
     // Add breadcrumb for debugging context
     errorTracker.addBreadcrumb({
