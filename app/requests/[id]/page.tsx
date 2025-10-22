@@ -266,14 +266,11 @@ export default async function RequestDetailPage({ params }: PageProps) {
   }
 
   const supabase = await createClient();
-  
-  let messagingData;
-  try {
-    messagingData = await getMessagingData(user.id);
-  } catch (messagingError) {
-    console.error('[Help Request] Messaging data fetch failed:', messagingError);
-    messagingData = { unreadCount: 0, activeConversations: 0 };
-  }
+
+  // TEMPORARY FIX: Skip messaging data entirely to unblock page rendering
+  // The messaging RLS policies have issues that need to be fixed separately
+  // This matches the same pattern used in /requests page (line 239-241)
+  const messagingData = { unreadCount: 0, activeConversations: 0 };
 
   // Enhanced database query with proper error handling
   // NOTE: Using separate queries instead of foreign key joins to work around RLS limitations
@@ -358,17 +355,13 @@ export default async function RequestDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  let helpRequestMessagingStatus;
-  try {
-    helpRequestMessagingStatus = await getHelpRequestMessagingStatus(id, user.id);
-  } catch (messagingStatusError) {
-    console.error('[Help Request] Messaging status fetch failed:', messagingStatusError);
-    helpRequestMessagingStatus = {
-      conversationCount: 0,
-      unreadCount: 0,
-      hasActiveConversations: false
-    };
-  }
+  // TEMPORARY FIX: Skip help request messaging status to avoid RLS recursion during SSR
+  // This data will be fetched client-side by messaging components
+  const helpRequestMessagingStatus = {
+    conversationCount: 0,
+    unreadCount: 0,
+    hasActiveConversations: false
+  };
 
   const isOwner = request.user_id === user.id
   const isHelper = request.helper_id === user.id
