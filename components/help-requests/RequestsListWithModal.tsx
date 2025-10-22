@@ -33,20 +33,51 @@ interface HelpRequest {
   } | null
 }
 
+// Helper function moved into client component
+function formatTimeAgo(dateString: string) {
+  const now = new Date()
+  const date = new Date(dateString)
+  const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
+
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m ago`
+  } else if (diffInMinutes < 1440) {
+    return `${Math.floor(diffInMinutes / 60)}h ago`
+  } else {
+    return `${Math.floor(diffInMinutes / 1440)}d ago`
+  }
+}
+
 interface RequestsListWithModalProps {
   requests: HelpRequest[]
   currentUserId: string
-  categoryColors: Record<string, string>
-  urgencyColors: Record<string, string>
-  formatTimeAgo: (date: string) => string
+}
+
+// Category and urgency colors defined in client component
+const categoryColors: Record<string, string> = {
+  groceries: 'default',
+  transport: 'secondary',
+  household: 'outline',
+  medical: 'destructive',
+  meals: 'default',
+  childcare: 'secondary',
+  petcare: 'outline',
+  technology: 'secondary',
+  companionship: 'default',
+  respite: 'outline',
+  emotional: 'default',
+  other: 'outline'
+}
+
+const urgencyColors: Record<string, string> = {
+  normal: 'outline',
+  urgent: 'secondary',
+  critical: 'destructive'
 }
 
 export function RequestsListWithModal({
   requests,
-  currentUserId,
-  categoryColors,
-  urgencyColors,
-  formatTimeAgo
+  currentUserId
 }: RequestsListWithModalProps): ReactElement {
   const router = useRouter()
   const searchParams = useSearchParams()

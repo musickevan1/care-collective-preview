@@ -416,9 +416,6 @@ export default async function RequestsPage({ searchParams }: PageProps) {
             <RequestsListWithModal
               requests={safeRequests}
               currentUserId={user.id}
-              categoryColors={categoryColors}
-              urgencyColors={urgencyColors}
-              formatTimeAgo={formatTimeAgo}
             />
           </div>
         )}
