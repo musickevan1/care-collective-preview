@@ -9,6 +9,8 @@ import { createClient } from '@/lib/supabase/server';
 import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
 
+export const dynamic = 'force-dynamic'
+
 async function getCurrentUser() {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();

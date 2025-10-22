@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { AlertTriangle, Shield, CheckCircle, Users, Lock, Eye, EyeOff, Clock, Trash2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import {
-  contactEncryption,
+  ContactEncryptionService,
   encryptContact,
   decryptContact,
   isContactEncrypted,
@@ -19,8 +19,7 @@ import {
 import { captureError, captureWarning, addBreadcrumb } from '@/lib/error-tracking'
 import {
   trackContactExchange,
-  trackEncryption,
-  privacyEventTracker
+  trackEncryption
 } from '@/lib/security/privacy-event-tracker'
 
 interface HelpRequest {
@@ -102,7 +101,7 @@ export function ContactExchange({
         setCurrentUserId(user.id)
 
         // Check if encryption is supported
-        const encryptionStatus = contactEncryption.getEncryptionStatus()
+        const encryptionStatus = ContactEncryptionService.getInstance().getEncryptionStatus()
         setEncryptionEnabled(encryptionStatus.supported)
 
         // Load user privacy settings

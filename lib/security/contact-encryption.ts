@@ -370,7 +370,8 @@ export async function encryptContact(
   requestId: string,
   fields?: (keyof ContactInfo)[]
 ): Promise<EncryptedContactData> {
-  return await contactEncryption.encryptContactInfo(contactInfo, userId, requestId, fields);
+  const service = ContactEncryptionService.getInstance();
+  return await service.encryptContactInfo(contactInfo, userId, requestId, fields);
 }
 
 export async function decryptContact(
@@ -378,15 +379,18 @@ export async function decryptContact(
   userId: string,
   requestId: string
 ): Promise<Partial<ContactInfo>> {
-  return await contactEncryption.decryptContactInfo(encryptedData, userId, requestId);
+  const service = ContactEncryptionService.getInstance();
+  return await service.decryptContactInfo(encryptedData, userId, requestId);
 }
 
 export function isContactEncrypted(data: any): data is EncryptedContactData {
-  return contactEncryption.isEncrypted(data);
+  const service = ContactEncryptionService.getInstance();
+  return service.isEncrypted(data);
 }
 
 export function getContactEncryptionStatus() {
-  return contactEncryption.getEncryptionStatus();
+  const service = ContactEncryptionService.getInstance();
+  return service.getEncryptionStatus();
 }
 
 // Export types for external use

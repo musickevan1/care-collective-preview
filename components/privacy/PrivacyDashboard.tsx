@@ -26,7 +26,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import {
-  userPrivacyControls,
+  UserPrivacyControlsService,
   getUserPrivacySettings,
   updateUserPrivacySettings,
   revokeContactSharing,
@@ -93,11 +93,11 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
       setPrivacySettings(settings)
 
       // Load sharing history
-      const history = await userPrivacyControls.getContactSharingHistory(userId, { limit: 20 })
+      const history = await UserPrivacyControlsService.getInstance().getContactSharingHistory(userId, { limit: 20 })
       setSharingHistory(history as ContactSharingHistoryItem[])
 
       // Load export requests
-      const exports = await userPrivacyControls.getDataExportRequests(userId)
+      const exports = await UserPrivacyControlsService.getInstance().getDataExportRequests(userId)
       setExportRequests(exports)
 
       // Get encryption status
@@ -157,7 +157,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
       const success = await revokeContactSharing(userId, exchangeId, 'User request from privacy dashboard')
       if (success) {
         // Reload sharing history
-        const history = await userPrivacyControls.getContactSharingHistory(userId, { limit: 20 })
+        const history = await UserPrivacyControlsService.getInstance().getContactSharingHistory(userId, { limit: 20 })
         setSharingHistory(history as ContactSharingHistoryItem[])
       } else {
         setError('Failed to revoke contact sharing')
@@ -181,7 +181,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
       })
 
       // Reload export requests
-      const exports = await userPrivacyControls.getDataExportRequests(userId)
+      const exports = await UserPrivacyControlsService.getInstance().getDataExportRequests(userId)
       setExportRequests(exports)
 
       addBreadcrumb({
@@ -209,7 +209,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
     }
 
     try {
-      const success = await userPrivacyControls.deleteUserAccount(userId, deleteConfirmation)
+      const success = await UserPrivacyControlsService.getInstance().deleteUserAccount(userId, deleteConfirmation)
       if (success) {
         // In production, this would redirect to a confirmation page
         alert('Account deletion initiated. You will receive an email confirmation.')

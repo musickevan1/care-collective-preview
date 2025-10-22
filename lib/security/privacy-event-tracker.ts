@@ -653,7 +653,8 @@ export async function trackContactExchange(
   requesterId: string,
   metadata?: Record<string, any>
 ): Promise<void> {
-  return await privacyEventTracker.trackContactExchangeEvent(
+  const tracker = PrivacyEventTracker.getInstance();
+  return await tracker.trackContactExchangeEvent(
     eventType, exchangeId, helperId, requesterId, metadata
   );
 }
@@ -665,7 +666,8 @@ export async function trackEncryption(
   requestId?: string,
   error?: string
 ): Promise<void> {
-  return await privacyEventTracker.trackEncryptionEvent(
+  const tracker = PrivacyEventTracker.getInstance();
+  return await tracker.trackEncryptionEvent(
     eventType, operation, userId, requestId, error
   );
 }
@@ -675,15 +677,18 @@ export async function trackGDPRCompliance(
   userId: string,
   details?: Record<string, any>
 ): Promise<void> {
-  return await privacyEventTracker.trackGDPREvent(eventType, userId, details);
+  const tracker = PrivacyEventTracker.getInstance();
+  return await tracker.trackGDPREvent(eventType, userId, details);
 }
 
 export async function getUserPrivacyEvents(userId: string, options?: any) {
-  return await privacyEventTracker.getUserPrivacyEvents(userId, options);
+  const tracker = PrivacyEventTracker.getInstance();
+  return await tracker.getUserPrivacyEvents(userId, options);
 }
 
 export async function getPrivacyAlerts(options?: any) {
-  return await privacyEventTracker.getPrivacyAlerts(options);
+  const tracker = PrivacyEventTracker.getInstance();
+  return await tracker.getPrivacyAlerts(options);
 }
 
 // Export types

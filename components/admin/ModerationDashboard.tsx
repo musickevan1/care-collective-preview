@@ -9,7 +9,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { ReactElement } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { moderationService } from '@/lib/messaging/moderation';
-import { privacyEventTracker } from '@/lib/security/privacy-event-tracker';
+import { PrivacyEventTracker } from '@/lib/security/privacy-event-tracker';
 import { errorTracker } from '@/lib/error-tracking';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -267,7 +267,7 @@ export function ModerationDashboard({
       );
 
       // Track moderation action
-      await privacyEventTracker.trackPrivacyEvent({
+      await PrivacyEventTracker.getInstance().trackPrivacyEvent({
         event_type: 'MODERATION_ACTION_TAKEN',
         user_id: adminUserId,
         severity: action === 'ban_user' ? 'high' : action === 'restrict_user' ? 'medium' : 'low',
@@ -311,7 +311,7 @@ export function ModerationDashboard({
       );
 
       // Track restriction action
-      await privacyEventTracker.trackPrivacyEvent({
+      await PrivacyEventTracker.getInstance().trackPrivacyEvent({
         event_type: 'USER_RESTRICTION_APPLIED',
         user_id: adminUserId,
         affected_user_id: userId,

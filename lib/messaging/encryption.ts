@@ -4,7 +4,7 @@
  */
 
 import { ContactEncryptionService } from '@/lib/security/contact-encryption';
-import { privacyEventTracker } from '@/lib/security/privacy-event-tracker';
+import { PrivacyEventTracker } from '@/lib/security/privacy-event-tracker';
 import { errorTracker } from '@/lib/error-tracking';
 
 export interface MessageEncryptionResult {
@@ -107,7 +107,7 @@ export class MessageEncryptionService {
       }
 
       // Track encryption event
-      await privacyEventTracker.trackPrivacyEvent({
+      await PrivacyEventTracker.getInstance().trackPrivacyEvent({
         event_type: 'MESSAGE_ENCRYPTED',
         user_id: senderId,
         affected_user_id: recipientId,
@@ -135,7 +135,7 @@ export class MessageEncryptionService {
       const errorMessage = error instanceof Error ? error.message : 'Unknown encryption error';
 
       // Track encryption failure
-      await privacyEventTracker.trackPrivacyEvent({
+      await PrivacyEventTracker.getInstance().trackPrivacyEvent({
         event_type: 'MESSAGE_ENCRYPTION_FAILED',
         user_id: senderId,
         affected_user_id: recipientId,
@@ -235,7 +235,7 @@ export class MessageEncryptionService {
       const decryptedContent = decryptedObject.message_content || encryptedContent;
 
       // Track successful decryption
-      await privacyEventTracker.trackPrivacyEvent({
+      await PrivacyEventTracker.getInstance().trackPrivacyEvent({
         event_type: 'MESSAGE_DECRYPTED',
         user_id: currentUserId,
         affected_user_id: currentUserId === senderId ? recipientId : senderId,
@@ -257,7 +257,7 @@ export class MessageEncryptionService {
       const errorMessage = error instanceof Error ? error.message : 'Unknown decryption error';
 
       // Track decryption failure
-      await privacyEventTracker.trackPrivacyEvent({
+      await PrivacyEventTracker.getInstance().trackPrivacyEvent({
         event_type: 'MESSAGE_DECRYPTION_FAILED',
         user_id: currentUserId,
         severity: 'medium',
@@ -356,7 +356,7 @@ export class MessageEncryptionService {
 
       if (shouldEncrypt) {
         // Track potential sensitive information detection
-        await privacyEventTracker.trackPrivacyEvent({
+        await PrivacyEventTracker.getInstance().trackPrivacyEvent({
           event_type: 'SENSITIVE_MESSAGE_DETECTED',
           severity: 'low',
           description: 'Message contains patterns that suggest sensitive information',
@@ -446,7 +446,7 @@ export class MessageEncryptionService {
   async cleanupEncryptionKeys(conversationId: string, userId: string): Promise<void> {
     try {
       // Track cleanup event
-      await privacyEventTracker.trackPrivacyEvent({
+      await PrivacyEventTracker.getInstance().trackPrivacyEvent({
         event_type: 'MESSAGE_ENCRYPTION_CLEANUP',
         user_id: userId,
         severity: 'low',

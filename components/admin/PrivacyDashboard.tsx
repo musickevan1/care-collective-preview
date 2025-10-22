@@ -29,7 +29,7 @@ import {
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import {
-  privacyEventTracker,
+  PrivacyEventTracker,
   getPrivacyAlerts,
   getUserPrivacyEvents
 } from '@/lib/security/privacy-event-tracker'
@@ -195,7 +195,7 @@ export function AdminPrivacyDashboard({ adminUserId, className }: AdminPrivacyDa
       if (error) throw error
 
       // Track resolution action
-      await privacyEventTracker.trackPrivacyEvent({
+      await PrivacyEventTracker.getInstance().trackPrivacyEvent({
         event_type: 'PRIVACY_VIOLATION_REVIEWED',
         user_id: adminUserId,
         severity: 'medium',

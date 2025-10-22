@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Logger } from '@/lib/logger'
 import { errorTracker } from '@/lib/error-tracking'
 
+export const dynamic = 'force-dynamic'
+
 // GET - Get admin dashboard statistics
 export async function GET() {
   try {
