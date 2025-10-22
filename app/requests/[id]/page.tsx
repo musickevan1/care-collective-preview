@@ -328,6 +328,7 @@ export default async function RequestDetailPage({ params }: PageProps) {
   }
 
   // Enhanced error handling with proper logging
+  // CRITICAL: Do NOT throw errors during SSR - causes React Error #419
   if (requestError) {
     console.error('[Help Request Error]', {
       requestId: id,
@@ -338,16 +339,9 @@ export default async function RequestDetailPage({ params }: PageProps) {
       timestamp: new Date().toISOString(),
     });
 
-    // Distinguish between different error types
-    if (requestError.code === 'PGRST116') {
-      // No rows returned - request not found
-      console.info(`[Help Request] Request not found: ${id}`);
-      notFound();
-    } else {
-      // Database connection or other errors
-      console.error(`[Help Request] Database error for request ${id}:`, requestError);
-      throw new Error(`Database error: ${requestError.message}`);
-    }
+    // All database errors result in notFound() - no throwing during SSR
+    console.error(`[Help Request] Database error for request ${id}:`, requestError);
+    notFound();
   }
 
   if (!request) {
