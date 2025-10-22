@@ -2,6 +2,22 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/lib/database.types'
 
 /**
+ * Edge Runtime compatible storage adapter
+ * Provides no-op storage that returns empty strings instead of undefined
+ */
+const edgeStorageAdapter = {
+  getItem: async (key: string): Promise<string | null> => {
+    return null
+  },
+  setItem: async (key: string, value: string): Promise<void> => {
+    // No-op in Edge Runtime
+  },
+  removeItem: async (key: string): Promise<void> => {
+    // No-op in Edge Runtime
+  },
+}
+
+/**
  * Admin Supabase client with service role key
  *
  * IMPORTANT: This client bypasses Row Level Security (RLS)
@@ -14,7 +30,7 @@ import type { Database } from '@/lib/database.types'
  * - Fetching profile for auth decisions in auth callback
  * - Admin operations that need to bypass RLS
  *
- * EDGE RUNTIME COMPATIBLE: Uses standard Supabase client with service role
+ * EDGE RUNTIME COMPATIBLE: Uses no-op storage adapter
  */
 export function createAdminClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -29,7 +45,8 @@ export function createAdminClient() {
   return createSupabaseClient<Database>(supabaseUrl, supabaseServiceKey, {
     auth: {
       autoRefreshToken: false,
-      persistSession: false
+      persistSession: false,
+      storage: edgeStorageAdapter,
     },
     global: {
       headers: {
