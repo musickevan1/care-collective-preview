@@ -15,6 +15,7 @@ export default function SignUpPage() {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
   const [applicationReason, setApplicationReason] = useState('')
+  const [termsAccepted, setTermsAccepted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -26,6 +27,12 @@ export default function SignUpPage() {
     setLoading(true)
     setError('')
 
+    if (!termsAccepted) {
+      setError('You must accept the Community Standards and Terms of Service to create an account.')
+      setLoading(false)
+      return
+    }
+
     try {
       const { data: signUpData, error } = await supabase.auth.signUp({
         email,
@@ -35,6 +42,8 @@ export default function SignUpPage() {
             name: name,
             location: location,
             application_reason: applicationReason,
+            terms_accepted_at: new Date().toISOString(),
+            terms_version: '1.0',
           },
         },
       })
@@ -145,11 +154,11 @@ export default function SignUpPage() {
         <div className="text-center mb-8">
           <Link href="/" className="text-primary hover:text-primary/80 text-sm">← Back to Home</Link>
           <div className="flex justify-center mt-4 mb-4">
-            <Image 
-              src="/logo.png" 
-              alt="Care Collective Logo" 
-              width={64} 
-              height={64}
+            <Image
+              src="/logo.png"
+              alt="Care Collective Logo"
+              width={128}
+              height={128}
               className="rounded-lg"
             />
           </div>
@@ -255,11 +264,46 @@ export default function SignUpPage() {
                 </p>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full" 
+              {/* Community Standards and Terms Acceptance */}
+              <div className="space-y-3 border border-sage/20 bg-sage/5 rounded-lg p-4">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    disabled={loading}
+                    className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-sage flex-shrink-0 mt-0.5"
+                    required
+                  />
+                  <div className="text-sm">
+                    <span className="text-foreground">
+                      I agree to follow the CARE Collective&apos;s{' '}
+                      <Link
+                        href="/about#community-standards"
+                        target="_blank"
+                        className="text-primary hover:underline font-medium"
+                      >
+                        Community Standards
+                      </Link>
+                      {' '}and{' '}
+                      <Link
+                        href="/terms"
+                        target="_blank"
+                        className="text-primary hover:underline font-medium"
+                      >
+                        Terms of Service
+                      </Link>
+                      , use the site responsibly, and respect the privacy and safety of all members.
+                    </span>
+                  </div>
+                </label>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full"
                 size="lg"
-                disabled={loading}
+                disabled={loading || !termsAccepted}
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </Button>

@@ -838,12 +838,15 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           description: string | null
+          expires_at: string | null
           helped_at: string | null
           helper_id: string | null
           id: string
+          is_ongoing: boolean | null
           location_override: string | null
           location_privacy: string | null
           status: string | null
+          subcategory: string | null
           title: string
           updated_at: string | null
           urgency: string | null
@@ -856,12 +859,15 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           description?: string | null
+          expires_at?: string | null
           helped_at?: string | null
           helper_id?: string | null
           id?: string
+          is_ongoing?: boolean | null
           location_override?: string | null
           location_privacy?: string | null
           status?: string | null
+          subcategory?: string | null
           title: string
           updated_at?: string | null
           urgency?: string | null
@@ -874,12 +880,15 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           description?: string | null
+          expires_at?: string | null
           helped_at?: string | null
           helper_id?: string | null
           id?: string
+          is_ongoing?: boolean | null
           location_override?: string | null
           location_privacy?: string | null
           status?: string | null
+          subcategory?: string | null
           title?: string
           updated_at?: string | null
           urgency?: string | null
@@ -1424,6 +1433,8 @@ export type Database = {
           name: string
           phone: string | null
           rejection_reason: string | null
+          terms_accepted_at: string | null
+          terms_version: string | null
           verification_status:
             | Database["public"]["Enums"]["verification_status"]
             | null
@@ -1443,6 +1454,8 @@ export type Database = {
           name: string
           phone?: string | null
           rejection_reason?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           verification_status?:
             | Database["public"]["Enums"]["verification_status"]
             | null
@@ -1462,6 +1475,8 @@ export type Database = {
           name?: string
           phone?: string | null
           rejection_reason?: string | null
+          terms_accepted_at?: string | null
+          terms_version?: string | null
           verification_status?:
             | Database["public"]["Enums"]["verification_status"]
             | null
@@ -2045,6 +2060,14 @@ export type Database = {
         Args: { user_id: string }
         Returns: boolean
       }
+      is_current_user_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_current_user_approved: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       log_admin_action: {
         Args: {
           p_action_details?: Json
@@ -2082,12 +2105,15 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           description: string | null
+          expires_at: string | null
           helped_at: string | null
           helper_id: string | null
           id: string
+          is_ongoing: boolean | null
           location_override: string | null
           location_privacy: string | null
           status: string | null
+          subcategory: string | null
           title: string
           updated_at: string | null
           urgency: string | null

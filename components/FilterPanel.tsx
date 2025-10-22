@@ -18,30 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { 
-  Search, 
-  Filter, 
-  X, 
-  Calendar,
-  MapPin,
+import {
+  Search,
+  Filter,
+  X,
   AlertTriangle,
   CheckCircle,
-  Clock,
-  Package,
-  Car,
-  Home,
-  Heart,
-  Utensils,
-  Baby,
-  PawPrint,
-  Laptop,
-  Users,
-  Coffee,
-  MessageCircle,
-  MoreHorizontal
+  Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { FILTER_CATEGORIES } from '@/lib/constants/categories';
 
 export interface FilterOptions {
   search: string;
@@ -57,22 +44,6 @@ export interface FilterPanelProps {
   className?: string;
   showAdvanced?: boolean;
 }
-
-const categories = [
-  { value: 'all', label: 'All Categories', icon: Package },
-  { value: 'groceries', label: 'Groceries', icon: Package },
-  { value: 'transport', label: 'Transport', icon: Car },
-  { value: 'household', label: 'Household', icon: Home },
-  { value: 'medical', label: 'Medical', icon: Heart },
-  { value: 'meals', label: 'Meals', icon: Utensils },
-  { value: 'childcare', label: 'Childcare', icon: Baby },
-  { value: 'petcare', label: 'Pet Care', icon: PawPrint },
-  { value: 'technology', label: 'Technology', icon: Laptop },
-  { value: 'companionship', label: 'Companionship', icon: Users },
-  { value: 'respite', label: 'Respite Care', icon: Coffee },
-  { value: 'emotional', label: 'Emotional Support', icon: MessageCircle },
-  { value: 'other', label: 'Other', icon: MoreHorizontal },
-];
 
 const statusOptions = [
   { value: 'all', label: 'All Status', color: 'default' },
@@ -237,7 +208,7 @@ export function FilterPanel({
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => {
+                  {FILTER_CATEGORIES.map((category) => {
                     const IconComponent = category.icon;
                     return (
                       <SelectItem key={category.value} value={category.value}>
@@ -335,7 +306,7 @@ export function FilterPanel({
           )}
           {filters.category !== 'all' && (
             <Badge variant="secondary" className="text-xs">
-              {categories.find(c => c.value === filters.category)?.label}
+              {FILTER_CATEGORIES.find(c => c.value === filters.category)?.label}
               <Button
                 variant="ghost"
                 size="sm"

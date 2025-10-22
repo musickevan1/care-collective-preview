@@ -11,21 +11,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/lib/auth-context'
 import { helpRequestSchema } from '@/lib/validations'
 import { z } from 'zod'
-
-const categories = [
-  { value: 'groceries', label: 'Groceries & Shopping', icon: '🛒' },
-  { value: 'transport', label: 'Transportation', icon: '🚗' },
-  { value: 'household', label: 'Household Tasks', icon: '🏠' },
-  { value: 'medical', label: 'Medical & Pharmacy', icon: '💊' },
-  { value: 'meals', label: 'Meal Preparation', icon: '🍽️' },
-  { value: 'childcare', label: 'Childcare & Family', icon: '👶' },
-  { value: 'petcare', label: 'Pet Care', icon: '🐾' },
-  { value: 'technology', label: 'Technology Help', icon: '💻' },
-  { value: 'companionship', label: 'Companionship', icon: '👥' },
-  { value: 'respite', label: 'Respite Care', icon: '💆' },
-  { value: 'emotional', label: 'Emotional Support', icon: '💝' },
-  { value: 'other', label: 'Other', icon: '📋' },
-]
+import { CATEGORIES, getCategoryByValue, type CategoryValue } from '@/lib/constants/categories'
 
 const urgencyLevels = [
   { value: 'normal', label: 'Normal - Can wait a few days' },
@@ -36,7 +22,9 @@ const urgencyLevels = [
 export default function NewRequestPage() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [category, setCategory] = useState('')
+  const [category, setCategory] = useState<CategoryValue | ''>('')
+  const [subcategory, setSubcategory] = useState('')
+  const [isOngoing, setIsOngoing] = useState(false)
   const [urgency, setUrgency] = useState('normal')
   const [locationOverride, setLocationOverride] = useState('')
   const [locationPrivacy, setLocationPrivacy] = useState('public')
@@ -44,6 +32,10 @@ export default function NewRequestPage() {
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [messagingData, setMessagingData] = useState({ unreadCount: 0, activeConversations: 0 })
+
+  // Get subcategories for selected category
+  const selectedCategory = category ? getCategoryByValue(category as CategoryValue) : null
+  const availableSubcategories = selectedCategory?.subcategories || []
 
   const router = useRouter()
   const supabase = createClient()
@@ -124,6 +116,8 @@ export default function NewRequestPage() {
           title: validatedData.title,
           description: validatedData.description,
           category: validatedData.category,
+          subcategory: subcategory.trim() || null,
+          is_ongoing: isOngoing,
           urgency: validatedData.urgency,
           user_id: user.id,
           location_override: validatedData.locationOverride || null,
@@ -275,15 +269,18 @@ export default function NewRequestPage() {
                 <select
                   id="category"
                   value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  onChange={(e) => {
+                    setCategory(e.target.value as CategoryValue | '')
+                    setSubcategory('') // Reset subcategory when category changes
+                  }}
                   required
                   disabled={loading}
                   className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${fieldErrors.category ? 'border-red-500' : ''}`}
                 >
                   <option value="">Select a category</option>
-                  {categories.map((cat) => (
+                  {CATEGORIES.map((cat) => (
                     <option key={cat.value} value={cat.value}>
-                      {cat.label}
+                      {cat.emoji} {cat.label}
                     </option>
                   ))}
                 </select>
@@ -291,6 +288,32 @@ export default function NewRequestPage() {
                   <p className="text-sm text-red-600">{fieldErrors.category}</p>
                 )}
               </div>
+
+              {/* Subcategory dropdown - only show if category has subcategories */}
+              {category && availableSubcategories.length > 0 && (
+                <div className="space-y-2">
+                  <label htmlFor="subcategory" className="text-sm font-medium text-foreground">
+                    Type of Help (Optional)
+                  </label>
+                  <select
+                    id="subcategory"
+                    value={subcategory}
+                    onChange={(e) => setSubcategory(e.target.value)}
+                    disabled={loading}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">Select a specific type (optional)</option>
+                    {availableSubcategories.map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-muted-foreground">
+                    Choose a specific type of help to make it easier for others to find your request
+                  </p>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <label htmlFor="description" className="text-sm font-medium text-foreground">
@@ -337,6 +360,26 @@ export default function NewRequestPage() {
                     </label>
                   ))}
                 </div>
+              </div>
+
+              {/* Ongoing Request Checkbox */}
+              <div className="space-y-2">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isOngoing}
+                    onChange={(e) => setIsOngoing(e.target.checked)}
+                    disabled={loading}
+                    className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-primary flex-shrink-0 mt-0.5"
+                  />
+                  <div>
+                    <div className="text-sm font-medium text-foreground">This is an ongoing need</div>
+                    <div className="text-xs text-muted-foreground">
+                      Check this if you need recurring help (e.g., weekly grocery runs, daily dog walking).
+                      Ongoing requests won&apos;t automatically expire after 30 days.
+                    </div>
+                  </div>
+                </label>
               </div>
 
               <div className="space-y-2">
