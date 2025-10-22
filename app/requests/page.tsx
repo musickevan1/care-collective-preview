@@ -9,6 +9,7 @@ import { StatusBadge } from '@/components/StatusBadge'
 import { FilterPanel } from '@/components/FilterPanel'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { getOptimizedHelpRequests, type OptimizedHelpRequest } from '@/lib/queries/help-requests-optimized'
+import { RequestsListWithModal } from '@/components/help-requests/RequestsListWithModal'
 import Link from 'next/link'
 
 // Force dynamic rendering - no caching for authenticated pages
@@ -412,69 +413,13 @@ export default async function RequestsPage({ searchParams }: PageProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {safeRequests.map((request: HelpRequest) => {
-                // Defensive null checks for rendering (nested profile structure)
-                const title = request.title || 'Untitled Request'
-                const urgency = request.urgency || 'normal'
-                const profileName = request.profiles?.name || 'Anonymous'
-                const profileLocation = request.profiles?.location
-
-                return (
-                  <Card key={request.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <CardTitle className="text-lg line-clamp-2">
-                          {title}
-                        </CardTitle>
-                        <Badge variant={urgencyColors[urgency as keyof typeof urgencyColors] || 'outline'} className="text-xs whitespace-nowrap">
-                          {urgency}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>{profileName}</span>
-                        {profileLocation && (
-                          <>
-                            <span>•</span>
-                            <span>{profileLocation}</span>
-                          </>
-                        )}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      {request.description && (
-                        <CardDescription className="mb-4 line-clamp-3">
-                          {request.description}
-                        </CardDescription>
-                      )}
-                      <div className="flex items-center justify-between">
-                        <div className="flex gap-2">
-                          <Badge variant={categoryColors[request.category as keyof typeof categoryColors] || 'outline'} className="text-xs">
-                            {request.category}
-                          </Badge>
-                          <StatusBadge status={request.status as any} />
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {formatTimeAgo(request.created_at)}
-                        </span>
-                      </div>
-                      {request.helper && request.status === 'in_progress' && (
-                        <div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
-                          Being helped by {request.helper.name}
-                        </div>
-                      )}
-                      <div className="mt-4 pt-4 border-t">
-                        <Link href={`/requests/${request.id}`}>
-                          <Button variant="outline" size="sm" className="w-full">
-                            View Details {request.status === 'open' && '& Offer Help'}
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
+            <RequestsListWithModal
+              requests={safeRequests}
+              currentUserId={user.id}
+              categoryColors={categoryColors}
+              urgencyColors={urgencyColors}
+              formatTimeAgo={formatTimeAgo}
+            />
           </div>
         )}
       </div>
