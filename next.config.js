@@ -54,6 +54,16 @@ const nextConfig = {
         ],
       },
       {
+        // HTML pages - short cache for quick updates
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=60, s-maxage=60, stale-while-revalidate=300'
+          }
+        ],
+      },
+      {
         // Additional security for API routes
         source: '/api/(.*)',
         headers: [
