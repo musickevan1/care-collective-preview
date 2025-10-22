@@ -1,4 +1,5 @@
-import { Logger } from './logger'
+// REMOVED: Logger singleton causes React Error #419 when used in global ErrorBoundary
+// import { Logger } from './logger'
 
 export interface ErrorContext {
   userId?: string
@@ -96,11 +97,12 @@ class ErrorTracker {
       handled
     }
 
-    // Log the error
-    Logger.getInstance().error(`Error tracked: ${error.message}`, error, {
+    // Log the error (console instead of Logger to avoid SSR singleton issues)
+    console.error(`[ErrorTracker] Error tracked: ${error.message}`, {
       errorId,
       context,
-      handled
+      handled,
+      stack: error.stack
     })
 
     // Store in queue for potential sending to external service
@@ -129,7 +131,7 @@ class ErrorTracker {
       handled: true
     }
 
-    Logger.getInstance().warn(`Warning tracked: ${message}`, {
+    console.warn(`[ErrorTracker] Warning tracked: ${message}`, {
       warningId: errorId,
       context
     })
@@ -159,7 +161,7 @@ class ErrorTracker {
       handled: true
     }
 
-    Logger.getInstance().info(`Info tracked: ${message}`, {
+    console.log(`[ErrorTracker] Info tracked: ${message}`, {
       infoId: errorId,
       context
     })
