@@ -41,24 +41,16 @@ export const signupSchema = z.object({
     .string()
     .min(8, 'Password must be at least 8 characters')
     .max(128, 'Password too long')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number')
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
+  termsAccepted: z.literal(true, {
+    errorMap: () => ({ message: 'You must accept the Terms of Service' })
+  })
 })
 
 // Help request schemas
-export const categorySchema = z.enum([
-  'groceries',
-  'transport', 
-  'household',
-  'medical',
-  'meals',
-  'childcare',
-  'petcare',
-  'technology',
-  'companionship',
-  'respite',
-  'emotional',
-  'other'
-])
+import { getCategoryValues } from './constants/categories';
+
+export const categorySchema = z.enum(getCategoryValues() as [string, ...string[]])
 
 export const urgencySchema = z.enum(['normal', 'urgent', 'critical'])
 

@@ -105,11 +105,11 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="text-primary hover:text-primary/80 text-sm">← Back to Home</Link>
           <div className="flex justify-center mt-4 mb-4">
-            <Image 
-              src="/logo.png" 
-              alt="Care Collective Logo" 
-              width={64} 
-              height={64}
+            <Image
+              src="/logo.png"
+              alt="Care Collective Logo"
+              width={128}
+              height={128}
               className="rounded-lg"
             />
           </div>

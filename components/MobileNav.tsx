@@ -26,11 +26,11 @@ const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuth
     } else {
       return [
         { href: '#home', label: 'Home' },
-        { href: '#mission', label: 'Mission' },
-        { href: '#how-it-works', label: 'How It Works' },
         { href: '#whats-happening', label: 'What\'s Happening' },
-        { href: '#about', label: 'About' },
-        { href: '#contact', label: 'Contact' }
+        { href: '#how-it-works', label: 'How It Works' },
+        { href: '/resources', label: 'Resources' },
+        { href: '/about', label: 'About Us' },
+        { href: '/contact', label: 'Contact Us' }
       ]
     }
   } else {
