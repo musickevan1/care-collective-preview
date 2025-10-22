@@ -437,10 +437,8 @@ export default async function RequestDetailPage({ params }: PageProps) {
           <HelpRequestCardWithMessaging
             request={transformedRequest}
             currentUserId={user.id}
-            onConversationStarted={(conversationId) => {
-              // Could redirect to messages or show success state
-              console.log('Conversation started:', conversationId);
-            }}
+            // REMOVED: onConversationStarted event handler
+            // Server Components cannot pass functions to Client Components (React Error #419)
           />
 
           {/* Additional Details Card */}
