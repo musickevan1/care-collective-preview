@@ -3,7 +3,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
-import { Logger } from '@/lib/logger'
+// REMOVED: Logger singleton causes React Error #419 when used in global providers
+// import { Logger } from '@/lib/logger'
 import { errorTracker } from '@/lib/error-tracking'
 
 interface AuthContextType {
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data: { session: initialSession }, error } = await supabase.auth.getSession()
         
         if (error) {
-          Logger.getInstance().warn('Initial session retrieval failed', {
+          console.warn('[Auth] Initial session retrieval failed:', {
             errorMessage: error.message,
             retryCount,
             maxRetries,
@@ -73,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(initialSession?.user ?? null)
         setLoading(false)
       } catch (error) {
-        Logger.getInstance().error('Critical failure getting initial session', error as Error, {
+        console.error('[Auth] Critical failure getting initial session:', error, {
           retryCount,
           maxRetries,
           category: 'auth_critical'
@@ -98,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        Logger.getInstance().info('Auth state change detected', {
+        console.log('[Auth] Auth state change detected:', {
           event,
           hasUser: !!session?.user,
           userId: session?.user?.id,
@@ -122,7 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Handle session refresh
         if (event === 'TOKEN_REFRESHED') {
-          Logger.getInstance().info('Authentication token refreshed successfully', {
+          console.log('[Auth] Authentication token refreshed successfully:', {
             userId: session?.user?.id,
             category: 'auth_token_refresh'
           })
@@ -147,7 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true)
 
-      Logger.getInstance().info('User sign out initiated', {
+      console.log('[Auth] User sign out initiated:', {
         userId: user?.id,
         category: 'auth_signout'
       })
@@ -156,7 +157,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null)
       setSession(null)
 
-      Logger.getInstance().info('User signed out successfully', {
+      console.log('[Auth] User signed out successfully:', {
         category: 'auth_signout'
       })
 
@@ -170,7 +171,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
     } catch (error) {
-      Logger.getInstance().error('Sign out failed', error as Error, {
+      console.error('[Auth] Sign out failed:', error, {
         userId: user?.id,
         category: 'auth_error'
       })
