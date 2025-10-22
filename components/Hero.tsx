@@ -34,14 +34,14 @@ export default function Hero(): ReactElement {
           <div className="flex items-center justify-center gap-4 mb-8 animate-fade-in-up">
             <div className="relative">
               <div className="absolute -inset-2 bg-gradient-to-r from-sage via-dusty-rose to-terracotta rounded-full opacity-20 blur-lg animate-pulse"></div>
-              <Image 
-                src="/logo-textless.png" 
-                alt="CARE Collective Logo" 
-                width={80} 
-                height={80}
-                className="relative rounded-full shadow-lg hover:scale-[1.02] transition-transform duration-200"
+              <Image
+                src="/logo-textless.png"
+                alt="CARE Collective Logo"
+                width={160}
+                height={160}
+                className="relative rounded-full shadow-lg hover:scale-[1.02] transition-transform duration-200 w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40"
                 priority
-                sizes="80px"
+                sizes="(max-width: 640px) 112px, (max-width: 768px) 144px, 160px"
               />
             </div>
           </div>

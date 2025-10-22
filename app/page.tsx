@@ -23,11 +23,11 @@ export default function HomePage(): ReactElement {
               <Image
                 src="/logo-textless.png"
                 alt="CARE Collective Logo"
-                width={64}
-                height={64}
-                className="rounded"
+                width={48}
+                height={48}
+                className="rounded w-10 h-10 sm:w-12 sm:h-12"
                 priority
-                sizes="64px"
+                sizes="(max-width: 640px) 40px, 48px"
               />
               <span className="text-lg sm:text-xl font-bold truncate">CARE Collective</span>
             </Link>
