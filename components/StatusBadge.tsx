@@ -58,9 +58,10 @@ export const StatusBadge = memo<StatusBadgeProps>(({ status, className }) => {
   )
   
   return (
-    <Badge 
+    <Badge
       variant={config.variant}
       className={badgeClassName}
+      aria-label={`Status: ${config.label}`}
     >
       {config.label}
     </Badge>
