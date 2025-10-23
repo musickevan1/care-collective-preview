@@ -116,6 +116,8 @@ export default function NewRequestPage() {
           title: validatedData.title,
           description: validatedData.description,
           category: validatedData.category,
+          subcategory: subcategory.trim() || null,
+          is_ongoing: isOngoing,
           urgency: validatedData.urgency,
           user_id: user.id,
           location_override: validatedData.location_override || null,
