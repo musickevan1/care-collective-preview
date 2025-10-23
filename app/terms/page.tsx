@@ -46,8 +46,9 @@ export default function TermsPage(): ReactElement {
             <CardContent className="p-6 space-y-4">
               <p className="text-foreground">
                 By accessing or using the CARE Collective website and services, you agree to be bound by
-                these Terms of Service and our Privacy Policy. If you do not agree to these terms, you may
-                not access or use our services.
+                these Terms of Service and our{' '}
+                <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>.
+                If you do not agree to these terms, you may not access or use our services.
               </p>
               <p className="text-foreground">
                 These terms apply to all users of the platform, including those who browse, post help requests,
@@ -188,7 +189,7 @@ export default function TermsPage(): ReactElement {
               </p>
               <p className="text-foreground">
                 For complete information about how we collect, use, and protect your data, please review our{' '}
-                <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
+                <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>.
               </p>
               <p className="text-foreground">
                 By using the CARE Collective, you consent to our data practices as described in the Privacy Policy.
@@ -325,7 +326,7 @@ export default function TermsPage(): ReactElement {
           </Link>
           <span className="hidden sm:inline text-muted-foreground">•</span>
           <Link
-            href="/privacy"
+            href="/privacy-policy"
             className="text-primary hover:underline text-sm"
           >
             View Privacy Policy
