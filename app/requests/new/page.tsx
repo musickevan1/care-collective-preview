@@ -192,7 +192,6 @@ export default function NewRequestPage() {
   }
 
   const breadcrumbs = [
-    { label: 'Help Requests', href: '/requests' },
     { label: 'New Request' }
   ];
 

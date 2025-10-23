@@ -201,12 +201,28 @@ async function getDashboardData(userId: string) {
       .order('created_at', { ascending: false })
       .limit(5);
 
+    // Get user's own help requests
+    const { data: userRequests } = await supabase
+      .from('help_requests')
+      .select(`
+        id,
+        title,
+        status,
+        urgency,
+        category,
+        created_at
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(5);
+
     return {
       userRequestsCount: userRequestsCount || 0,
       unreadCount: unreadCount || 0,
       activeConversations: conversations?.length || 0,
       helpedCount: helpedCount || 0,
-      recentRequests: recentRequests || []
+      recentRequests: recentRequests || [],
+      userRequests: userRequests || []
     };
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
@@ -215,7 +231,8 @@ async function getDashboardData(userId: string) {
       unreadCount: 0,
       activeConversations: 0,
       helpedCount: 0,
-      recentRequests: []
+      recentRequests: [],
+      userRequests: []
     };
   }
 }
@@ -421,67 +438,120 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </div>
 
         {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Community Activity</CardTitle>
-            <CardDescription>
-              Stay updated with what&apos;s happening in your community
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {dashboardData.recentRequests.length > 0 ? (
-              <div className="space-y-4">
-                {dashboardData.recentRequests.map((request: any) => (
-                  <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-medium text-secondary">{request.title}</h4>
-                        <Badge 
-                          variant={request.urgency === 'critical' ? 'destructive' : 
-                                  request.urgency === 'urgent' ? 'secondary' : 'outline'}
-                          className="text-xs"
-                        >
-                          {request.urgency}
-                        </Badge>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* User's Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Activity</CardTitle>
+              <CardDescription>
+                Your recent help requests and their status
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {dashboardData.userRequests.length > 0 ? (
+                <div className="space-y-3">
+                  {dashboardData.userRequests.map((request: any) => (
+                    <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium text-secondary truncate">{request.title}</h4>
+                          <Badge
+                            variant={request.status === 'open' ? 'default' :
+                                    request.status === 'in_progress' ? 'secondary' : 'outline'}
+                            className="text-xs flex-shrink-0"
+                          >
+                            {request.status.replace('_', ' ')}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {request.category} • {new Date(request.created_at).toLocaleDateString()}
+                        </p>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        by {request.profiles?.name || 'Anonymous'} • {new Date(request.created_at).toLocaleDateString()}
-                      </p>
+                      <Link href={`/requests/${request.id}`}>
+                        <Button variant="ghost" size="sm">View</Button>
+                      </Link>
                     </div>
-                    <Link href={`/requests/${request.id}`}>
-                      <Button variant="outline" size="sm">View</Button>
+                  ))}
+                  <div className="text-center pt-2">
+                    <Link href="/requests?filter=own">
+                      <Button variant="outline" size="sm">View All Your Requests</Button>
                     </Link>
                   </div>
-                ))}
-                <div className="text-center pt-4">
-                  <Link href="/requests">
-                    <Button variant="outline">View All Requests</Button>
-                  </Link>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <div className="text-6xl mb-4">🌟</div>
-                <h3 className="text-lg font-medium text-secondary mb-2">Welcome to Care Collective!</h3>
-                <p className="text-muted-foreground mb-4">
-                  You&apos;re all set up. Start by creating your first help request or browse what others need.
-                </p>
-                <div className="flex gap-2 justify-center mb-4">
-                  <Badge variant="default">New Member</Badge>
-                  <Badge variant="secondary">Community Builder</Badge>
-                </div>
-                <div className="flex gap-2 justify-center">
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-muted-foreground mb-3">You haven't created any requests yet</p>
                   <Link href="/requests/new">
-                    <Button>Create Request</Button>
-                  </Link>
-                  <Link href="/requests">
-                    <Button variant="outline">Browse Requests</Button>
+                    <Button size="sm">Create Your First Request</Button>
                   </Link>
                 </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Community Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Community Activity</CardTitle>
+              <CardDescription>
+                Stay updated with what&apos;s happening in your community
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {dashboardData.recentRequests.length > 0 ? (
+                <div className="space-y-4">
+                  {dashboardData.recentRequests.map((request: any) => (
+                    <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium text-secondary">{request.title}</h4>
+                          <Badge
+                            variant={request.urgency === 'critical' ? 'destructive' :
+                                    request.urgency === 'urgent' ? 'secondary' : 'outline'}
+                            className="text-xs"
+                          >
+                            {request.urgency}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          by {request.profiles?.name || 'Anonymous'} • {new Date(request.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Link href={`/requests/${request.id}`}>
+                        <Button variant="outline" size="sm">View</Button>
+                      </Link>
+                    </div>
+                  ))}
+                  <div className="text-center pt-4">
+                    <Link href="/requests">
+                      <Button variant="outline">View All Requests</Button>
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-6xl mb-4">🌟</div>
+                  <h3 className="text-lg font-medium text-secondary mb-2">Welcome to Care Collective!</h3>
+                  <p className="text-muted-foreground mb-4">
+                    You&apos;re all set up. Start by creating your first help request or browse what others need.
+                  </p>
+                  <div className="flex gap-2 justify-center mb-4">
+                    <Badge variant="default">New Member</Badge>
+                    <Badge variant="secondary">Community Builder</Badge>
+                  </div>
+                  <div className="flex gap-2 justify-center">
+                    <Link href="/requests/new">
+                      <Button>Create Request</Button>
+                    </Link>
+                    <Link href="/requests">
+                      <Button variant="outline">Browse Requests</Button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* DIAGNOSTIC PANEL - Always visible during debugging */}
