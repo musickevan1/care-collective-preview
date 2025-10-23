@@ -157,8 +157,8 @@ export default function SignUpPage() {
             <Image
               src="/logo.png"
               alt="Care Collective Logo"
-              width={128}
-              height={128}
+              width={256}
+              height={256}
               className="rounded-lg"
             />
           </div>
