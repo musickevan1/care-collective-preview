@@ -91,24 +91,9 @@ export async function POST(
       );
     }
 
-    const body = await request.json();
-    
-    // Validate request body
-    const validation = messagingValidation.helpRequestConversation.safeParse({
-      help_request_id: helpRequestId,
-      ...body
-    });
+    const supabase = createClient();
 
-    if (!validation.success) {
-      return NextResponse.json(
-        { error: 'Invalid request data', details: validation.error.errors },
-        { status: 400 }
-      );
-    }
-
-    const supabase = await createClient();
-
-    // Fetch help request details and verify it exists and is accessible
+    // Fetch help request details first to get the recipient
     const { data: helpRequest, error: helpError } = await supabase
       .from('help_requests')
       .select(`
@@ -148,6 +133,30 @@ export async function POST(
     if (helpRequest.user_id === user.id) {
       return NextResponse.json(
         { error: 'You cannot offer help on your own request' },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+
+    // Validate request body with recipient_id derived from help request
+    const validation = messagingValidation.helpRequestConversation.safeParse({
+      help_request_id: helpRequestId,
+      recipient_id: helpRequest.user_id, // Derive from help request
+      ...body
+    });
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: validation.error.issues },
+        { status: 400 }
+      );
+    }
+
+    // If client sent recipient_id, validate it matches the help request owner
+    if (body.recipient_id && body.recipient_id !== helpRequest.user_id) {
+      return NextResponse.json(
+        { error: 'Invalid recipient for this help request' },
         { status: 400 }
       );
     }

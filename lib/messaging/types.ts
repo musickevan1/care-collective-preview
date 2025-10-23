@@ -166,7 +166,7 @@ export const messagingValidation = {
   // Help request conversation starter
   helpRequestConversation: z.object({
     help_request_id: z.string().uuid("Invalid help request ID"),
-    recipient_id: z.string().uuid("Invalid recipient ID"),
+    recipient_id: z.string().uuid("Invalid recipient ID").optional(),
     initial_message: z.string()
       .min(10, "Message must be at least 10 characters")
       .max(1000, "Message too long")

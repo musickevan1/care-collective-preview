@@ -292,11 +292,23 @@ export function HelpRequestCardWithMessaging({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Heart className="w-5 h-5 text-sage" />
-              Offer Help
+              {success ? (
+                <>
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  Conversation Started
+                </>
+              ) : (
+                <>
+                  <Heart className="w-5 h-5 text-sage" />
+                  Offer Help
+                </>
+              )}
             </DialogTitle>
             <DialogDescription>
-              Send a message to {request.profiles.name} to coordinate helping with their request.
+              {success
+                ? `Your message has been sent to ${request.profiles.name}. You'll be redirected to continue the conversation.`
+                : `Send a message to ${request.profiles.name} to coordinate helping with their request.`
+              }
             </DialogDescription>
           </DialogHeader>
 
@@ -358,18 +370,13 @@ export function HelpRequestCardWithMessaging({
               </Alert>
             </div>
           ) : (
-            <div className="text-center py-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center py-8">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="font-semibold text-lg mb-2">Conversation started!</h3>
-              <p className="text-muted-foreground text-sm mb-4">
-                Your message has been sent to {request.profiles.name}. 
-                They'll be able to respond and coordinate with you directly.
-              </p>
-              <div className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Redirecting to messages...
-              </div>
+              </p>
             </div>
           )}
 
