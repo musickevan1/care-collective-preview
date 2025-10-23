@@ -102,21 +102,25 @@ export default function LoginPage() {
   return (
     <main id="main-content" className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Button asChild variant="default" size="sm">
-            <Link href="/">← Back to Home</Link>
-          </Button>
-          <div className="flex justify-center mt-4 mb-4">
-            <Image
-              src="/logo.png"
-              alt="Care Collective Logo"
-              width={256}
-              height={256}
-              className="rounded-lg"
-            />
+        <div className="mb-8">
+          <div className="mb-6">
+            <Button asChild variant="default" size="sm">
+              <Link href="/">← Back to Home</Link>
+            </Button>
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-          <p className="text-muted-foreground">Sign in to your Care Collective account</p>
+          <div className="text-center">
+            <div className="flex justify-center mb-4">
+              <Image
+                src="/logo.png"
+                alt="Care Collective Logo"
+                width={256}
+                height={256}
+                className="rounded-lg"
+              />
+            </div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
+            <p className="text-muted-foreground">Sign in to your Care Collective account</p>
+          </div>
         </div>
 
         <Card>
