@@ -8,7 +8,6 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 import Image from 'next/image'
 import { PerformanceMonitor } from '@/components/PerformanceMonitor'
-import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import { MobileNav } from '@/components/MobileNav'
 
 export default async function PerformancePage() {
@@ -62,11 +61,10 @@ export default async function PerformancePage() {
               </div>
             </div>
             <div className="flex items-center gap-2 ml-auto">
-              <ReadableModeToggle />
               <MobileNav isAdmin={true} />
               <form action="/api/auth/logout" method="post" className="hidden md:block">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   type="submit"
                   variant="terracotta"
                 >

@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MobileNav } from '@/components/MobileNav';
 import { LogoutButton } from '@/components/LogoutButton';
-import { ReadableModeToggle } from '@/components/ReadableModeToggle';
 import { SkipToContent } from '@/components/SkipToContent';
 import { 
   MessageCircle, 
@@ -211,7 +210,6 @@ export function PlatformLayout({
                     {user.name}
                   </span>
                 </div>
-                <ReadableModeToggle />
                 <LogoutButton size="sm" />
               </div>
 

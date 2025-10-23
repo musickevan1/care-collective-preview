@@ -4,7 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { ReadableModeToggle } from '@/components/ReadableModeToggle'
 import { MobileNav } from '@/components/MobileNav'
 import { redirect } from 'next/navigation'
 
@@ -123,11 +122,10 @@ export default async function AdminDashboard() {
               </nav>
             </div>
             <div className="flex items-center gap-2">
-              <ReadableModeToggle />
               <MobileNav isAdmin={true} />
               <form action="/api/auth/logout" method="post" className="hidden md:block">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   type="submit"
                   variant="terracotta"
                 >

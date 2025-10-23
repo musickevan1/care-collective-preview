@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 
 interface DiagnosticData {
   authUserId: string
@@ -19,12 +19,32 @@ interface DiagnosticData {
  * This panel displays critical authentication data to identify where
  * the auth bug occurs without needing access to Vercel runtime logs.
  */
-export function DiagnosticPanel({ data }: { data: DiagnosticData }): ReactElement {
+export function DiagnosticPanel({ data }: { data: DiagnosticData }): ReactElement | null {
+  const [isVisible, setIsVisible] = useState(() => {
+    return typeof window !== 'undefined' ? localStorage.getItem('diagnosticPanelClosed') !== 'true' : true;
+  })
+
+  const handleClose = () => {
+    setIsVisible(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('diagnosticPanelClosed', 'true');
+    }
+  }
+
+  if (!isVisible) return null;
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-red-600 text-white p-4 text-xs font-mono z-50 shadow-lg border-t-4 border-yellow-400">
       <div className="max-w-7xl mx-auto">
-        <div className="font-bold text-yellow-300 mb-2 text-center">
+        <div className="font-bold text-yellow-300 mb-2 text-center flex items-center justify-center">
           🚨 DIAGNOSTIC MODE - Auth Debug Panel 🚨
+          <button
+            onClick={handleClose}
+            className="ml-auto bg-yellow-400 hover:bg-yellow-500 text-red-600 rounded px-2 py-1 font-bold text-sm transition-colors"
+            aria-label="Close diagnostic panel"
+          >
+            ✕
+          </button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <div>

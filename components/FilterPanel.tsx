@@ -49,8 +49,6 @@ const statusOptions = [
   { value: 'all', label: 'All Status', color: 'default' },
   { value: 'open', label: 'Open', color: 'sage' },
   { value: 'in_progress', label: 'In Progress', color: 'secondary' },
-  { value: 'completed', label: 'Completed', color: 'success' },
-  { value: 'cancelled', label: 'Cancelled', color: 'outline' },
 ];
 
 const urgencyOptions = [
@@ -63,8 +61,6 @@ const urgencyOptions = [
 const sortOptions = [
   { value: 'created_at', label: 'Date Created' },
   { value: 'urgency', label: 'Urgency Level' },
-  { value: 'category', label: 'Category' },
-  { value: 'status', label: 'Status' },
 ];
 
 export function FilterPanel({ 
@@ -156,9 +152,9 @@ export function FilterPanel({
           <Button
             key={status.value}
             variant={filters.status === status.value ? 'default' : 'outline'}
-            size="default"
+            size="lg"
             onClick={() => updateFilters({ status: status.value })}
-            className="text-xs"
+            className="text-sm py-3 w-full sm:w-auto"
           >
             {status.label}
           </Button>
@@ -246,14 +242,14 @@ export function FilterPanel({
             </div>
 
             {/* Sort Options */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="sort-select">Sort By</Label>
-                <Select 
-                  value={filters.sortBy} 
+                <Select
+                  value={filters.sortBy}
                   onValueChange={(value) => updateFilters({ sortBy: value })}
                 >
-                  <SelectTrigger id="sort-select">
+                  <SelectTrigger id="sort-select" className="h-12">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -268,11 +264,11 @@ export function FilterPanel({
 
               <div className="space-y-2">
                 <Label htmlFor="order-select">Sort Order</Label>
-                <Select 
-                  value={filters.sortOrder} 
+                <Select
+                  value={filters.sortOrder}
                   onValueChange={(value: 'asc' | 'desc') => updateFilters({ sortOrder: value })}
                 >
-                  <SelectTrigger id="order-select">
+                  <SelectTrigger id="order-select" className="h-12">
                     <SelectValue placeholder="Order" />
                   </SelectTrigger>
                   <SelectContent>
