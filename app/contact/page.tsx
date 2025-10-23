@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Clock, Shield, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
+import { ContactForm } from '@/components/ContactForm';
 
 export const metadata = {
   title: 'Contact Us - Care Collective',
@@ -76,6 +77,11 @@ export default function ContactPage(): ReactElement {
           </Card>
         </section>
 
+        {/* Contact Form */}
+        <section className="mb-12">
+          <ContactForm />
+        </section>
+
         {/* What to Contact Us About */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-foreground mb-4">How Can We Help?</h2>
@@ -116,23 +122,6 @@ export default function ContactPage(): ReactElement {
               </CardContent>
             </Card>
           </div>
-        </section>
-
-        {/* Location */}
-        <section className="mb-12">
-          <Card>
-            <CardHeader>
-              <CardTitle>Our Location</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-foreground mb-2">
-                <strong>Serving Southwest Missouri</strong>
-              </p>
-              <p className="text-muted-foreground">
-                Springfield, MO 65897
-              </p>
-            </CardContent>
-          </Card>
         </section>
 
         {/* Back to Home */}
