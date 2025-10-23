@@ -54,12 +54,12 @@ const nextConfig = {
         ],
       },
       {
-        // HTML pages - short cache for quick updates
+        // HTML pages - no cache for immediate updates on deployment
         source: '/(.*)',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=60, s-maxage=60, stale-while-revalidate=300'
+            value: 'public, max-age=0, s-maxage=0, must-revalidate'
           }
         ],
       },
