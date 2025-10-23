@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink, Heart, Home, Users, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 export const metadata = {
   title: 'Community Resources - Care Collective',
@@ -12,6 +13,13 @@ export default function ResourcesPage(): ReactElement {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
+        {/* Back to Home */}
+        <div className="mb-6">
+          <Button asChild variant="default" size="sm">
+            <Link href="/">← Back to Home</Link>
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4">Community Resources</h1>
