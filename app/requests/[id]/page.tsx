@@ -15,6 +15,7 @@ interface PageProps {
  * This maintains backward compatibility for old /requests/[id] links
  */
 export default async function RequestDetailPage({ params }: PageProps) {
+  // In Next.js 14.2.32, params is synchronous, not a Promise
   const { id } = params
 
   // Redirect to list page with modal open

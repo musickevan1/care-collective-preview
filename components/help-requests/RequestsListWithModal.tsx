@@ -6,7 +6,7 @@
 
 'use client'
 
-import { ReactElement, useState, useEffect } from 'react'
+import { ReactElement, useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -86,9 +86,18 @@ export function RequestsListWithModal({
   const [selectedRequest, setSelectedRequest] = useState<any | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isHydrated, setIsHydrated] = useState(false)
 
-  // Fetch request details when ID in URL
+  // Wait for hydration before any state updates
   useEffect(() => {
+    setIsHydrated(true)
+  }, [])
+
+  // Fetch request details when ID in URL (after hydration)
+  useEffect(() => {
+    // Don't update state during hydration
+    if (!isHydrated) return
+
     if (requestId) {
       setLoading(true)
       setError(null)
@@ -114,7 +123,7 @@ export function RequestsListWithModal({
     } else {
       setSelectedRequest(null)
     }
-  }, [requestId, router])
+  }, [requestId, router, isHydrated])
 
   const handleRequestClick = (id: string) => {
     router.push(`/requests?id=${id}`)
@@ -198,15 +207,17 @@ export function RequestsListWithModal({
         })}
       </div>
 
-      {/* Request Detail Modal */}
-      {selectedRequest && !loading && !error && (
-        <RequestDetailModal
-          request={selectedRequest}
-          currentUserId={currentUserId}
-          open={!!selectedRequest}
-          onClose={handleCloseModal}
-        />
-      )}
+      {/* Request Detail Modal - wrapped in Suspense to prevent hydration errors */}
+      <Suspense fallback={null}>
+        {selectedRequest && !loading && !error && (
+          <RequestDetailModal
+            request={selectedRequest}
+            currentUserId={currentUserId}
+            open={!!selectedRequest}
+            onClose={handleCloseModal}
+          />
+        )}
+      </Suspense>
 
       {/* Loading state */}
       {loading && requestId && (

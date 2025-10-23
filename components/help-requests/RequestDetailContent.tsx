@@ -13,12 +13,16 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { HelpRequestCardWithMessaging } from '@/components/help-requests/HelpRequestCardWithMessaging'
 import { MessagingStatusIndicator } from '@/components/messaging/MessagingStatusIndicator'
+import { ClientOnly } from '@/components/ClientOnly'
 import Link from 'next/link'
 
 // Import RequestActions dynamically as it's a client component
 const RequestActions = dynamic(
   () => import('@/app/requests/[id]/RequestActions').then(mod => ({ default: mod.RequestActions })),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => <div className="p-4 text-center text-muted-foreground">Loading actions...</div>
+  }
 )
 
 // ContactExchange must be client-only (ssr: false) because it calls createClient()
@@ -161,30 +165,38 @@ export function RequestDetailContent({
             </Badge>
           </div>
 
-          {/* Request Timeline */}
+          {/* Request Timeline - wrapped in ClientOnly to prevent hydration issues */}
           <div>
             <h3 className="font-semibold mb-2">Timeline</h3>
             <div className="text-sm space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Created:</span>
-                <span suppressHydrationWarning>{formatDate(request.created_at)}</span>
+                <ClientOnly fallback={<span className="text-muted-foreground">Loading...</span>}>
+                  <span>{formatDate(request.created_at)}</span>
+                </ClientOnly>
               </div>
               {request.helped_at && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Help started:</span>
-                  <span suppressHydrationWarning>{formatDate(request.helped_at)}</span>
+                  <ClientOnly fallback={<span className="text-muted-foreground">Loading...</span>}>
+                    <span>{formatDate(request.helped_at)}</span>
+                  </ClientOnly>
                 </div>
               )}
               {request.completed_at && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Completed:</span>
-                  <span suppressHydrationWarning>{formatDate(request.completed_at)}</span>
+                  <ClientOnly fallback={<span className="text-muted-foreground">Loading...</span>}>
+                    <span>{formatDate(request.completed_at)}</span>
+                  </ClientOnly>
                 </div>
               )}
               {request.cancelled_at && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Cancelled:</span>
-                  <span suppressHydrationWarning>{formatDate(request.cancelled_at)}</span>
+                  <ClientOnly fallback={<span className="text-muted-foreground">Loading...</span>}>
+                    <span>{formatDate(request.cancelled_at)}</span>
+                  </ClientOnly>
                 </div>
               )}
             </div>
