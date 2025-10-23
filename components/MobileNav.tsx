@@ -28,9 +28,9 @@ const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuth
         { href: '#home', label: 'Home' },
         { href: '#whats-happening', label: 'What\'s Happening' },
         { href: '#how-it-works', label: 'How It Works' },
-        { href: '/resources', label: 'Resources' },
-        { href: '/about', label: 'About Us' },
-        { href: '/contact', label: 'Contact Us' }
+        { href: '#resources-preview', label: 'Resources' },
+        { href: '#about', label: 'About Us' },
+        { href: '#contact-preview', label: 'Contact Us' }
       ]
     }
   } else {
