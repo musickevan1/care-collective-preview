@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ReactElement } from 'react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
+import { Button } from '@/components/ui/button'
 import { useAuthNavigation } from '@/lib/hooks/useAuthNavigation'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
@@ -281,12 +282,11 @@ export default function HomePage(): ReactElement {
 
               {/* Call to Action */}
               <div className="mt-12">
-                <Link href="/signup" className="inline-flex items-center justify-center bg-dusty-rose-accessible text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-dusty-rose-accessible transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-dusty-rose/20 min-h-[48px] group">
-                  <span>Join Our Community</span>
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
+                <Button asChild variant="default" size="lg">
+                  <Link href="/signup">
+                    Join Our Community
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>
