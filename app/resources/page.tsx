@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function ResourcesPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-sage-light/10 to-dusty-rose-light/10">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Back to Home */}
         <div className="mb-6">
@@ -22,8 +22,11 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Community Resources</h1>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <div className="inline-block p-4 bg-gradient-to-br from-primary to-primary-contrast rounded-full shadow-lg mb-4">
+            <Heart className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Community Resources</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             The CARE Collective connects community members with trusted local and regional organizations
             that offer practical support, guidance, and connection.
           </p>
@@ -31,13 +34,13 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Essentials Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-sage/10 rounded-lg">
-              <Home className="w-6 h-6 text-sage" />
+          <div className="flex items-center gap-4 mb-6">
+            <div className="p-3 bg-gradient-to-br from-sage to-sage-dark rounded-xl shadow-md">
+              <Home className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Essentials</h2>
-              <p className="text-muted-foreground">Get help with food, housing, and everyday needs.</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Essentials</h2>
+              <p className="text-muted-foreground text-lg">Get help with food, housing, and everyday needs.</p>
             </div>
           </div>
 
@@ -77,13 +80,13 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Well-Being Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-dusty-rose/10 rounded-lg">
-              <Heart className="w-6 h-6 text-dusty-rose" />
+          <div className="flex items-center gap-4 mb-6">
+            <div className="p-3 bg-gradient-to-br from-dusty-rose to-dusty-rose-dark rounded-xl shadow-md">
+              <Heart className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Well-Being</h2>
-              <p className="text-muted-foreground">Find support for emotional health, caregiving challenges, and serious illness.</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Well-Being</h2>
+              <p className="text-muted-foreground text-lg">Find support for emotional health, caregiving challenges, and serious illness.</p>
             </div>
           </div>
 
@@ -107,13 +110,13 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Community Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-primary/10 rounded-lg">
-              <Users className="w-6 h-6 text-primary" />
+          <div className="flex items-center gap-4 mb-6">
+            <div className="p-3 bg-gradient-to-br from-primary to-primary-contrast rounded-xl shadow-md">
+              <Users className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Community</h2>
-              <p className="text-muted-foreground">Join local programs and spaces that promote health, creativity, and connection.</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Community</h2>
+              <p className="text-muted-foreground text-lg">Join local programs and spaces that promote health, creativity, and connection.</p>
             </div>
           </div>
 
@@ -138,13 +141,13 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Learning Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-accent/10 rounded-lg">
-              <GraduationCap className="w-6 h-6 text-accent" />
+          <div className="flex items-center gap-4 mb-6">
+            <div className="p-3 bg-gradient-to-br from-accent to-accent-dark rounded-xl shadow-md">
+              <GraduationCap className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Learning</h2>
-              <p className="text-muted-foreground">Learn new skills and connect with local experts.</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Learning</h2>
+              <p className="text-muted-foreground text-lg">Learn new skills and connect with local experts.</p>
             </div>
           </div>
 
@@ -209,23 +212,26 @@ interface ResourceCardProps {
 
 function ResourceCard({ title, description, url }: ResourceCardProps): ReactElement {
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="bg-white border-sage/20 shadow-md hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-1">
       <CardHeader>
         <CardTitle className="flex items-start justify-between gap-2">
-          <span className="text-lg">{title}</span>
-          {url && <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-1" />}
+          <span className="text-lg font-bold">{title}</span>
+          {url && <ExternalLink className="w-5 h-5 text-sage flex-shrink-0 mt-1" />}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground mb-3">{description}</p>
+        <p className="text-muted-foreground mb-4 leading-relaxed">{description}</p>
         {url && (
           <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-primary hover:underline font-medium inline-flex items-center gap-1"
+            className="text-sage hover:text-sage-dark font-semibold inline-flex items-center gap-2 hover:underline transition-colors"
           >
             Visit Website
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </a>
         )}
       </CardContent>
