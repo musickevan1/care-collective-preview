@@ -156,17 +156,17 @@ export function FilterPanel({
           <Button
             key={status.value}
             variant={filters.status === status.value ? 'default' : 'outline'}
-            size="sm"
+            size="default"
             onClick={() => updateFilters({ status: status.value })}
             className="text-xs"
           >
             {status.label}
           </Button>
         ))}
-        
+
         <Button
           variant="outline"
-          size="sm"
+          size="default"
           onClick={() => setShowFilters(!showFilters)}
           className="ml-2"
           aria-expanded={showFilters}
@@ -233,7 +233,7 @@ export function FilterPanel({
                     <Button
                       key={urgency.value}
                       variant={filters.urgency === urgency.value ? 'default' : 'outline'}
-                      size="sm"
+                      size="default"
                       onClick={() => updateFilters({ urgency: urgency.value })}
                       className="text-xs"
                     >

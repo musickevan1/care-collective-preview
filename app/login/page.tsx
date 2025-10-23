@@ -100,7 +100,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
+    <main id="main-content" className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Button asChild variant="default" size="sm">

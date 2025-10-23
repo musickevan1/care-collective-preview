@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { MobileNav } from '@/components/MobileNav';
 import { LogoutButton } from '@/components/LogoutButton';
 import { ReadableModeToggle } from '@/components/ReadableModeToggle';
+import { SkipToContent } from '@/components/SkipToContent';
 import { 
   MessageCircle, 
   Heart, 
@@ -105,6 +106,7 @@ export function PlatformLayout({
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background">
+        <SkipToContent />
         {children}
       </div>
     );
@@ -112,6 +114,7 @@ export function PlatformLayout({
 
   return (
     <div className="min-h-screen bg-background">
+      <SkipToContent />
       {/* Main Header */}
       <header className="sticky top-0 z-40 w-full border-b bg-background shadow-sm">
         <div className="container mx-auto px-4">
@@ -256,7 +259,7 @@ export function PlatformLayout({
       )}
 
       {/* Main Content */}
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {children}
       </main>
 
