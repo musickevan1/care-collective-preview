@@ -282,11 +282,112 @@ export default function HomePage(): ReactElement {
 
               {/* Call to Action */}
               <div className="mt-12">
-                <Button asChild variant="default" size="lg">
-                  <Link href="/signup">
-                    Join Our Community
-                  </Link>
-                </Button>
+                <Link href="/signup" className="bg-sage-accessible text-white hover:bg-sage-dark px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 hover:shadow-lg min-h-[48px] inline-flex items-center justify-center">
+                  Join Our Community
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Resources Preview Section */}
+        <section id="resources-preview" className="py-16 md:py-20 bg-white">
+          <div className="container mx-auto px-4 max-w-7xl">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
+                Community Resources
+              </h2>
+              <p className="text-xl font-medium text-muted-foreground mb-12 max-w-3xl mx-auto">
+                Trusted local and regional organizations offering practical support
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                {/* Essentials */}
+                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+                  <div className="text-5xl mb-4">🏠</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Essentials</h3>
+                  <p className="text-muted-foreground">Food, housing, and everyday needs</p>
+                </div>
+
+                {/* Well-Being */}
+                <div className="text-center p-6 border-2 border-dusty-rose-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-dusty-rose transition-all">
+                  <div className="text-5xl mb-4">💖</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Well-Being</h3>
+                  <p className="text-muted-foreground">Emotional health and caregiving support</p>
+                </div>
+
+                {/* Community */}
+                <div className="text-center p-6 border-2 border-primary-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-primary transition-all">
+                  <div className="text-5xl mb-4">👥</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Community</h3>
+                  <p className="text-muted-foreground">Local programs and connections</p>
+                </div>
+
+                {/* Learning */}
+                <div className="text-center p-6 border-2 border-accent-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-accent transition-all">
+                  <div className="text-5xl mb-4">📚</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">Learning</h3>
+                  <p className="text-muted-foreground">Training and educational programs</p>
+                </div>
+              </div>
+
+              <div className="mt-12">
+                <Link href="/resources" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
+                  <span>View All Resources</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Preview Section */}
+        <section id="contact-preview" className="py-16 md:py-20 bg-gradient-to-br from-sage-light to-green-50">
+          <div className="container mx-auto px-4 max-w-7xl">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
+                Get in Touch
+              </h2>
+              <p className="text-xl font-medium text-muted-foreground mb-12 max-w-3xl mx-auto">
+                Have questions or feedback? We're here to help.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                {/* Email */}
+                <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-center mb-6">
+                    <div className="text-5xl mb-4">📧</div>
+                    <h3 className="text-2xl font-bold text-foreground mb-4">Email Us</h3>
+                  </div>
+                  <div className="text-center">
+                    <a href="mailto:swmocarecollective@gmail.com" className="text-lg text-sage hover:underline font-medium">
+                      swmocarecollective@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="text-center mb-6">
+                    <div className="text-5xl mb-4">📍</div>
+                    <h3 className="text-2xl font-bold text-foreground mb-4">Our Location</h3>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg text-foreground font-medium">Southwest Missouri</p>
+                    <p className="text-muted-foreground">Springfield, MO 65897</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-12">
+                <Link href="/contact" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[48px] group">
+                  <span>Get in Touch</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
               </div>
             </div>
           </div>
@@ -315,6 +416,8 @@ export default function HomePage(): ReactElement {
                 <li><Link href="/signup" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Join Community</Link></li>
                 <li><Link href="#contact" onClick={handleSmoothScroll} className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Contact Us</Link></li>
                 <li><Link href="/dashboard" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Member Portal</Link></li>
+                <li><Link href="/terms" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
