@@ -152,7 +152,9 @@ export default function SignUpPage() {
     <main className="min-h-screen bg-background flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="text-primary hover:text-primary/80 text-sm">← Back to Home</Link>
+          <Button asChild variant="default" size="sm">
+            <Link href="/">← Back to Home</Link>
+          </Button>
           <div className="flex justify-center mt-4 mb-4">
             <Image
               src="/logo.png"
