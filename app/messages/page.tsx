@@ -40,9 +40,22 @@ async function getUser() {
 
 async function getMessagingData(userId: string) {
   const supabase = await createClient();
-  
+
   try {
-    // Get user's conversations
+    // First, get conversation IDs where user is a participant
+    const { data: userConversations } = await supabase
+      .from('conversation_participants')
+      .select('conversation_id')
+      .eq('user_id', userId)
+      .is('left_at', null);
+
+    const conversationIds = userConversations?.map(uc => uc.conversation_id) || [];
+
+    if (conversationIds.length === 0) {
+      return { conversations: [], unreadCount: 0, activeConversations: 0 };
+    }
+
+    // Now get full conversation data with ALL participants
     const { data: conversations, error: conversationsError } = await supabase
       .from('conversations')
       .select(`
@@ -50,8 +63,9 @@ async function getMessagingData(userId: string) {
         help_request_id,
         last_message_at,
         created_at,
-        conversation_participants!inner (
+        conversation_participants (
           user_id,
+          left_at,
           profiles (
             id,
             name,
@@ -66,8 +80,7 @@ async function getMessagingData(userId: string) {
           status
         )
       `)
-      .eq('conversation_participants.user_id', userId)
-      .is('conversation_participants.left_at', null)
+      .in('id', conversationIds)
       .order('last_message_at', { ascending: false });
 
     if (conversationsError) {
@@ -89,9 +102,9 @@ async function getMessagingData(userId: string) {
     // Transform conversations for display
     const formattedConversations = await Promise.all(
       (conversations || []).map(async (conv) => {
-        // Get the other participant
+        // Get the other participant (exclude current user and those who left)
         const otherParticipant = conv.conversation_participants.find(
-          p => p.user_id !== userId
+          p => p.user_id !== userId && !p.left_at
         );
 
         // Get last message
