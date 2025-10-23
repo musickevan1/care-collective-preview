@@ -21,36 +21,269 @@ Care Collective: Mutual aid platform connecting community members for support an
 **Current Status**: Phase 2.3 (Admin Panel) - 85% success probability
 
 ### Git Workflow (MANDATORY)
-**CRITICAL**: After code changes:
-1. Always ask before committing/pushing
-2. Use descriptive messages with Claude Code attribution
-3. Never commit without explicit consent
 
-### Deployment System (MANDATORY)
-**CRITICAL - Production Domain Updates**: The main production URL (`https://care-collective-preview.vercel.app`) ONLY updates when explicitly deployed with `npx vercel --prod`. Regular git pushes create preview deployments but DO NOT update the main domain.
+**Branch Strategy** (Tier 1.5 - PR-Based Development):
+```
+main (production-ready)
+ └── develop (integration branch)
+      ├── feature/feature-name
+      ├── fix/bug-description
+      └── hotfix/urgent-fix
+```
 
-**Required Workflow After Every Code Change**:
+**Development Workflow**:
 ```bash
-# 1. Commit changes with descriptive message
-git add .
-git commit -m "feat: description 🤖 Generated with Claude Code"
+# 1. Create feature branch from develop
+git checkout develop
+git pull origin develop
+git checkout -b feature/messaging-encryption
 
-# 2. Push to main branch (creates preview deployment)
+# 2. Make changes, commit incrementally
+git add .
+git commit -m "feat: add message encryption service 🤖 Generated with Claude Code"
+
+# 3. Push feature branch
+git push -u origin feature/messaging-encryption
+
+# 4. Create Pull Request
+gh pr create \
+  --base develop \
+  --title "feat: Add message encryption" \
+  --body "$(cat <<'EOF'
+## Summary
+- Implements end-to-end encryption for sensitive messages
+- Adds privacy violation detection
+
+## Testing
+- [x] 80%+ test coverage
+- [x] Accessibility verified
+- [x] Type-check passes
+
+🤖 Generated with Claude Code
+EOF
+)"
+
+# 5. PR Review (Manual + AI Agent)
+# - Review against .claude/pr-review-checklist.md
+# - Automated checks run (type-check, lint, tests)
+# - AI agent reviews code quality, security, accessibility
+
+# 6. Merge to develop after approval
+gh pr merge --squash
+
+# 7. Deploy develop to staging for integration testing
+git checkout develop
+git pull origin develop
+npx vercel  # Creates preview deployment
+
+# 8. Merge develop to main for production
+gh pr create --base main --title "Release: vX.X.X"
+# After approval:
+git checkout main
+git merge develop
 git push origin main
 
-# 3. Deploy to production (REQUIRED to update main domain)
+# 9. Deploy to production
+npx vercel --prod
+```
+
+**Hotfix Workflow** (Urgent Production Fixes):
+```bash
+# For critical security/safety issues only
+git checkout main
+git checkout -b hotfix/security-patch
+# Make fix
+git commit -m "hotfix: patch security vulnerability"
+git push origin hotfix/security-patch
+gh pr create --base main  # Fast-track review
+# After approval:
+git checkout main
+git merge hotfix/security-patch
+git push origin main
+npx vercel --prod
+# Backport to develop:
+git checkout develop
+git merge main
+git push origin develop
+```
+
+**PR Review Process**:
+1. **Automated Checks** (Must Pass):
+   - `npm run type-check` (0 errors)
+   - `npm run lint` (0 warnings)
+   - `npm run test` (80%+ coverage)
+
+2. **AI Agent Review** (`.claude/pr-review-checklist.md`):
+   - Safety & Security (CRITICAL)
+   - Accessibility (WCAG 2.1 AA)
+   - Code Quality
+   - Testing Coverage
+   - Documentation
+
+3. **Human Review**:
+   - Final approval
+   - Business logic verification
+   - Community impact assessment
+
+**Git Rules**:
+- Always ask before committing/pushing
+- Use descriptive messages with Claude Code attribution
+- Never commit without explicit consent
+- Feature work goes through PR process
+- Only hotfixes bypass PR to main
+
+### Deployment System (MANDATORY)
+
+**CRITICAL - Production Domain Updates**: The main production URL (`https://care-collective-preview.vercel.app`) ONLY updates when explicitly deployed with `npx vercel --prod` from the `main` branch.
+
+**Deployment Environments**:
+- **Production** (`main` branch):
+  - URL: `https://care-collective-preview.vercel.app`
+  - Deploy: `npx vercel --prod` (from main)
+  - Trigger: After PR merge to main
+
+- **Staging** (`develop` branch):
+  - URL: Preview URL (auto-generated)
+  - Deploy: `npx vercel` (from develop)
+  - Trigger: After PR merge to develop
+
+- **Feature Preview** (feature branches):
+  - URL: Preview URL (auto-generated)
+  - Deploy: Automatic on push
+  - Trigger: Any push to feature branch
+
+**Production Deployment Checklist**:
+```bash
+# 1. Verify develop is ready for production
+git checkout develop
+npm run type-check  # Must pass
+npm run lint        # Must pass
+npm run test        # Must pass
+npm run build       # Must pass
+
+# 2. Create release PR
+gh pr create --base main --title "Release: v1.2.3" --body "$(cat <<'EOF'
+## Release Notes
+- Feature: Message encryption
+- Fix: Accessibility improvements
+- Security: RLS policy updates
+
+## Pre-deployment Checklist
+- [x] All tests pass
+- [x] Type-check passes
+- [x] Build succeeds
+- [x] Database migrations ready
+- [x] Environment variables configured
+
+🤖 Generated with Claude Code
+EOF
+)"
+
+# 3. After PR approval, merge and deploy
+git checkout main
+git merge develop
+git push origin main
 npx vercel --prod
 
 # 4. Verify production deployment
-npx vercel inspect <deployment-url> --logs
+npx vercel inspect $(npx vercel ls --prod | head -n1) --logs
+
+# 5. Tag release
+git tag -a v1.2.3 -m "Release v1.2.3"
+git push origin v1.2.3
 ```
 
-**Branch Strategy**:
-- **main** - Production branch, always push here for production updates
-- All commits to `main` should be immediately deployed with `npx vercel --prod`
-- Preview deployments (musickevan1s-projects.vercel.app URLs) are automatic but NOT production
-
 **NEVER skip `npx vercel --prod`** - Without it, the main domain will show old code!
+
+### Multi-Agent Workflow (RECOMMENDED)
+
+**Agent Roles**:
+
+1. **Orchestrator Agent** (Planning & Delegation):
+   - Reads `docs/context-engineering/master-plan.md`
+   - Breaks down phase goals into tasks
+   - Delegates to specialist agents in parallel
+   - Coordinates work across agents
+
+2. **Feature Agent** (Implementation):
+   - Implements new features
+   - Validates against Zod schemas
+   - Ensures TypeScript compliance
+   - Follows CLAUDE.md patterns
+
+3. **Testing Agent** (Quality Assurance):
+   - Writes comprehensive tests
+   - Maintains 80%+ coverage
+   - Tests accessibility (WCAG 2.1 AA)
+   - Verifies mobile responsiveness
+
+4. **Security Agent** (Safety & Privacy):
+   - Audits RLS policies
+   - Reviews privacy compliance
+   - Checks input validation
+   - Scans for exposed secrets
+
+5. **Documentation Agent** (Knowledge Management):
+   - Updates CLAUDE.md
+   - Creates session summaries
+   - Documents API changes
+   - Maintains phase plans
+
+6. **PR Review Agent** (Quality Gate):
+   - Reviews against `.claude/pr-review-checklist.md`
+   - Runs automated checks
+   - Provides detailed feedback
+   - Recommends approve/reject
+
+**Parallel Agent Execution** (CRITICAL):
+```typescript
+// ✅ EFFICIENT: Single message with multiple Task calls
+// All agents run in parallel, maximizing speed
+[
+  Task(Feature Agent): "Implement message encryption",
+  Task(Testing Agent): "Write tests for encryption service",
+  Task(Security Agent): "Audit encryption implementation",
+  Task(Docs Agent): "Update CLAUDE.md with encryption patterns"
+]
+
+// ❌ INEFFICIENT: Sequential execution
+// Agents run one by one, wasting time
+[Task(Feature Agent): "Implement"] → Wait → [Task(Testing Agent): "Test"]
+```
+
+**Example Multi-Agent Workflow**:
+```bash
+# User Request: "Add message encryption feature"
+
+# 1. Orchestrator breaks down task
+Tasks:
+- Implement ContactEncryptionService extension
+- Add encryption to message sending flow
+- Create encryption tests
+- Update RLS policies
+- Document encryption patterns
+
+# 2. Parallel agent execution (SINGLE message)
+[
+  Task(Feature Agent): "Implement encryption service and message flow",
+  Task(Testing Agent): "Write comprehensive encryption tests",
+  Task(Security Agent): "Audit RLS policies and privacy compliance",
+  Task(Docs Agent): "Update CLAUDE.md with encryption examples"
+]
+
+# 3. PR Review Agent evaluates
+- Runs: npm run type-check, lint, test
+- Reviews code against checklist
+- Posts detailed PR comments
+- Recommends: "Approve - all checks pass"
+
+# 4. Human final review and merge
+```
+
+**Workflow Documentation**:
+- PR Process: `.claude/workflows/pr-workflow.md`
+- Multi-Agent Guide: `.claude/workflows/multi-agent-guide.md`
+- PR Review Checklist: `.claude/pr-review-checklist.md`
 
 ### Domain Context
 - **Help Requests**: Core entity, validate thoroughly
@@ -94,6 +327,12 @@ npx vercel inspect <deployment-url> --logs
 
 ```
 care-collective-preview/
+├── .claude/               # Claude Code configuration
+│   ├── workflows/         # Development workflows
+│   │   ├── pr-workflow.md          # PR process guide
+│   │   └── multi-agent-guide.md    # Multi-agent delegation guide
+│   ├── pr-review-checklist.md      # PR review criteria
+│   └── settings.local.json         # Local settings
 ├── app/                    # Next.js App Router
 │   ├── auth/, dashboard/, requests/, admin/, messages/, privacy/
 ├── components/            # UI components
@@ -103,6 +342,7 @@ care-collective-preview/
 │   ├── database.types.ts, features.ts, utils.ts
 ├── docs/                  # Documentation
 │   ├── context-engineering/, development/, database/, security/
+│   ├── sessions/          # Development session logs
 ├── PROJECT_STATUS.md      # Current status
 └── supabase/              # Database schema
 ```
