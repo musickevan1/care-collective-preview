@@ -103,8 +103,8 @@ export default function NewRequestPage() {
         description: description.trim() || null,
         category,
         urgency,
-        locationOverride: locationOverride.trim() || null,
-        locationPrivacy
+        location_override: locationOverride.trim() || null,
+        location_privacy: locationPrivacy
       }
 
       const validatedData = helpRequestSchema.parse(formData)
@@ -393,13 +393,13 @@ export default function NewRequestPage() {
                   placeholder="e.g., Downtown, ZIP 65802, or specific address"
                   disabled={loading}
                   maxLength={100}
-                  className={fieldErrors.locationOverride ? 'border-red-500' : ''}
+                  className={fieldErrors.location_override ? 'border-red-500' : ''}
                 />
                 <p className="text-xs text-muted-foreground">
                   Override your profile location for this specific request if needed
                 </p>
-                {fieldErrors.locationOverride && (
-                  <p className="text-sm text-red-600">{fieldErrors.locationOverride}</p>
+                {fieldErrors.location_override && (
+                  <p className="text-sm text-red-600">{fieldErrors.location_override}</p>
                 )}
               </div>
 
