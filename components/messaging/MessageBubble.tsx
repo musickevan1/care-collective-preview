@@ -33,6 +33,9 @@ interface MessageBubbleProps {
   onHeightMeasured?: (height: number) => void
   showSenderName?: boolean
   className?: string
+  showThreadIndicator?: boolean
+  compact?: boolean
+  onThreadOpen?: () => void
 }
 
 /**
@@ -48,6 +51,9 @@ export function MessageBubble({
   onHeightMeasured,
   showSenderName = true,
   className,
+  showThreadIndicator = false, // eslint-disable-line @typescript-eslint/no-unused-vars
+  compact = false, // eslint-disable-line @typescript-eslint/no-unused-vars
+  onThreadOpen, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: MessageBubbleProps): ReactElement {
   const messageRef = useRef<HTMLDivElement>(null)
 
