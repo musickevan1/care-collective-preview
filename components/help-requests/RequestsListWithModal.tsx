@@ -191,7 +191,7 @@ export function RequestsListWithModal({
                 <div className="mt-4 pt-4 border-t">
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="default"
                     className="w-full"
                     onClick={(e) => {
                       e.stopPropagation() // Prevent card click
