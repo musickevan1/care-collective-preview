@@ -93,6 +93,23 @@ export async function POST(
 
     const supabase = createClient();
 
+    // Check user's verification status first (required by RLS policies)
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('verification_status')
+      .eq('id', user.id)
+      .single();
+
+    if (!userProfile || userProfile.verification_status !== 'approved') {
+      return NextResponse.json(
+        {
+          error: 'Your account must be approved to offer help. Please complete the verification process.',
+          requiresApproval: true
+        },
+        { status: 403 }
+      );
+    }
+
     // Fetch help request details first to get the recipient
     const { data: helpRequest, error: helpError } = await supabase
       .from('help_requests')
@@ -115,8 +132,20 @@ export async function POST(
       .single();
 
     if (helpError || !helpRequest) {
+      // Log the actual error for debugging
+      console.error('Help request fetch error:', {
+        helpRequestId,
+        userId: user.id,
+        error: helpError,
+        message: helpError?.message,
+        code: helpError?.code
+      });
+
       return NextResponse.json(
-        { error: 'Help request not found' },
+        {
+          error: 'Help request not found or you do not have access to view it',
+          details: process.env.NODE_ENV === 'development' ? helpError?.message : undefined
+        },
         { status: 404 }
       );
     }
