@@ -52,6 +52,12 @@ npx vercel inspect <deployment-url> --logs
 
 **NEVER skip `npx vercel --prod`** - Without it, the main domain will show old code!
 
+**Service Worker Cache Busting** (AUTOMATED):
+- `npm run build` automatically updates service worker cache version via `prebuild` hook
+- This ensures users always see the latest deployment, not cached versions
+- Network-first strategy for HTML pages guarantees fresh content
+- Cache-first only for static assets with content hashes (JS, CSS, images)
+
 ### Domain Context
 - **Help Requests**: Core entity, validate thoroughly
 - **Contact Exchange**: Privacy-first, explicit consent required
