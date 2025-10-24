@@ -261,9 +261,40 @@ export function MessagingDashboard({
         schema: 'public',
         table: 'messages',
         filter: `conversation_id=eq.${selectedConversation}`
-      }, () => {
-        // Reload messages when new message arrives
-        loadMessages(selectedConversation)
+      }, async (payload) => {
+        // Efficiently append new message instead of reloading entire conversation
+        const newMessage = payload.new as any
+
+        // Fetch full message with sender/recipient profiles
+        const { data: messageWithProfiles, error } = await supabase
+          .from('messages')
+          .select(`
+            *,
+            sender:profiles!messages_sender_id_fkey(id, name, location),
+            recipient:profiles!messages_recipient_id_fkey(id, name, location)
+          `)
+          .eq('id', newMessage.id)
+          .single()
+
+        if (!error && messageWithProfiles) {
+          setMessageThread(prev => {
+            // Deduplicate: check if message already exists
+            const exists = prev.messages.some(msg => msg.id === messageWithProfiles.id)
+            if (exists) {
+              console.debug(`Skipping duplicate message in dashboard: ${messageWithProfiles.id}`)
+              return prev
+            }
+
+            return {
+              ...prev,
+              messages: [...prev.messages, messageWithProfiles]
+            }
+          })
+        } else {
+          // Fallback to full reload if fetch fails
+          console.warn('Failed to fetch new message, reloading conversation:', error)
+          loadMessages(selectedConversation)
+        }
       })
       .subscribe()
 

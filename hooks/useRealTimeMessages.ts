@@ -649,11 +649,6 @@ export function useRealTimeMessages(
       }, async (payload) => {
         const newMessage = payload.new as any;
 
-        // Don't add messages we just sent (avoid duplicates)
-        if (newMessage.sender_id === userId && newMessage.id === lastMessageIdRef.current) {
-          return;
-        }
-
         // Get sender info
         const { data: sender } = await supabase
           .from('profiles')
@@ -690,13 +685,24 @@ export function useRealTimeMessages(
           }
         }
 
-        setState(prev => ({
-          ...prev,
-          messages: [...prev.messages, processedMessage],
-          unreadCount: newMessage.recipient_id === userId
-            ? prev.unreadCount + 1
-            : prev.unreadCount
-        }));
+        // Add message to state with deduplication check
+        // This prevents duplicates from race conditions, network lag, and offline sync
+        setState(prev => {
+          // Check if message already exists by ID
+          const messageExists = prev.messages.some(msg => msg.id === newMessage.id);
+          if (messageExists) {
+            console.debug(`Skipping duplicate message: ${newMessage.id}`);
+            return prev; // Skip duplicate, return unchanged state
+          }
+
+          return {
+            ...prev,
+            messages: [...prev.messages, processedMessage],
+            unreadCount: newMessage.recipient_id === userId
+              ? prev.unreadCount + 1
+              : prev.unreadCount
+          };
+        });
 
         lastMessageIdRef.current = newMessage.id;
       })

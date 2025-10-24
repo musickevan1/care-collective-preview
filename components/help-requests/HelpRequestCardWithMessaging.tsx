@@ -6,6 +6,7 @@
 'use client';
 
 import { ReactElement, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -63,6 +64,7 @@ export function HelpRequestCardWithMessaging({
   currentUserId,
   onConversationStarted
 }: HelpRequestCardWithMessagingProps): ReactElement {
+  const router = useRouter();
   const [showOfferDialog, setShowOfferDialog] = useState(false);
   const [offerMessage, setOfferMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -156,10 +158,10 @@ export function HelpRequestCardWithMessaging({
         setShowOfferDialog(false);
         setSuccess(false);
         setOfferMessage('');
-        
-        // Redirect to messaging with the specific conversation
+
+        // Navigate to messaging with the specific conversation
         if (window.confirm('Would you like to go to your messages to continue the conversation?')) {
-          window.location.href = `/messages?conversation=${data.conversation.id}`;
+          router.push(`/messages?conversation=${data.conversation.id}`);
         }
       }, 2000);
 
@@ -268,10 +270,10 @@ export function HelpRequestCardWithMessaging({
                   Offer Help
                 </Button>
               ) : isOwnRequest ? (
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="sm"
-                  onClick={() => window.location.href = `/messages?help_request=${request.id}`}
+                  onClick={() => router.push(`/messages?help_request=${request.id}`)}
                   className="flex items-center gap-2 border-sage/30 text-sage hover:bg-sage/5"
                 >
                   <MessageCircle className="w-4 h-4" />
