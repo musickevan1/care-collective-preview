@@ -111,6 +111,7 @@ export async function POST(
     }
 
     // Fetch help request details first to get the recipient
+    // Use explicit foreign key name to avoid ambiguity (help_requests has both user_id and helper_id)
     const { data: helpRequest, error: helpError } = await supabase
       .from('help_requests')
       .select(`
@@ -122,7 +123,7 @@ export async function POST(
         urgency,
         status,
         created_at,
-        profiles (
+        owner:profiles!user_id (
           id,
           name,
           location
