@@ -567,15 +567,30 @@ export class MessagingClient {
 
   private async getConversationRecipient(conversationId: string, senderId: string): Promise<string | null> {
     const supabase = await this.getClient();
-    const { data: participants } = await supabase
+    const { data: participants, error } = await supabase
       .from('conversation_participants')
       .select('user_id')
       .eq('conversation_id', conversationId)
       .neq('user_id', senderId)
-      .is('left_at', null)
-      .single();
+      .is('left_at', null);
 
-    return participants?.user_id || null;
+    if (error) {
+      console.error('Error fetching conversation participants:', error);
+      return null;
+    }
+
+    if (!participants || participants.length === 0) {
+      // No other participants in conversation
+      return null;
+    }
+
+    // For 1-to-1 conversations, return the single recipient
+    // For group conversations, return first participant (message visible to all via conversation_id)
+    if (participants.length > 1) {
+      console.warn(`Group conversation detected (${conversationId}) with ${participants.length} participants. Using first participant as recipient_id.`);
+    }
+
+    return participants[0].user_id;
   }
 
   private async canUserMessage(senderId: string, recipientId: string): Promise<boolean> {

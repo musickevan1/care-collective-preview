@@ -29,29 +29,9 @@ export function RequestActions({
   const router = useRouter()
   const supabase = createClient()
 
-  const handleOfferHelp = async () => {
-    setLoading(true)
-    setError(null)
-    
-    const { error } = await supabase
-      .from('help_requests')
-      .update({
-        helper_id: userId,
-        status: 'in_progress',
-        helped_at: new Date().toISOString()
-      })
-      .eq('id', request.id)
-      .eq('status', 'open') // Ensure it's still open
-    
-    if (error) {
-      setError('Failed to offer help. Please try again.')
-      console.error('Error offering help:', error)
-    } else {
-      router.refresh()
-    }
-    
-    setLoading(false)
-  }
+  // NOTE: "Offer to Help" functionality has been moved to HelpRequestCardWithMessaging
+  // to ensure proper conversation creation. This component now only handles status updates
+  // for existing help relationships.
 
   const handleCompleteRequest = async () => {
     setLoading(true)
@@ -158,17 +138,8 @@ export function RequestActions({
       )}
       
       <div className="flex flex-wrap gap-3">
-        {/* Offer to help button */}
-        {canHelp && (
-          <Button 
-            onClick={handleOfferHelp}
-            disabled={loading}
-            size="lg"
-            className="flex-1 sm:flex-none"
-          >
-            {loading ? 'Processing...' : 'Offer to Help'}
-          </Button>
-        )}
+        {/* "Offer to Help" button removed - use HelpRequestCardWithMessaging instead */}
+        {/* This ensures proper conversation creation through the messaging system */}
 
         {/* Helper actions */}
         {isHelper && request.status === 'in_progress' && (
@@ -237,6 +208,9 @@ export function RequestActions({
 
       {/* Status explanations */}
       <div className="text-sm text-muted-foreground">
+        {request.status === 'open' && !isOwner && canHelp && (
+          <p>To offer help, use the &quot;Offer Help&quot; button on the request card above to start a conversation.</p>
+        )}
         {request.status === 'open' && !isOwner && !canHelp && (
           <p>This request is open for helpers to offer assistance.</p>
         )}
