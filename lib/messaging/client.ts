@@ -190,14 +190,21 @@ export class MessagingClient {
   ): Promise<Conversation> {
     const validated = messagingValidation.createConversation.parse(params);
 
-    // Check if user can message the recipient
-    const canMessage = await this.canUserMessage(creatorId, validated.recipient_id);
-    if (!canMessage) {
-      throw new MessagingError(
-        'You cannot message this user based on their privacy settings',
-        MESSAGING_ERRORS.PERMISSION_DENIED,
-        { creatorId, recipientId: validated.recipient_id }
-      );
+    // CRITICAL FIX: Help request conversations bypass privacy settings
+    // This allows users to offer help on any open help request, regardless of the recipient's privacy preferences
+    // Direct messages (non-help-request) still require privacy check
+    const isHelpRequestConversation = !!validated.help_request_id;
+
+    if (!isHelpRequestConversation) {
+      // Only check privacy settings for direct messages
+      const canMessage = await this.canUserMessage(creatorId, validated.recipient_id);
+      if (!canMessage) {
+        throw new MessagingError(
+          'You cannot message this user based on their privacy settings',
+          MESSAGING_ERRORS.PERMISSION_DENIED,
+          { creatorId, recipientId: validated.recipient_id }
+        );
+      }
     }
 
     const supabase = await this.getClient();
@@ -603,15 +610,43 @@ export class MessagingClient {
       case 'anyone':
         return true;
       case 'help_connections':
-        // Check if users have interacted through help requests
+        // FIXED: Check if users have existing help request-based conversations
+        // This implements the logic that was previously incomplete (empty array)
         const supabase = await this.getClient();
+
+        // Step 1: Get all conversations where sender is a participant
+        const { data: senderConversations } = await supabase
+          .from('conversation_participants')
+          .select('conversation_id')
+          .eq('user_id', senderId)
+          .is('left_at', null);
+
+        if (!senderConversations || senderConversations.length === 0) {
+          return false;
+        }
+
+        const senderConvIds = senderConversations.map(c => c.conversation_id);
+
+        // Step 2: Get all conversations where recipient is a participant AND in sender's conversations
+        const { data: recipientConversations } = await supabase
+          .from('conversation_participants')
+          .select('conversation_id')
+          .eq('user_id', recipientId)
+          .in('conversation_id', senderConvIds)
+          .is('left_at', null);
+
+        if (!recipientConversations || recipientConversations.length === 0) {
+          return false;
+        }
+
+        // Step 3: Check if any shared conversation is help request-based
+        const sharedConvIds = recipientConversations.map(c => c.conversation_id);
         const { count } = await supabase
           .from('conversations')
           .select('id', { count: 'exact' })
-          .not('help_request_id', 'is', null)
-          .in('id', [
-            // Subquery to find conversations where both users are participants
-          ]);
+          .in('id', sharedConvIds)
+          .not('help_request_id', 'is', null);
+
         return (count || 0) > 0;
       default:
         return false;
