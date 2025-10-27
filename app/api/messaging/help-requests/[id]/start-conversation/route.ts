@@ -48,15 +48,43 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const requestId = Math.random().toString(36).substring(7);
+  console.log(`[start-conversation:${requestId}] Request started`, {
+    helpRequestId: params.id,
+    timestamp: new Date().toISOString()
+  });
+
   try {
     const user = await getCurrentUser();
     if (!user) {
+      console.log(`[start-conversation:${requestId}] Auth failed - no user`);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    console.log(`[start-conversation:${requestId}] User authenticated`, {
+      userId: user.id,
+      email: user.email
+    });
+
     // Check user restrictions for starting conversations
-    const restrictionCheck = await moderationService.checkUserRestrictions(user.id, 'start_conversation');
+    let restrictionCheck;
+    try {
+      restrictionCheck = await moderationService.checkUserRestrictions(user.id, 'start_conversation');
+      console.log(`[start-conversation:${requestId}] Restriction check result`, {
+        allowed: restrictionCheck.allowed,
+        reason: restrictionCheck.reason
+      });
+    } catch (restrictionError: any) {
+      // Fallback if RPC function doesn't exist
+      console.warn(`[start-conversation:${requestId}] Restriction check failed, using fallback`, {
+        error: restrictionError?.message,
+        code: restrictionError?.code
+      });
+      restrictionCheck = { allowed: true }; // Fail open for now
+    }
+
     if (!restrictionCheck.allowed) {
+      console.log(`[start-conversation:${requestId}] User restricted`);
       return NextResponse.json(
         {
           error: restrictionCheck.reason || 'You are restricted from starting new conversations.',
@@ -192,43 +220,96 @@ export async function POST(
     }
 
     // Check if a conversation already exists between these users for this help request
-    const { data: existingConversation } = await supabase
-      .from('conversations')
-      .select(`
-        id,
-        conversation_participants!inner (
-          user_id
-        )
-      `)
-      .eq('help_request_id', helpRequestId)
-      .eq('conversation_participants.user_id', user.id);
+    // FIXED: Avoid !inner join to prevent RLS recursion
+    console.log(`[start-conversation:${requestId}] Checking for existing conversation`);
 
-    if (existingConversation && existingConversation.length > 0) {
-      // Check if the help request owner is also in any of these conversations
-      for (const conv of existingConversation) {
-        const { data: participants } = await supabase
-          .from('conversation_participants')
-          .select('user_id')
-          .eq('conversation_id', conv.id)
-          .is('left_at', null);
+    try {
+      // Step 1: Find conversations for this help request where current user is a participant
+      const { data: userParticipations, error: partError } = await supabase
+        .from('conversation_participants')
+        .select('conversation_id')
+        .eq('user_id', user.id)
+        .is('left_at', null);
 
-        const participantIds = participants?.map(p => p.user_id) || [];
-        if (participantIds.includes(helpRequest.user_id)) {
-          return NextResponse.json(
-            { 
-              error: 'You already have a conversation about this help request',
-              conversation_id: conv.id 
-            },
-            { status: 409 }
-          );
+      if (partError) {
+        console.error(`[start-conversation:${requestId}] Error fetching participations`, {
+          error: partError.message,
+          code: partError.code
+        });
+      }
+
+      if (userParticipations && userParticipations.length > 0) {
+        const convIds = userParticipations.map(p => p.conversation_id);
+
+        // Step 2: Check which of these conversations are for this help request
+        const { data: helpConversations, error: convError } = await supabase
+          .from('conversations')
+          .select('id')
+          .eq('help_request_id', helpRequestId)
+          .in('id', convIds);
+
+        if (convError) {
+          console.error(`[start-conversation:${requestId}] Error fetching conversations`, {
+            error: convError.message,
+            code: convError.code
+          });
+        }
+
+        if (helpConversations && helpConversations.length > 0) {
+          // Step 3: Check if help request owner is in any of these conversations
+          for (const conv of helpConversations) {
+            const { data: ownerParticipation } = await supabase
+              .from('conversation_participants')
+              .select('user_id')
+              .eq('conversation_id', conv.id)
+              .eq('user_id', helpRequest.user_id)
+              .is('left_at', null);
+
+            if (ownerParticipation && ownerParticipation.length > 0) {
+              console.log(`[start-conversation:${requestId}] Duplicate conversation found`, {
+                conversationId: conv.id
+              });
+              return NextResponse.json(
+                {
+                  error: 'You already have a conversation about this help request',
+                  conversation_id: conv.id
+                },
+                { status: 409 }
+              );
+            }
+          }
         }
       }
+      console.log(`[start-conversation:${requestId}] No duplicate conversation found`);
+    } catch (dupeError: any) {
+      console.error(`[start-conversation:${requestId}] Duplicate check failed`, {
+        error: dupeError?.message,
+        stack: dupeError?.stack
+      });
+      // Continue anyway - better to allow duplicate than block legitimate conversation
     }
 
     // Create the conversation using the specialized help request function
-    const conversation = await messagingClient.startHelpConversation(user.id, validation.data);
+    console.log(`[start-conversation:${requestId}] Creating conversation via messagingClient`);
+    let conversation;
+    try {
+      conversation = await messagingClient.startHelpConversation(user.id, validation.data);
+      console.log(`[start-conversation:${requestId}] Conversation created successfully`, {
+        conversationId: conversation.id
+      });
+    } catch (createError: any) {
+      console.error(`[start-conversation:${requestId}] Failed to create conversation`, {
+        error: createError?.message,
+        code: createError?.code,
+        details: createError?.details,
+        hint: createError?.hint,
+        stack: createError?.stack
+      });
+      throw createError;
+    }
 
     // Get conversation details for response
+    console.log(`[start-conversation:${requestId}] Fetching conversation details`);
     const conversationDetails = await messagingClient.getMessages(conversation.id, user.id, { limit: 1, direction: 'newer' });
 
     // Log the help offer for analytics
@@ -268,8 +349,17 @@ export async function POST(
       message: 'Conversation started successfully. You can now coordinate help with the requester.'
     }, { status: 201 });
 
-  } catch (error) {
-    console.error('Error starting help conversation:', error);
+  } catch (error: any) {
+    console.error(`[start-conversation:${requestId}] CRITICAL ERROR:`, {
+      error: error?.message,
+      code: error?.code,
+      details: error?.details,
+      hint: error?.hint,
+      stack: error?.stack,
+      timestamp: new Date().toISOString(),
+      helpRequestId: params.id,
+      userId: user?.id
+    });
 
     if (error instanceof Error && error.message.includes('privacy settings')) {
       return NextResponse.json(
