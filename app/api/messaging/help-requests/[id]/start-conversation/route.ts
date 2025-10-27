@@ -344,7 +344,7 @@ export async function POST(
         title: helpRequest.title,
         category: helpRequest.category,
         urgency: helpRequest.urgency,
-        requester: helpRequest.profiles
+        requester: helpRequest.owner
       },
       message: 'Conversation started successfully. You can now coordinate help with the requester.'
     }, { status: 201 });

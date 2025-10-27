@@ -1,0 +1,10 @@
+- [ ] Split up /about /contact /resources pages into sections Resources / About Us / Contact Us and place on the home page (if they are too long we can consider a preview section on home page then link to full section [ideally fit all on homepage though])
+- [ ] Add terms of use / privacy & safety sections at bottom of homepage or link to them on footer
+- [ ] Ensure scroll animation consistency with new sections
+- [ ] Reorder navbar respectively
+- [ ] Make "Join Our Community" button at the bottom of /home page visible with teal bg
+- [ ] Add a X close button for the diagnostic mode debug panel to close
+- [ ] Remove "Readable" button / feature
+- [ ] Fix / clean up the Advanced filtering for requests
+- [ ] When in the "New Request" page, the container to the right of the CARE Collective on the header shows the page endpoints as "/Help Requests / New Request " which is redundant, remove "/Help Requests" so it just shows "/New Request" and doesnt clutter the navbar
+- [ ] On a users dashboard, let's add a section next to "Recent Community Activity" for users specific activity showing their current help requests 
