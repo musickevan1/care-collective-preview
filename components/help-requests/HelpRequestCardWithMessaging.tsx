@@ -148,10 +148,16 @@ export function HelpRequestCardWithMessaging({
       }
 
       const data = await response.json();
+
+      // API now returns simplified response with conversation_id
+      if (!data.success || !data.conversation_id) {
+        throw new Error('Failed to create conversation');
+      }
+
       setSuccess(true);
-      
+
       // Notify parent component
-      onConversationStarted?.(data.conversation.id);
+      onConversationStarted?.(data.conversation_id);
 
       // Close dialog after success
       setTimeout(() => {
@@ -161,7 +167,7 @@ export function HelpRequestCardWithMessaging({
 
         // Navigate to messaging with the specific conversation
         if (window.confirm('Would you like to go to your messages to continue the conversation?')) {
-          router.push(`/messages?conversation=${data.conversation.id}`);
+          router.push(`/messages?conversation=${data.conversation_id}`);
         }
       }, 2000);
 

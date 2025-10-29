@@ -308,26 +308,6 @@ export async function POST(
       throw createError;
     }
 
-    // Get conversation details for response
-    console.log(`[start-conversation:${requestId}] Fetching conversation details`);
-    let conversationDetails;
-    try {
-      conversationDetails = await messagingClient.getMessages(conversation.id, user.id, { limit: 1, direction: 'newer' });
-      console.log(`[start-conversation:${requestId}] Got conversation details`, {
-        hasConversation: !!conversationDetails?.conversation,
-        conversationId: conversationDetails?.conversation?.id,
-        messageCount: conversationDetails?.messages?.length || 0
-      });
-    } catch (detailsError: any) {
-      console.error(`[start-conversation:${requestId}] Failed to get conversation details`, {
-        error: detailsError?.message,
-        code: detailsError?.code,
-        conversationId: conversation.id
-      });
-      // Continue with fallback - conversation was created successfully
-      conversationDetails = null;
-    }
-
     // Log the help offer for analytics
     console.log('Help conversation started:', {
       conversationId: conversation.id,
@@ -353,26 +333,13 @@ export async function POST(
         .eq('id', helpRequestId);
     }
 
-    // Build response with defensive checks and fallback values
-    const responseConversation = conversationDetails?.conversation || {
-      id: conversation.id,
-      help_request_id: helpRequestId,
-      created_at: new Date().toISOString(),
-      participants: [],
-      help_request: null,
-      last_message: null,
-      unread_count: 0
-    };
+    console.log(`[start-conversation:${requestId}] Conversation created successfully, returning minimal response`);
 
+    // Return minimal response - client will fetch full details after redirect
     return NextResponse.json({
-      conversation: responseConversation,
-      help_request: {
-        id: helpRequest.id,
-        title: helpRequest.title,
-        category: helpRequest.category,
-        urgency: helpRequest.urgency,
-        requester: helpRequest.owner || null
-      },
+      success: true,
+      conversation_id: conversation.id,
+      help_request_id: helpRequestId,
       message: 'Conversation started successfully. You can now coordinate help with the requester.'
     }, { status: 201 });
 
