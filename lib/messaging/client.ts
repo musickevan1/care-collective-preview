@@ -264,58 +264,106 @@ export class MessagingClient {
     senderId: string,
     params: z.infer<typeof messagingValidation.sendMessage>
   ): Promise<Message> {
-    const validated = messagingValidation.sendMessage.parse(params);
+    const requestId = Math.random().toString(36).substring(7);
+    console.log(`[sendMessage:${requestId}] Starting`, {
+      senderId,
+      conversationId: params.conversation_id,
+      contentLength: params.content?.length
+    });
 
-    // Verify conversation access
-    const hasAccess = await this.verifyConversationAccess(validated.conversation_id, senderId);
-    if (!hasAccess) {
-      throw new MessagingError(
-        'You do not have access to this conversation',
-        MESSAGING_ERRORS.PERMISSION_DENIED,
-        { conversationId: validated.conversation_id, senderId }
-      );
+    try {
+      const validated = messagingValidation.sendMessage.parse(params);
+      console.log(`[sendMessage:${requestId}] Validation passed`);
+
+      // Verify conversation access
+      console.log(`[sendMessage:${requestId}] Checking conversation access`);
+      const hasAccess = await this.verifyConversationAccess(validated.conversation_id, senderId);
+      console.log(`[sendMessage:${requestId}] Access check result`, { hasAccess });
+
+      if (!hasAccess) {
+        console.error(`[sendMessage:${requestId}] Access denied`);
+        throw new MessagingError(
+          'You do not have access to this conversation',
+          MESSAGING_ERRORS.PERMISSION_DENIED,
+          { conversationId: validated.conversation_id, senderId }
+        );
+      }
+
+      // Get recipient ID
+      console.log(`[sendMessage:${requestId}] Getting recipient ID`);
+      const recipientId = await this.getConversationRecipient(validated.conversation_id, senderId);
+      console.log(`[sendMessage:${requestId}] Recipient ID`, { recipientId });
+
+      if (!recipientId) {
+        console.error(`[sendMessage:${requestId}] No recipient found`);
+        throw new MessagingError(
+          'Could not determine message recipient',
+          MESSAGING_ERRORS.CONVERSATION_NOT_FOUND,
+          { conversationId: validated.conversation_id }
+        );
+      }
+
+      const supabase = await this.getClient();
+      console.log(`[sendMessage:${requestId}] Getting help request ID`);
+
+      // Get help request ID if this conversation is related to one
+      const { data: conversation, error: convError } = await supabase
+        .from('conversations')
+        .select('help_request_id')
+        .eq('id', validated.conversation_id)
+        .single();
+
+      if (convError) {
+        console.error(`[sendMessage:${requestId}] Error fetching conversation`, {
+          error: convError.message,
+          code: convError.code
+        });
+      }
+      console.log(`[sendMessage:${requestId}] Help request ID`, {
+        helpRequestId: conversation?.help_request_id
+      });
+
+      console.log(`[sendMessage:${requestId}] Inserting message`);
+      const { data: message, error } = await supabase
+        .from('messages')
+        .insert({
+          conversation_id: validated.conversation_id,
+          sender_id: senderId,
+          recipient_id: recipientId,
+          help_request_id: conversation?.help_request_id,
+          content: validated.content,
+          message_type: validated.message_type,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error(`[sendMessage:${requestId}] Message insert failed`, {
+          error: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint
+        });
+        throw new MessagingError(
+          `Failed to send message: ${error.message}`,
+          MESSAGING_ERRORS.INVALID_INPUT,
+          params
+        );
+      }
+
+      console.log(`[sendMessage:${requestId}] Message sent successfully`, {
+        messageId: message.id
+      });
+      return message;
+
+    } catch (error: any) {
+      console.error(`[sendMessage:${requestId}] CRITICAL ERROR`, {
+        error: error?.message,
+        stack: error?.stack,
+        code: error?.code
+      });
+      throw error;
     }
-
-    // Get recipient ID
-    const recipientId = await this.getConversationRecipient(validated.conversation_id, senderId);
-    if (!recipientId) {
-      throw new MessagingError(
-        'Could not determine message recipient',
-        MESSAGING_ERRORS.CONVERSATION_NOT_FOUND,
-        { conversationId: validated.conversation_id }
-      );
-    }
-
-    const supabase = await this.getClient();
-    // Get help request ID if this conversation is related to one
-    const { data: conversation } = await supabase
-      .from('conversations')
-      .select('help_request_id')
-      .eq('id', validated.conversation_id)
-      .single();
-
-    const { data: message, error } = await supabase
-      .from('messages')
-      .insert({
-        conversation_id: validated.conversation_id,
-        sender_id: senderId,
-        recipient_id: recipientId,
-        help_request_id: conversation?.help_request_id,
-        content: validated.content,
-        message_type: validated.message_type,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      throw new MessagingError(
-        `Failed to send message: ${error.message}`,
-        MESSAGING_ERRORS.INVALID_INPUT,
-        params
-      );
-    }
-
-    return message;
   }
 
   /**
@@ -475,15 +523,25 @@ export class MessagingClient {
   // Helper methods
 
   private async verifyConversationAccess(conversationId: string, userId: string): Promise<boolean> {
+    console.log('[verifyConversationAccess] Checking', { conversationId, userId });
     const supabase = await this.getClient();
-    const { count } = await supabase
+    const { count, error } = await supabase
       .from('conversation_participants')
       .select('*', { count: 'exact' })
       .eq('conversation_id', conversationId)
       .eq('user_id', userId)
       .is('left_at', null);
 
-    return (count || 0) > 0;
+    if (error) {
+      console.error('[verifyConversationAccess] Query error', {
+        error: error.message,
+        code: error.code
+      });
+    }
+
+    const hasAccess = (count || 0) > 0;
+    console.log('[verifyConversationAccess] Result', { count, hasAccess });
+    return hasAccess;
   }
 
   private async getUnreadMessageCount(conversationId: string, userId: string): Promise<number> {
@@ -573,6 +631,7 @@ export class MessagingClient {
   }
 
   private async getConversationRecipient(conversationId: string, senderId: string): Promise<string | null> {
+    console.log('[getConversationRecipient] Fetching', { conversationId, senderId });
     const supabase = await this.getClient();
     const { data: participants, error } = await supabase
       .from('conversation_participants')
@@ -582,12 +641,21 @@ export class MessagingClient {
       .is('left_at', null);
 
     if (error) {
-      console.error('Error fetching conversation participants:', error);
+      console.error('[getConversationRecipient] Query error', {
+        error: error.message,
+        code: error.code
+      });
       return null;
     }
 
+    console.log('[getConversationRecipient] Participants found', {
+      count: participants?.length || 0,
+      participants: participants?.map(p => p.user_id)
+    });
+
     if (!participants || participants.length === 0) {
       // No other participants in conversation
+      console.warn('[getConversationRecipient] No participants found');
       return null;
     }
 
@@ -597,7 +665,9 @@ export class MessagingClient {
       console.warn(`Group conversation detected (${conversationId}) with ${participants.length} participants. Using first participant as recipient_id.`);
     }
 
-    return participants[0].user_id;
+    const recipientId = participants[0].user_id;
+    console.log('[getConversationRecipient] Recipient', { recipientId });
+    return recipientId;
   }
 
   private async canUserMessage(senderId: string, recipientId: string): Promise<boolean> {
