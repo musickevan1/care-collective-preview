@@ -8,6 +8,8 @@ import { createClient } from '@/lib/supabase/server';
 import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
+import { isMessagingV2Enabled } from '@/lib/features';
+import { messagingServiceV2 } from '@/lib/messaging/service-v2';
 
 // Rate limiting for help request conversations
 const helpConversationCounts = new Map<string, { count: number; resetTime: number }>();
@@ -289,28 +291,94 @@ export async function POST(
       // Continue anyway - better to allow duplicate than block legitimate conversation
     }
 
-    // Create the conversation using the specialized help request function
-    console.log(`[start-conversation:${requestId}] Creating conversation via messagingClient`);
-    let conversation;
-    try {
-      conversation = await messagingClient.startHelpConversation(user.id, validation.data);
-      console.log(`[start-conversation:${requestId}] Conversation created successfully`, {
-        conversationId: conversation.id
+    // Create the conversation - V2 (atomic) or V1 (fallback)
+    console.log(`[start-conversation:${requestId}] Creating conversation`);
+
+    // Check feature flag
+    const useV2 = isMessagingV2Enabled();
+    console.log(`[start-conversation:${requestId}] Using messaging version`, {
+      version: useV2 ? 'v2' : 'v1'
+    });
+
+    let conversationResult;
+
+    if (useV2) {
+      // V2: Atomic RPC function
+      const rpcResult = await messagingServiceV2.createHelpConversation({
+        help_request_id: helpRequestId,
+        helper_id: user.id,
+        initial_message: validation.data.initial_message,
       });
-    } catch (createError: any) {
-      console.error(`[start-conversation:${requestId}] Failed to create conversation`, {
-        error: createError?.message,
-        code: createError?.code,
-        details: createError?.details,
-        hint: createError?.hint,
-        stack: createError?.stack
-      });
-      throw createError;
+
+      if (!rpcResult.success) {
+        console.error(`[start-conversation:${requestId}] V2 RPC failed`, {
+          error: rpcResult.error,
+          message: rpcResult.message,
+        });
+
+        // Map V2 error codes to HTTP responses
+        switch (rpcResult.error) {
+          case 'conversation_exists':
+            return NextResponse.json(
+              {
+                error: 'You already have a conversation about this help request',
+                conversation_id: rpcResult.conversation_id, // Allow navigation to existing
+              },
+              { status: 409 }
+            );
+
+          case 'help_request_unavailable':
+            return NextResponse.json(
+              { error: 'This help request is no longer accepting offers' },
+              { status: 400 }
+            );
+
+          case 'permission_denied':
+            return NextResponse.json(
+              { error: 'You do not have permission to create this conversation' },
+              { status: 403 }
+            );
+
+          case 'validation_error':
+            return NextResponse.json(
+              { error: rpcResult.message || 'Invalid conversation data' },
+              { status: 400 }
+            );
+
+          default:
+            // Generic server error
+            return NextResponse.json(
+              {
+                error: 'Failed to start conversation. Please try again.',
+                details: process.env.NODE_ENV === 'development' ? rpcResult.details : undefined,
+              },
+              { status: 500 }
+            );
+        }
+      }
+
+      conversationResult = { id: rpcResult.conversation_id };
+
+    } else {
+      // V1: Original multi-step process (fallback)
+      try {
+        conversationResult = await messagingClient.startHelpConversation(user.id, validation.data);
+        console.log(`[start-conversation:${requestId}] V1 conversation created`, {
+          conversationId: conversationResult.id
+        });
+      } catch (createError: any) {
+        console.error(`[start-conversation:${requestId}] V1 failed`, {
+          error: createError?.message,
+          code: createError?.code,
+        });
+        throw createError; // Existing V1 error handling will catch this
+      }
     }
 
     // Log the help offer for analytics
     console.log('Help conversation started:', {
-      conversationId: conversation.id,
+      version: useV2 ? 'v2' : 'v1',
+      conversationId: conversationResult.id,
       helpRequestId: helpRequestId,
       helpRequestTitle: helpRequest.title,
       offerer: user.id,
@@ -338,7 +406,7 @@ export async function POST(
     // Return minimal response - client will fetch full details after redirect
     return NextResponse.json({
       success: true,
-      conversation_id: conversation.id,
+      conversation_id: conversationResult.id,
       help_request_id: helpRequestId,
       message: 'Conversation started successfully. You can now coordinate help with the requester.'
     }, { status: 201 });

@@ -58,3 +58,56 @@ export function logFeatureStatus(): void {
     console.groupEnd();
   }
 }
+
+/**
+ * Check if Messaging V2 is enabled
+ * Supports three rollout strategies:
+ * - Explicit enable/disable via NEXT_PUBLIC_MESSAGING_V2_ENABLED
+ * - Internal testing via NEXT_PUBLIC_MESSAGING_V2_ROLLOUT='internal'
+ * - Percentage-based rollout via NEXT_PUBLIC_MESSAGING_V2_ROLLOUT='percentage:X'
+ */
+export function isMessagingV2Enabled(): boolean {
+  // Check environment variable for explicit enable/disable
+  const envFlag = process.env.NEXT_PUBLIC_MESSAGING_V2_ENABLED;
+
+  if (envFlag === 'true') {
+    return true;
+  }
+
+  if (envFlag === 'false') {
+    return false;
+  }
+
+  // Check rollout configuration
+  const rolloutConfig = process.env.NEXT_PUBLIC_MESSAGING_V2_ROLLOUT;
+
+  if (!rolloutConfig) {
+    // Default: disabled
+    return false;
+  }
+
+  // Internal testing mode
+  if (rolloutConfig === 'internal') {
+    // TODO: Check if user is internal tester
+    // For now, enable for all (will be restricted server-side)
+    return true;
+  }
+
+  // Percentage rollout (e.g., "percentage:10" for 10% of users)
+  if (rolloutConfig.startsWith('percentage:')) {
+    const percentage = parseInt(rolloutConfig.split(':')[1], 10);
+
+    if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+      console.warn('[features] Invalid percentage rollout config:', rolloutConfig);
+      return false;
+    }
+
+    // Simple random rollout (not user-based, for simplicity)
+    // In production, should use userId for consistent experience
+    return Math.random() * 100 < percentage;
+  }
+
+  // Unknown config, default to disabled
+  console.warn('[features] Unknown rollout config:', rolloutConfig);
+  return false;
+}
