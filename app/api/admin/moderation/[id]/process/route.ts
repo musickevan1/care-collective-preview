@@ -114,12 +114,13 @@ export async function POST(
     );
 
     // Log the admin action for audit purposes
+    const messages = Array.isArray(report.messages) ? report.messages : [];
     console.log('Moderation action processed:', {
       reportId,
       action,
       adminId: user.id,
       messageId: report.message_id,
-      senderId: Array.isArray(report.messages) ? report.messages[0]?.sender_id : report.messages?.sender_id,
+      senderId: messages[0]?.sender_id,
       timestamp: new Date().toISOString()
     });
 
