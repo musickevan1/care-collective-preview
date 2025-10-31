@@ -341,7 +341,7 @@ async function generateContactDataExport(supabase: any, userId: string, includeD
   const { data: contactExchanges } = await contactQuery;
 
   // Remove sensitive encrypted data for export
-  const sanitizedExchanges = contactExchanges?.map(exchange => ({
+  const sanitizedExchanges = contactExchanges?.map((exchange: any) => ({
     ...exchange,
     encrypted_contact_data: exchange.encrypted_contact_data ? '[ENCRYPTED_DATA_PRESENT]' : null,
     contact_shared: exchange.contact_shared ? '[CONTACT_DATA_PRESENT]' : null
