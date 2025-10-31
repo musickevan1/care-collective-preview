@@ -245,8 +245,8 @@ export class UserPrivacyControlsService {
         component: 'UserPrivacyControlsService',
         action: 'getContactSharingPreferences',
         userId,
-        helpRequestId,
-        severity: 'medium'
+        severity: 'medium',
+        extra: { helpRequestId }
       });
 
       // Return safe defaults
@@ -362,8 +362,10 @@ export class UserPrivacyControlsService {
       if (historyError) {
         captureWarning('Failed to update sharing history during revocation', {
           component: 'UserPrivacyControlsService',
-          exchangeId,
-          error: historyError.message
+          extra: {
+            exchangeId,
+            error: historyError.message
+          }
         });
       }
 
@@ -385,8 +387,10 @@ export class UserPrivacyControlsService {
       if (auditError) {
         captureWarning('Failed to create audit trail for contact revocation', {
           component: 'UserPrivacyControlsService',
-          exchangeId,
-          error: auditError.message
+          extra: {
+            exchangeId,
+            error: auditError.message
+          }
         });
       }
 
@@ -407,8 +411,8 @@ export class UserPrivacyControlsService {
         component: 'UserPrivacyControlsService',
         action: 'revokeContactSharing',
         userId,
-        exchangeId,
-        severity: 'high'
+        severity: 'high',
+        extra: { exchangeId }
       });
       return false;
     }
@@ -673,13 +677,7 @@ export async function requestDataExport(
   return await UserPrivacyControlsService.getInstance().requestDataExport(userId, exportRequest);
 }
 
-// Export types and schemas
-export type {
-  UserPrivacySettings,
-  ContactSharingPreference,
-  DataExportRequest
-};
-
+// Export schemas
 export {
   privacySettingsSchema,
   contactSharingPreferenceSchema,

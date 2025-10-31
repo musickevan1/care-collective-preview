@@ -644,8 +644,8 @@ export function ContactExchange({
         component: 'ContactExchange',
         action: 'loadContactInfo',
         userId: currentUserId,
-        requestId,
-        severity: 'medium'
+        severity: 'medium',
+        extra: { requestId }
       })
       setError('Failed to load contact information')
     } finally {

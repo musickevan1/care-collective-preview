@@ -248,8 +248,8 @@ export class ContactEncryptionService {
         component: 'ContactEncryptionService',
         action: 'encryptContactInfo',
         userId,
-        requestId,
-        severity: 'high'
+        severity: 'high',
+        extra: { requestId }
       });
       throw new Error('Failed to encrypt contact information');
     }
@@ -313,8 +313,8 @@ export class ContactEncryptionService {
         component: 'ContactEncryptionService',
         action: 'decryptContactInfo',
         userId,
-        requestId,
-        severity: 'high'
+        severity: 'high',
+        extra: { requestId }
       });
       throw new Error('Failed to decrypt contact information');
     }
@@ -392,6 +392,3 @@ export function getContactEncryptionStatus() {
   const service = ContactEncryptionService.getInstance();
   return service.getEncryptionStatus();
 }
-
-// Export types for external use
-export type { ContactInfo, EncryptedContactData };

@@ -76,7 +76,7 @@ export function DiagnosticPanel({ data }: { data: DiagnosticData }): ReactElemen
               data.profileStatus === 'approved' ? 'text-green-300 font-bold' :
               'text-yellow-300'
             }>
-              {data.profileStatus.toUpperCase()}
+              {data.profileStatus?.toUpperCase() ?? 'NULL'}
             </div>
           </div>
           <div>
