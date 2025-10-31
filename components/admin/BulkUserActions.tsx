@@ -35,7 +35,7 @@ interface User {
   id: string
   name: string
   email?: string
-  verification_status: string
+  verification_status: string | null
   is_admin: boolean
   created_at: string
 }
