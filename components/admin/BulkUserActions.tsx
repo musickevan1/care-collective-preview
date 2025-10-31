@@ -33,11 +33,11 @@ import {
 
 interface User {
   id: string
-  name: string
+  name: string | null
   email?: string
   verification_status: string | null
-  is_admin: boolean
-  created_at: string
+  is_admin: boolean | null
+  created_at: string | null
 }
 
 interface BulkUserActionsProps {
