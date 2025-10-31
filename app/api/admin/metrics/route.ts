@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
     const emailMetrics = {
       emails_sent_24h: emailNotifications?.length || 0,
       emails_delivered_24h: emailNotifications?.filter(e => e.delivery_status === 'delivered').length || 0,
-      email_failure_rate: emailNotifications?.length > 0
+      email_failure_rate: (emailNotifications?.length ?? 0) > 0
         ? Math.round((emailNotifications.filter(e => ['failed', 'bounced'].includes(e.delivery_status)).length / emailNotifications.length) * 100)
         : 0
     }
