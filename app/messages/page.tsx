@@ -183,8 +183,18 @@ async function getMessagingData(userId: string) {
         return {
           id: conv.id,
           help_request_id: conv.help_request_id,
+          created_by: conv.requester_id,
+          status: conv.status,
+          created_at: conv.created_at,
+          updated_at: conv.updated_at,
           last_message_at: conv.last_message_at,
           unread_count: convUnreadCount || 0,
+          participants: [{
+            user_id: otherParticipant?.user_id || '',
+            name: Array.isArray(otherParticipant?.profiles) ? (otherParticipant.profiles[0] as any)?.name || 'Unknown' : (otherParticipant?.profiles as any)?.name || 'Unknown',
+            location: Array.isArray(otherParticipant?.profiles) ? (otherParticipant.profiles[0] as any)?.location : (otherParticipant?.profiles as any)?.location,
+            role: 'member' as const
+          }],
           other_participant: {
             id: otherParticipant?.user_id || '',
             name: Array.isArray(otherParticipant?.profiles) ? (otherParticipant.profiles[0] as any)?.name || 'Unknown' : (otherParticipant?.profiles as any)?.name || 'Unknown',
