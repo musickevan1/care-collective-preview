@@ -7,7 +7,7 @@ interface DiagnosticData {
   authUserEmail: string
   profileId: string
   profileName: string
-  profileStatus: string
+  profileStatus: string | null
   idsMatch: boolean
   timestamp: string
 }
