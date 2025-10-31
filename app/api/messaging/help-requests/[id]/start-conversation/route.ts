@@ -56,8 +56,10 @@ export async function POST(
     timestamp: new Date().toISOString()
   });
 
+  let user: Awaited<ReturnType<typeof getCurrentUser>> = null;
+
   try {
-    const user = await getCurrentUser();
+    user = await getCurrentUser();
     if (!user) {
       console.log(`[start-conversation:${requestId}] Auth failed - no user`);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -301,6 +303,7 @@ export async function POST(
     });
 
     let conversationResult;
+    let conversationVersion: 'v1' | 'v2' = useV2 ? 'v2' : 'v1';
 
     if (useV2) {
       // V2: Atomic RPC function
@@ -314,6 +317,7 @@ export async function POST(
         console.error(`[start-conversation:${requestId}] V2 RPC failed`, {
           error: rpcResult.error,
           message: rpcResult.message,
+          details: rpcResult.details,
         });
 
         // Map V2 error codes to HTTP responses
@@ -345,6 +349,11 @@ export async function POST(
               { status: 400 }
             );
 
+          case 'rpc_error':
+            console.warn(`[start-conversation:${requestId}] Falling back to V1 after RPC failure`);
+            conversationVersion = 'v1';
+            break;
+
           default:
             // Generic server error
             return NextResponse.json(
@@ -357,9 +366,14 @@ export async function POST(
         }
       }
 
-      conversationResult = { id: rpcResult.conversation_id };
+      if (rpcResult.success) {
+        conversationResult = { id: rpcResult.conversation_id };
+      }
 
-    } else {
+    }
+
+    if (!conversationResult) {
+      conversationVersion = 'v1';
       // V1: Original multi-step process (fallback)
       try {
         conversationResult = await messagingClient.startHelpConversation(user.id, validation.data);
@@ -377,7 +391,7 @@ export async function POST(
 
     // Log the help offer for analytics
     console.log('Help conversation started:', {
-      version: useV2 ? 'v2' : 'v1',
+      version: conversationVersion,
       conversationId: conversationResult.id,
       helpRequestId: helpRequestId,
       helpRequestTitle: helpRequest.title,
