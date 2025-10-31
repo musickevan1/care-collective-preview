@@ -204,8 +204,10 @@ export async function POST(request: NextRequest) {
     } catch (processingError) {
       captureWarning('Data export processing failed', {
         component: 'UserDataAPI',
-        exportRequestId: exportRequest.id,
-        error: processingError instanceof Error ? processingError.message : 'Unknown error'
+        extra: {
+          exportRequestId: exportRequest.id,
+          error: processingError instanceof Error ? processingError.message : 'Unknown error'
+        }
       });
     }
 
