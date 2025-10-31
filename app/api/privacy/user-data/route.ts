@@ -386,7 +386,7 @@ async function generatePrivacyAuditExport(supabase: any, userId: string) {
     audit_summary: {
       total_actions: auditLogs?.length || 0,
       last_activity: auditLogs?.[0]?.timestamp,
-      privacy_violations: auditLogs?.filter(log => log.action.includes('FAILED')).length || 0
+      privacy_violations: auditLogs?.filter((log: any) => log.action.includes('FAILED')).length || 0
     }
   };
 }
@@ -418,9 +418,9 @@ async function generateSharingHistoryExport(supabase: any, userId: string) {
     sharing_history: sharingHistory,
     summary: {
       total_shares: sharingHistory?.length || 0,
-      active_shares: sharingHistory?.filter(h => h.status === 'active').length || 0,
-      revoked_shares: sharingHistory?.filter(h => h.status === 'revoked').length || 0,
-      expired_shares: sharingHistory?.filter(h => h.status === 'expired').length || 0
+      active_shares: sharingHistory?.filter((h: any) => h.status === 'active').length || 0,
+      revoked_shares: sharingHistory?.filter((h: any) => h.status === 'revoked').length || 0,
+      expired_shares: sharingHistory?.filter((h: any) => h.status === 'expired').length || 0
     }
   };
 }
@@ -513,8 +513,8 @@ function convertToCSV(data: any): string {
         rows.push(headers.join(','));
 
         // Add data rows
-        sectionData.forEach(item => {
-          const values = headers.map(header => {
+        sectionData.forEach((item: any) => {
+          const values = headers.map((header: string) => {
             const value = item[header];
             if (value === null || value === undefined) return '';
             if (typeof value === 'object') return JSON.stringify(value);
