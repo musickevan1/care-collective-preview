@@ -187,8 +187,8 @@ async function getMessagingData(userId: string) {
           unread_count: convUnreadCount || 0,
           other_participant: {
             id: otherParticipant?.user_id || '',
-            name: otherParticipant?.profiles?.name || 'Unknown',
-            location: otherParticipant?.profiles?.location
+            name: Array.isArray(otherParticipant?.profiles) ? otherParticipant.profiles[0]?.name || 'Unknown' : otherParticipant?.profiles?.name || 'Unknown',
+            location: Array.isArray(otherParticipant?.profiles) ? otherParticipant.profiles[0]?.location : otherParticipant?.profiles?.location
           },
           help_request: conv.help_requests ? {
             id: conv.help_requests.id,
