@@ -209,7 +209,7 @@ export class APIValidator {
       return schema.parse(data)
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new Error(`Validation failed: ${error.errors.map(e => e.message).join(', ')}`)
+        throw new Error(`Validation failed: ${error.issues.map(e => e.message).join(', ')}`)
       }
       throw new Error('Invalid request data')
     }

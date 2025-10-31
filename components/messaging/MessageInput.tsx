@@ -106,7 +106,7 @@ export function MessageInput({
     // Validate message content
     const validation = messagingValidation.messageContent.safeParse(content.trim())
     if (!validation.success) {
-      setError(validation.error.errors[0]?.message || 'Invalid message content')
+      setError(validation.error.issues[0]?.message || 'Invalid message content')
       return
     }
 

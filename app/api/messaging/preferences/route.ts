@@ -63,9 +63,9 @@ export async function PUT(request: NextRequest) {
     const validation = messagingValidation.messagingPreferences.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
-        { 
-          error: 'Invalid preferences data', 
-          details: validation.error.errors 
+        {
+          error: 'Invalid preferences data',
+          details: validation.error.issues
         },
         { status: 400 }
       );
