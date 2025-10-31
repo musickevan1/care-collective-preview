@@ -65,13 +65,13 @@ export const DynamicMobileNav = withDynamicLoading(
 // Web Vitals monitoring - now properly handled with SSR safety
 export const DynamicWebVitals = withDynamicLoading(
   () => Promise.resolve({ default: () => null }), // Web vitals are handled within PerformanceMonitor
-  () => null
+  () => <></>
 )
 
 // Service Worker Registration - now properly implemented with environment detection
 export const DynamicServiceWorkerRegistration = withDynamicLoading(
   () => import('@/components/ServiceWorkerRegistration').then(module => ({ default: module.ServiceWorkerRegistration })),
-  () => null,
+  () => <></>,
   'Service Worker registration failed'
 )
 
