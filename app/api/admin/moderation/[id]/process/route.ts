@@ -119,7 +119,7 @@ export async function POST(
       action,
       adminId: user.id,
       messageId: report.message_id,
-      senderId: report.messages.sender_id,
+      senderId: Array.isArray(report.messages) ? report.messages[0]?.sender_id : report.messages?.sender_id,
       timestamp: new Date().toISOString()
     });
 
