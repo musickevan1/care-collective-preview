@@ -183,10 +183,10 @@ async function getMessagingData(userId: string) {
         return {
           id: conv.id,
           help_request_id: conv.help_request_id,
-          created_by: conv.requester_id,
-          status: conv.status,
+          created_by: (conv as any).requester_id || '',
+          status: (conv as any).status || 'active',
           created_at: conv.created_at,
-          updated_at: conv.updated_at,
+          updated_at: (conv as any).updated_at || conv.created_at,
           last_message_at: conv.last_message_at,
           unread_count: convUnreadCount || 0,
           participants: [{
