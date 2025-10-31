@@ -355,7 +355,7 @@ export function ContactExchange({
       await trackContactExchange('completed', exchangeData.id, currentUserId, requesterId, {
         encrypted: encryptionEnabled,
         privacy_level: 'enhanced',
-        fields_shared: fieldsToEncrypt.length > 0 ? fieldsToEncrypt : ['name', 'location'],
+        fields_shared: ['name', 'location'],
         retention_days: privacySettings?.auto_delete_exchanges_after_days || 90
       })
 
