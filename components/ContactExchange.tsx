@@ -141,7 +141,9 @@ export function ContactExchange({
       captureWarning('Failed to load user privacy settings', {
         component: 'ContactExchange',
         userId,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        extra: {
+          error: error instanceof Error ? error.message : 'Unknown error'
+        }
       })
     }
   }
