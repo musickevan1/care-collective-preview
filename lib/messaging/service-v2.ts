@@ -24,6 +24,7 @@ export interface V2RPCResult {
   conversation_id?: string;
   message_id?: string;
   conversation?: any;
+  conversations?: any[];
   messages?: any[];
   error?: string;
   message?: string;
