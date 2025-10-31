@@ -56,8 +56,10 @@ export async function POST(
     timestamp: new Date().toISOString()
   });
 
+  let user: Awaited<ReturnType<typeof getCurrentUser>> = null;
+
   try {
-    const user = await getCurrentUser();
+    user = await getCurrentUser();
     if (!user) {
       console.log(`[start-conversation:${requestId}] Auth failed - no user`);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
