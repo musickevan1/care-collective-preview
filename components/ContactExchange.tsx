@@ -562,8 +562,8 @@ export function ContactExchange({
             component: 'ContactExchange',
             action: 'loadContactInfo',
             userId: currentUserId,
-            requestId,
-            severity: 'high'
+            severity: 'high',
+            extra: { requestId }
           })
 
           // Fall back to basic profile information
