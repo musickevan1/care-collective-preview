@@ -256,7 +256,9 @@ export function ContactExchange({
         captureWarning('Audit trail creation failed', {
           component: 'ContactExchange',
           action: 'handleConsentGiven',
-          error: auditError.message
+          extra: {
+            error: auditError.message
+          }
         })
       }
 
