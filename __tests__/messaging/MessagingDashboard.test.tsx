@@ -48,9 +48,14 @@ vi.mock('@/components/messaging/MessageThreadRealtime', () => ({
 }));
 
 // Mock the messaging client
+const mockGetConversations = vi.fn();
+
 vi.mock('@/lib/messaging/client', () => ({
+  messagingClient: {
+    getConversations: mockGetConversations,
+  },
   MessagingClient: vi.fn().mockImplementation(() => ({
-    getConversations: vi.fn(),
+    getConversations: mockGetConversations,
   })),
 }));
 

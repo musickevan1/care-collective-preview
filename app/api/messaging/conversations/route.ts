@@ -242,12 +242,19 @@ export async function POST(request: NextRequest) {
     // Create the conversation
     const conversation = await messagingClient.createConversation(user.id, validation.data);
 
-    // Return success response with conversation details
-    const conversationDetails = await messagingClient.getMessages(conversation.id, user.id, { limit: 1, direction: 'newer' });
+    Logger.getInstance().info('Messaging conversation created', {
+      endpoint: '/api/messaging/conversations',
+      method: 'POST',
+      conversationId: conversation.id,
+      helpRequestId: help_request_id,
+      category: 'messaging_success'
+    });
 
     return NextResponse.json({
-      conversation: conversationDetails.conversation,
-      message: 'Conversation created successfully'
+      success: true,
+      conversation_id: conversation.id,
+      help_request_id,
+      message: 'Conversation created successfully. Continue chatting to coordinate next steps.'
     }, { status: 201 });
 
   } catch (error) {

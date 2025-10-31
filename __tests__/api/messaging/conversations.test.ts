@@ -20,10 +20,17 @@ vi.mock('@/lib/supabase/server', () => ({
   createClient: () => mockSupabaseClient,
 }));
 
+const mockGetConversations = vi.fn();
+const mockCreateConversation = vi.fn();
+
 vi.mock('@/lib/messaging/client', () => ({
+  messagingClient: {
+    getConversations: mockGetConversations,
+    createConversation: mockCreateConversation,
+  },
   MessagingClient: vi.fn().mockImplementation(() => ({
-    getConversations: vi.fn(),
-    createConversation: vi.fn(),
+    getConversations: mockGetConversations,
+    createConversation: mockCreateConversation,
   })),
 }));
 
@@ -34,7 +41,10 @@ describe('/api/messaging/conversations', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
+    mockGetConversations.mockReset();
+    mockCreateConversation.mockReset();
+
     mockSelect = vi.fn().mockReturnThis();
     mockQuery = vi.fn().mockReturnThis();
     mockInsert = vi.fn().mockReturnThis();
@@ -231,13 +241,13 @@ describe('/api/messaging/conversations', () => {
 
   describe('POST /api/messaging/conversations', () => {
     const mockUser = {
-      id: 'user-123',
+      id: '11111111-1111-1111-1111-111111111111',
       email: 'test@example.com',
     };
 
     const validConversationData = {
-      help_request_id: 'req-456',
-      participant_ids: ['user-456'],
+      recipient_id: '22222222-2222-2222-2222-222222222222',
+      help_request_id: '33333333-3333-3333-3333-333333333333',
       initial_message: 'Hi, I can help with your request!',
     };
 
@@ -254,23 +264,22 @@ describe('/api/messaging/conversations', () => {
       });
 
       const mockNewConversation = {
-        id: 'conv-new',
-        created_by: 'user-123',
-        help_request_id: 'req-456',
+        id: '44444444-4444-4444-4444-444444444444',
+        created_by: mockUser.id,
+        help_request_id: validConversationData.help_request_id,
         status: 'active',
         created_at: '2025-01-07T15:00:00Z',
       };
 
-      mockInsert.mockResolvedValue({
-        data: [mockNewConversation],
-        error: null,
-      });
+      mockCreateConversation.mockResolvedValue(mockNewConversation);
 
       const response = await POST(req);
       const responseData = await response.json();
 
       expect(response.status).toBe(201);
-      expect(responseData.conversation).toEqual(mockNewConversation);
+      expect(responseData.success).toBe(true);
+      expect(responseData.conversation_id).toBe(mockNewConversation.id);
+      expect(responseData.help_request_id).toBe(validConversationData.help_request_id);
     });
 
     it('validates required fields', async () => {
@@ -292,13 +301,13 @@ describe('/api/messaging/conversations', () => {
       expect(response.status).toBe(400);
     });
 
-    it('validates participant_ids array', async () => {
+    it('validates recipient_id format', async () => {
       const { req } = createMocks({
         method: 'POST',
         url: '/api/messaging/conversations',
         body: {
           ...validConversationData,
-          participant_ids: 'invalid', // Should be array
+          recipient_id: 'invalid-recipient-id', // Should be UUID
         },
       });
 
@@ -361,7 +370,7 @@ describe('/api/messaging/conversations', () => {
         url: '/api/messaging/conversations',
         body: {
           ...validConversationData,
-          help_request_id: 'non-existent-request',
+          help_request_id: '99999999-9999-9999-9999-999999999999',
         },
       });
 
@@ -387,7 +396,7 @@ describe('/api/messaging/conversations', () => {
         url: '/api/messaging/conversations',
         body: {
           ...validConversationData,
-          participant_ids: ['user-123'], // Same as authenticated user
+          recipient_id: mockUser.id, // Same as authenticated user
         },
       });
 
@@ -436,22 +445,22 @@ describe('/api/messaging/conversations', () => {
         error: null,
       });
 
-      mockInsert.mockResolvedValue({
-        data: [{
-          id: 'conv-new',
-          created_by: 'user-123',
-          created_at: '2025-01-07T15:00:00Z',
-        }],
-        error: null,
+      mockCreateConversation.mockResolvedValue({
+        id: 'conv-new',
+        created_by: 'user-123',
+        created_at: '2025-01-07T15:00:00Z',
+        help_request_id: validConversationData.help_request_id,
       });
 
       const response = await POST(req);
 
       expect(response.status).toBe(201);
-      expect(mockInsert).toHaveBeenCalledWith(
+      expect(mockCreateConversation).toHaveBeenCalledWith(
+        mockUser.id,
         expect.objectContaining({
-          created_by: 'user-123',
-          status: 'active',
+          recipient_id: validConversationData.recipient_id,
+          help_request_id: validConversationData.help_request_id,
+          initial_message: validConversationData.initial_message,
         })
       );
     });
