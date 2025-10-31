@@ -191,11 +191,11 @@ async function getMessagingData(userId: string) {
             location: Array.isArray(otherParticipant?.profiles) ? (otherParticipant.profiles[0] as any)?.location : (otherParticipant?.profiles as any)?.location
           },
           help_request: conv.help_requests ? {
-            id: conv.help_requests.id,
-            title: conv.help_requests.title,
-            category: conv.help_requests.category,
-            urgency: conv.help_requests.urgency,
-            status: conv.help_requests.status
+            id: (conv.help_requests as any).id,
+            title: (conv.help_requests as any).title,
+            category: (conv.help_requests as any).category,
+            urgency: (conv.help_requests as any).urgency,
+            status: (conv.help_requests as any).status
           } : undefined,
           last_message: lastMessage ? {
             content: lastMessage.content,
