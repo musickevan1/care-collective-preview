@@ -26,7 +26,7 @@ export async function POST(
         updateData = {
           verification_status: 'approved',
           approved_at: new Date().toISOString(),
-          approved_by: user.id,
+          approved_by: adminUser.id,
           rejection_reason: null
         }
         responseMessage = 'User approved successfully'
