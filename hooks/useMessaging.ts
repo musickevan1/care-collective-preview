@@ -112,11 +112,17 @@ export function useMessaging({
     }
 
     const data = await response.json();
-    
+
+    const conversationId = data.conversation_id ?? data.conversation?.id;
+
+    if (!conversationId) {
+      throw new Error('Conversation created but no identifier was returned');
+    }
+
     // Refresh conversations to include the new one
     refreshConversations();
-    
-    return data.conversation.id;
+
+    return conversationId;
   }, [refreshConversations]);
 
   // Start a help request conversation
@@ -140,11 +146,17 @@ export function useMessaging({
     }
 
     const data = await response.json();
-    
+
+    const conversationId = data.conversation_id ?? data.conversation?.id;
+
+    if (!conversationId) {
+      throw new Error('Help conversation created but no identifier was returned');
+    }
+
     // Refresh conversations to include the new one
     refreshConversations();
-    
-    return data.conversation.id;
+
+    return conversationId;
   }, [refreshConversations]);
 
   // Update messaging preferences
