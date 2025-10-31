@@ -2,6 +2,12 @@
 
 import { lazy, Suspense } from 'react'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
+import type { Database } from '@/lib/database.types'
+
+type User = Database['public']['Tables']['profiles']['Row']
+type HelpRequest = Database['public']['Tables']['help_requests']['Row']
+type ContactExchange = Database['public']['Tables']['contact_exchanges']['Row']
+type Message = Database['public']['Tables']['messages']['Row']
 
 // Dynamically import admin components to reduce bundle size
 const AdminReportingDashboard = lazy(() => import('./AdminReportingDashboard').then(m => ({ default: m.AdminReportingDashboard })))
@@ -11,26 +17,29 @@ const BulkUserActions = lazy(() => import('./BulkUserActions').then(m => ({ defa
 const UserDetailModal = lazy(() => import('./UserDetailModal').then(m => ({ default: m.UserDetailModal })))
 const UserActivityTimeline = lazy(() => import('./UserActivityTimeline').then(m => ({ default: m.UserActivityTimeline })))
 
-interface AdminComponentProps {
-  component: 'reporting' | 'moderation' | 'privacy' | 'bulk-actions' | 'user-detail' | 'user-activity'
-  [key: string]: any
-}
+type AdminComponentProps =
+  | { component: 'reporting' }
+  | { component: 'moderation'; adminUserId: string; className?: string }
+  | { component: 'privacy'; adminUserId: string; className?: string }
+  | { component: 'bulk-actions'; selectedUsers: User[]; onClearSelection: () => void; onRefresh: () => void }
+  | { component: 'user-detail'; userId: string | null; isOpen: boolean; onClose: () => void }
+  | { component: 'user-activity'; helpRequestsCreated: HelpRequest[]; helpRequestsHelped: HelpRequest[]; contactExchanges: ContactExchange[]; messages: Message[] }
 
-export function AdminDashboardDynamic({ component, ...props }: AdminComponentProps) {
+export function AdminDashboardDynamic(props: AdminComponentProps) {
   const renderComponent = () => {
-    switch (component) {
+    switch (props.component) {
       case 'reporting':
-        return <AdminReportingDashboard {...props} />
+        return <AdminReportingDashboard />
       case 'moderation':
-        return <ModerationDashboard {...props} />
+        return <ModerationDashboard adminUserId={props.adminUserId} className={props.className} />
       case 'privacy':
-        return <AdminPrivacyDashboard {...props} />
+        return <AdminPrivacyDashboard adminUserId={props.adminUserId} className={props.className} />
       case 'bulk-actions':
-        return <BulkUserActions {...props} />
+        return <BulkUserActions selectedUsers={props.selectedUsers} onClearSelection={props.onClearSelection} onRefresh={props.onRefresh} />
       case 'user-detail':
-        return <UserDetailModal {...props} />
+        return <UserDetailModal userId={props.userId} isOpen={props.isOpen} onClose={props.onClose} />
       case 'user-activity':
-        return <UserActivityTimeline {...props} />
+        return <UserActivityTimeline helpRequestsCreated={props.helpRequestsCreated} helpRequestsHelped={props.helpRequestsHelped} contactExchanges={props.contactExchanges} messages={props.messages} />
       default:
         return <div>Unknown admin component</div>
     }

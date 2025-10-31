@@ -165,12 +165,12 @@ export function UserDetailModal({ userId, isOpen, onClose }: UserDetailModalProp
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-600">Member Since</label>
-                    <div className="text-gray-900">{formatTimeAgo(userProfile.created_at)}</div>
+                    <div className="text-gray-900">{formatTimeAgo(userProfile.created_at ?? '')}</div>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-600">Verification Status</label>
                     <div className="mt-1">
-                      {getVerificationStatusBadge(userProfile.verification_status)}
+                      {getVerificationStatusBadge(userProfile.verification_status ?? 'unverified')}
                     </div>
                   </div>
                   {userProfile.phone && (
@@ -261,7 +261,7 @@ export function UserDetailModal({ userId, isOpen, onClose }: UserDetailModalProp
                         <div className="flex-1">
                           <div className="font-medium text-gray-900 text-sm">{request.title}</div>
                           <div className="text-xs text-gray-500 mt-1">
-                            {formatTimeAgo(request.created_at)} • {request.category}
+                            {formatTimeAgo(request.created_at ?? '')} • {request.category}
                           </div>
                         </div>
                         <StatusBadge status={request.status as any} />

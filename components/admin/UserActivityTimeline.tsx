@@ -51,42 +51,42 @@ export function UserActivityTimeline({
 }: UserActivityTimelineProps): ReactElement {
   
   // Combine all activities into a single timeline
-  const activities: ActivityItem[] = [
+  const activities = [
     ...helpRequestsCreated.map(request => ({
       id: `request-${request.id}`,
       type: 'request_created' as const,
-      timestamp: request.created_at,
+      timestamp: request.created_at ?? '',
       title: 'Created help request',
-      description: request.title,
-      status: request.status,
-      category: request.category
+      description: request.title ?? '',
+      status: request.status ?? undefined,
+      category: request.category ?? undefined
     })),
     ...helpRequestsHelped.map(request => ({
       id: `helped-${request.id}`,
       type: 'request_helped' as const,
-      timestamp: request.helped_at || request.updated_at || request.created_at,
+      timestamp: request.helped_at ?? request.updated_at ?? request.created_at ?? '',
       title: 'Provided help',
-      description: request.title,
-      status: request.status,
-      category: request.category
+      description: request.title ?? '',
+      status: request.status ?? undefined,
+      category: request.category ?? undefined
     })),
     ...contactExchanges.map(exchange => ({
       id: `exchange-${exchange.id}`,
       type: 'contact_exchange' as const,
-      timestamp: exchange.exchanged_at,
+      timestamp: exchange.exchanged_at ?? '',
       title: 'Contact information exchanged',
-      description: `${exchange.exchange_type} contact shared`,
+      description: `${exchange.exchange_type ?? 'Unknown'} contact shared`,
       status: exchange.confirmed_at ? 'confirmed' : 'pending'
     })),
     ...messages.map(message => ({
       id: `message-${message.id}`,
       type: 'message_sent' as const,
-      timestamp: message.created_at,
+      timestamp: message.created_at ?? '',
       title: 'Sent message',
       description: message.content.substring(0, 50) + (message.content.length > 50 ? '...' : ''),
-      status: message.read ? 'read' : 'unread'
+      status: message.read_at ? 'read' : 'unread'
     }))
-  ]
+  ] as ActivityItem[]
 
   // Sort by timestamp (newest first)
   activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())

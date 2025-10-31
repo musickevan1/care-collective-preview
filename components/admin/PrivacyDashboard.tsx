@@ -619,7 +619,6 @@ export function AdminPrivacyDashboard({ adminUserId, className }: AdminPrivacyDa
                                     </AlertDialogAction>
                                     <AlertDialogAction
                                       onClick={() => handleResolveAlert(alert.id, 'false_positive')}
-                                      variant="outline"
                                     >
                                       False Positive
                                     </AlertDialogAction>

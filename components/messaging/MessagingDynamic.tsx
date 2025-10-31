@@ -1,7 +1,8 @@
 'use client'
 
 import { lazy, Suspense } from 'react'
-import { LoadingSkeleton } from '@/components/LoadingSkeleton'
+import { LoadingSkeleton } from '@/components/ui/loading'
+import type { ConversationWithDetails, MessageWithSender } from '@/lib/messaging/types'
 
 // Dynamically import messaging components to reduce bundle size
 const MessagingDashboard = lazy(() => import('./MessagingDashboard').then(m => ({ default: m.MessagingDashboard })))
@@ -10,24 +11,26 @@ const ConversationList = lazy(() => import('./ConversationList').then(m => ({ de
 const MessageInput = lazy(() => import('./MessageInput').then(m => ({ default: m.MessageInput })))
 const MessageBubble = lazy(() => import('./MessageBubble').then(m => ({ default: m.MessageBubble })))
 
-interface MessagingComponentProps {
-  component: 'dashboard' | 'message-list' | 'conversation-list' | 'message-input' | 'message-bubble'
-  [key: string]: any
-}
+type MessagingComponentProps =
+  | { component: 'dashboard'; initialConversations: ConversationWithDetails[]; userId: string; userName?: string; selectedConversationId?: string; enableRealtime?: boolean }
+  | { component: 'message-list'; messages: MessageWithSender[]; currentUserId: string; isLoading?: boolean; hasMore?: boolean; onLoadMore?: () => void }
+  | { component: 'conversation-list'; conversations: ConversationWithDetails[]; selectedConversationId?: string; onConversationSelect: (conversationId: string) => void; loading?: boolean; error?: string | null }
+  | { component: 'message-input'; onSendMessage: (content: string, messageType?: 'text' | 'help_request_update') => Promise<void>; placeholder?: string; disabled?: boolean; maxLength?: number; minHeight?: string }
+  | { component: 'message-bubble'; message: MessageWithSender; isCurrentUser: boolean; onReply?: () => void; onReport?: (messageId: string) => void; onDelete?: (messageId: string) => void }
 
-export function MessagingDynamic({ component, ...props }: MessagingComponentProps) {
+export function MessagingDynamic(props: MessagingComponentProps) {
   const renderComponent = () => {
-    switch (component) {
+    switch (props.component) {
       case 'dashboard':
-        return <MessagingDashboard {...props} />
+        return <MessagingDashboard initialConversations={props.initialConversations} userId={props.userId} userName={props.userName} selectedConversationId={props.selectedConversationId} enableRealtime={props.enableRealtime} />
       case 'message-list':
-        return <VirtualizedMessageList {...props} />
+        return <VirtualizedMessageList messages={props.messages} currentUserId={props.currentUserId} isLoading={props.isLoading} hasMore={props.hasMore} onLoadMore={props.onLoadMore} />
       case 'conversation-list':
-        return <ConversationList {...props} />
+        return <ConversationList conversations={props.conversations} selectedConversationId={props.selectedConversationId} onConversationSelect={props.onConversationSelect} loading={props.loading} error={props.error} />
       case 'message-input':
-        return <MessageInput {...props} />
+        return <MessageInput onSendMessage={props.onSendMessage} placeholder={props.placeholder} disabled={props.disabled} maxLength={props.maxLength} minHeight={props.minHeight} />
       case 'message-bubble':
-        return <MessageBubble {...props} />
+        return <MessageBubble message={props.message} isCurrentUser={props.isCurrentUser} onReply={props.onReply} onReport={props.onReport} onDelete={props.onDelete} />
       default:
         return <div>Unknown messaging component</div>
     }
@@ -36,9 +39,9 @@ export function MessagingDynamic({ component, ...props }: MessagingComponentProp
   return (
     <Suspense fallback={
       <LoadingSkeleton
+        type="card"
         lines={4}
         className="space-y-3"
-        aria-label="Loading messaging component"
       />
     }>
       {renderComponent()}
@@ -47,8 +50,8 @@ export function MessagingDynamic({ component, ...props }: MessagingComponentProp
 }
 
 // Export individual lazy components for direct use
-export const LazyMessagingDashboard = lazy(() => import('./MessagingDashboard'))
-export const LazyVirtualizedMessageList = lazy(() => import('./VirtualizedMessageList'))
-export const LazyConversationList = lazy(() => import('./ConversationList'))
-export const LazyMessageInput = lazy(() => import('./MessageInput'))
-export const LazyMessageBubble = lazy(() => import('./MessageBubble'))
+export const LazyMessagingDashboard = lazy(() => import('./MessagingDashboard').then(m => ({ default: m.MessagingDashboard })))
+export const LazyVirtualizedMessageList = lazy(() => import('./VirtualizedMessageList').then(m => ({ default: m.VirtualizedMessageList })))
+export const LazyConversationList = lazy(() => import('./ConversationList').then(m => ({ default: m.ConversationList })))
+export const LazyMessageInput = lazy(() => import('./MessageInput').then(m => ({ default: m.MessageInput })))
+export const LazyMessageBubble = lazy(() => import('./MessageBubble').then(m => ({ default: m.MessageBubble })))
