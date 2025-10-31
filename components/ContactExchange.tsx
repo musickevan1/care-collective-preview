@@ -398,7 +398,7 @@ export function ContactExchange({
         const { createAuditEntry } = await import('@/lib/validations/contact-exchange');
         const auditEntry = createAuditEntry('CONTACT_EXCHANGE_FAILED', {
           requestId,
-          helperId: currentUserId,
+          helperId: currentUserId || '',
           requesterId,
           metadata: { error: errorMessage },
         });
