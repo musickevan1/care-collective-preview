@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         const emailResult = await emailService.sendApplicationDecision(
           userEmail,
           userName,
-          action,
+          action === 'approve' ? 'approved' : 'rejected',
           reason
         )
 
