@@ -51,7 +51,11 @@ export const privacyEventTypes = {
 
   // Admin actions
   PRIVACY_VIOLATION_REVIEWED: 'PRIVACY_VIOLATION_REVIEWED',
-  MANUAL_DATA_DELETION: 'MANUAL_DATA_DELETION'
+  MANUAL_DATA_DELETION: 'MANUAL_DATA_DELETION',
+
+  // Moderation actions
+  MODERATION_ACTION_TAKEN: 'MODERATION_ACTION_TAKEN',
+  USER_RESTRICTION_APPLIED: 'USER_RESTRICTION_APPLIED'
 } as const;
 
 export type PrivacyEventType = keyof typeof privacyEventTypes;
