@@ -4,11 +4,11 @@ import { lazy, Suspense } from 'react'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 
 // Dynamically import messaging components to reduce bundle size
-const MessagingDashboard = lazy(() => import('./MessagingDashboard'))
-const VirtualizedMessageList = lazy(() => import('./VirtualizedMessageList'))
-const ConversationList = lazy(() => import('./ConversationList'))
-const MessageInput = lazy(() => import('./MessageInput'))
-const MessageBubble = lazy(() => import('./MessageBubble'))
+const MessagingDashboard = lazy(() => import('./MessagingDashboard').then(m => ({ default: m.MessagingDashboard })))
+const VirtualizedMessageList = lazy(() => import('./VirtualizedMessageList').then(m => ({ default: m.VirtualizedMessageList })))
+const ConversationList = lazy(() => import('./ConversationList').then(m => ({ default: m.ConversationList })))
+const MessageInput = lazy(() => import('./MessageInput').then(m => ({ default: m.MessageInput })))
+const MessageBubble = lazy(() => import('./MessageBubble').then(m => ({ default: m.MessageBubble })))
 
 interface MessagingComponentProps {
   component: 'dashboard' | 'message-list' | 'conversation-list' | 'message-input' | 'message-bubble'

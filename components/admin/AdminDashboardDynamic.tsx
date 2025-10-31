@@ -4,12 +4,12 @@ import { lazy, Suspense } from 'react'
 import { LoadingSkeleton } from '@/components/LoadingSkeleton'
 
 // Dynamically import admin components to reduce bundle size
-const AdminReportingDashboard = lazy(() => import('./AdminReportingDashboard'))
-const ModerationDashboard = lazy(() => import('./ModerationDashboard'))
-const PrivacyDashboard = lazy(() => import('./PrivacyDashboard'))
-const BulkUserActions = lazy(() => import('./BulkUserActions'))
-const UserDetailModal = lazy(() => import('./UserDetailModal'))
-const UserActivityTimeline = lazy(() => import('./UserActivityTimeline'))
+const AdminReportingDashboard = lazy(() => import('./AdminReportingDashboard').then(m => ({ default: m.AdminReportingDashboard })))
+const ModerationDashboard = lazy(() => import('./ModerationDashboard').then(m => ({ default: m.ModerationDashboard })))
+const PrivacyDashboard = lazy(() => import('./PrivacyDashboard').then(m => ({ default: m.PrivacyDashboard })))
+const BulkUserActions = lazy(() => import('./BulkUserActions').then(m => ({ default: m.BulkUserActions })))
+const UserDetailModal = lazy(() => import('./UserDetailModal').then(m => ({ default: m.UserDetailModal })))
+const UserActivityTimeline = lazy(() => import('./UserActivityTimeline').then(m => ({ default: m.UserActivityTimeline })))
 
 interface AdminComponentProps {
   component: 'reporting' | 'moderation' | 'privacy' | 'bulk-actions' | 'user-detail' | 'user-activity'
