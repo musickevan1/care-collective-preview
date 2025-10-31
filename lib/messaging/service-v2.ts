@@ -152,6 +152,30 @@ export class MessagingServiceV2 {
 
     return data as V2RPCResult;
   }
+
+  /**
+   * List all conversations for a user
+   */
+  async listConversations(userId: string): Promise<V2RPCResult> {
+    const supabase = await this.getClient();
+    const { data, error } = await supabase.rpc('list_conversations_v2', {
+      p_user_id: userId,
+    });
+
+    if (error) {
+      console.error('[MessagingServiceV2.listConversations] RPC error', {
+        error: error.message,
+      });
+
+      return {
+        success: false,
+        error: 'rpc_error',
+        message: 'Database error while fetching conversations',
+      };
+    }
+
+    return data as V2RPCResult;
+  }
 }
 
 // Export singleton instance
