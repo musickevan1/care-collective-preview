@@ -56,8 +56,10 @@ export async function POST(
     timestamp: new Date().toISOString()
   });
 
+  let user: Awaited<ReturnType<typeof getCurrentUser>> = null;
+
   try {
-    const user = await getCurrentUser();
+    user = await getCurrentUser();
     if (!user) {
       console.log(`[start-conversation:${requestId}] Auth failed - no user`);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -197,7 +199,24 @@ export async function POST(
       );
     }
 
-    const body = await request.json();
+    let body: any = {};
+
+    try {
+      body = await request.json();
+    } catch (parseError: any) {
+      const isSyntaxError = parseError instanceof SyntaxError;
+
+      console.warn(`[start-conversation:${requestId}] Failed to parse request body`, {
+        error: parseError?.message,
+        isSyntaxError,
+      });
+
+      if (!isSyntaxError) {
+        throw parseError;
+      }
+      // Continue with empty body so defaults (like initial_message) still apply
+      body = {};
+    }
 
     // Validate request body with recipient_id derived from help request
     const validation = messagingValidation.helpRequestConversation.safeParse({
