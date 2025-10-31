@@ -56,15 +56,27 @@ async function getMessagingData(userId: string) {
       const conversations = (result.conversations || []).map((conv: any) => ({
         id: conv.id,
         help_request_id: conv.help_request_id,
+        created_by: conv.requester_id,
+        title: conv.help_request?.title || 'Conversation',
+        status: conv.status,
+        created_at: conv.created_at,
+        updated_at: conv.updated_at,
         last_message_at: conv.last_message_at,
         unread_count: 0, // V2 doesn't have read tracking yet
-        other_participant: {
-          id: conv.other_participant.id,
-          name: conv.other_participant.name || 'Unknown',
-          location: conv.other_participant.location
-        },
+        // Transform other_participant into participants array for component compatibility
+        participants: [
+          {
+            user_id: conv.other_participant.id,
+            name: conv.other_participant.name || 'Unknown',
+            location: conv.other_participant.location,
+            role: 'member' as const
+          }
+        ],
         help_request: conv.help_request,
-        last_message: conv.last_message
+        last_message: conv.last_message ? {
+          ...conv.last_message,
+          sender_name: conv.last_message.sender_id === userId ? 'You' : conv.other_participant.name
+        } : undefined
       }));
 
       return {
