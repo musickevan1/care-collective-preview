@@ -2,7 +2,7 @@
 // import { Logger } from './logger'
 
 export interface ErrorContext {
-  userId?: string
+  userId?: string | null
   sessionId?: string
   userAgent?: string
   url?: string
