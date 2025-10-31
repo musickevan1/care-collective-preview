@@ -129,16 +129,16 @@ const nextConfig = {
   // Compression for performance
   compress: true,
 
-  // TypeScript configuration  
+  // TypeScript configuration
   typescript: {
-    // Temporarily bypass during build while maintaining local type checking
-    ignoreBuildErrors: true,
+    // Enforce type checking during builds for production safety
+    ignoreBuildErrors: false,
   },
 
   // ESLint configuration
   eslint: {
-    // Temporarily disable ESLint during build until config is fixed
-    ignoreDuringBuilds: true,
+    // Enforce linting during builds for code quality
+    ignoreDuringBuilds: false,
   },
 
   // Build configuration for Vercel deployment

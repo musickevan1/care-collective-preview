@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { emailService } from '@/lib/email-service'
 import { z } from 'zod'
+import { requireAdminAuth, getAdminUser } from '@/lib/api/admin-auth'
 
 // Validation schema for user management actions
 const userActionSchema = z.object({
@@ -13,24 +14,11 @@ const userActionSchema = z.object({
 // GET - Get all users with pagination
 export async function GET(request: NextRequest) {
   try {
+    // Comprehensive admin authorization check
+    const authError = await requireAdminAuth()
+    if (authError) return authError
+
     const supabase = await createClient()
-    
-    // Verify admin authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Check if user is admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile?.is_admin) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
-    }
 
     // Parse query parameters
     const { searchParams } = new URL(request.url)
@@ -101,33 +89,21 @@ export async function GET(request: NextRequest) {
 // POST - Perform user management actions
 export async function POST(request: NextRequest) {
   try {
+    // Comprehensive admin authorization check
+    const authError = await requireAdminAuth()
+    if (authError) return authError
+
+    const adminUser = await getAdminUser()
     const supabase = await createClient()
-    
-    // Verify admin authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Check if user is admin
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-
-    if (!profile?.is_admin) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
-    }
 
     // Parse and validate request body
     const body = await request.json()
     const { userId, action, reason } = userActionSchema.parse(body)
 
     // Prevent admin from removing their own admin status
-    if (userId === user.id && action === 'remove_admin') {
-      return NextResponse.json({ 
-        error: 'Cannot remove admin privileges from yourself' 
+    if (userId === adminUser.id && action === 'remove_admin') {
+      return NextResponse.json({
+        error: 'Cannot remove admin privileges from yourself'
       }, { status: 400 })
     }
 
@@ -135,9 +111,9 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'activate':
-        updateData = { 
+        updateData = {
           verification_status: 'approved',
-          approved_by: user.id,
+          approved_by: adminUser.id,
           approved_at: new Date().toISOString()
         }
         break
@@ -170,7 +146,7 @@ export async function POST(request: NextRequest) {
     // Log admin action
     console.log(`[Admin API] User ${action}:`, {
       userId,
-      adminId: user.id,
+      adminId: adminUser.id,
       reason
     })
 

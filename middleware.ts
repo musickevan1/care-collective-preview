@@ -1,16 +1,27 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware-edge'
+import { Logger } from '@/lib/logger'
 
 export async function middleware(request: NextRequest) {
   // CRITICAL DEBUG: Verify middleware executes
-  console.log('[Middleware] 🎯 ENTRY POINT - Path:', request.nextUrl.pathname)
+  Logger.getInstance().debug('[Middleware] ENTRY POINT', {
+    path: request.nextUrl.pathname,
+    category: 'middleware'
+  })
 
   try {
     const result = await updateSession(request)
-    console.log('[Middleware] ✅ EXIT - Returning response for:', request.nextUrl.pathname)
+    Logger.getInstance().debug('[Middleware] EXIT - Returning response', {
+      path: request.nextUrl.pathname,
+      category: 'middleware'
+    })
     return result
   } catch (error) {
-    console.error('[Middleware] CRITICAL ERROR - Blocking request for security:', error)
+    Logger.getInstance().error('[Middleware] CRITICAL ERROR - Blocking request for security', error as Error, {
+      path: request.nextUrl.pathname,
+      category: 'middleware',
+      severity: 'critical'
+    })
 
     // SECURITY: In production, block all requests if middleware fails
     // This prevents auth bypass if service role client or other critical code fails
@@ -22,7 +33,10 @@ export async function middleware(request: NextRequest) {
     }
 
     // Development: Allow through with warning
-    console.warn('[Middleware] Development mode - allowing request despite error')
+    Logger.getInstance().warn('[Middleware] Development mode - allowing request despite error', {
+      path: request.nextUrl.pathname,
+      category: 'middleware'
+    })
     const response = NextResponse.next()
 
     // Add basic security headers even when middleware fails

@@ -12,26 +12,7 @@ import { moderationService } from '@/lib/messaging/moderation';
 import { z } from 'zod';
 import { Logger } from '@/lib/logger';
 import { errorTracker } from '@/lib/error-tracking';
-
-// Rate limiting setup (in production, use Redis or external service)
-const requestCounts = new Map<string, { count: number; resetTime: number }>();
-
-function checkRateLimit(userId: string, maxRequests: number = 30, windowMs: number = 60000): boolean {
-  const now = Date.now();
-  const userLimit = requestCounts.get(userId);
-
-  if (!userLimit || now > userLimit.resetTime) {
-    requestCounts.set(userId, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-
-  if (userLimit.count >= maxRequests) {
-    return false;
-  }
-
-  userLimit.count += 1;
-  return true;
-}
+import { messageRateLimiter, strictRateLimiter } from '@/lib/security/rate-limiter';
 
 async function getCurrentUser() {
   const supabase = await createClient();
@@ -55,10 +36,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check rate limit
-    if (!checkRateLimit(user.id)) {
+    // Check rate limit using centralized rate limiter
+    const rateLimitResult = await messageRateLimiter.check(request, `user:${user.id}`);
+    if (!rateLimitResult.success) {
       return NextResponse.json(
-        { error: 'Too many requests. Please slow down.' },
+        {
+          error: 'Too many requests. Please slow down.',
+          retry_after: new Date(rateLimitResult.reset).toISOString()
+        },
         { status: 429 }
       );
     }
@@ -128,9 +113,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Check rate limit (stricter for creating conversations)
-    if (!checkRateLimit(`create_conv_${user.id}`, 10, 60000)) {
+    const rateLimitResult = await strictRateLimiter.check(request, `create_conv:${user.id}`);
+    if (!rateLimitResult.success) {
       return NextResponse.json(
-        { error: 'Too many conversation creation attempts. Please wait.' },
+        {
+          error: 'Too many conversation creation attempts. Please wait.',
+          retry_after: new Date(rateLimitResult.reset).toISOString()
+        },
         { status: 429 }
       );
     }

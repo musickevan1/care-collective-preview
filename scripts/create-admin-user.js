@@ -12,17 +12,17 @@ require('dotenv').config()
 
 // Supabase credentials from environment variables
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE
 
 // Admin credentials from environment variables or command line arguments
 const adminEmail = process.env.ADMIN_EMAIL || process.argv[2]
 const adminPassword = process.env.ADMIN_PASSWORD || process.argv[3]
 
 // Validation
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.error('❌ Missing required environment variables:')
   console.error('   - NEXT_PUBLIC_SUPABASE_URL')
-  console.error('   - SUPABASE_SERVICE_ROLE')
+  console.error('   - SUPABASE_SERVICE_ROLE_KEY')
   process.exit(1)
 }
 
@@ -37,7 +37,7 @@ async function createAdminUser() {
   console.log('🚀 Creating admin user for Care Collective...')
 
   // Create Supabase client with service role (bypasses RLS)
-  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE, {
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     auth: {
       autoRefreshToken: false,
       persistSession: false

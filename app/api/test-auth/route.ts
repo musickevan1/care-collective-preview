@@ -5,7 +5,11 @@ import { getProfileWithServiceRole } from '@/lib/supabase/admin'
 export const dynamic = 'force-dynamic'
 
 /**
- * Diagnostic endpoint to test authentication and RLS behavior
+ * SECURITY: Diagnostic endpoint for authentication and RLS testing
+ *
+ * Access Requirements:
+ * - Production: Requires ENABLE_TEST_ENDPOINTS=true environment variable
+ * - All environments: Requires authenticated admin user with approved status
  *
  * Tests:
  * 1. Service role profile fetch (bypasses RLS)
@@ -14,7 +18,13 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET(request: NextRequest) {
   try {
-    // Get authenticated user
+    // SECURITY CHECK 1: Feature flag gating
+    // In production, only allow access when explicitly enabled
+    if (process.env.NODE_ENV === 'production' && process.env.ENABLE_TEST_ENDPOINTS !== 'true') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+
+    // SECURITY CHECK 2: Require authentication
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
@@ -24,6 +34,22 @@ export async function GET(request: NextRequest) {
         error: 'Not authenticated',
         authError: authError?.message
       }, { status: 401 })
+    }
+
+    // SECURITY CHECK 3: Require admin with full verification
+    const { data: adminProfile } = await supabase
+      .from('profiles')
+      .select('is_admin, verification_status, email_confirmed')
+      .eq('id', user.id)
+      .single()
+
+    if (!adminProfile?.is_admin ||
+        adminProfile.verification_status !== 'approved' ||
+        !adminProfile.email_confirmed) {
+      return NextResponse.json({
+        success: false,
+        error: 'Admin access required'
+      }, { status: 403 })
     }
 
     console.log('[Test Auth] Testing for user:', {

@@ -1,5 +1,6 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/lib/database.types'
+import { Logger } from '@/lib/logger'
 
 /**
  * Edge Runtime compatible storage adapter
@@ -34,7 +35,7 @@ const edgeStorageAdapter = {
  */
 export function createAdminClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseServiceKey) {
     throw new Error(
@@ -62,12 +63,12 @@ export function createAdminClient() {
  */
 export async function getProfileWithServiceRole(userId: string) {
   // ENHANCED DEBUG LOGGING - Track data flow
-  console.log('[Service Role] INPUT userId:', userId)
-  console.log('[Service Role] Env check:', {
+  Logger.getInstance().debug('[Service Role] INPUT userId', { userId })
+  Logger.getInstance().debug('[Service Role] Env check', {
     hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
-    hasKey: !!process.env.SUPABASE_SERVICE_ROLE,
+    hasKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
     urlValue: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    timestamp: new Date().toISOString()
+    category: 'service_role'
   })
 
   try {
@@ -80,7 +81,7 @@ export async function getProfileWithServiceRole(userId: string) {
       .single()
 
     // ENHANCED DEBUG LOGGING - Track query result
-    console.log('[Service Role] RESULT:', {
+    Logger.getInstance().debug('[Service Role] RESULT', {
       success: !!profile,
       profileId: profile?.id,
       profileName: profile?.name,
@@ -89,37 +90,38 @@ export async function getProfileWithServiceRole(userId: string) {
       mismatchDetected: profile && profile.id !== userId,
       error: error?.message,
       errorCode: error?.code,
-      timestamp: new Date().toISOString()
+      category: 'service_role'
     })
 
     if (error) {
-      console.error('[Service Role] Profile query failed:', {
-        error: error.message,
+      Logger.getInstance().error('[Service Role] Profile query failed', error, {
         code: error.code,
         details: error.details,
         hint: error.hint,
-        userId
+        userId,
+        category: 'service_role'
       })
       throw error
     }
 
     // CRITICAL: Verify profile ID matches input user ID
     if (profile.id !== userId) {
-      console.error('[Service Role] 🚨 CRITICAL MISMATCH DETECTED:', {
+      Logger.getInstance().error('[Service Role] CRITICAL MISMATCH DETECTED', undefined, {
         inputUserId: userId,
         returnedProfileId: profile.id,
         returnedProfileName: profile.name,
         THIS_SHOULD_NEVER_HAPPEN: true,
-        timestamp: new Date().toISOString()
+        category: 'service_role',
+        severity: 'critical'
       })
     }
 
     return profile
   } catch (error) {
-    console.error('[Service Role] CRITICAL: getProfileWithServiceRole failed:', {
-      error,
+    Logger.getInstance().error('[Service Role] CRITICAL: getProfileWithServiceRole failed', error as Error, {
       userId,
-      errorMessage: error instanceof Error ? error.message : String(error)
+      category: 'service_role',
+      severity: 'critical'
     })
     throw error
   }
@@ -140,14 +142,20 @@ export async function hasPendingSessionInvalidation(userId: string): Promise<boo
     })
 
     if (error) {
-      console.error('[Service Role] Failed to check pending session invalidation:', error)
+      Logger.getInstance().error('[Service Role] Failed to check pending session invalidation', error, {
+        userId,
+        category: 'service_role'
+      })
       // On error, assume no pending invalidation (fail open for this check)
       return false
     }
 
     return data === true
   } catch (error) {
-    console.error('[Service Role] Exception checking pending session invalidation:', error)
+    Logger.getInstance().error('[Service Role] Exception checking pending session invalidation', error as Error, {
+      userId,
+      category: 'service_role'
+    })
     return false
   }
 }
@@ -166,11 +174,20 @@ export async function markSessionInvalidated(userId: string): Promise<void> {
     })
 
     if (error) {
-      console.error('[Service Role] Failed to mark session as invalidated:', error)
+      Logger.getInstance().error('[Service Role] Failed to mark session as invalidated', error, {
+        userId,
+        category: 'service_role'
+      })
     } else {
-      console.log('[Service Role] Session marked as invalidated for user:', userId)
+      Logger.getInstance().info('[Service Role] Session marked as invalidated', {
+        userId,
+        category: 'service_role'
+      })
     }
   } catch (error) {
-    console.error('[Service Role] Exception marking session as invalidated:', error)
+    Logger.getInstance().error('[Service Role] Exception marking session as invalidated', error as Error, {
+      userId,
+      category: 'service_role'
+    })
   }
 }

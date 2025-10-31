@@ -56,7 +56,7 @@ async function verifyEnvironmentVariables() {
   const requiredVars = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    'SUPABASE_SERVICE_ROLE',
+    'SUPABASE_SERVICE_ROLE_KEY',
     'NEXT_PUBLIC_SITE_URL',
   ];
   
@@ -109,7 +109,7 @@ async function verifySupabaseConnection() {
   
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE;
+  const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
   
   if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceRole) {
     error('Missing Supabase credentials, skipping connection test');
@@ -165,7 +165,7 @@ async function verifyDatabaseSchema() {
   header('📊 Checking Database Schema');
   
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE;
+  const supabaseServiceRole = process.env.SUPABASE_SERVICE_ROLE_KEY;
   
   if (!supabaseUrl || !supabaseServiceRole) {
     error('Missing Supabase credentials, skipping schema check');

@@ -17,7 +17,7 @@ envContent.split('\n').forEach(line => {
 });
 
 const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceRoleKey = env.SUPABASE_SERVICE_ROLE;
+const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !serviceRoleKey) {
   console.error('❌ Missing Supabase credentials in .env.local');

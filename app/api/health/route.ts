@@ -118,23 +118,31 @@ function checkEnvironment(): HealthCheckResult {
       'NEXT_PUBLIC_SUPABASE_ANON_KEY',
       'SUPABASE_SERVICE_ROLE_KEY'
     ]
-    
+
     const missingVars = requiredEnvVars.filter(varName => !process.env[varName])
-    
+
     if (missingVars.length > 0) {
+      // Log detailed information server-side only
+      Logger.getInstance().error('Environment configuration incomplete', undefined, {
+        missingVars,
+        count: missingVars.length,
+        category: 'health_check'
+      })
+
+      // Return generic message to prevent information disclosure
       return {
         status: 'unhealthy',
-        message: `Missing required environment variables: ${missingVars.join(', ')}`,
+        message: 'Environment configuration incomplete',
         last_checked: new Date().toISOString()
       }
     }
-    
+
     return {
       status: 'healthy',
       message: 'All required environment variables present',
       last_checked: new Date().toISOString()
     }
-    
+
   } catch (error) {
     Logger.getInstance().error('Environment health check error', error as Error)
     return {

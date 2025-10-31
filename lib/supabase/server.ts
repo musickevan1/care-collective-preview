@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { Logger } from '@/lib/logger'
 
 export function createClient() {
   const cookieStore = cookies()
@@ -21,7 +22,10 @@ export function createClient() {
             const cookies = cookieStore.getAll()
             // Debug logging for authentication issues (only when auth cookies present)
             if (process.env.NODE_ENV === 'development' && cookies.some(c => c.name.includes('sb-'))) {
-              console.log('[Server Client] Auth cookies found:', cookies.filter(c => c.name.includes('sb-')).map(c => c.name))
+              Logger.getInstance().debug('[Server Client] Auth cookies found', {
+                authCookies: cookies.filter(c => c.name.includes('sb-')).map(c => c.name),
+                category: 'server_client'
+              })
             }
             // Enhanced cookie validation and sanitization
             return cookies.filter(cookie => {
@@ -39,7 +43,10 @@ export function createClient() {
               return true
             })
           } catch (error) {
-            console.warn('[Server Client] Cookie parsing error:', error)
+            Logger.getInstance().warn('[Server Client] Cookie parsing error', {
+              error: error instanceof Error ? error.message : String(error),
+              category: 'server_client'
+            })
             return []
           }
         },
@@ -48,11 +55,17 @@ export function createClient() {
             // Validate and sanitize cookies before setting
             const validCookies = cookiesToSet.filter(cookie => {
               if (!cookie || typeof cookie.name !== 'string' || !cookie.name.trim()) {
-                console.warn('[Server Client] Invalid cookie name:', cookie)
+                Logger.getInstance().warn('[Server Client] Invalid cookie name', {
+                  cookie: cookie?.name,
+                  category: 'server_client'
+                })
                 return false
               }
               if (cookie.value === undefined || cookie.value === null) {
-                console.warn('[Server Client] Invalid cookie value for:', cookie.name)
+                Logger.getInstance().warn('[Server Client] Invalid cookie value', {
+                  cookieName: cookie.name,
+                  category: 'server_client'
+                })
                 return false
               }
               return true
@@ -69,11 +82,17 @@ export function createClient() {
 
             // Debug logging for cookie operations
             if (process.env.NODE_ENV === 'development' && validCookies.length > 0) {
-              console.log('[Server Client] Setting cookies:', validCookies.map(c => c.name))
+              Logger.getInstance().debug('[Server Client] Setting cookies', {
+                cookieNames: validCookies.map(c => c.name),
+                category: 'server_client'
+              })
             }
           } catch (error) {
             if (process.env.NODE_ENV === 'development') {
-              console.warn('[Server Client] Cookie setting failed (expected in server components):', error)
+              Logger.getInstance().warn('[Server Client] Cookie setting failed (expected in server components)', {
+                error: error instanceof Error ? error.message : String(error),
+                category: 'server_client'
+              })
             }
             // The `setAll` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing

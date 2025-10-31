@@ -18,7 +18,7 @@ export function getCSPHeader(): string {
     "form-action 'self'",
     "frame-ancestors 'none'",
     "frame-src 'none'",
-    // "worker-src 'self' blob:", // Removed to prevent service worker build issues
+    "worker-src 'self' blob:", // Re-enabled for service worker support
     "manifest-src 'self'",
   ]
 

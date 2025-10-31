@@ -1,32 +1,21 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { requireAdminAuth, getAdminUser } from '@/lib/api/admin-auth'
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { userId: string } }
 ) {
   try {
+    // Comprehensive admin authorization check
+    const authError = await requireAdminAuth()
+    if (authError) return authError
+
+    const adminUser = await getAdminUser()
     const supabase = await createClient()
     const { userId } = params
     const body = await request.json()
     const { action, reason } = body
-
-    // Verify admin access
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Check if user is admin
-    const { data: adminProfile, error: adminError } = await supabase
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-
-    if (adminError || !adminProfile?.is_admin) {
-      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
-    }
 
     // Perform the requested action
     let updateData: any = {}
@@ -98,7 +87,7 @@ export async function POST(
       const { error: auditError } = await supabase
         .from('admin_audit_log')
         .insert({
-          admin_id: user.id,
+          admin_id: adminUser.id,
           action: action,
           target_user_id: userId,
           details: {

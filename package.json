@@ -27,7 +27,7 @@
     "db:push": "supabase db push",
     "db:pull": "supabase db pull",
     "db:migration": "supabase migration new",
-    "db:types": "supabase gen types typescript --project-id kecureoyekeqhrxkmjuh > lib/database.types.ts",
+    "db:types": "~/.local/bin/supabase gen types typescript --project-id kecureoyekeqhrxkmjuh > lib/database.types.ts",
     "db:seed": "supabase db seed",
     "db:link": "supabase link --project-ref kecureoyekeqhrxkmjuh",
     "db:test-rls": "vitest run tests/database/rls-policies.test.ts",
