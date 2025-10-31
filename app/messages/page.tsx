@@ -254,8 +254,8 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps):
       breadcrumbs={breadcrumbs}
     >
       <div className="h-[calc(100vh-64px)] overflow-hidden">
-        <MessagingDashboard 
-          initialConversations={conversations}
+        <MessagingDashboard
+          initialConversations={conversations as any}
           userId={user.id}
           selectedConversationId={searchParams.conversation}
           enableRealtime={true}
