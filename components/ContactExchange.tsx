@@ -387,8 +387,10 @@ export function ContactExchange({
         component: 'ContactExchange',
         action: 'handleConsentGiven',
         userId: currentUserId,
-        requestId,
-        severity: 'high'
+        severity: 'high',
+        extra: {
+          requestId
+        }
       })
 
       // Log failed attempt for security monitoring
