@@ -51,7 +51,7 @@ const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuth
 export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'dashboard' }) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const { isAuthenticated, isAdmin: userIsAdmin, displayName, isLoading, error } = useAuthNavigation()
+  const { isAuthenticated, isAdmin: userIsAdmin, displayName, isLoading } = useAuthNavigation()
   const handleSmoothScroll = useSmoothScroll()
   
   // Use prop isAdmin for dashboard variant, userIsAdmin for homepage variant
