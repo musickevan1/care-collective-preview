@@ -54,8 +54,6 @@ export class ErrorBoundary extends Component<Props, State> {
       },
       extra: {
         componentStack: errorInfo.componentStack,
-        errorBoundaryStack: errorInfo.errorBoundary,
-        errorBoundaryName: errorInfo.errorBoundaryName,
         timestamp: new Date().toISOString()
       }
     }, true)
