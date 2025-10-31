@@ -8,6 +8,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { LoadingSkeleton } from '@/components/ui/loading';
 import { cn } from '@/lib/utils';
 
+// Re-export LoadingSkeleton for convenience
+export { LoadingSkeleton };
+
 interface LoadingSkeletonProps {
   className?: string;
   'aria-label'?: string;
