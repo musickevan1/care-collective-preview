@@ -16,11 +16,13 @@ type Profile = Database['public']['Tables']['profiles']['Row'] & {
   email?: string // Add email for bulk operations
 }
 
-function formatTimeAgo(dateString: string): string {
+function formatTimeAgo(dateString: string | null): string {
+  if (!dateString) return 'Unknown'
+
   const now = new Date()
   const date = new Date(dateString)
   const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
-  
+
   if (diffInDays === 0) {
     return 'Today'
   } else if (diffInDays === 1) {
