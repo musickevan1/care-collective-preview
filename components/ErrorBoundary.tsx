@@ -50,7 +50,7 @@ export class ErrorBoundary extends Component<Props, State> {
       tags: {
         platform: 'care-collective',
         environment: process.env.NODE_ENV || 'development',
-        hasComponentStack: !!errorInfo.componentStack
+        hasComponentStack: String(!!errorInfo.componentStack)
       },
       extra: {
         componentStack: errorInfo.componentStack,
