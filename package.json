@@ -88,6 +88,7 @@
     "next": "^14.2.32",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-pull-to-refresh": "^2.0.1",
     "react-window": "^2.2.2",
     "resend": "^6.0.2",
     "tailwind-merge": "^3.3.1",
