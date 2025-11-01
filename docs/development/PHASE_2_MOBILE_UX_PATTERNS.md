@@ -67,24 +67,55 @@ Add mobile-specific interaction patterns that users expect from modern messaging
 ## 📦 Phase 2.1: Pull-to-Refresh Messages
 
 **Priority:** HIGH
-**Estimated Time:** 6-8 hours
+**Status:** ⚠️ BLOCKED - Library Incompatibility with Next.js 14
+**Estimated Time:** 6-8 hours (now requires custom implementation ~8-10 hours)
 **Files to Modify:**
 - `components/messaging/MessagingDashboard.tsx`
-- `components/messaging/VirtualizedMessageList.tsx` (if using virtualization)
+- `lib/hooks/usePullToRefresh.ts` (new custom hook)
+
+---
+
+### ⚠️ CRITICAL: Known Incompatibility Issue
+
+**Libraries Tested (ALL INCOMPATIBLE with Next.js 14.2.32):**
+
+1. **react-pull-to-refresh (v2.0.1)**
+   - Production Error: `ReferenceError: Cannot access 'K' before initialization`
+   - Result: 500 error on /messages page
+   - Issue: Circular dependency in bundle
+
+2. **react-simple-pull-to-refresh (latest)**
+   - Production Error: `ReferenceError: Cannot access '$' before initialization`
+   - Result: Same 500 error
+   - Issue: Same circular dependency problem
+
+**Root Cause:** Both libraries have bundling issues with Next.js 14's minification and module resolution. The circular references in the library code cause initialization errors during production builds.
+
+**Commits Reverted:**
+- `1b721b5` - Initial pull-to-refresh implementation
+- `b76b189` - Attempted fix with alternative library
+- `316749d` - Full revert to restore working state
+
+**Resolution Required:** Must implement custom pull-to-refresh using native touch events or wait for:
+- Next.js 15 (may resolve bundling issues)
+- Library updates for Next.js 14 compatibility
+- Alternative gesture libraries (Framer Motion, react-use-gesture)
+
+---
 
 ### What to Implement
 
 **User Story:** As a mobile user, I want to pull down on the message list to check for new messages, so I can manually refresh when needed (e.g., after losing connectivity).
 
-### Technical Implementation
+### Technical Implementation (Custom Approach Required)
 
-#### Step 1: Install Library
+#### Step 1: ~~Install Library~~ Create Custom Hook
 
-```bash
+~~```bash
 npm install react-pull-to-refresh
-# or
-yarn add react-pull-to-refresh
-```
+```~~
+
+**UPDATE:** Build custom hook using native touch events:
 
 #### Step 2: Wrap Message List
 
