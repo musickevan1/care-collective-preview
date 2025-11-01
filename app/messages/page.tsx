@@ -41,9 +41,10 @@ async function getUser() {
 }
 
 async function getMessagingData(userId: string) {
-  // V2: Always use atomic RPC function to list conversations (V1 removed)
+  // V2: Load only ACCEPTED conversations for the Active tab
+  // Pending offers are loaded separately by the MessagingDashboard component
   try {
-    const result = await messagingServiceV2.listConversations(userId);
+    const result = await messagingServiceV2.listAcceptedConversations(userId);
 
     if (!result.success) {
       console.error('[MessagesPage] V2 list conversations failed:', result.error);
