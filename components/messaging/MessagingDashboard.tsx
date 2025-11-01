@@ -104,7 +104,7 @@ export function MessagingDashboard({
     try {
       // Get conversation details
       const { data: conversation, error: convError } = await supabase
-        .from('conversations')
+        .from('conversations_v2')
         .select(`
           *,
           conversation_participants!inner (
@@ -130,7 +130,7 @@ export function MessagingDashboard({
 
       // Get messages
       const { data: messages, error: msgError } = await supabase
-        .from('messages')
+        .from('messages_v2')
         .select(`
           *,
           sender:profiles!sender_id (
@@ -172,7 +172,7 @@ export function MessagingDashboard({
       // Mark messages as read
       if (messages?.length) {
         await supabase
-          .from('messages')
+          .from('messages_v2')
           .update({ read_at: new Date().toISOString() })
           .eq('conversation_id', conversationId)
           .eq('recipient_id', userId)
@@ -203,7 +203,7 @@ export function MessagingDashboard({
 
     try {
       const { error } = await supabase
-        .from('messages')
+        .from('messages_v2')
         .insert({
           conversation_id: selectedConversation,
           sender_id: userId,
@@ -217,7 +217,7 @@ export function MessagingDashboard({
 
       // Update conversation's last_message_at
       await supabase
-        .from('conversations')
+        .from('conversations_v2')
         .update({ last_message_at: new Date().toISOString() })
         .eq('id', selectedConversation)
 
@@ -338,7 +338,7 @@ export function MessagingDashboard({
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
-        table: 'messages',
+        table: 'messages_v2',
         filter: `conversation_id=eq.${selectedConversation}`
       }, async (payload) => {
         // Efficiently append new message instead of reloading entire conversation
@@ -346,7 +346,7 @@ export function MessagingDashboard({
 
         // Fetch full message with sender/recipient profiles
         const { data: messageWithProfiles, error } = await supabase
-          .from('messages')
+          .from('messages_v2')
           .select(`
             *,
             sender:profiles!messages_sender_id_fkey(id, name, location),
