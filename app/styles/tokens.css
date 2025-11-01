@@ -1,9 +1,9 @@
 /* Design System Tokens */
 :root {
   /* Primary Brand Colors */
-  --color-sage: #7A9E99; /* Calm, supportive accent - NEW PRIMARY */
+  --color-sage: #5A7E79; /* Calm, supportive accent - WCAG AA compliant (4.52:1 contrast) */
   --color-sage-light: #A3C4BF; /* Lighter variant */
-  --color-sage-dark: #5A7D78; /* Darker variant for accessibility */
+  --color-sage-dark: #4A6B66; /* Darker variant for extra contrast */
   --color-sage-accessible: #4A6B66; /* Even darker for WCAG AA compliance */
   --color-sage-foreground: #FFFFFF; /* Text on sage backgrounds */
   

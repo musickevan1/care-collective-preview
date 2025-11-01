@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { messagingClient } from '@/lib/messaging/client';
+import { messagingServiceV2 } from '@/lib/messaging/service-v2';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
 import { z } from 'zod';
@@ -73,26 +73,34 @@ export async function GET(
       );
     }
 
-    // Parse query parameters for pagination
-    const url = new URL(request.url);
-    const cursor = url.searchParams.get('cursor') || undefined;
-    const limit = Math.min(parseInt(url.searchParams.get('limit') || '50', 10), 100);
-    const direction = (url.searchParams.get('direction') === 'newer') ? 'newer' : 'older';
+    // V2: Get full conversation with messages using RPC
+    const result = await messagingServiceV2.getConversation(conversationId, user.id);
 
-    if (limit < 1) {
-      return NextResponse.json(
-        { error: 'Invalid limit parameter' },
-        { status: 400 }
-      );
+    if (!result.success) {
+      // Map V2 error codes to HTTP responses
+      switch (result.error) {
+        case 'not_found':
+          return NextResponse.json(
+            { error: 'Conversation not found' },
+            { status: 404 }
+          );
+        case 'access_denied':
+          return NextResponse.json(
+            { error: 'You do not have access to this conversation' },
+            { status: 403 }
+          );
+        default:
+          return NextResponse.json(
+            { error: 'Failed to fetch messages' },
+            { status: 500 }
+          );
+      }
     }
 
-    const result = await messagingClient.getMessages(
-      conversationId, 
-      user.id, 
-      { cursor, limit, direction }
-    );
-
-    return NextResponse.json(result);
+    return NextResponse.json({
+      conversation: result.conversation,
+      messages: result.messages || []
+    });
 
   } catch (error) {
     console.error('Error fetching messages:', error);
@@ -195,35 +203,57 @@ export async function POST(
       );
     }
 
-    // Send the message
-    const message = await messagingClient.sendMessage(user.id, {
+    // Send the message using V2 RPC
+    const result = await messagingServiceV2.sendMessage({
       conversation_id: conversationId,
-      content: validation.data.content,
-      message_type: validation.data.message_type || 'text'
+      sender_id: user.id,
+      content: validation.data.content
     });
+
+    if (!result.success) {
+      // Map V2 error codes to HTTP responses
+      switch (result.error) {
+        case 'not_found':
+          return NextResponse.json(
+            { error: 'Conversation not found' },
+            { status: 404 }
+          );
+        case 'access_denied':
+          return NextResponse.json(
+            { error: 'You do not have access to this conversation' },
+            { status: 403 }
+          );
+        case 'validation_error':
+          return NextResponse.json(
+            { error: result.message || 'Invalid message data' },
+            { status: 400 }
+          );
+        default:
+          return NextResponse.json(
+            { error: 'Failed to send message' },
+            { status: 500 }
+          );
+      }
+    }
 
     // Get the message with sender details for response
     const supabase = await createClient();
     const { data: messageWithSender } = await supabase
-      .from('messages')
+      .from('messages_v2')
       .select(`
         *,
-        sender:profiles!messages_sender_id_fkey (
-          id,
-          name,
-          location
-        ),
-        recipient:profiles!messages_recipient_id_fkey (
+        sender:profiles!messages_v2_sender_id_fkey (
           id,
           name,
           location
         )
       `)
-      .eq('id', message.id)
+      .eq('id', result.message_id)
       .single();
 
     return NextResponse.json({
       message: messageWithSender,
+      message_id: result.message_id,
       status: 'sent'
     }, { status: 201 });
 
@@ -302,9 +332,20 @@ export async function PUT(
       );
     }
 
-    await messagingClient.markMessageAsRead(messageId, user.id);
+    // V2: Update messages_v2 table directly
+    const supabase = await createClient();
+    const { error: updateError } = await supabase
+      .from('messages_v2')
+      .update({ read_at: new Date().toISOString() })
+      .eq('id', messageId)
+      .eq('recipient_id', user.id) // Only recipient can mark as read
+      .is('read_at', null); // Only update if not already read
 
-    return NextResponse.json({ 
+    if (updateError) {
+      throw new Error('Failed to mark message as read');
+    }
+
+    return NextResponse.json({
       message: 'Message marked as read',
       read_at: new Date().toISOString()
     });

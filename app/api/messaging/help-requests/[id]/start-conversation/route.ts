@@ -5,10 +5,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
-import { isMessagingV2Enabled } from '@/lib/features';
 import { messagingServiceV2 } from '@/lib/messaging/service-v2';
 
 // Rate limiting for help request conversations
@@ -224,162 +222,107 @@ export async function POST(
     }
 
     // Check if a conversation already exists between these users for this help request
-    // FIXED: Avoid !inner join to prevent RLS recursion
-    console.log(`[start-conversation:${requestId}] Checking for existing conversation`);
+    // V2: Direct query on conversations_v2 table (has requester_id and helper_id)
+    console.log(`[start-conversation:${requestId}] Checking for existing conversation (V2)`);
 
     try {
-      // Step 1: Find conversations for this help request where current user is a participant
-      const { data: userParticipations, error: partError } = await supabase
-        .from('conversation_participants')
-        .select('conversation_id')
-        .eq('user_id', user.id)
-        .is('left_at', null);
+      const { data: existingConv, error: dupeError } = await supabase
+        .from('conversations_v2')
+        .select('id')
+        .eq('help_request_id', helpRequestId)
+        .eq('helper_id', user.id)
+        .maybeSingle();
 
-      if (partError) {
-        console.error(`[start-conversation:${requestId}] Error fetching participations`, {
-          error: partError.message,
-          code: partError.code
+      if (dupeError) {
+        console.error(`[start-conversation:${requestId}] Error checking duplicates`, {
+          error: dupeError.message,
+          code: dupeError.code
         });
       }
 
-      if (userParticipations && userParticipations.length > 0) {
-        const convIds = userParticipations.map(p => p.conversation_id);
-
-        // Step 2: Check which of these conversations are for this help request
-        const { data: helpConversations, error: convError } = await supabase
-          .from('conversations')
-          .select('id')
-          .eq('help_request_id', helpRequestId)
-          .in('id', convIds);
-
-        if (convError) {
-          console.error(`[start-conversation:${requestId}] Error fetching conversations`, {
-            error: convError.message,
-            code: convError.code
-          });
-        }
-
-        if (helpConversations && helpConversations.length > 0) {
-          // Step 3: Check if help request owner is in any of these conversations
-          for (const conv of helpConversations) {
-            const { data: ownerParticipation } = await supabase
-              .from('conversation_participants')
-              .select('user_id')
-              .eq('conversation_id', conv.id)
-              .eq('user_id', helpRequest.user_id)
-              .is('left_at', null);
-
-            if (ownerParticipation && ownerParticipation.length > 0) {
-              console.log(`[start-conversation:${requestId}] Duplicate conversation found`, {
-                conversationId: conv.id
-              });
-              return NextResponse.json(
-                {
-                  error: 'You already have a conversation about this help request',
-                  conversation_id: conv.id
-                },
-                { status: 409 }
-              );
-            }
-          }
-        }
+      if (existingConv) {
+        console.log(`[start-conversation:${requestId}] Duplicate conversation found`, {
+          conversationId: existingConv.id
+        });
+        return NextResponse.json(
+          {
+            error: 'You already have a conversation about this help request',
+            conversation_id: existingConv.id
+          },
+          { status: 409 }
+        );
       }
+
       console.log(`[start-conversation:${requestId}] No duplicate conversation found`);
     } catch (dupeError: any) {
       console.error(`[start-conversation:${requestId}] Duplicate check failed`, {
         error: dupeError?.message,
         stack: dupeError?.stack
       });
-      // Continue anyway - better to allow duplicate than block legitimate conversation
+      // Continue anyway - V2 RPC will also check for duplicates
     }
 
-    // Create the conversation - V2 (atomic) or V1 (fallback)
-    console.log(`[start-conversation:${requestId}] Creating conversation`);
+    // Create the conversation using V2 atomic RPC
+    console.log(`[start-conversation:${requestId}] Creating conversation (V2)`);
 
-    // Check feature flag
-    const useV2 = isMessagingV2Enabled();
-    console.log(`[start-conversation:${requestId}] Using messaging version`, {
-      version: useV2 ? 'v2' : 'v1'
+    const rpcResult = await messagingServiceV2.createHelpConversation({
+      help_request_id: helpRequestId,
+      helper_id: user.id,
+      initial_message: validation.data.initial_message,
     });
 
-    let conversationResult;
-
-    if (useV2) {
-      // V2: Atomic RPC function
-      const rpcResult = await messagingServiceV2.createHelpConversation({
-        help_request_id: helpRequestId,
-        helper_id: user.id,
-        initial_message: validation.data.initial_message,
+    if (!rpcResult.success) {
+      console.error(`[start-conversation:${requestId}] V2 RPC failed`, {
+        error: rpcResult.error,
+        message: rpcResult.message,
       });
 
-      if (!rpcResult.success) {
-        console.error(`[start-conversation:${requestId}] V2 RPC failed`, {
-          error: rpcResult.error,
-          message: rpcResult.message,
-        });
+      // Map V2 error codes to HTTP responses
+      switch (rpcResult.error) {
+        case 'conversation_exists':
+          return NextResponse.json(
+            {
+              error: 'You already have a conversation about this help request',
+              conversation_id: rpcResult.conversation_id, // Allow navigation to existing
+            },
+            { status: 409 }
+          );
 
-        // Map V2 error codes to HTTP responses
-        switch (rpcResult.error) {
-          case 'conversation_exists':
-            return NextResponse.json(
-              {
-                error: 'You already have a conversation about this help request',
-                conversation_id: rpcResult.conversation_id, // Allow navigation to existing
-              },
-              { status: 409 }
-            );
+        case 'help_request_unavailable':
+          return NextResponse.json(
+            { error: 'This help request is no longer accepting offers' },
+            { status: 400 }
+          );
 
-          case 'help_request_unavailable':
-            return NextResponse.json(
-              { error: 'This help request is no longer accepting offers' },
-              { status: 400 }
-            );
+        case 'permission_denied':
+          return NextResponse.json(
+            { error: 'You do not have permission to create this conversation' },
+            { status: 403 }
+          );
 
-          case 'permission_denied':
-            return NextResponse.json(
-              { error: 'You do not have permission to create this conversation' },
-              { status: 403 }
-            );
+        case 'validation_error':
+          return NextResponse.json(
+            { error: rpcResult.message || 'Invalid conversation data' },
+            { status: 400 }
+          );
 
-          case 'validation_error':
-            return NextResponse.json(
-              { error: rpcResult.message || 'Invalid conversation data' },
-              { status: 400 }
-            );
-
-          default:
-            // Generic server error
-            return NextResponse.json(
-              {
-                error: 'Failed to start conversation. Please try again.',
-                details: process.env.NODE_ENV === 'development' ? rpcResult.details : undefined,
-              },
-              { status: 500 }
-            );
-        }
-      }
-
-      conversationResult = { id: rpcResult.conversation_id };
-
-    } else {
-      // V1: Original multi-step process (fallback)
-      try {
-        conversationResult = await messagingClient.startHelpConversation(user.id, validation.data);
-        console.log(`[start-conversation:${requestId}] V1 conversation created`, {
-          conversationId: conversationResult.id
-        });
-      } catch (createError: any) {
-        console.error(`[start-conversation:${requestId}] V1 failed`, {
-          error: createError?.message,
-          code: createError?.code,
-        });
-        throw createError; // Existing V1 error handling will catch this
+        default:
+          // Generic server error
+          return NextResponse.json(
+            {
+              error: 'Failed to start conversation. Please try again.',
+              details: process.env.NODE_ENV === 'development' ? rpcResult.details : undefined,
+            },
+            { status: 500 }
+          );
       }
     }
+
+    const conversationResult = { id: rpcResult.conversation_id };
 
     // Log the help offer for analytics
     console.log('Help conversation started:', {
-      version: useV2 ? 'v2' : 'v1',
+      version: 'v2',
       conversationId: conversationResult.id,
       helpRequestId: helpRequestId,
       helpRequestTitle: helpRequest.title,
@@ -392,7 +335,7 @@ export async function POST(
 
     // Update help request status to 'in_progress' if this is the first offer
     const { data: existingConversations } = await supabase
-      .from('conversations')
+      .from('conversations_v2')
       .select('id')
       .eq('help_request_id', helpRequestId);
 
