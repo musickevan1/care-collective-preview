@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
-import { messagingServiceV2 } from '@/lib/messaging/service-v2';
+import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
 
 // Rate limiting for help request conversations
 const helpConversationCounts = new Map<string, { count: number; resetTime: number }>();

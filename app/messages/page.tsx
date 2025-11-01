@@ -9,7 +9,7 @@ import { MessagingDashboard } from '@/components/messaging/MessagingDashboard';
 import { PlatformLayout } from '@/components/layout/PlatformLayout';
 import { redirect } from 'next/navigation';
 import { isMessagingV2Enabled } from '@/lib/features';
-import { messagingServiceV2 } from '@/lib/messaging/service-v2';
+import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
 
 // Force dynamic rendering for authentication
 export const dynamic = 'force-dynamic';

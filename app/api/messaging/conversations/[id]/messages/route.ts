@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { messagingServiceV2 } from '@/lib/messaging/service-v2';
+import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
 import { z } from 'zod';
