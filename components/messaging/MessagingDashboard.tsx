@@ -27,7 +27,6 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
-import PullToRefresh from 'react-simple-pull-to-refresh'
 
 interface MessagingDashboardProps {
   initialConversations: ConversationWithDetails[]
@@ -66,12 +65,10 @@ export function MessagingDashboard({
     error: null
   })
   const [isMobile, setIsMobile] = useState(false)
-  const [isTouchDevice, setIsTouchDevice] = useState(false)
   const [showConversationList, setShowConversationList] = useState(true)
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active')
   const [pendingOffers, setPendingOffers] = useState<any[]>([])
   const [isLoadingOffers, setIsLoadingOffers] = useState(false)
-  const [isManualRefresh, setIsManualRefresh] = useState(false)
   const [viewportHeight, setViewportHeight] = useState<number | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messageThreadRef = useRef<HTMLDivElement>(null)
@@ -83,21 +80,15 @@ export function MessagingDashboard({
     enabled: enableRealtime
   })
 
-  // Detect touch device on mount
-  useEffect(() => {
-    const checkTouchDevice = () => {
-      const isTouch =
-        'ontouchstart' in window ||
-        navigator.maxTouchPoints > 0 ||
-        // @ts-ignore - legacy property
-        navigator.msMaxTouchPoints > 0
-      setIsTouchDevice(isTouch)
-    }
-    checkTouchDevice()
-  }, [])
-
   // Handle viewport changes when virtual keyboard opens/closes on mobile
   useEffect(() => {
+    // Only apply on touch devices
+    const isTouchDevice =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      // @ts-ignore - legacy property
+      navigator.msMaxTouchPoints > 0
+
     if (!isTouchDevice) return
 
     // Use Visual Viewport API if available (modern browsers)
@@ -161,37 +152,6 @@ export function MessagingDashboard({
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
-
-  // Custom refresh indicators with Care Collective colors
-  const PullingContent = useCallback((): ReactElement => (
-    <div className="flex items-center justify-center py-4">
-      <RefreshCw className="w-5 h-5 text-sage" />
-      <span className="ml-2 text-sm text-sage">Pull to refresh...</span>
-    </div>
-  ), [])
-
-  const RefreshingContent = useCallback((): ReactElement => (
-    <div className="flex items-center justify-center py-4">
-      <RefreshCw className="w-5 h-5 text-sage animate-spin" />
-      <span className="ml-2 text-sm text-sage">Refreshing messages...</span>
-    </div>
-  ), [])
-
-  // Handle pull-to-refresh
-  const handleRefresh = useCallback(async () => {
-    setIsManualRefresh(true)
-    try {
-      // Reload messages for current conversation
-      if (selectedConversation) {
-        await loadMessages(selectedConversation)
-      }
-      // Also refresh conversation list
-      // Note: In a full implementation, you'd reload conversations from the server
-      // For now, we just reload messages which will update the conversation's timestamp
-    } finally {
-      setIsManualRefresh(false)
-    }
-  }, [selectedConversation, loadMessages])
 
   // Load messages for selected conversation
   const loadMessages = useCallback(async (conversationId: string) => {
@@ -707,44 +667,19 @@ export function MessagingDashboard({
                 </div>
               ) : (
                 <>
-                  {isTouchDevice ? (
-                    <PullToRefresh
-                      onRefresh={handleRefresh}
-                      pullingContent={<PullingContent />}
-                      refreshingContent={<RefreshingContent />}
-                      resistance={2}
-                      pullDownThreshold={60}
-                      maxPullDownDistance={80}
-                    >
-                      <ScrollArea className="flex-1 p-4">
-                        <div className="space-y-4">
-                          {messageThread.messages.map((message) => (
-                            <MessageBubble
-                              key={message.id}
-                              message={message}
-                              isCurrentUser={message.sender_id === userId}
-                              showSenderName={true}
-                            />
-                          ))}
-                          <div ref={messagesEndRef} />
-                        </div>
-                      </ScrollArea>
-                    </PullToRefresh>
-                  ) : (
-                    <ScrollArea className="flex-1 p-4">
-                      <div className="space-y-4">
-                        {messageThread.messages.map((message) => (
-                          <MessageBubble
-                            key={message.id}
-                            message={message}
-                            isCurrentUser={message.sender_id === userId}
-                            showSenderName={true}
-                          />
-                        ))}
-                        <div ref={messagesEndRef} />
-                      </div>
-                    </ScrollArea>
-                  )}
+                  <ScrollArea className="flex-1 p-4">
+                    <div className="space-y-4">
+                      {messageThread.messages.map((message) => (
+                        <MessageBubble
+                          key={message.id}
+                          message={message}
+                          isCurrentUser={message.sender_id === userId}
+                          showSenderName={true}
+                        />
+                      ))}
+                      <div ref={messagesEndRef} />
+                    </div>
+                  </ScrollArea>
 
                   {/* Typing Indicator */}
                   {selectedConversation && (
