@@ -52,7 +52,19 @@ export function MessageInput({
   const [content, setContent] = useState('')
   const [isSending, setIsSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Detect touch device capability for mobile-optimized keyboard shortcuts
+  useEffect(() => {
+    const hasTouchScreen =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      // @ts-ignore - legacy property
+      navigator.msMaxTouchPoints > 0
+
+    setIsTouchDevice(hasTouchScreen)
+  }, [])
 
   // Typing status management
   const { broadcastTypingStart, broadcastTypingStop } = useTypingStatus({
@@ -133,17 +145,29 @@ export function MessageInput({
     }
   }
 
-  // Handle keyboard shortcuts
+  // Handle keyboard shortcuts - different behavior for mobile vs desktop
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Send on Ctrl/Cmd + Enter
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-      e.preventDefault()
-      handleSendMessage()
-    }
-    
-    // Prevent newlines if at character limit
-    if (e.key === 'Enter' && content.length >= maxLength) {
-      e.preventDefault()
+    if (e.key === 'Enter') {
+      if (isTouchDevice) {
+        // Mobile: Enter sends, Shift+Enter adds newline
+        if (!e.shiftKey) {
+          e.preventDefault()
+          handleSendMessage()
+        }
+        // Shift+Enter allows newline (default behavior)
+      } else {
+        // Desktop: Ctrl/Cmd+Enter sends, Enter adds newline
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault()
+          handleSendMessage()
+        }
+        // Plain Enter allows newline (default behavior)
+      }
+
+      // Prevent newlines if at character limit
+      if (content.length >= maxLength) {
+        e.preventDefault()
+      }
     }
   }
 
@@ -234,10 +258,27 @@ export function MessageInput({
         {/* Send button and shortcuts */}
         <div className="flex items-center justify-between">
           <div className="text-xs text-muted-foreground">
-            <kbd className="px-2 py-1 bg-muted text-muted-foreground rounded text-xs">
-              Ctrl+Enter
-            </kbd>{' '}
-            to send
+            {isTouchDevice ? (
+              // Mobile keyboard shortcut hint
+              <>
+                <kbd className="px-2 py-1 bg-muted text-muted-foreground rounded text-xs">
+                  Enter
+                </kbd>{' '}
+                to send,{' '}
+                <kbd className="px-2 py-1 bg-muted text-muted-foreground rounded text-xs">
+                  Shift+Enter
+                </kbd>{' '}
+                for new line
+              </>
+            ) : (
+              // Desktop keyboard shortcut hint
+              <>
+                <kbd className="px-2 py-1 bg-muted text-muted-foreground rounded text-xs">
+                  Ctrl+Enter
+                </kbd>{' '}
+                to send
+              </>
+            )}
           </div>
 
           <Button

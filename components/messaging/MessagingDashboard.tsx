@@ -69,7 +69,9 @@ export function MessagingDashboard({
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active')
   const [pendingOffers, setPendingOffers] = useState<any[]>([])
   const [isLoadingOffers, setIsLoadingOffers] = useState(false)
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messageThreadRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
   // Track current user's presence status
@@ -77,6 +79,60 @@ export function MessagingDashboard({
     userId,
     enabled: enableRealtime
   })
+
+  // Handle viewport changes when virtual keyboard opens/closes on mobile
+  useEffect(() => {
+    // Only apply on touch devices
+    const isTouchDevice =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      // @ts-ignore - legacy property
+      navigator.msMaxTouchPoints > 0
+
+    if (!isTouchDevice) return
+
+    // Use Visual Viewport API if available (modern browsers)
+    if ('visualViewport' in window && window.visualViewport) {
+      const viewport = window.visualViewport
+
+      const handleViewportChange = () => {
+        // When keyboard opens, viewport height decreases
+        const newHeight = viewport.height
+        setViewportHeight(newHeight)
+
+        // Scroll input into view when keyboard opens
+        if (messageThreadRef.current && selectedConversation) {
+          setTimeout(() => {
+            messageThreadRef.current?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'end'
+            })
+          }, 100)
+        }
+      }
+
+      viewport.addEventListener('resize', handleViewportChange)
+      viewport.addEventListener('scroll', handleViewportChange)
+
+      // Set initial height
+      setViewportHeight(viewport.height)
+
+      return () => {
+        viewport.removeEventListener('resize', handleViewportChange)
+        viewport.removeEventListener('scroll', handleViewportChange)
+      }
+    } else {
+      // Fallback for older browsers - use window resize
+      const handleResize = () => {
+        setViewportHeight(window.innerHeight)
+      }
+
+      handleResize()
+      window.addEventListener('resize', handleResize)
+
+      return () => window.removeEventListener('resize', handleResize)
+    }
+  }, [selectedConversation])
 
   // Check if mobile layout needed
   useEffect(() => {
@@ -428,7 +484,14 @@ export function MessagingDashboard({
   const otherParticipant = currentConversation?.participants.find(p => p.user_id !== userId)
 
   return (
-    <div className={cn("h-full flex bg-background", className)}>
+    <div
+      className={cn("h-full flex bg-background", className)}
+      style={
+        viewportHeight && isMobile
+          ? { height: `${viewportHeight}px`, maxHeight: `${viewportHeight}px` }
+          : undefined
+      }
+    >
       {/* Conversation List Panel */}
       <div 
         className={cn(
@@ -508,7 +571,8 @@ export function MessagingDashboard({
       </div>
 
       {/* Message Thread Panel */}
-      <div 
+      <div
+        ref={messageThreadRef}
         className={cn(
           "flex-1 flex flex-col",
           isMobile && showConversationList && "hidden"

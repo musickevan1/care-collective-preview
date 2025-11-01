@@ -148,7 +148,7 @@ function ConversationItem({
                 : lastMessage.content
               }
             </p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{lastMessage.sender_name}</span>
               <span>•</span>
               <time dateTime={lastMessage.created_at}>
@@ -159,14 +159,14 @@ function ConversationItem({
         )}
 
         {/* Conversation metadata */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <MessageCircle className="w-3 h-3" />
+            <MessageCircle className="w-4 h-4" />
             <span>
               {conversation.participants.length} participant{conversation.participants.length !== 1 ? 's' : ''}
             </span>
           </div>
-          
+
           <time dateTime={conversation.last_message_at}>
             Updated {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
           </time>

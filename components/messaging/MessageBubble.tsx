@@ -1,16 +1,16 @@
 'use client'
 
-import React, { useRef, useLayoutEffect } from 'react'
+import React, { useRef, useLayoutEffect, useState, useEffect } from 'react'
 import { ReactElement } from 'react'
 import { MessageWithSender } from '@/lib/messaging/types'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { 
-  MoreVertical, 
-  Flag, 
-  Trash2, 
+import {
+  MoreVertical,
+  Flag,
+  Trash2,
   Copy,
   Check,
   CheckCheck,
@@ -56,6 +56,18 @@ export function MessageBubble({
   onThreadOpen, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: MessageBubbleProps): ReactElement {
   const messageRef = useRef<HTMLDivElement>(null)
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
+
+  // Detect touch device capability
+  useEffect(() => {
+    const hasTouchScreen =
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      // @ts-ignore - legacy property
+      navigator.msMaxTouchPoints > 0
+
+    setIsTouchDevice(hasTouchScreen)
+  }, [])
 
   // Measure height for virtualization
   useLayoutEffect(() => {
@@ -179,11 +191,16 @@ export function MessageBubble({
             {message.content}
           </p>
 
-          {/* Message actions dropdown (only visible on hover/focus) */}
-          <div 
+          {/* Message actions dropdown - visible on touch devices, hover-only on desktop */}
+          <div
             className={cn(
-              "absolute -top-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 z-10",
-              isCurrentUser ? "-left-2" : "-right-2"
+              "absolute -top-2 transition-opacity duration-200 z-10",
+              isCurrentUser ? "-left-2" : "-right-2",
+              // On touch devices: always visible with reduced opacity
+              // On desktop: hidden until hover/focus
+              isTouchDevice
+                ? "opacity-70"
+                : "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
             )}
           >
             <DropdownMenu>
@@ -191,10 +208,14 @@ export function MessageBubble({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-6 w-6 p-0 bg-background/95 border shadow-sm hover:bg-muted"
+                  className={cn(
+                    "bg-background/95 border shadow-sm hover:bg-muted",
+                    // Larger touch target on mobile (44px minimum per WCAG)
+                    isTouchDevice ? "h-9 w-9 p-0" : "h-6 w-6 p-0"
+                  )}
                   aria-label="Message actions"
                 >
-                  <MoreVertical className="w-3 h-3" />
+                  <MoreVertical className={cn(isTouchDevice ? "w-4 h-4" : "w-3 h-3")} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align={isCurrentUser ? "start" : "end"}>
@@ -202,15 +223,15 @@ export function MessageBubble({
                   <Copy className="w-4 h-4 mr-2" />
                   Copy message
                 </DropdownMenuItem>
-                
+
                 {onReply && (
                   <DropdownMenuItem onClick={onReply}>
                     Reply
                   </DropdownMenuItem>
                 )}
-                
+
                 {!isCurrentUser && onReport && (
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={() => onReport(message.id)}
                     className="text-destructive focus:text-destructive"
                   >
@@ -218,9 +239,9 @@ export function MessageBubble({
                     Report message
                   </DropdownMenuItem>
                 )}
-                
+
                 {isCurrentUser && onDelete && (
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={() => onDelete(message.id)}
                     className="text-destructive focus:text-destructive"
                   >
