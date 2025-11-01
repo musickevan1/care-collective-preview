@@ -186,15 +186,9 @@ export function MessagingDashboard({
         error: null
       })
 
-      // Mark messages as read
-      if (messages?.length) {
-        await supabase
-          .from('messages_v2')
-          .update({ read_at: new Date().toISOString() })
-          .eq('conversation_id', conversationId)
-          .eq('recipient_id', userId)
-          .is('read_at', null)
-      }
+      // Mark messages as read (V2 doesn't have recipient_id or read_at fields)
+      // messages_v2 schema doesn't include read tracking - skip this for now
+      // TODO: If read tracking is needed, it should be in a separate table
 
     } catch (error) {
       console.error('Error loading messages:', error)
@@ -207,35 +201,30 @@ export function MessagingDashboard({
     }
   }, [supabase, userId])
 
-  // Send message handler
+  // Send message handler (V2 only has conversation_id, sender_id, content)
   const handleSendMessage = useCallback(async (content: string, messageType: 'text' | 'help_request_update' = 'text') => {
     if (!selectedConversation) return
 
     const conversation = messageThread.conversation
     if (!conversation) return
 
-    // Find recipient (the other participant)
-    const recipient = conversation.participants.find(p => p.user_id !== userId)
-    if (!recipient) throw new Error('No recipient found')
-
     try {
+      // messages_v2 schema: id, conversation_id, sender_id, content, created_at, updated_at
+      // No recipient_id, message_type, or help_request_id in V2
       const { error } = await supabase
         .from('messages_v2')
         .insert({
           conversation_id: selectedConversation,
           sender_id: userId,
-          recipient_id: recipient.user_id,
-          content,
-          message_type: messageType,
-          help_request_id: conversation.help_request?.id
+          content
         })
 
       if (error) throw error
 
-      // Update conversation's last_message_at
+      // Update conversation's updated_at (no last_message_at in V2)
       await supabase
         .from('conversations_v2')
-        .update({ last_message_at: new Date().toISOString() })
+        .update({ updated_at: new Date().toISOString() })
         .eq('id', selectedConversation)
 
       // Reload messages to get the new one
