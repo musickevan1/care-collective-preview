@@ -41,19 +41,16 @@ async function getUser() {
 }
 
 async function getMessagingData(userId: string) {
-  const useV2 = isMessagingV2Enabled();
+  // V2: Always use atomic RPC function to list conversations (V1 removed)
+  try {
+    const result = await messagingServiceV2.listConversations(userId);
 
-  if (useV2) {
-    // V2: Use atomic RPC function to list conversations
-    try {
-      const result = await messagingServiceV2.listConversations(userId);
+    if (!result.success) {
+      console.error('[MessagesPage] V2 list conversations failed:', result.error);
+      return { conversations: [], unreadCount: 0, activeConversations: 0 };
+    }
 
-      if (!result.success) {
-        console.error('[MessagesPage] V2 list conversations failed:', result.error);
-        return { conversations: [], unreadCount: 0, activeConversations: 0 };
-      }
-
-      const conversations = (result.conversations || []).map((conv: any) => ({
+    const conversations = (result.conversations || []).map((conv: any) => ({
         id: conv.id,
         help_request_id: conv.help_request_id,
         created_by: conv.requester_id,
@@ -84,14 +81,11 @@ async function getMessagingData(userId: string) {
         unreadCount: 0, // V2 doesn't have read tracking yet
         activeConversations: conversations.length
       };
-    } catch (error) {
-      console.error('[MessagesPage] V2 error:', error);
-      return { conversations: [], unreadCount: 0, activeConversations: 0 };
-    }
+  } catch (error) {
+    console.error('[MessagesPage] V2 error:', error);
+    return { conversations: [], unreadCount: 0, activeConversations: 0 };
   }
-
-  // V1: Legacy implementation
-  const supabase = await createClient();
+}
 
   try {
     // First, get conversation IDs where user is a participant
