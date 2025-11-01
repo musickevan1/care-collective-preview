@@ -12,7 +12,14 @@ interface PendingOffer {
   initial_message: string;
   created_at: string;
   expires_at: string;
+  requester_id: string;
+  helper_id: string;
   helper_profile: {
+    id: string;
+    name: string;
+    location: string;
+  };
+  requester_profile: {
     id: string;
     name: string;
     location: string;
@@ -27,6 +34,7 @@ interface PendingOffer {
 
 interface PendingOffersSectionProps {
   offers: PendingOffer[];
+  currentUserId: string;
   onAccept: (conversationId: string) => Promise<void>;
   onReject: (conversationId: string) => Promise<void>;
   isLoading?: boolean;
@@ -34,6 +42,7 @@ interface PendingOffersSectionProps {
 
 export function PendingOffersSection({
   offers,
+  currentUserId,
   onAccept,
   onReject,
   isLoading = false
@@ -79,6 +88,7 @@ export function PendingOffersSection({
           <PendingOfferCard
             key={offer.id}
             offer={offer}
+            currentUserId={currentUserId}
             onAccept={onAccept}
             onReject={onReject}
           />

@@ -463,6 +463,7 @@ export function MessagingDashboard({
           <div className="flex-1 overflow-auto p-4">
             <PendingOffersSection
               offers={pendingOffers}
+              currentUserId={userId}
               onAccept={handleAcceptOffer}
               onReject={handleRejectOffer}
               isLoading={isLoadingOffers}
