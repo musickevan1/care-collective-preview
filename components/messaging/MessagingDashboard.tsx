@@ -102,18 +102,20 @@ export function MessagingDashboard({
     setMessageThread(prev => ({ ...prev, loading: true, error: null }))
 
     try {
-      // Get conversation details
+      // Get conversation details with requester and helper profiles
       const { data: conversation, error: convError } = await supabase
         .from('conversations_v2')
         .select(`
           *,
-          conversation_participants!inner (
-            user_id,
-            profiles (
-              id,
-              name,
-              location
-            )
+          requester:requester_id (
+            id,
+            name,
+            location
+          ),
+          helper:helper_id (
+            id,
+            name,
+            location
           ),
           help_requests (
             id,
@@ -128,17 +130,12 @@ export function MessagingDashboard({
 
       if (convError) throw convError
 
-      // Get messages
+      // Get messages with sender profiles
       const { data: messages, error: msgError } = await supabase
         .from('messages_v2')
         .select(`
           *,
-          sender:profiles!sender_id (
-            id,
-            name,
-            location
-          ),
-          recipient:profiles!recipient_id (
+          sender:sender_id (
             id,
             name,
             location
@@ -149,15 +146,25 @@ export function MessagingDashboard({
 
       if (msgError) throw msgError
 
-      // Transform conversation data
+      // Transform conversation data - V2 has direct requester/helper, not participants table
+      const participants = [
+        {
+          user_id: conversation.requester.id,
+          name: conversation.requester.name,
+          location: conversation.requester.location,
+          role: 'requester'
+        },
+        {
+          user_id: conversation.helper.id,
+          name: conversation.helper.name,
+          location: conversation.helper.location,
+          role: 'helper'
+        }
+      ]
+
       const conversationWithDetails: ConversationWithDetails = {
         ...conversation,
-        participants: conversation.conversation_participants.map((cp: any) => ({
-          user_id: cp.user_id,
-          name: cp.profiles.name,
-          location: cp.profiles.location,
-          role: cp.role || 'member'
-        })),
+        participants,
         help_request: conversation.help_requests,
         unread_count: 0 // Will be updated by real-time subscription
       }
@@ -344,13 +351,12 @@ export function MessagingDashboard({
         // Efficiently append new message instead of reloading entire conversation
         const newMessage = payload.new as any
 
-        // Fetch full message with sender/recipient profiles
+        // Fetch full message with sender profile (V2 doesn't have recipient_id)
         const { data: messageWithProfiles, error } = await supabase
           .from('messages_v2')
           .select(`
             *,
-            sender:profiles!messages_sender_id_fkey(id, name, location),
-            recipient:profiles!messages_recipient_id_fkey(id, name, location)
+            sender:sender_id(id, name, location)
           `)
           .eq('id', newMessage.id)
           .single()
