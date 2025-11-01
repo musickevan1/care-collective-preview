@@ -43,7 +43,7 @@ export const signupSchema = z.object({
     .max(128, 'Password too long')
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
   termsAccepted: z.literal(true, {
-    errorMap: () => ({ message: 'You must accept the Terms of Service' })
+    message: 'You must accept the Terms of Service'
   })
 })
 

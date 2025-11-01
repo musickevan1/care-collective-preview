@@ -108,6 +108,9 @@ export interface MessageWithSender extends Message {
     name: string;
     location?: string;
   };
+  // Threading support for message threads
+  thread_id?: string;
+  parent_message_id?: string;
 }
 
 // Validation schemas with Care Collective specific rules
@@ -260,10 +263,14 @@ export const MESSAGING_ERRORS = {
 // Content moderation types
 export interface ContentModerationResult {
   flagged: boolean;
+  approved: boolean;
   confidence: number;
+  score: number;
   categories: string[];
+  flags: string[];
   suggested_action: 'allow' | 'review' | 'block';
   explanation: string;
+  reason?: string;
 }
 
 // Pagination helpers
