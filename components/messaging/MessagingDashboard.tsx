@@ -27,7 +27,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
-import PullToRefresh from 'react-pull-to-refresh'
+import PullToRefresh from 'react-simple-pull-to-refresh'
 
 interface MessagingDashboardProps {
   initialConversations: ConversationWithDetails[]
@@ -162,8 +162,15 @@ export function MessagingDashboard({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
-  // Custom refresh indicator with Care Collective colors
-  const RefreshIndicator = useCallback((): ReactElement => (
+  // Custom refresh indicators with Care Collective colors
+  const PullingContent = useCallback((): ReactElement => (
+    <div className="flex items-center justify-center py-4">
+      <RefreshCw className="w-5 h-5 text-sage" />
+      <span className="ml-2 text-sm text-sage">Pull to refresh...</span>
+    </div>
+  ), [])
+
+  const RefreshingContent = useCallback((): ReactElement => (
     <div className="flex items-center justify-center py-4">
       <RefreshCw className="w-5 h-5 text-sage animate-spin" />
       <span className="ml-2 text-sm text-sage">Refreshing messages...</span>
@@ -703,9 +710,11 @@ export function MessagingDashboard({
                   {isTouchDevice ? (
                     <PullToRefresh
                       onRefresh={handleRefresh}
+                      pullingContent={<PullingContent />}
+                      refreshingContent={<RefreshingContent />}
                       resistance={2}
-                      distanceToRefresh={60}
-                      refreshingContent={<RefreshIndicator />}
+                      pullDownThreshold={60}
+                      maxPullDownDistance={80}
                     >
                       <ScrollArea className="flex-1 p-4">
                         <div className="space-y-4">
