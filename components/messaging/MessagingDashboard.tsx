@@ -27,7 +27,6 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
-import { messagingServiceV2 } from '@/lib/messaging/service-v2'
 
 interface MessagingDashboardProps {
   initialConversations: ConversationWithDetails[]
@@ -259,7 +258,13 @@ export function MessagingDashboard({
   // Accept offer handler
   const handleAcceptOffer = useCallback(async (conversationId: string) => {
     try {
-      const result = await messagingServiceV2.acceptOffer(conversationId)
+      const response = await fetch('/api/messaging/accept-offer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId })
+      })
+      const result = await response.json()
+
       if (result.success) {
         // Reload pending offers and switch to active tab
         await loadPendingOffers()
@@ -277,7 +282,13 @@ export function MessagingDashboard({
   // Reject offer handler
   const handleRejectOffer = useCallback(async (conversationId: string) => {
     try {
-      const result = await messagingServiceV2.rejectOffer(conversationId)
+      const response = await fetch('/api/messaging/reject-offer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId })
+      })
+      const result = await response.json()
+
       if (result.success) {
         // Reload pending offers
         await loadPendingOffers()
