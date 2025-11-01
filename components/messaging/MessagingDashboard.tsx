@@ -102,21 +102,11 @@ export function MessagingDashboard({
     setMessageThread(prev => ({ ...prev, loading: true, error: null }))
 
     try {
-      // Get conversation details with requester and helper profiles
+      // Get conversation details (V2 has requester_id/helper_id pointing to auth.users, not profiles)
       const { data: conversation, error: convError } = await supabase
         .from('conversations_v2')
         .select(`
           *,
-          requester:requester_id (
-            id,
-            name,
-            location
-          ),
-          helper:helper_id (
-            id,
-            name,
-            location
-          ),
           help_requests (
             id,
             title,
@@ -130,34 +120,54 @@ export function MessagingDashboard({
 
       if (convError) throw convError
 
-      // Get messages with sender profiles
+      // Fetch profiles separately since conversations_v2 FKs point to auth.users, not profiles
+      const { data: requesterProfile } = await supabase
+        .from('profiles')
+        .select('id, name, location')
+        .eq('id', conversation.requester_id)
+        .single()
+
+      const { data: helperProfile } = await supabase
+        .from('profiles')
+        .select('id, name, location')
+        .eq('id', conversation.helper_id)
+        .single()
+
+      // Get messages
       const { data: messages, error: msgError } = await supabase
         .from('messages_v2')
-        .select(`
-          *,
-          sender:sender_id (
-            id,
-            name,
-            location
-          )
-        `)
+        .select('*')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true })
 
       if (msgError) throw msgError
 
+      // Fetch sender profiles for all messages
+      const senderIds = [...new Set(messages?.map(m => m.sender_id) || [])]
+      const { data: senderProfiles } = await supabase
+        .from('profiles')
+        .select('id, name, location')
+        .in('id', senderIds)
+
+      // Map profiles to messages
+      const profileMap = new Map(senderProfiles?.map(p => [p.id, p]) || [])
+      const messagesWithSenders = messages?.map(msg => ({
+        ...msg,
+        sender: profileMap.get(msg.sender_id)
+      })) || []
+
       // Transform conversation data - V2 has direct requester/helper, not participants table
       const participants = [
         {
-          user_id: conversation.requester.id,
-          name: conversation.requester.name,
-          location: conversation.requester.location,
+          user_id: requesterProfile?.id || conversation.requester_id,
+          name: requesterProfile?.name || 'Unknown User',
+          location: requesterProfile?.location || '',
           role: 'requester'
         },
         {
-          user_id: conversation.helper.id,
-          name: conversation.helper.name,
-          location: conversation.helper.location,
+          user_id: helperProfile?.id || conversation.helper_id,
+          name: helperProfile?.name || 'Unknown User',
+          location: helperProfile?.location || '',
           role: 'helper'
         }
       ]
@@ -170,7 +180,7 @@ export function MessagingDashboard({
       }
 
       setMessageThread({
-        messages: messages || [],
+        messages: messagesWithSenders,
         conversation: conversationWithDetails,
         loading: false,
         error: null
@@ -351,33 +361,42 @@ export function MessagingDashboard({
         // Efficiently append new message instead of reloading entire conversation
         const newMessage = payload.new as any
 
-        // Fetch full message with sender profile (V2 doesn't have recipient_id)
-        const { data: messageWithProfiles, error } = await supabase
+        // Fetch message and sender profile separately (V2 conversations_v2 FKs point to auth.users)
+        const { data: message, error: msgError } = await supabase
           .from('messages_v2')
-          .select(`
-            *,
-            sender:sender_id(id, name, location)
-          `)
+          .select('*')
           .eq('id', newMessage.id)
           .single()
 
-        if (!error && messageWithProfiles) {
+        if (!msgError && message) {
+          // Fetch sender profile
+          const { data: senderProfile } = await supabase
+            .from('profiles')
+            .select('id, name, location')
+            .eq('id', message.sender_id)
+            .single()
+
+          const messageWithSender = {
+            ...message,
+            sender: senderProfile
+          }
+
           setMessageThread(prev => {
             // Deduplicate: check if message already exists
-            const exists = prev.messages.some(msg => msg.id === messageWithProfiles.id)
+            const exists = prev.messages.some(msg => msg.id === messageWithSender.id)
             if (exists) {
-              console.debug(`Skipping duplicate message in dashboard: ${messageWithProfiles.id}`)
+              console.debug(`Skipping duplicate message in dashboard: ${messageWithSender.id}`)
               return prev
             }
 
             return {
               ...prev,
-              messages: [...prev.messages, messageWithProfiles]
+              messages: [...prev.messages, messageWithSender]
             }
           })
         } else {
           // Fallback to full reload if fetch fails
-          console.warn('Failed to fetch new message, reloading conversation:', error)
+          console.warn('Failed to fetch new message, reloading conversation:', msgError)
           loadMessages(selectedConversation)
         }
       })
