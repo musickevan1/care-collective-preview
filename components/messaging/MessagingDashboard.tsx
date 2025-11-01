@@ -121,17 +121,27 @@ export function MessagingDashboard({
       if (convError) throw convError
 
       // Fetch profiles separately since conversations_v2 FKs point to auth.users, not profiles
-      const { data: requesterProfile } = await supabase
+      const { data: requesterProfile, error: reqProfileError } = await supabase
         .from('profiles')
         .select('id, name, location')
         .eq('id', conversation.requester_id)
         .single()
 
-      const { data: helperProfile } = await supabase
+      if (reqProfileError) {
+        console.error('Failed to fetch requester profile:', reqProfileError)
+        // Continue with fallback - will use 'Unknown User' in participants array
+      }
+
+      const { data: helperProfile, error: helpProfileError } = await supabase
         .from('profiles')
         .select('id, name, location')
         .eq('id', conversation.helper_id)
         .single()
+
+      if (helpProfileError) {
+        console.error('Failed to fetch helper profile:', helpProfileError)
+        // Continue with fallback - will use 'Unknown User' in participants array
+      }
 
       // Get messages
       const { data: messages, error: msgError } = await supabase
@@ -144,10 +154,15 @@ export function MessagingDashboard({
 
       // Fetch sender profiles for all messages
       const senderIds = [...new Set(messages?.map(m => m.sender_id) || [])]
-      const { data: senderProfiles } = await supabase
+      const { data: senderProfiles, error: senderProfilesError } = await supabase
         .from('profiles')
         .select('id, name, location')
         .in('id', senderIds)
+
+      if (senderProfilesError) {
+        console.error('Failed to fetch sender profiles:', senderProfilesError)
+        // Continue with empty array - messages will lack sender info but won't crash
+      }
 
       // Map profiles to messages
       const profileMap = new Map(senderProfiles?.map(p => [p.id, p]) || [])
@@ -175,7 +190,7 @@ export function MessagingDashboard({
       const conversationWithDetails: ConversationWithDetails = {
         ...conversation,
         participants,
-        help_request: conversation.help_requests,
+        help_request: conversation.help_requests || null, // Defensive null check
         unread_count: 0 // Will be updated by real-time subscription
       }
 
@@ -192,6 +207,12 @@ export function MessagingDashboard({
 
     } catch (error) {
       console.error('Error loading messages:', error)
+      console.error('Conversation ID:', conversationId)
+      console.error('Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'N/A'
+      })
+
       setMessageThread({
         messages: [],
         conversation: null,
