@@ -8,15 +8,16 @@ import { MessageBubble } from './MessageBubble'
 import { MessageInput } from './MessageInput'
 import { TypingIndicator } from './TypingIndicator'
 import { PresenceIndicator, usePresenceStatus } from './PresenceIndicator'
+import { PendingOffersSection } from './PendingOffersSection'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { 
-  MessageCircle, 
-  ArrowLeft, 
-  Users, 
+import {
+  MessageCircle,
+  ArrowLeft,
+  Users,
   RefreshCw,
   AlertCircle,
   Send,
@@ -26,6 +27,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
+import { messagingServiceV2 } from '@/lib/messaging/service-v2'
 
 interface MessagingDashboardProps {
   initialConversations: ConversationWithDetails[]
@@ -65,6 +67,9 @@ export function MessagingDashboard({
   })
   const [isMobile, setIsMobile] = useState(false)
   const [showConversationList, setShowConversationList] = useState(true)
+  const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active')
+  const [pendingOffers, setPendingOffers] = useState<any[]>([])
+  const [isLoadingOffers, setIsLoadingOffers] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
@@ -226,6 +231,64 @@ export function MessagingDashboard({
     }
   }, [selectedConversation, messageThread.conversation, userId, supabase, loadMessages])
 
+  // Load pending offers
+  const loadPendingOffers = useCallback(async () => {
+    setIsLoadingOffers(true)
+    try {
+      const { data, error } = await supabase.rpc('list_conversations_v2', {
+        p_user_id: userId,
+        p_status: 'pending'
+      })
+
+      if (error) {
+        console.error('Error loading pending offers:', error)
+        return
+      }
+
+      const result = data as any
+      if (result.success && result.conversations) {
+        setPendingOffers(result.conversations)
+      }
+    } catch (error) {
+      console.error('Error loading pending offers:', error)
+    } finally {
+      setIsLoadingOffers(false)
+    }
+  }, [supabase, userId])
+
+  // Accept offer handler
+  const handleAcceptOffer = useCallback(async (conversationId: string) => {
+    try {
+      const result = await messagingServiceV2.acceptOffer(conversationId)
+      if (result.success) {
+        // Reload pending offers and switch to active tab
+        await loadPendingOffers()
+        await loadMessages(conversationId)
+        setActiveTab('active')
+        setSelectedConversation(conversationId)
+      } else {
+        console.error('Failed to accept offer:', result.error)
+      }
+    } catch (error) {
+      console.error('Error accepting offer:', error)
+    }
+  }, [loadPendingOffers, loadMessages])
+
+  // Reject offer handler
+  const handleRejectOffer = useCallback(async (conversationId: string) => {
+    try {
+      const result = await messagingServiceV2.rejectOffer(conversationId)
+      if (result.success) {
+        // Reload pending offers
+        await loadPendingOffers()
+      } else {
+        console.error('Failed to reject offer:', result.error)
+      }
+    } catch (error) {
+      console.error('Error rejecting offer:', error)
+    }
+  }, [loadPendingOffers])
+
   // Handle conversation selection
   const handleConversationSelect = useCallback((conversationId: string) => {
     setSelectedConversation(conversationId)
@@ -249,6 +312,11 @@ export function MessagingDashboard({
       handleConversationSelect(selectedConversationId)
     }
   }, [selectedConversationId, conversations, handleConversationSelect])
+
+  // Load pending offers on mount
+  useEffect(() => {
+    loadPendingOffers()
+  }, [loadPendingOffers])
 
   // Real-time subscriptions
   useEffect(() => {
@@ -330,7 +398,7 @@ export function MessagingDashboard({
               <MessageCircle className="w-5 h-5 text-sage" />
               Messages
             </h2>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={loadPendingOffers}>
               <RefreshCw className="w-4 h-4" />
             </Button>
           </div>
@@ -341,12 +409,55 @@ export function MessagingDashboard({
           )}
         </div>
 
-        <ConversationList
-          conversations={conversations}
-          selectedConversationId={selectedConversation || undefined}
-          onConversationSelect={handleConversationSelect}
-          className="flex-1"
-        />
+        {/* Tab Navigation */}
+        <nav className="flex gap-2 border-b border-border px-4" role="tablist">
+          <button
+            role="tab"
+            aria-selected={activeTab === 'active'}
+            onClick={() => setActiveTab('active')}
+            className={cn(
+              "px-4 py-3 font-medium transition-colors relative text-sm",
+              activeTab === 'active'
+                ? "text-sage border-b-2 border-sage"
+                : "text-muted-foreground hover:text-secondary"
+            )}
+          >
+            Active ({conversations.length})
+          </button>
+          <button
+            role="tab"
+            aria-selected={activeTab === 'pending'}
+            onClick={() => setActiveTab('pending')}
+            className={cn(
+              "px-4 py-3 font-medium transition-colors relative text-sm",
+              activeTab === 'pending'
+                ? "text-sage border-b-2 border-sage"
+                : "text-muted-foreground hover:text-secondary"
+            )}
+          >
+            Pending ({pendingOffers.length})
+          </button>
+        </nav>
+
+        {/* Conditional Content */}
+        {activeTab === 'active' && (
+          <ConversationList
+            conversations={conversations}
+            selectedConversationId={selectedConversation || undefined}
+            onConversationSelect={handleConversationSelect}
+            className="flex-1"
+          />
+        )}
+        {activeTab === 'pending' && (
+          <div className="flex-1 overflow-auto p-4">
+            <PendingOffersSection
+              offers={pendingOffers}
+              onAccept={handleAcceptOffer}
+              onReject={handleRejectOffer}
+              isLoading={isLoadingOffers}
+            />
+          </div>
+        )}
       </div>
 
       {/* Message Thread Panel */}

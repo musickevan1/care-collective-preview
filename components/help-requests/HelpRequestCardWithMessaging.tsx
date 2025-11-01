@@ -313,10 +313,14 @@ export function HelpRequestCardWithMessaging({
               )}
             </DialogTitle>
             <DialogDescription>
-              {success
-                ? `Your message has been sent to ${request.profiles.name}. You'll be redirected to continue the conversation.`
-                : `Send a message to ${request.profiles.name} to coordinate helping with their request.`
-              }
+              {success ? (
+                `Offer sent to ${request.profiles.name}! They'll review it and can start messaging if they accept.`
+              ) : (
+                <>
+                  Send an offer to {request.profiles.name}.{' '}
+                  <strong className="text-secondary">Your offer will be pending until they accept it.</strong>
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
 
@@ -405,12 +409,12 @@ export function HelpRequestCardWithMessaging({
                 {submitting ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Starting conversation...
+                    Sending offer...
                   </>
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
-                    Send & Start Conversation
+                    Send Offer
                   </>
                 )}
               </Button>
