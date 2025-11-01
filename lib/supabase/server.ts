@@ -5,9 +5,14 @@ import { Logger } from '@/lib/logger'
 export function createClient() {
   const cookieStore = cookies()
 
+  // CRITICAL FIX: Trim any whitespace/newlines from environment variables
+  // Vercel environment variables had literal \n characters causing WebSocket failures
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!.trim()
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!.trim()
+
   const client = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       auth: {
         // Disable auto-refresh on server-side to prevent cookie parsing issues
