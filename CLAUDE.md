@@ -27,7 +27,7 @@ Care Collective: Mutual aid platform connecting community members for support an
 3. Never commit without explicit consent
 
 ### Deployment System (MANDATORY)
-**CRITICAL - Production Domain Updates**: The main production URL (`https://care-collective-preview.vercel.app`) ONLY updates when explicitly deployed with `npx vercel --prod`. Regular git pushes create preview deployments but DO NOT update the main domain.
+**CRITICAL - Automatic Deployments**: The repository is connected to Vercel via Git integration. Every push to `main` automatically triggers a production deployment to `https://care-collective-preview.vercel.app`. **DO NOT** run `npx vercel --prod` manually as this causes duplicate deployments!
 
 **Required Workflow After Every Code Change**:
 ```bash
@@ -35,22 +35,23 @@ Care Collective: Mutual aid platform connecting community members for support an
 git add .
 git commit -m "feat: description 🤖 Generated with Claude Code"
 
-# 2. Push to main branch (creates preview deployment)
+# 2. Push to main branch (AUTOMATICALLY deploys to production via Git integration)
 git push origin main
 
-# 3. Deploy to production (REQUIRED to update main domain)
-npx vercel --prod
+# 3. Wait for Vercel deployment to complete (automatic from GitHub push)
+# Monitor at: https://vercel.com/musickevan1s-projects/care-collective-preview
 
 # 4. Verify production deployment
 npx vercel inspect <deployment-url> --logs
 ```
 
 **Branch Strategy**:
-- **main** - Production branch, always push here for production updates
-- All commits to `main` should be immediately deployed with `npx vercel --prod`
-- Preview deployments (musickevan1s-projects.vercel.app URLs) are automatic but NOT production
+- **main** - Production branch, connected to Vercel via Git integration
+- **AUTOMATIC DEPLOYMENT**: Pushing to `main` triggers production deployment
+- **NEVER run `npx vercel --prod` manually** - This creates duplicate deployments!
+- Git push is sufficient - Vercel handles the rest automatically
 
-**NEVER skip `npx vercel --prod`** - Without it, the main domain will show old code!
+**CRITICAL**: The repository is connected to Vercel via Git integration. Every push to `main` automatically triggers a production deployment. Running `npx vercel --prod` after pushing causes duplicate deployments and wastes build resources!
 
 **Service Worker Cache Busting** (AUTOMATED):
 - `npm run build` automatically updates service worker cache version via `prebuild` hook
