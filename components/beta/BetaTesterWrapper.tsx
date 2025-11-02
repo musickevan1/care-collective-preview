@@ -7,9 +7,15 @@ import { BetaWelcomeModal } from './BetaWelcomeModal';
 
 interface BetaTesterWrapperProps {
   showWelcomeModal?: boolean;
+  forceOpenModal?: boolean;
+  onModalOpenChange?: (open: boolean) => void;
 }
 
-export function BetaTesterWrapper({ showWelcomeModal = false }: BetaTesterWrapperProps): ReactElement | null {
+export function BetaTesterWrapper({
+  showWelcomeModal = false,
+  forceOpenModal = false,
+  onModalOpenChange
+}: BetaTesterWrapperProps): ReactElement | null {
   const [isBetaTester, setIsBetaTester] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -51,7 +57,12 @@ export function BetaTesterWrapper({ showWelcomeModal = false }: BetaTesterWrappe
   return (
     <>
       <BugReportButton />
-      {showWelcomeModal && <BetaWelcomeModal />}
+      {showWelcomeModal && (
+        <BetaWelcomeModal
+          forceOpen={forceOpenModal}
+          onOpenChange={onModalOpenChange}
+        />
+      )}
     </>
   );
 }

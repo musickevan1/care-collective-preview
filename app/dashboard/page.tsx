@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { DiagnosticPanel } from '@/components/DiagnosticPanel'
-import { BetaTesterWrapper } from '@/components/beta/BetaTesterWrapper'
+import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
 import Link from 'next/link'
 
 // Force dynamic rendering since this page uses authentication
@@ -293,9 +293,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       user={user}
       messagingData={messagingData}
     >
-      {/* Beta Welcome Modal - Only shows to beta testers on first dashboard visit */}
-      <BetaTesterWrapper showWelcomeModal={true} />
-
       <div className="container mx-auto px-4 py-8">
         {/* Error Messages */}
         {hasAdminError && (
@@ -307,21 +304,8 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </div>
         )}
 
-        {/* Beta Testing Notice */}
-        <div className="bg-gradient-to-r from-sage/10 to-primary/10 border-2 border-sage/30 rounded-lg p-4 mb-6">
-          <div className="flex items-start gap-3">
-            <div className="text-2xl">🚀</div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-secondary mb-1 flex items-center gap-2">
-                Beta Testing Phase
-                <Badge variant="secondary" className="text-xs">Active</Badge>
-              </h3>
-              <p className="text-secondary/80 text-sm">
-                Welcome to Care Collective Beta! You&apos;re helping us build something special. Your feedback shapes the future of mutual aid in our community. Report issues or suggestions to help us improve.
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Beta Testing Notice with Modal Control - Shows to beta testers only */}
+        <BetaBannerWithModal />
 
         {/* Welcome Section */}
         <div className="mb-8">

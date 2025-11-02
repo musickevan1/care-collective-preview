@@ -6,10 +6,21 @@ import { Button } from '@/components/ui/button';
 
 const MODAL_STORAGE_KEY = 'beta_welcome_modal_shown';
 
-export function BetaWelcomeModal(): ReactElement | null {
+interface BetaWelcomeModalProps {
+  forceOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalProps): ReactElement | null {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    // If forceOpen is true, open immediately
+    if (forceOpen) {
+      setIsOpen(true);
+      return;
+    }
+
     // Check if modal has already been shown (ever)
     const hasBeenShown = localStorage.getItem(MODAL_STORAGE_KEY);
 
@@ -21,7 +32,7 @@ export function BetaWelcomeModal(): ReactElement | null {
 
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [forceOpen]);
 
   // ESC key handler for closing modal
   useEffect(() => {
@@ -39,8 +50,12 @@ export function BetaWelcomeModal(): ReactElement | null {
 
   const handleClose = () => {
     setIsOpen(false);
-    // Mark as shown permanently
-    localStorage.setItem(MODAL_STORAGE_KEY, 'true');
+    // Mark as shown permanently (only if not force-opened)
+    if (!forceOpen) {
+      localStorage.setItem(MODAL_STORAGE_KEY, 'true');
+    }
+    // Notify parent component if callback provided
+    onOpenChange?.(false);
   };
 
   // Handle backdrop click to close
