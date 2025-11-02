@@ -6,6 +6,7 @@ import { MessagingProvider, useMessagingContext } from './MessagingContext'
 import { ConversationPanel } from './ConversationPanel'
 import { MessageThreadPanel } from './MessageThreadPanel'
 import { usePresenceStatus } from './PresenceIndicator'
+import { ViewportFix } from './ViewportFix'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 
@@ -132,6 +133,7 @@ export function MessagingDashboard({
       isMobile={isMobile}
       onMobileNavigate={handleMobileNavigate}
     >
+      <ViewportFix />
       <RealTimeSubscriptions
         enableRealtime={enableRealtime}
         selectedConversationId={selectedConversationId}

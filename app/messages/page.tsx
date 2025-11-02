@@ -107,13 +107,13 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps):
   ];
 
   return (
-    <PlatformLayout 
-      user={user} 
+    <PlatformLayout
+      user={user}
       messagingData={messagingData}
       showMessagingContext={true}
       breadcrumbs={breadcrumbs}
     >
-      <div className="h-[calc(100vh-64px)] overflow-hidden">
+      <div className="messaging-page-container overflow-hidden">
         <MessagingDashboard
           initialConversations={conversations as any}
           userId={user.id}
