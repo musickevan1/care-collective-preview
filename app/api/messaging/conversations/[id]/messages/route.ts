@@ -10,6 +10,7 @@ import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
 import { messageRateLimiter } from '@/lib/security/rate-limiter';
+import { notifyNewMessage } from '@/lib/notifications';
 import { z } from 'zod';
 
 async function getCurrentUser() {
@@ -265,6 +266,31 @@ export async function POST(
       `)
       .eq('id', result.message_id)
       .single();
+
+    // Get conversation to find recipient for notification
+    const { data: conversation } = await supabase
+      .from('conversations_v2')
+      .select('requester_id, helper_id')
+      .eq('id', conversationId)
+      .single();
+
+    if (conversation && messageWithSender?.sender) {
+      // Determine recipient (the person who is NOT the sender)
+      const recipientId = conversation.requester_id === user.id
+        ? conversation.helper_id
+        : conversation.requester_id;
+
+      // Send notification to recipient (fire-and-forget, don't block response)
+      notifyNewMessage({
+        recipientId,
+        senderId: user.id,
+        senderName: messageWithSender.sender.name || 'Someone',
+        conversationId,
+        messagePreview: validation.data.content
+      }).catch(error => {
+        console.error('[POST /messages] Failed to send notification:', error);
+      });
+    }
 
     return NextResponse.json({
       message: messageWithSender,

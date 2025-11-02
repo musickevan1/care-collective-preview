@@ -14,7 +14,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/lib/database.types'
 
 type HelpRequest = Database['public']['Tables']['help_requests']['Row']
@@ -38,7 +37,6 @@ export function RequestActions({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createClient()
 
   // NOTE: "Offer to Help" functionality has been moved to HelpRequestCardWithMessaging
   // to ensure proper conversation creation. This component now only handles status updates
@@ -47,22 +45,23 @@ export function RequestActions({
   const handleCompleteRequest = async () => {
     setLoading(true)
     setError(null)
-    
-    const { error } = await supabase
-      .from('help_requests')
-      .update({
-        status: 'completed',
-        completed_at: new Date().toISOString()
+
+    try {
+      const response = await fetch(`/api/requests/${request.id}/complete`, {
+        method: 'POST',
       })
-      .eq('id', request.id)
-    
-    if (error) {
-      setError('Failed to complete request. Please try again.')
-      console.error('Error completing request:', error)
-    } else {
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to complete request')
+      }
+
       router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to complete request. Please try again.')
+      console.error('Error completing request:', err)
     }
-    
+
     setLoading(false)
   }
 
@@ -70,20 +69,21 @@ export function RequestActions({
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase
-      .from('help_requests')
-      .update({
-        status: 'cancelled',
-        cancelled_at: new Date().toISOString()
+    try {
+      const response = await fetch(`/api/requests/${request.id}/cancel`, {
+        method: 'POST',
       })
-      .eq('id', request.id)
 
-    if (error) {
-      setError('Failed to cancel request. Please try again.')
-      console.error('Error cancelling request:', error)
-    } else {
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to cancel request')
+      }
+
       router.refresh()
       router.push('/requests')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to cancel request. Please try again.')
+      console.error('Error cancelling request:', err)
     }
 
     setLoading(false)
@@ -118,23 +118,29 @@ export function RequestActions({
   const handleWithdrawHelp = async () => {
     setLoading(true)
     setError(null)
-    
-    const { error } = await supabase
-      .from('help_requests')
-      .update({
-        status: 'open',
-        helper_id: null,
-        helped_at: null
+
+    try {
+      const response = await fetch(`/api/requests/${request.id}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          reason: 'Helper withdrew from the request',
+        }),
       })
-      .eq('id', request.id)
-    
-    if (error) {
-      setError('Failed to withdraw help. Please try again.')
-      console.error('Error withdrawing help:', error)
-    } else {
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to withdraw help')
+      }
+
       router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to withdraw help. Please try again.')
+      console.error('Error withdrawing help:', err)
     }
-    
+
     setLoading(false)
   }
 

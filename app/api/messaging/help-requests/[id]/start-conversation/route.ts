@@ -9,6 +9,7 @@ import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
 import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
 import { helpRequestRateLimiter } from '@/lib/security/rate-limiter';
+import { notifyHelpRequestOffer } from '@/lib/notifications';
 
 async function getCurrentUser() {
   const supabase = await createClient();
@@ -323,6 +324,26 @@ export async function POST(
         .from('help_requests')
         .update({ status: 'in_progress' })
         .eq('id', helpRequestId);
+    }
+
+    // Get helper's profile name for notification
+    const { data: helperProfile } = await supabase
+      .from('profiles')
+      .select('name')
+      .eq('id', user.id)
+      .single();
+
+    // Send notification to request owner (fire-and-forget)
+    if (helperProfile) {
+      notifyHelpRequestOffer({
+        requesterId: helpRequest.user_id,
+        helperId: user.id,
+        helperName: helperProfile.name || 'Someone',
+        requestId: helpRequestId,
+        requestTitle: helpRequest.title
+      }).catch(error => {
+        console.error('[POST /start-conversation] Failed to send notification:', error);
+      });
     }
 
     console.log(`[start-conversation:${requestId}] Conversation created successfully, returning minimal response`);
