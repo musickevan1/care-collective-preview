@@ -224,23 +224,6 @@ describe('Accessibility Tests', () => {
   });
 
   describe('Screen Reader Support', () => {
-    it('provides skip links for main content', () => {
-      render(
-        <div>
-          <a href="#main-content" className="sr-only focus:not-sr-only">
-            Skip to main content
-          </a>
-          <nav>Navigation</nav>
-          <main id="main-content">
-            <h1>Main Content</h1>
-          </main>
-        </div>
-      );
-
-      const skipLink = screen.getByRole('link', { name: 'Skip to main content' });
-      expect(skipLink).toHaveAttribute('href', '#main-content');
-    });
-
     it('uses proper landmark roles', () => {
       render(
         <div>

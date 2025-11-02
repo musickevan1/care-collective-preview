@@ -5,7 +5,6 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { overlock, fontClasses, atkinsonHyperlegible } from "@/lib/fonts";
 import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
-import { SkipToContent } from "@/components/SkipToContent";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'),
@@ -56,7 +55,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className={`antialiased ${overlock.className} font-feature-settings-'kern' 1`}>
-        <SkipToContent />
         <Providers>
           {children}
           <footer className="bg-secondary text-secondary-foreground py-4 mt-16">
