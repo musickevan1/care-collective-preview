@@ -58,12 +58,11 @@ export class MessagingClient {
             location
           )
         )
-      `)
+      `, { count: 'exact' })
       .eq('conversation_participants.user_id', userId)
       .is('conversation_participants.left_at', null)
       .order('last_message_at', { ascending: false })
-      .range(offset, offset + limit - 1)
-      .single();
+      .range(offset, offset + limit - 1);
 
     if (error) {
       throw new MessagingError(
