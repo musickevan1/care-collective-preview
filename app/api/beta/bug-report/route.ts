@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     // Get user profile for additional context
     const { data: profile } = await supabase
       .from('profiles')
-      .select('name, email, is_beta_tester')
+      .select('name, is_beta_tester')
       .eq('id', user.id)
       .single();
 
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
         steps_to_reproduce: validatedData.stepsToReproduce,
         context: validatedData.context,
         reporter_name: profile?.name || 'Unknown',
-        reporter_email: profile?.email || user.email,
+        reporter_email: user.email,
         is_from_beta_tester: profile?.is_beta_tester || false,
         status: 'open',
       })
