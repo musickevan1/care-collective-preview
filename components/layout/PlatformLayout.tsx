@@ -201,12 +201,15 @@ export function PlatformLayout({
 
               {/* User Menu - Desktop */}
               <div className="hidden lg:flex items-center gap-2">
-                <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-secondary/5">
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-2 px-3 py-1 rounded-lg bg-secondary/5 hover:bg-secondary/10 transition-colors"
+                >
                   <User className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm font-medium text-secondary">
                     {user.name}
                   </span>
-                </div>
+                </Link>
                 <LogoutButton size="sm" />
               </div>
 
