@@ -279,8 +279,11 @@ function containsProhibitedContent(content: string): boolean {
 }
 
 /**
- * PUT /api/messaging/conversations/[id]/messages/[messageId]/read
- * Mark a specific message as read
+ * PUT /api/messaging/conversations/[id]/messages
+ * Mark messages as read in a conversation
+ * Query params:
+ * - markAllRead=true: Mark all messages in conversation as read
+ * - messageId=uuid: Mark specific message as read
  */
 export async function PUT(
   request: NextRequest,
@@ -292,42 +295,85 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const conversationId = params.id;
     const url = new URL(request.url);
+    const markAllRead = url.searchParams.get('markAllRead') === 'true';
     const messageId = url.searchParams.get('messageId');
-    
-    if (!messageId) {
-      return NextResponse.json(
-        { error: 'Message ID is required' },
-        { status: 400 }
-      );
-    }
 
-    // Validate UUID format
+    // Validate conversation ID format
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(messageId)) {
+    if (!uuidRegex.test(conversationId)) {
       return NextResponse.json(
-        { error: 'Invalid message ID format' },
+        { error: 'Invalid conversation ID format' },
         { status: 400 }
       );
     }
 
-    // V2: Update messages_v2 table directly
     const supabase = await createClient();
-    const { error: updateError } = await supabase
-      .from('messages_v2')
-      .update({ read_at: new Date().toISOString() })
-      .eq('id', messageId)
-      .eq('recipient_id', user.id) // Only recipient can mark as read
-      .is('read_at', null); // Only update if not already read
 
-    if (updateError) {
-      throw new Error('Failed to mark message as read');
+    // Mark all messages in conversation as read
+    if (markAllRead) {
+      // Use database function for atomic operation
+      const { data, error: rpcError } = await supabase
+        .rpc('mark_messages_read', {
+          user_uuid: user.id,
+          conversation_uuid: conversationId
+        });
+
+      if (rpcError) {
+        console.error('[PUT /messages] RPC error:', rpcError);
+        throw new Error('Failed to mark messages as read');
+      }
+
+      // Get updated unread count
+      const { data: unreadData } = await supabase
+        .rpc('get_unread_message_count', { user_uuid: user.id });
+
+      return NextResponse.json({
+        message: 'All messages marked as read',
+        marked_count: data || 0,
+        unread_count: unreadData || 0,
+        read_at: new Date().toISOString()
+      });
     }
 
-    return NextResponse.json({
-      message: 'Message marked as read',
-      read_at: new Date().toISOString()
-    });
+    // Mark specific message as read
+    if (messageId) {
+      if (!uuidRegex.test(messageId)) {
+        return NextResponse.json(
+          { error: 'Invalid message ID format' },
+          { status: 400 }
+        );
+      }
+
+      // V1: Update messages table directly
+      const { error: updateError } = await supabase
+        .from('messages')
+        .update({ read_at: new Date().toISOString() })
+        .eq('id', messageId)
+        .eq('recipient_id', user.id) // Only recipient can mark as read
+        .is('read_at', null); // Only update if not already read
+
+      if (updateError) {
+        console.error('[PUT /messages] Update error:', updateError);
+        throw new Error('Failed to mark message as read');
+      }
+
+      // Get updated unread count
+      const { data: unreadData } = await supabase
+        .rpc('get_unread_message_count', { user_uuid: user.id });
+
+      return NextResponse.json({
+        message: 'Message marked as read',
+        unread_count: unreadData || 0,
+        read_at: new Date().toISOString()
+      });
+    }
+
+    return NextResponse.json(
+      { error: 'Either markAllRead or messageId parameter is required' },
+      { status: 400 }
+    );
 
   } catch (error) {
     console.error('Error marking message as read:', error);

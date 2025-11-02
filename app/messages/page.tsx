@@ -8,8 +8,6 @@ import { createClient } from '@/lib/supabase/server';
 import { MessagingDashboard } from '@/components/messaging/MessagingDashboard';
 import { PlatformLayout } from '@/components/layout/PlatformLayout';
 import { redirect } from 'next/navigation';
-import { isMessagingV2Enabled } from '@/lib/features';
-import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
 
 // Force dynamic rendering for authentication
 export const dynamic = 'force-dynamic';
@@ -41,49 +39,119 @@ async function getUser() {
 }
 
 async function getMessagingData(userId: string) {
-  // V2: Load only ACCEPTED conversations for the Active tab
-  // Pending offers are loaded separately by the MessagingDashboard component
+  // V1: Use tables with read tracking enabled
   try {
-    const result = await messagingServiceV2.listAcceptedConversations(userId);
+    const supabase = await createClient();
 
-    if (!result.success) {
-      console.error('[MessagesPage] V2 list conversations failed:', result.error);
-      return { conversations: [], unreadCount: 0, activeConversations: 0 };
+    // Get total unread count using database function
+    const { data: unreadData, error: unreadError } = await supabase
+      .rpc('get_unread_message_count', { user_uuid: userId });
+
+    if (unreadError) {
+      console.error('[MessagesPage] Error getting unread count:', unreadError);
     }
 
-    const conversations = (result.conversations || []).map((conv: any) => ({
-        id: conv.id,
-        help_request_id: conv.help_request_id,
-        created_by: conv.requester_id,
-        title: conv.help_request?.title || 'Conversation',
-        status: conv.status,
-        created_at: conv.created_at,
-        updated_at: conv.updated_at,
-        last_message_at: conv.last_message_at,
-        unread_count: 0, // V2 doesn't have read tracking yet
-        // Transform other_participant into participants array for component compatibility
-        participants: [
-          {
-            user_id: conv.other_participant.id,
-            name: conv.other_participant.name || 'Unknown',
-            location: conv.other_participant.location,
-            role: 'member' as const
-          }
-        ],
-        help_request: conv.help_request,
-        last_message: conv.last_message ? {
-          ...conv.last_message,
-          sender_name: conv.last_message.sender_id === userId ? 'You' : conv.other_participant.name
-        } : undefined
-      }));
+    const totalUnreadCount = unreadData || 0;
 
-      return {
-        conversations,
-        unreadCount: 0, // V2 doesn't have read tracking yet
-        activeConversations: conversations.length
-      };
+    // Get user's conversations with participants and messages
+    const { data: conversationsData, error: conversationsError } = await supabase
+      .from('conversation_participants')
+      .select(`
+        conversation_id,
+        conversations!inner (
+          id,
+          help_request_id,
+          created_by,
+          title,
+          status,
+          created_at,
+          updated_at,
+          last_message_at,
+          help_requests (
+            id,
+            title,
+            category,
+            urgency,
+            status
+          )
+        )
+      `)
+      .eq('user_id', userId)
+      .is('left_at', null)
+      .eq('conversations.status', 'active')
+      .order('conversations.last_message_at', { ascending: false });
+
+    if (conversationsError) {
+      console.error('[MessagesPage] Error loading conversations:', conversationsError);
+      return { conversations: [], unreadCount: totalUnreadCount, activeConversations: 0 };
+    }
+
+    // Get per-conversation unread counts and format conversations
+    const conversations = await Promise.all(
+      (conversationsData || []).map(async (item: any) => {
+        const conv = item.conversations;
+
+        // Get unread count for this conversation
+        const { count: unreadCount } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('conversation_id', conv.id)
+          .eq('recipient_id', userId)
+          .is('read_at', null);
+
+        // Get other participants
+        const { data: otherParticipants } = await supabase
+          .from('conversation_participants')
+          .select('user_id, profiles!inner(name, location)')
+          .eq('conversation_id', conv.id)
+          .neq('user_id', userId)
+          .is('left_at', null);
+
+        // Get last message
+        const { data: lastMessages } = await supabase
+          .from('messages')
+          .select('id, content, sender_id, created_at')
+          .eq('conversation_id', conv.id)
+          .order('created_at', { ascending: false })
+          .limit(1);
+
+        const lastMessage = lastMessages?.[0];
+        const otherParticipant = otherParticipants?.[0];
+
+        return {
+          id: conv.id,
+          help_request_id: conv.help_request_id,
+          created_by: conv.created_by,
+          title: conv.help_requests?.title || conv.title || 'Conversation',
+          status: conv.status,
+          created_at: conv.created_at,
+          updated_at: conv.updated_at,
+          last_message_at: conv.last_message_at || conv.created_at,
+          unread_count: unreadCount || 0,
+          participants: otherParticipants?.map((p: any) => ({
+            user_id: p.user_id,
+            name: p.profiles?.name || 'Unknown',
+            location: p.profiles?.location,
+            role: 'member' as const
+          })) || [],
+          help_request: conv.help_requests,
+          last_message: lastMessage ? {
+            ...lastMessage,
+            sender_name: lastMessage.sender_id === userId
+              ? 'You'
+              : ((otherParticipant as any)?.profiles?.name || 'Unknown')
+          } : undefined
+        };
+      })
+    );
+
+    return {
+      conversations,
+      unreadCount: totalUnreadCount,
+      activeConversations: conversations.length
+    };
   } catch (error) {
-    console.error('[MessagesPage] V2 error:', error);
+    console.error('[MessagesPage] Error:', error);
     return { conversations: [], unreadCount: 0, activeConversations: 0 };
   }
 }
