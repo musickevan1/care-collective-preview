@@ -20,7 +20,8 @@ import {
   PlusCircle,
   Search,
   User,
-  Settings
+  Settings,
+  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -30,6 +31,7 @@ interface PlatformLayoutProps {
     id: string;
     name: string;
     email: string;
+    isAdmin?: boolean;
   };
   messagingData?: {
     unreadCount: number;
@@ -86,7 +88,14 @@ export function PlatformLayout({
       icon: MessageCircle,
       badge: messagingData.unreadCount,
       exactMatch: true
-    }
+    },
+    // Conditionally add Admin Panel link for admin users
+    ...(user?.isAdmin ? [{
+      href: '/admin',
+      label: 'Admin Panel',
+      icon: Shield,
+      exactMatch: false
+    }] : [])
   ];
 
   const isActive = useCallback((item: NavItem) => {
@@ -199,7 +208,7 @@ export function PlatformLayout({
               </div>
 
               {/* Mobile Navigation */}
-              <MobileNav variant="dashboard" />
+              <MobileNav variant="dashboard" isAdmin={user?.isAdmin || false} />
             </div>
           </div>
         </div>
