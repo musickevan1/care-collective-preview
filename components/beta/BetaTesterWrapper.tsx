@@ -40,11 +40,12 @@ export function BetaTesterWrapper({
 
         const { data: profile } = await supabase
           .from('profiles')
-          .select('is_beta_tester')
+          .select('is_beta_tester, is_admin')
           .eq('id', user.id)
           .single();
 
-        setIsBetaTester(profile?.is_beta_tester || false);
+        // Show beta features for both beta testers and admins
+        setIsBetaTester(profile?.is_beta_tester || profile?.is_admin || false);
       } catch (error) {
         console.error('Error checking beta tester status:', error);
       } finally {
@@ -55,7 +56,7 @@ export function BetaTesterWrapper({
     checkBetaTesterStatus();
   }, []);
 
-  // Don't render anything while loading or if not a beta tester
+  // Don't render anything while loading or if not a beta tester/admin
   if (isLoading || !isBetaTester) {
     return null;
   }
