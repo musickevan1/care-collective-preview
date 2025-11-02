@@ -245,48 +245,6 @@ export function PlatformLayout({
       <main id="main-content" className="flex-1">
         {children}
       </main>
-
-      {/* Quick Notifications Panel */}
-      {notificationsOpen && (
-        <div className="fixed inset-0 z-50 bg-black/20" onClick={() => setNotificationsOpen(false)}>
-          <div className="absolute top-16 right-4 w-80 bg-background border rounded-lg shadow-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-secondary">Notifications</h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setNotificationsOpen(false)}
-              >
-                ×
-              </Button>
-            </div>
-            
-            {messagingData.unreadCount > 0 ? (
-              <div className="space-y-2">
-                <div className="p-3 bg-sage/5 rounded-lg border border-sage/20">
-                  <div className="flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-sage" />
-                    <span className="font-medium text-sm text-secondary">
-                      {messagingData.unreadCount} new message{messagingData.unreadCount !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Community members are coordinating help requests
-                  </p>
-                  <Button size="sm" className="mt-2 w-full" asChild>
-                    <Link href="/messages">View Messages</Link>
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-6">
-                <Bell className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">No new notifications</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
