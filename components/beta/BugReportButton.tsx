@@ -16,6 +16,7 @@ export function BugReportButton(): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState<BugReportFormData>({
     title: '',
     severity: 'medium',
@@ -48,6 +49,7 @@ export function BugReportButton(): ReactElement {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
       // Capture current page context
@@ -69,6 +71,10 @@ export function BugReportButton(): ReactElement {
       });
 
       if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        if (errorData?.error) {
+          throw new Error(errorData.error);
+        }
         throw new Error('Failed to submit bug report');
       }
 
@@ -76,6 +82,7 @@ export function BugReportButton(): ReactElement {
       setTimeout(() => {
         setIsOpen(false);
         setSubmitSuccess(false);
+        setSubmitError(null);
         setFormData({
           title: '',
           severity: 'medium',
@@ -86,7 +93,8 @@ export function BugReportButton(): ReactElement {
       }, 2000);
     } catch (error) {
       console.error('Bug report submission error:', error);
-      alert('Failed to submit bug report. Please try again or contact support.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to submit bug report';
+      setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -135,6 +143,15 @@ export function BugReportButton(): ReactElement {
               </div>
             )}
 
+            {/* Error Message */}
+            {submitError && !submitSuccess && (
+              <div className="m-6 p-4 bg-red-100 border border-red-400 text-red-800 rounded-lg">
+                <p className="font-semibold">Submission Failed</p>
+                <p className="text-sm">{submitError}</p>
+                <p className="text-xs mt-2">Please check your input and try again.</p>
+              </div>
+            )}
+
             {/* Form */}
             {!submitSuccess && (
               <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -147,13 +164,15 @@ export function BugReportButton(): ReactElement {
                     id="bug-title"
                     type="text"
                     required
+                    minLength={5}
+                    maxLength={200}
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="Brief description of the issue"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                   <p className="mt-1 text-xs text-gray-600">
-                    e.g., "Cannot upload profile picture on mobile"
+                    Minimum 5 characters (e.g., "Cannot upload profile picture on mobile")
                   </p>
                 </div>
 
@@ -205,6 +224,8 @@ export function BugReportButton(): ReactElement {
                   <textarea
                     id="bug-description"
                     required
+                    minLength={10}
+                    maxLength={2000}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     placeholder="What happened? What did you expect to happen?"
@@ -212,7 +233,7 @@ export function BugReportButton(): ReactElement {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                   />
                   <p className="mt-1 text-xs text-gray-600">
-                    Include any error messages you saw
+                    Minimum 10 characters. Include any error messages you saw.
                   </p>
                 </div>
 
@@ -223,6 +244,7 @@ export function BugReportButton(): ReactElement {
                   </label>
                   <textarea
                     id="bug-steps"
+                    maxLength={2000}
                     value={formData.stepsToReproduce}
                     onChange={(e) => setFormData({ ...formData, stepsToReproduce: e.target.value })}
                     placeholder="1. Go to Browse Requests&#10;2. Click filter dropdown&#10;3. Select 'Groceries'&#10;4. Nothing happens"
