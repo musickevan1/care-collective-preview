@@ -60,7 +60,7 @@ export default function RootLayout({
           <footer className="bg-secondary text-secondary-foreground py-4 mt-16">
             <div className="container mx-auto px-4 text-center">
               <p className="text-sm opacity-75">
-                🚀 Preview Version - Built for Client Review
+                🧪 Beta Version - Built for Community Testing
               </p>
             </div>
           </footer>
