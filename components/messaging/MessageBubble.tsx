@@ -5,24 +5,13 @@ import { ReactElement } from 'react'
 import { MessageWithSender } from '@/lib/messaging/types'
 import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import {
-  MoreVertical,
   Flag,
-  Trash2,
-  Copy,
   Check,
   CheckCheck,
   Clock,
   AlertTriangle
 } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 
 interface MessageBubbleProps {
   message: MessageWithSender
@@ -115,7 +104,6 @@ export function MessageBubble({
   }
 
   const isSystemMessage = message.message_type === 'system'
-  const isSpecialMessage = message.message_type !== 'text'
 
   if (isSystemMessage) {
     // System messages are centered and styled differently
@@ -173,19 +161,6 @@ export function MessageBubble({
               : "rounded-bl-sm"
           )}
         >
-          {/* Special message indicator */}
-          {isSpecialMessage && (
-            <Badge 
-              variant="outline" 
-              className="mb-2 text-xs bg-background/80"
-            >
-              {message.message_type === 'help_request_update' 
-                ? 'Help Request Update' 
-                : message.message_type
-              }
-            </Badge>
-          )}
-
           {/* Message content */}
           <p className="text-sm leading-relaxed whitespace-pre-wrap">
             {message.content}

@@ -4,17 +4,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { MessageBubble } from '@/components/messaging/MessageBubble';
 import { MessageWithSender } from '@/lib/messaging/types';
-
-// Mock clipboard API
-Object.assign(navigator, {
-  clipboard: {
-    writeText: vi.fn(),
-  },
-});
 
 // Mock date functions
 vi.mock('date-fns', () => ({
@@ -142,99 +134,8 @@ describe('MessageBubble', () => {
     });
   });
 
-  describe('Message Actions', () => {
-    it('shows message actions menu on hover', async () => {
-      render(
-        <MessageBubble
-          message={mockMessage}
-          isCurrentUser={false}
-          onReport={mockOnReport}
-        />
-      );
-
-      const messageContainer = screen.getByText('Hello, this is a test message!').closest('div');
-      
-      // Trigger hover by finding the group element
-      const groupElement = messageContainer?.closest('.group');
-      if (groupElement) {
-        fireEvent.mouseEnter(groupElement);
-      }
-
-      // Look for the more options button (should be visible on hover)
-      await waitFor(() => {
-        const moreButton = document.querySelector('[aria-haspopup=\"menu\"]');
-        expect(moreButton).toBeInTheDocument();
-      });
-    });
-
-    it('copies message content to clipboard', async () => {
-      const user = userEvent.setup();
-      
-      render(
-        <MessageBubble
-          message={mockMessage}
-          isCurrentUser={false}
-          onReport={mockOnReport}
-        />
-      );
-
-      // Find and click the more options button
-      const moreButton = document.querySelector('[aria-haspopup=\"menu\"]');
-      if (moreButton) {
-        await user.click(moreButton as Element);
-      }
-
-      // Click copy option
-      const copyOption = screen.getByText('Copy message');
-      await user.click(copyOption);
-
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('Hello, this is a test message!');
-    });
-
-    it('calls onReport when report option is clicked', async () => {
-      const user = userEvent.setup();
-      
-      render(
-        <MessageBubble
-          message={mockMessage}
-          isCurrentUser={false}
-          onReport={mockOnReport}
-        />
-      );
-
-      // Find and click the more options button
-      const moreButton = document.querySelector('[aria-haspopup=\"menu\"]');
-      if (moreButton) {
-        await user.click(moreButton as Element);
-      }
-
-      // Click report option
-      const reportOption = screen.getByText('Report message');
-      await user.click(reportOption);
-
-      expect(mockOnReport).toHaveBeenCalled();
-    });
-
-    it('does not show report option for own messages', async () => {
-      const user = userEvent.setup();
-      
-      render(
-        <MessageBubble
-          message={mockMessage}
-          isCurrentUser={true}
-          onReport={mockOnReport}
-        />
-      );
-
-      // Find and click the more options button
-      const moreButton = document.querySelector('[aria-haspopup=\"menu\"]');
-      if (moreButton) {
-        await user.click(moreButton as Element);
-      }
-
-      expect(screen.queryByText('Report message')).not.toBeInTheDocument();
-    });
-  });
+  // Message Actions tests removed - UI simplified per user request
+  // Previously tested: actions menu, copy, report, delete functionality
 
   describe('System Messages', () => {
     it('renders system messages with special styling', () => {
