@@ -7,14 +7,20 @@ import { BetaWelcomeModal } from './BetaWelcomeModal';
 
 interface BetaTesterWrapperProps {
   showWelcomeModal?: boolean;
+  showBanner?: boolean;
   forceOpenModal?: boolean;
   onModalOpenChange?: (open: boolean) => void;
+  onReopenModal?: () => void;
+  children?: React.ReactNode;
 }
 
 export function BetaTesterWrapper({
   showWelcomeModal = false,
+  showBanner = false,
   forceOpenModal = false,
-  onModalOpenChange
+  onModalOpenChange,
+  onReopenModal,
+  children
 }: BetaTesterWrapperProps): ReactElement | null {
   const [isBetaTester, setIsBetaTester] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,6 +69,7 @@ export function BetaTesterWrapper({
           onOpenChange={onModalOpenChange}
         />
       )}
+      {children}
     </>
   );
 }

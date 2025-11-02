@@ -13,23 +13,16 @@ export function BetaBannerWithModal(): ReactElement {
     setForceOpenModal(true);
   };
 
-  const handleModalClose = () => {
-    setForceOpenModal(false);
-  };
-
   return (
-    <>
-      {/* Beta Tester Wrapper with Modal Control */}
-      <BetaTesterWrapper
-        showWelcomeModal={true}
-        forceOpenModal={forceOpenModal}
-        onModalOpenChange={(open) => {
-          if (!open) {
-            setForceOpenModal(false);
-          }
-        }}
-      />
-
+    <BetaTesterWrapper
+      showWelcomeModal={true}
+      forceOpenModal={forceOpenModal}
+      onModalOpenChange={(open) => {
+        if (!open) {
+          setForceOpenModal(false);
+        }
+      }}
+    >
       {/* Beta Testing Notice Banner */}
       <div className="bg-gradient-to-r from-sage/10 to-primary/10 border-2 border-sage/30 rounded-lg p-4 mb-6">
         <div className="flex items-start gap-3">
@@ -58,6 +51,6 @@ export function BetaBannerWithModal(): ReactElement {
           </div>
         </div>
       </div>
-    </>
+    </BetaTesterWrapper>
   );
 }
