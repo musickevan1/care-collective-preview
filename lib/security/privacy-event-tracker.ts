@@ -103,8 +103,12 @@ interface SuspiciousPattern {
  */
 export class PrivacyEventTracker {
   private static instance: PrivacyEventTracker | null = null;
-  private supabase = createClient();
   private suspiciousPatterns: SuspiciousPattern[] = [];
+
+  // Lazy-load Supabase client to avoid calling cookies() at module load time
+  private async getClient() {
+    return await createClient();
+  }
 
   private constructor() {
     this.initializeSuspiciousPatterns();
@@ -154,8 +158,10 @@ export class PrivacyEventTracker {
         alertId = await this.createPrivacyViolationAlert(validatedEvent);
       }
 
+      const supabase = await this.getClient();
+
       // Store event in audit trail
-      const { error: auditError } = await this.supabase
+      const { error: auditError } = await supabase
         .from('contact_exchange_audit')
         .insert({
           action: validatedEvent.event_type,
@@ -348,7 +354,8 @@ export class PrivacyEventTracker {
     }
   ) {
     try {
-      let query = this.supabase
+      const supabase = await this.getClient();
+      let query = supabase
         .from('contact_exchange_audit')
         .select('*')
         .or(`helper_id.eq.${userId},requester_id.eq.${userId}`)
@@ -396,10 +403,11 @@ export class PrivacyEventTracker {
     limit?: number;
   }) {
     try {
-      let query = this.supabase
+      const supabase = await this.getClient();
+      let query = supabase
         .from('privacy_violation_alerts')
         .select('*')
-        .order('detected_at', { ascending: false });
+        .order('detected_at', { ascending: false});
 
       if (options?.severity) {
         query = query.eq('severity', options.severity);
@@ -515,7 +523,8 @@ export class PrivacyEventTracker {
       const alertId = crypto.getRandomValues(new Uint8Array(16))
         .reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
-      const { error } = await this.supabase
+      const supabase = await this.getClient();
+      const { error } = await supabase
         .from('privacy_violation_alerts')
         .insert({
           id: alertId,

@@ -88,7 +88,11 @@ export type DataExportRequest = z.infer<typeof dataExportRequestSchema>;
  */
 export class UserPrivacyControlsService {
   private static instance: UserPrivacyControlsService | null = null;
-  private supabase = createClient();
+
+  // Lazy-load Supabase client to avoid calling cookies() at module load time
+  private async getClient() {
+    return await createClient();
+  }
 
   private constructor() {}
 
@@ -104,7 +108,8 @@ export class UserPrivacyControlsService {
    */
   async getUserPrivacySettings(userId: string): Promise<UserPrivacySettings> {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getClient();
+      const { data, error } = await supabase
         .from('user_privacy_settings')
         .select('*')
         .eq('user_id', userId)
@@ -150,7 +155,8 @@ export class UserPrivacyControlsService {
         ...settings
       });
 
-      const { data, error } = await this.supabase
+      const supabase = await this.getClient();
+      const { data, error } = await supabase
         .from('user_privacy_settings')
         .upsert({
           ...validatedSettings,
@@ -276,7 +282,8 @@ export class UserPrivacyControlsService {
     }
   ) {
     try {
-      let query = this.supabase
+      const supabase = await this.getClient();
+      let query = supabase
         .from('contact_sharing_history')
         .select(`
           *,
@@ -334,8 +341,10 @@ export class UserPrivacyControlsService {
     reason?: string
   ): Promise<boolean> {
     try {
+      const supabase = await this.getClient();
+
       // Update contact exchange status
-      const { error: exchangeError } = await this.supabase
+      const { error: exchangeError } = await supabase
         .from('contact_exchanges')
         .update({
           status: 'revoked',
@@ -350,7 +359,7 @@ export class UserPrivacyControlsService {
       if (exchangeError) throw exchangeError;
 
       // Update sharing history
-      const { error: historyError } = await this.supabase
+      const { error: historyError } = await supabase
         .from('contact_sharing_history')
         .update({
           status: 'revoked',
@@ -370,7 +379,7 @@ export class UserPrivacyControlsService {
       }
 
       // Create audit trail
-      const { error: auditError } = await this.supabase
+      const { error: auditError } = await supabase
         .from('contact_exchange_audit')
         .insert({
           action: 'CONTACT_EXCHANGE_REVOKED',
@@ -432,7 +441,8 @@ export class UserPrivacyControlsService {
       const downloadToken = crypto.getRandomValues(new Uint8Array(32))
         .reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
-      const { data, error } = await this.supabase
+      const supabase = await this.getClient();
+      const { data, error } = await supabase
         .from('data_export_requests')
         .insert({
           user_id: userId,
@@ -478,7 +488,8 @@ export class UserPrivacyControlsService {
    */
   async getDataExportRequests(userId: string) {
     try {
-      const { data, error } = await this.supabase
+      const supabase = await this.getClient();
+      const { data, error } = await supabase
         .from('data_export_requests')
         .select('*')
         .eq('user_id', userId)
@@ -509,8 +520,10 @@ export class UserPrivacyControlsService {
         throw new Error('Invalid confirmation code');
       }
 
+      const supabase = await this.getClient();
+
       // Mark all contact exchanges as deleted
-      await this.supabase
+      await supabase
         .from('contact_exchanges')
         .update({
           status: 'deleted',
@@ -520,19 +533,19 @@ export class UserPrivacyControlsService {
         .or(`helper_id.eq.${userId},requester_id.eq.${userId}`);
 
       // Mark sharing history as deleted
-      await this.supabase
+      await supabase
         .from('contact_sharing_history')
         .update({ status: 'deleted' })
         .eq('user_id', userId);
 
       // Delete privacy settings
-      await this.supabase
+      await supabase
         .from('user_privacy_settings')
         .delete()
         .eq('user_id', userId);
 
       // Create final audit entry
-      await this.supabase
+      await supabase
         .from('contact_exchange_audit')
         .insert({
           action: 'DATA_DELETION_REQUESTED',

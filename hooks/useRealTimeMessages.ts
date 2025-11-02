@@ -8,7 +8,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { MessageWithSender } from '@/lib/messaging/types';
-import { messageEncryption } from '@/lib/messaging/encryption';
+import { MessageEncryptionService } from '@/lib/messaging/encryption';
 import { errorTracker } from '@/lib/error-tracking';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import type { RealtimeChannel } from '@supabase/supabase-js';
@@ -174,7 +174,7 @@ export function useRealTimeMessages(
           messages.map(async (message) => {
             if (message.encryption_status === 'encrypted') {
               try {
-                const decryptionResult = await messageEncryption.decryptMessage(
+                const decryptionResult = await MessageEncryptionService.getInstance().decryptMessage(
                   message.content,
                   message.sender_id,
                   message.recipient_id,
@@ -331,7 +331,7 @@ export function useRealTimeMessages(
       let encryptionStatus: 'none' | 'encrypted' | 'failed' = 'none';
 
       if (encryptionEnabled || messageType !== 'standard') {
-        const encryptionResult = await messageEncryption.encryptMessage(
+        const encryptionResult = await MessageEncryptionService.getInstance().encryptMessage(
           content,
           userId,
           '', // Recipient will be determined by conversation
@@ -677,7 +677,7 @@ export function useRealTimeMessages(
         let processedMessage = messageWithSender;
         if (encryptionEnabled && newMessage.encryption_status === 'encrypted') {
           try {
-            const decryptionResult = await messageEncryption.decryptMessage(
+            const decryptionResult = await MessageEncryptionService.getInstance().decryptMessage(
               newMessage.content,
               newMessage.sender_id,
               newMessage.recipient_id,

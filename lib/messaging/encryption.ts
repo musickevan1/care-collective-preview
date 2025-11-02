@@ -39,10 +39,18 @@ export interface EncryptionKeyInfo {
  * Provides end-to-end encryption for sensitive messages using Phase 2.2 infrastructure
  */
 export class MessageEncryptionService {
+  private static instance: MessageEncryptionService | null = null;
   private contactEncryption: ContactEncryptionService;
 
-  constructor() {
+  private constructor() {
     this.contactEncryption = new ContactEncryptionService();
+  }
+
+  public static getInstance(): MessageEncryptionService {
+    if (!MessageEncryptionService.instance) {
+      MessageEncryptionService.instance = new MessageEncryptionService();
+    }
+    return MessageEncryptionService.instance;
   }
 
   /**
@@ -471,4 +479,5 @@ export class MessageEncryptionService {
 }
 
 // Export singleton instance
-export const messageEncryption = new MessageEncryptionService();
+// COMMENTED OUT: Use MessageEncryptionService.getInstance() instead to avoid module-level instantiation
+// export const messageEncryption = new MessageEncryptionService();
