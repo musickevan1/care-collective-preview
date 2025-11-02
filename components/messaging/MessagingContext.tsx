@@ -287,32 +287,38 @@ export function MessagingProvider({
     content: string,
     messageType: 'text' | 'help_request_update' = 'text'
   ) => {
-    if (!selectedConversation) return
+    if (!selectedConversation) {
+      throw new Error('No conversation selected. Please select a conversation to send messages.')
+    }
 
     try {
-      const { error } = await supabase
-        .from('messages_v2')
-        .insert({
-          conversation_id: selectedConversation,
-          sender_id: userId,
-          content
+      // Use the API endpoint instead of direct insert to get proper error handling
+      const response = await fetch(`/api/messaging/conversations/${selectedConversation}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content,
+          message_type: messageType
         })
+      })
 
-      if (error) throw error
+      const data = await response.json()
 
-      // Update conversation's updated_at
-      await supabase
-        .from('conversations_v2')
-        .update({ updated_at: new Date().toISOString() })
-        .eq('id', selectedConversation)
+      if (!response.ok) {
+        // Use the user-friendly error message from the API
+        const errorMessage = data.userMessage || data.error || 'Failed to send message'
+        throw new Error(errorMessage)
+      }
 
-      // Reload messages to get the new one
+      // Reload messages to get the new one with proper formatting
       await loadMessages(selectedConversation)
     } catch (error) {
       console.error('Error sending message:', error)
       throw error
     }
-  }, [selectedConversation, userId, supabase, loadMessages])
+  }, [selectedConversation, loadMessages])
 
   /**
    * Load pending offers

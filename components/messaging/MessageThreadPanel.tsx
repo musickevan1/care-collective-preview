@@ -118,6 +118,7 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
                   userId={userId}
                   userName={userName}
                   disabled={messageThread.error !== null}
+                  conversationStatus={messageThread.conversation?.status}
                   data-component="MessageInput"
                 />
               )}

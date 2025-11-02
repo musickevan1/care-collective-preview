@@ -29,6 +29,7 @@ interface MessageInputProps {
   userId?: string
   userName?: string
   enableTypingStatus?: boolean
+  conversationStatus?: 'pending' | 'accepted' | 'rejected'
   'data-component'?: string
 }
 
@@ -49,6 +50,7 @@ export function MessageInput({
   userId,
   userName,
   enableTypingStatus = true,
+  conversationStatus,
   'data-component': dataComponent
 }: MessageInputProps): ReactElement {
   const [content, setContent] = useState('')
@@ -181,7 +183,8 @@ export function MessageInput({
   const characterCount = content.length
   const isAtLimit = characterCount >= maxLength
   const isNearLimit = characterCount >= maxLength * 0.8
-  const canSend = content.trim().length > 0 && !isSending && !disabled
+  const isPending = conversationStatus === 'pending'
+  const canSend = content.trim().length > 0 && !isSending && !disabled && !isPending
 
   return (
     <div
@@ -195,6 +198,16 @@ export function MessageInput({
         }}
         className="space-y-3"
       >
+        {/* Pending conversation notice */}
+        {isPending && (
+          <div className="flex items-center gap-2 text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-lg">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+            <span>
+              This conversation is pending. You can send messages once the recipient accepts your offer to help.
+            </span>
+          </div>
+        )}
+
         {/* Error display */}
         {error && (
           <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-lg">

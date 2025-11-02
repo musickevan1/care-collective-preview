@@ -60,14 +60,19 @@ export function PendingOffersSection({
 
   if (offers.length === 0) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 px-4">
         <Inbox className="w-16 h-16 mx-auto text-gray-300 mb-4" aria-hidden="true" />
         <h3 className="text-lg font-semibold text-secondary mb-2">
           No Pending Offers
         </h3>
-        <p className="text-gray-600 max-w-md mx-auto">
-          When community members offer to help with your requests, they'll appear here for you to review
-        </p>
+        <div className="text-sm text-gray-600 max-w-md mx-auto space-y-2">
+          <p>
+            When you offer to help with a request, it will appear here until the person accepts it.
+          </p>
+          <p>
+            Offers you've received from others will also show here for you to review.
+          </p>
+        </div>
       </div>
     );
   }

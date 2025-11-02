@@ -190,26 +190,62 @@ export async function POST(
     });
 
     if (!result.success) {
-      // Map V2 error codes to HTTP responses
+      // Map V2 error codes to HTTP responses with user-friendly messages
       switch (result.error) {
         case 'not_found':
           return NextResponse.json(
-            { error: 'Conversation not found' },
+            {
+              error: 'Conversation not found',
+              errorType: 'not_found',
+              userMessage: 'This conversation no longer exists. Please refresh the page.'
+            },
             { status: 404 }
           );
         case 'access_denied':
           return NextResponse.json(
-            { error: 'You do not have access to this conversation' },
+            {
+              error: 'You do not have access to this conversation',
+              errorType: 'access_denied',
+              userMessage: 'You do not have permission to send messages in this conversation.'
+            },
+            { status: 403 }
+          );
+        case 'permission_denied':
+          // Check if it's a pending conversation error
+          if (result.message?.includes('must be accepted')) {
+            return NextResponse.json(
+              {
+                error: 'Conversation must be accepted before messaging',
+                errorType: 'pending_conversation',
+                userMessage: 'This conversation is still pending. You can send messages once the recipient accepts your offer to help.'
+              },
+              { status: 403 }
+            );
+          }
+          return NextResponse.json(
+            {
+              error: result.message || 'Permission denied',
+              errorType: 'permission_denied',
+              userMessage: 'You do not have permission to send this message.'
+            },
             { status: 403 }
           );
         case 'validation_error':
           return NextResponse.json(
-            { error: result.message || 'Invalid message data' },
+            {
+              error: result.message || 'Invalid message data',
+              errorType: 'validation_error',
+              userMessage: result.message || 'Your message could not be sent. Please check that it is between 1 and 1000 characters.'
+            },
             { status: 400 }
           );
         default:
           return NextResponse.json(
-            { error: 'Failed to send message' },
+            {
+              error: 'Failed to send message',
+              errorType: 'unknown',
+              userMessage: 'Unable to send your message right now. Please try again in a moment.'
+            },
             { status: 500 }
           );
       }

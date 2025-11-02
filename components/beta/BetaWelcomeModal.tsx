@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement, useEffect, useState } from 'react';
-import { X, Bug, CheckCircle2, MessageSquare, Users } from 'lucide-react';
+import { X, Bug, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const MODAL_SESSION_KEY = 'beta_welcome_modal_shown';
@@ -23,10 +23,31 @@ export function BetaWelcomeModal(): ReactElement | null {
     }
   }, []);
 
+  // ESC key handler for closing modal
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener('keydown', handleEsc);
+      return () => window.removeEventListener('keydown', handleEsc);
+    }
+  }, [isOpen]);
+
   const handleClose = () => {
     setIsOpen(false);
     // Mark as shown for this session
     sessionStorage.setItem(MODAL_SESSION_KEY, 'true');
+  };
+
+  // Handle backdrop click to close
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
   };
 
   if (!isOpen) {
@@ -34,10 +55,13 @@ export function BetaWelcomeModal(): ReactElement | null {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm">
-      <div className="bg-background rounded-2xl shadow-2xl max-w-2xl w-full border-4 border-primary">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-60 backdrop-blur-sm"
+      onClick={handleBackdropClick}
+    >
+      <div className="bg-background rounded-2xl shadow-2xl max-w-2xl w-full border-2 border-primary max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header with Close Button */}
-        <div className="relative bg-primary text-white p-8 rounded-t-xl">
+        <div className="relative bg-primary text-white p-6 md:p-8 rounded-t-xl flex-shrink-0">
           <button
             onClick={handleClose}
             className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white"
@@ -50,15 +74,15 @@ export function BetaWelcomeModal(): ReactElement | null {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 rounded-full mb-4">
               <span className="text-5xl">🎉</span>
             </div>
-            <h1 className="text-4xl font-bold mb-2">Welcome, Beta Tester!</h1>
-            <p className="text-xl font-semibold opacity-90">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome, Beta Tester!</h1>
+            <p className="text-lg md:text-xl font-semibold opacity-90">
               You're part of something special
             </p>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-8 space-y-6">
+        {/* Content - Scrollable */}
+        <div className="p-6 md:p-8 space-y-6 overflow-y-auto flex-grow">
           {/* Main Message */}
           <div className="text-center mb-6">
             <p className="text-xl font-bold text-secondary leading-relaxed">
@@ -71,79 +95,51 @@ export function BetaWelcomeModal(): ReactElement | null {
           </div>
 
           {/* Key Points */}
-          <div className="grid gap-4 my-6">
-            <div className="flex items-start gap-4 p-4 bg-sage/10 rounded-lg border border-sage/30">
+          <div className="grid gap-5 my-6">
+            <div className="flex items-start gap-4 p-5 bg-primary/5 rounded-lg border border-primary/20">
               <Bug className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
               <div>
-                <p className="font-bold text-lg text-secondary mb-1">Report Bugs Easily</p>
-                <p className="text-base text-gray-700 font-medium">
+                <p className="font-bold text-lg text-secondary mb-2">Report Bugs Easily</p>
+                <p className="text-base text-gray-700 leading-relaxed">
                   Look for the <span className="font-bold text-primary">"Report Bug"</span> button
                   in the bottom-right corner - use it whenever something doesn't work right!
                 </p>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 p-4 bg-dusty-rose/10 rounded-lg border border-dusty-rose/30">
+            <div className="flex items-start gap-4 p-5 bg-sage/5 rounded-lg border border-sage/20">
               <MessageSquare className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
               <div>
-                <p className="font-bold text-lg text-secondary mb-1">Test Key Features</p>
-                <p className="text-base text-gray-700 font-medium">
+                <p className="font-bold text-lg text-secondary mb-2">Test Key Features</p>
+                <p className="text-base text-gray-700 leading-relaxed">
                   Focus on <span className="font-bold">help requests</span> and{' '}
                   <span className="font-bold">messaging</span> - create requests, offer help,
                   and chat with other testers!
                 </p>
               </div>
             </div>
-
-            <div className="flex items-start gap-4 p-4 bg-accent/10 rounded-lg border border-accent/30">
-              <Users className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
-              <div>
-                <p className="font-bold text-lg text-secondary mb-1">Share Your Thoughts</p>
-                <p className="text-base text-gray-700 font-medium">
-                  You'll receive <span className="font-bold">2 short surveys</span>:
-                  mid-week and final. Your honest feedback helps us improve!
-                </p>
-              </div>
-            </div>
           </div>
 
           {/* Important Note */}
-          <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-5 mt-6">
-            <div className="flex items-start gap-3">
-              <CheckCircle2 className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold text-base text-gray-900 mb-1">Remember:</p>
-                <ul className="text-sm text-gray-800 space-y-1 font-medium">
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span><span className="font-bold">No silly questions</span> - report anything confusing!</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span><span className="font-bold">Test on mobile</span> if you can - it's important!</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2">•</span>
-                    <span><span className="font-bold">Be honest</span> - we want the real feedback, good or bad!</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
+            <p className="text-sm text-gray-700 leading-relaxed">
+              <strong>Remember:</strong> Report anything confusing, test on mobile if possible,
+              and be honest with your feedback - we want the real thing, good or bad!
+            </p>
           </div>
 
-          {/* Close Button */}
-          <div className="pt-4">
-            <Button
-              onClick={handleClose}
-              className="w-full text-lg font-bold py-6 shadow-lg hover:shadow-xl transition-all"
-              size="lg"
-            >
-              Got it! Let's get started 🚀
-            </Button>
-          </div>
+        </div>
 
-          {/* Footer Note */}
-          <p className="text-center text-sm text-gray-600 pt-2">
+        {/* Footer - Fixed */}
+        <div className="p-6 md:p-8 border-t flex-shrink-0 space-y-3">
+          <Button
+            onClick={handleClose}
+            className="w-full text-lg font-bold py-6 shadow-lg hover:shadow-xl transition-all"
+            size="lg"
+          >
+            Got it! Let's get started 🚀
+          </Button>
+          <p className="text-center text-sm text-gray-600">
             Need help? Check the beta tester guide or use the bug report button anytime.
           </p>
         </div>
