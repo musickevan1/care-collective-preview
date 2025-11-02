@@ -105,6 +105,12 @@ export function RequestsListWithModal({
       fetch(`/api/requests/${requestId}`)
         .then(res => {
           if (!res.ok) {
+            // Check if request was cancelled (410 Gone)
+            if (res.status === 410) {
+              return res.json().then(data => {
+                throw new Error(data.message || 'This request has been cancelled')
+              })
+            }
             throw new Error('Failed to fetch request')
           }
           return res.json()
@@ -115,10 +121,14 @@ export function RequestsListWithModal({
         })
         .catch(err => {
           console.error('Error fetching request:', err)
-          setError('Failed to load request details')
+          const errorMessage = err.message || 'Failed to load request details'
+          setError(errorMessage)
           setLoading(false)
-          // Clear the invalid ID from URL
-          router.push('/requests')
+
+          // Auto-redirect after showing error for cancelled/missing requests
+          setTimeout(() => {
+            router.push('/requests')
+          }, 3000)
         })
     } else {
       setSelectedRequest(null)
@@ -225,6 +235,27 @@ export function RequestsListWithModal({
           <div className="bg-background p-6 rounded-lg">
             <p>Loading request details...</p>
           </div>
+        </div>
+      )}
+
+      {/* Error state - show user-friendly message */}
+      {error && requestId && !loading && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="max-w-md mx-4">
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🚫</div>
+                <h3 className="text-lg font-semibold mb-2">Request Unavailable</h3>
+                <p className="text-muted-foreground mb-4">{error}</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Redirecting you back to the requests page...
+                </p>
+                <Button onClick={handleCloseModal} variant="outline">
+                  Go Back Now
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
     </>

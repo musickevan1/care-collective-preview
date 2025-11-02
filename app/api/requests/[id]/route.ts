@@ -61,6 +61,17 @@ export async function GET(
       )
     }
 
+    // Check if request is cancelled - only allow owner to view
+    if (requestData.status === 'cancelled' && requestData.user_id !== user.id) {
+      return NextResponse.json(
+        {
+          error: 'Request has been cancelled',
+          message: 'This help request has been cancelled by the requester and is no longer available.'
+        },
+        { status: 410 } // 410 Gone - resource existed but no longer available
+      )
+    }
+
     // Fetch requester profile separately
     const { data: requesterProfile } = await supabase
       .from('profiles')
