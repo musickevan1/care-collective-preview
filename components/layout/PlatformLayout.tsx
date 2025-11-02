@@ -5,20 +5,20 @@
 
 'use client';
 
-import { ReactElement, ReactNode, useState, useCallback } from 'react';
+import { ReactElement, ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MobileNav } from '@/components/MobileNav';
 import { LogoutButton } from '@/components/LogoutButton';
+import { NotificationDropdown } from '@/components/notifications';
 import {
-  MessageCircle, 
-  Heart, 
-  Home, 
-  PlusCircle, 
+  MessageCircle,
+  Heart,
+  Home,
+  PlusCircle,
   Search,
-  Bell,
   User,
   Settings
 } from 'lucide-react';
@@ -50,15 +50,14 @@ interface NavItem {
   exactMatch?: boolean;
 }
 
-export function PlatformLayout({ 
-  children, 
-  user, 
+export function PlatformLayout({
+  children,
+  user,
   messagingData = { unreadCount: 0, activeConversations: 0 },
   showMessagingContext = false,
   breadcrumbs = []
 }: PlatformLayoutProps): ReactElement {
   const pathname = usePathname();
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   const isAuthenticated = !!user;
 
@@ -96,10 +95,6 @@ export function PlatformLayout({
     }
     return pathname.startsWith(item.href);
   }, [pathname]);
-
-  const handleNotificationsToggle = useCallback(() => {
-    setNotificationsOpen(prev => !prev);
-  }, []);
 
   if (!isAuthenticated) {
     return (
@@ -187,17 +182,7 @@ export function PlatformLayout({
             {/* User Actions */}
             <div className="flex items-center gap-2">
               {/* Notifications */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="relative"
-                onClick={handleNotificationsToggle}
-              >
-                <Bell className="w-4 h-4" />
-                {messagingData.unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                )}
-              </Button>
+              <NotificationDropdown />
 
               {/* User Menu - Desktop */}
               <div className="hidden lg:flex items-center gap-2">
