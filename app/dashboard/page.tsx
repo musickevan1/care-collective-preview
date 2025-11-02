@@ -203,7 +203,7 @@ async function getDashboardData(userId: string) {
       .order('created_at', { ascending: false })
       .limit(5);
 
-    // Get user's own help requests
+    // Get user's own help requests (exclude cancelled)
     const { data: userRequests } = await supabase
       .from('help_requests')
       .select(`
@@ -215,6 +215,7 @@ async function getDashboardData(userId: string) {
         created_at
       `)
       .eq('user_id', userId)
+      .neq('status', 'cancelled')
       .order('created_at', { ascending: false })
       .limit(5);
 
