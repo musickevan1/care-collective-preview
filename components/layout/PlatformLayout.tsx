@@ -63,6 +63,14 @@ export function PlatformLayout({
 
   const isAuthenticated = !!user;
 
+  // DEBUG: Log admin status
+  console.log('[PlatformLayout] User data:', {
+    hasUser: !!user,
+    userName: user?.name,
+    isAdmin: user?.isAdmin,
+    userKeys: user ? Object.keys(user) : []
+  });
+
   // Main navigation items
   const navItems: NavItem[] = [
     {
@@ -97,6 +105,13 @@ export function PlatformLayout({
       exactMatch: false
     }] : [])
   ];
+
+  // DEBUG: Log navigation items
+  console.log('[PlatformLayout] Navigation items:', {
+    totalItems: navItems.length,
+    items: navItems.map(item => item.label),
+    hasAdmin: navItems.some(item => item.label === 'Admin Panel')
+  });
 
   const isActive = useCallback((item: NavItem) => {
     if (item.exactMatch) {
