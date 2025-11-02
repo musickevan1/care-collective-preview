@@ -1,9 +1,8 @@
 'use client'
 
-import { ReactElement, useRef } from 'react'
+import { ReactElement, useRef, useState, useEffect } from 'react'
 import { MessageWithSender } from '@/lib/messaging/types'
-import { MessageBubble } from './MessageBubble'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { VirtualizedMessageList } from './VirtualizedMessageList'
 import { Button } from '@/components/ui/button'
 import { RefreshCw, AlertCircle } from 'lucide-react'
 
@@ -19,14 +18,14 @@ interface MessageThreadViewProps {
 /**
  * MessageThreadView - Displays messages with loading and error states
  *
+ * Phase 2.2 Part 2 - Now uses VirtualizedMessageList for performance
+ *
  * Features:
- * - Message list with auto-scroll anchor
+ * - VirtualizedMessageList for 1000+ message performance
+ * - Auto-height tracking with ResizeObserver
+ * - Date separators for message grouping
  * - Loading state with spinner
  * - Error state with retry button
- * - Scrollable container
- *
- * Note: This component currently uses ScrollArea.
- * In Phase 2, it will be upgraded to use VirtualizedMessageList for better performance.
  *
  * @component
  */
@@ -38,7 +37,29 @@ export function MessageThreadView({
   onRetry,
   className
 }: MessageThreadViewProps): ReactElement {
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerHeight, setContainerHeight] = useState(400)
+
+  // Track container height for virtualization
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const observer = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const { height } = entry.contentRect
+        // Ensure minimum height
+        setContainerHeight(Math.max(300, height))
+      }
+    })
+
+    observer.observe(containerRef.current)
+
+    // Set initial height
+    const rect = containerRef.current.getBoundingClientRect()
+    setContainerHeight(Math.max(300, rect.height))
+
+    return () => observer.disconnect()
+  }, [])
 
   // Loading state
   if (loading) {
@@ -67,20 +88,18 @@ export function MessageThreadView({
     )
   }
 
-  // Messages display
+  // Messages display with virtualization
   return (
-    <ScrollArea className={`flex-1 p-4 ${className || ''}`}>
-      <div className="space-y-4">
-        {messages.map((message) => (
-          <MessageBubble
-            key={message.id}
-            message={message}
-            isCurrentUser={message.sender_id === userId}
-            showSenderName={true}
-          />
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-    </ScrollArea>
+    <div ref={containerRef} className={`flex-1 flex flex-col min-h-0 ${className || ''}`}>
+      <VirtualizedMessageList
+        messages={messages}
+        currentUserId={userId}
+        showDateSeparators={true}
+        enableVirtualization={true}
+        height={containerHeight}
+        itemHeight={80}
+        className="flex-1"
+      />
+    </div>
   )
 }
