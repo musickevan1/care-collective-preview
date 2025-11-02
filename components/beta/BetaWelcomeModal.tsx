@@ -4,14 +4,14 @@ import { ReactElement, useEffect, useState } from 'react';
 import { X, Bug, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const MODAL_SESSION_KEY = 'beta_welcome_modal_shown';
+const MODAL_STORAGE_KEY = 'beta_welcome_modal_shown';
 
 export function BetaWelcomeModal(): ReactElement | null {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Check if modal has already been shown this session
-    const hasBeenShown = sessionStorage.getItem(MODAL_SESSION_KEY);
+    // Check if modal has already been shown (ever)
+    const hasBeenShown = localStorage.getItem(MODAL_STORAGE_KEY);
 
     if (!hasBeenShown) {
       // Small delay to ensure page is loaded
@@ -39,8 +39,8 @@ export function BetaWelcomeModal(): ReactElement | null {
 
   const handleClose = () => {
     setIsOpen(false);
-    // Mark as shown for this session
-    sessionStorage.setItem(MODAL_SESSION_KEY, 'true');
+    // Mark as shown permanently
+    localStorage.setItem(MODAL_STORAGE_KEY, 'true');
   };
 
   // Handle backdrop click to close
