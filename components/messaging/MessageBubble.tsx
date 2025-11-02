@@ -191,67 +191,8 @@ export function MessageBubble({
             {message.content}
           </p>
 
-          {/* Message actions dropdown - visible on touch devices, hover-only on desktop */}
-          <div
-            className={cn(
-              "absolute -top-2 transition-opacity duration-200 z-10",
-              isCurrentUser ? "-left-2" : "-right-2",
-              // On touch devices: always visible with reduced opacity
-              // On desktop: hidden until hover/focus
-              isTouchDevice
-                ? "opacity-70"
-                : "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"
-            )}
-          >
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "bg-background/95 border shadow-sm hover:bg-muted",
-                    // Larger touch target on mobile (44px minimum per WCAG)
-                    isTouchDevice ? "h-9 w-9 p-0" : "h-6 w-6 p-0"
-                  )}
-                  aria-label="Message actions"
-                >
-                  <MoreVertical className={cn(isTouchDevice ? "w-4 h-4" : "w-3 h-3")} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align={isCurrentUser ? "start" : "end"}>
-                <DropdownMenuItem onClick={handleCopyMessage}>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy message
-                </DropdownMenuItem>
-
-                {onReply && (
-                  <DropdownMenuItem onClick={onReply}>
-                    Reply
-                  </DropdownMenuItem>
-                )}
-
-                {!isCurrentUser && onReport && (
-                  <DropdownMenuItem
-                    onClick={() => onReport(message.id)}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Flag className="w-4 h-4 mr-2" />
-                    Report message
-                  </DropdownMenuItem>
-                )}
-
-                {isCurrentUser && onDelete && (
-                  <DropdownMenuItem
-                    onClick={() => onDelete(message.id)}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {/* Message actions removed - simplified UX per user feedback */}
+          {/* Previous dropdown menu with copy/reply/report/delete actions removed */}
         </div>
 
         {/* Timestamp and status */}

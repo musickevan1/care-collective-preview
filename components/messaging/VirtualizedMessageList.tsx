@@ -308,9 +308,17 @@ export function VirtualizedMessageList({
   }, [messages, showDateSeparators]);
 
   // Scroll to bottom when new messages arrive (if auto-scroll is enabled)
+  // Only auto-scroll for NEW messages (not on initial load or navigation)
   useEffect(() => {
-    if (messages.length > previousMessageCount.current && autoScrollEnabled && listRef.current) {
-      listRef.current.scrollToItem(itemCount - 1, 'end');
+    const isNewMessage = messages.length > previousMessageCount.current && previousMessageCount.current > 0;
+
+    if (isNewMessage && autoScrollEnabled && listRef.current) {
+      // Use setTimeout to prevent interrupting user scroll gestures
+      setTimeout(() => {
+        if (listRef.current && autoScrollEnabled) {
+          listRef.current.scrollToItem(itemCount - 1, 'end');
+        }
+      }, 100);
     }
     previousMessageCount.current = messages.length;
   }, [messages.length, itemCount, autoScrollEnabled]);

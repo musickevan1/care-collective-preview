@@ -51,7 +51,7 @@ export function ConversationHeader({
               size="sm"
               onClick={onBack}
               aria-label="Back to conversations"
-              className="messaging-action-button"
+              className="messaging-action-button h-[44px] w-[44px]"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
@@ -88,7 +88,7 @@ export function ConversationHeader({
             variant="ghost"
             size="sm"
             aria-label="More options"
-            className="messaging-action-button"
+            className="messaging-action-button h-[44px] w-[44px]"
           >
             <MoreVertical className="w-4 h-4" />
           </Button>
