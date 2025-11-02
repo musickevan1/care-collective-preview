@@ -473,13 +473,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           {request.category} • {new Date(request.created_at).toLocaleDateString()}
                         </p>
                       </div>
-                      <Link href={`/requests/${request.id}`}>
+                      <Link href={`/requests/my-requests?id=${request.id}`}>
                         <Button variant="ghost" size="sm">View</Button>
                       </Link>
                     </div>
                   ))}
                   <div className="text-center pt-2">
-                    <Link href="/requests?filter=own">
+                    <Link href="/requests/my-requests">
                       <Button variant="outline" size="sm">View All Your Requests</Button>
                     </Link>
                   </div>
