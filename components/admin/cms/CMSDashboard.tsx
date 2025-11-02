@@ -4,7 +4,7 @@ import { ReactElement } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, TrendingUp, Calendar } from 'lucide-react';
+import { FileText, TrendingUp, Calendar, Tag } from 'lucide-react';
 
 interface CMSDashboardProps {
   adminUserId: string;
@@ -20,20 +20,25 @@ export function CMSDashboard({ adminUserId }: CMSDashboardProps): ReactElement {
       color: 'text-sage',
     },
     {
-      title: 'Site Content',
-      description: 'Edit mission, about, and other site sections (Coming soon)',
-      icon: FileText,
-      href: '#',
-      color: 'text-terracotta',
-      disabled: true,
+      title: 'Calendar Events',
+      description: 'Manage community events and calendar',
+      icon: Calendar,
+      href: '/admin/cms/calendar-events',
+      color: 'text-dusty-rose',
     },
     {
-      title: 'Calendar Events',
-      description: 'Manage community events and calendar (Coming soon)',
-      icon: Calendar,
-      href: '#',
-      color: 'text-dusty-rose',
-      disabled: true,
+      title: 'Event Categories',
+      description: 'Organize events by categories',
+      icon: Tag,
+      href: '/admin/cms/categories',
+      color: 'text-accent',
+    },
+    {
+      title: 'Site Content',
+      description: 'Edit mission, about, and other site sections',
+      icon: FileText,
+      href: '/admin/cms/site-content',
+      color: 'text-terracotta',
     },
   ];
 
@@ -50,10 +55,7 @@ export function CMSDashboard({ adminUserId }: CMSDashboardProps): ReactElement {
         {sections.map((section) => {
           const Icon = section.icon;
           return (
-            <Card
-              key={section.title}
-              className={section.disabled ? 'opacity-60' : ''}
-            >
+            <Card key={section.title}>
               <CardHeader>
                 <div className="flex items-center gap-3 mb-2">
                   <div className={`p-2 rounded-lg bg-background ${section.color}`}>
@@ -64,17 +66,11 @@ export function CMSDashboard({ adminUserId }: CMSDashboardProps): ReactElement {
                 <CardDescription>{section.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                {section.disabled ? (
-                  <Button disabled variant="outline" className="w-full min-h-[44px]">
-                    Coming Soon
+                <Link href={section.href}>
+                  <Button variant="sage" className="w-full min-h-[44px]">
+                    Manage
                   </Button>
-                ) : (
-                  <Link href={section.href}>
-                    <Button variant="sage" className="w-full min-h-[44px]">
-                      Manage
-                    </Button>
-                  </Link>
-                )}
+                </Link>
               </CardContent>
             </Card>
           );
@@ -88,6 +84,12 @@ export function CMSDashboard({ adminUserId }: CMSDashboardProps): ReactElement {
         <CardContent className="space-y-2 text-sm">
           <p>
             • Use <strong>Community Updates</strong> to showcase important stats and milestones
+          </p>
+          <p>
+            • Use <strong>Calendar Events</strong> to promote community gatherings and activities
+          </p>
+          <p>
+            • Edit <strong>Site Content</strong> to update mission, values, and about sections
           </p>
           <p>
             • Remember to <strong>publish</strong> your changes to make them visible on the live

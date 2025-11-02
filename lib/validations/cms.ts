@@ -14,9 +14,7 @@ const sanitizeHTML = (str: string) => validator.escape(str);
  * Used for home page editable sections
  */
 export const siteContentSchema = z.object({
-  section_key: z.enum(['events_updates', 'mission', 'about'], {
-    errorMap: () => ({ message: 'Invalid section key' }),
-  }),
+  section_key: z.enum(['events_updates', 'mission', 'about']),
   content: z.record(z.any()), // JSONB content - flexible structure
   status: z.enum(['draft', 'published']).default('draft'),
 });
