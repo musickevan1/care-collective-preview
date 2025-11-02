@@ -18,11 +18,13 @@ interface MessageThreadViewProps {
 /**
  * MessageThreadView - Displays messages with loading and error states
  *
- * Phase 2.2 Part 2 - Now uses VirtualizedMessageList for performance
+ * Phase 2.2 Part 3 - Fixed scroll isolation and height calculation
  *
  * Features:
  * - VirtualizedMessageList for 1000+ message performance
- * - Auto-height tracking with ResizeObserver
+ * - Correct height tracking with ResizeObserver on scroll container
+ * - Uses clientHeight (available space) NOT contentRect.height (content size)
+ * - Inner scroll container with overflow-y-auto for scroll isolation
  * - Date separators for message grouping
  * - Loading state with spinner
  * - Error state with retry button
@@ -37,26 +39,33 @@ export function MessageThreadView({
   onRetry,
   className
 }: MessageThreadViewProps): ReactElement {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [containerHeight, setContainerHeight] = useState(400)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [listHeight, setListHeight] = useState(300)
 
-  // Track container height for virtualization
+  // Track available height for virtualized list
   useEffect(() => {
-    if (!containerRef.current) return
+    if (!scrollContainerRef.current) return
 
     const observer = new ResizeObserver(entries => {
       for (const entry of entries) {
-        const { height } = entry.contentRect
-        // Ensure minimum height
-        setContainerHeight(Math.max(300, height))
+        // Use clientHeight (available viewport space)
+        // NOT contentRect.height (which would be content size)
+        const availableHeight = entry.target.clientHeight
+
+        // Ensure minimum height to prevent collapsed state
+        const calculatedHeight = Math.max(300, availableHeight)
+
+        setListHeight(calculatedHeight)
       }
     })
 
-    observer.observe(containerRef.current)
+    observer.observe(scrollContainerRef.current)
 
-    // Set initial height
-    const rect = containerRef.current.getBoundingClientRect()
-    setContainerHeight(Math.max(300, rect.height))
+    // Set initial height immediately (prevents flash of wrong size)
+    const initialHeight = scrollContainerRef.current.clientHeight
+    if (initialHeight > 0) {
+      setListHeight(Math.max(300, initialHeight))
+    }
 
     return () => observer.disconnect()
   }, [])
@@ -88,15 +97,18 @@ export function MessageThreadView({
     )
   }
 
-  // Messages display with virtualization
+  // Messages display with virtualization and scroll isolation
   return (
-    <div ref={containerRef} className="flex-1 min-h-0">
+    <div
+      ref={scrollContainerRef}
+      className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
+    >
       <VirtualizedMessageList
         messages={messages}
         currentUserId={userId}
         showDateSeparators={true}
         enableVirtualization={true}
-        height={containerHeight}
+        height={listHeight}
         itemHeight={80}
       />
     </div>

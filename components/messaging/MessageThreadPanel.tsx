@@ -76,15 +76,18 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
           </div>
         ) : (
           <>
-            {/* Conversation Header - Fixed at top */}
-            {messageThread.conversation && (
-              <ConversationHeader
-                conversation={messageThread.conversation}
-                userId={userId}
-                isMobile={isMobile}
-                onBack={onBack}
-              />
-            )}
+            {/* Conversation Header - Fixed at top, never scrolls */}
+            <div className="flex-none">
+              {messageThread.conversation && (
+                <ConversationHeader
+                  conversation={messageThread.conversation}
+                  userId={userId}
+                  isMobile={isMobile}
+                  onBack={onBack}
+                  data-component="ConversationHeader"
+                />
+              )}
+            </div>
 
             {/* Messages Area - Scrollable middle section */}
             <div ref={messageThreadRef} className="flex-1 min-h-0 flex flex-col">
@@ -106,16 +109,19 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
               )}
             </div>
 
-            {/* Message Input - Fixed at bottom */}
-            {!messageThread.loading && (
-              <MessageInput
-                onSendMessage={handleSendMessage}
-                conversationId={selectedConversation}
-                userId={userId}
-                userName={userName}
-                disabled={messageThread.error !== null}
-              />
-            )}
+            {/* Message Input - Fixed at bottom, never scrolls */}
+            <div className="flex-none">
+              {!messageThread.loading && (
+                <MessageInput
+                  onSendMessage={handleSendMessage}
+                  conversationId={selectedConversation}
+                  userId={userId}
+                  userName={userName}
+                  disabled={messageThread.error !== null}
+                  data-component="MessageInput"
+                />
+              )}
+            </div>
           </>
         )}
       </div>

@@ -29,6 +29,7 @@ interface MessageInputProps {
   userId?: string
   userName?: string
   enableTypingStatus?: boolean
+  'data-component'?: string
 }
 
 /**
@@ -47,7 +48,8 @@ export function MessageInput({
   conversationId,
   userId,
   userName,
-  enableTypingStatus = true
+  enableTypingStatus = true,
+  'data-component': dataComponent
 }: MessageInputProps): ReactElement {
   const [content, setContent] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -182,7 +184,10 @@ export function MessageInput({
   const canSend = content.trim().length > 0 && !isSending && !disabled
 
   return (
-    <div className={cn("border-t bg-background p-4", className)}>
+    <div
+      className={cn("border-t bg-background p-4", className)}
+      data-component={dataComponent}
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -287,7 +292,8 @@ export function MessageInput({
             className={cn(
               "bg-sage hover:bg-sage-dark text-white",
               "disabled:opacity-50 disabled:cursor-not-allowed",
-              "transition-all duration-200 hover:shadow-md"
+              "transition-all duration-200 hover:shadow-md",
+              "messaging-action-button"
             )}
             aria-label={isSending ? "Sending message..." : "Send message"}
           >

@@ -38,6 +38,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  viewportFit: 'cover', // Enable safe area insets for iOS notch/home indicator
   // Remove maximumScale to allow zooming for accessibility (WCAG 2.1 AA requirement)
 };
 

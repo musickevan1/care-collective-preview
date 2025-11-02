@@ -13,6 +13,7 @@ interface ConversationHeaderProps {
   isMobile: boolean
   onBack?: () => void
   className?: string
+  'data-component'?: string
 }
 
 /**
@@ -31,12 +32,16 @@ export function ConversationHeader({
   userId,
   isMobile,
   onBack,
-  className
+  className,
+  'data-component': dataComponent
 }: ConversationHeaderProps): ReactElement {
   const otherParticipant = conversation.participants.find(p => p.user_id !== userId)
 
   return (
-    <div className={`border-b border-border p-4 bg-background ${className || ''}`}>
+    <div
+      className={`border-b border-border p-4 bg-background ${className || ''}`}
+      data-component={dataComponent}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Mobile Back Button */}
@@ -46,6 +51,7 @@ export function ConversationHeader({
               size="sm"
               onClick={onBack}
               aria-label="Back to conversations"
+              className="messaging-action-button"
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
@@ -78,7 +84,12 @@ export function ConversationHeader({
               {conversation.help_request.urgency}
             </Badge>
           )}
-          <Button variant="ghost" size="sm" aria-label="More options">
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label="More options"
+            className="messaging-action-button"
+          >
             <MoreVertical className="w-4 h-4" />
           </Button>
         </div>
