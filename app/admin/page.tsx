@@ -229,6 +229,11 @@ export default async function AdminDashboard() {
                 📝 Content Management (CMS)
               </Button>
             </Link>
+            <Link href="/admin/bug-reports">
+              <Button variant="outline" className="w-full justify-start">
+                🐛 Bug Reports
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 

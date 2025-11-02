@@ -18,6 +18,13 @@ const bugReportSchema = z.object({
   }),
 });
 
+// Validation schema for bug report updates
+const bugReportUpdateSchema = z.object({
+  id: z.string().uuid(),
+  status: z.enum(['open', 'in_progress', 'resolved', 'closed', 'wont_fix']),
+  resolutionNotes: z.string().max(2000).optional(),
+});
+
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
@@ -94,7 +101,7 @@ export async function POST(request: Request) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid bug report data', details: error.errors },
+        { error: 'Invalid bug report data', details: error.issues },
         { status: 400 }
       );
     }
@@ -124,11 +131,11 @@ export async function GET(request: Request) {
     // Check if user is admin
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('is_admin')
       .eq('id', user.id)
       .single();
 
-    if (profile?.role !== 'admin') {
+    if (!profile?.is_admin) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -169,6 +176,111 @@ export async function GET(request: Request) {
     return NextResponse.json({ bugReports }, { status: 200 });
   } catch (error) {
     console.error('Bug report GET API error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH endpoint to update bug reports (admin only)
+export async function PATCH(request: Request) {
+  try {
+    const supabase = await createClient();
+
+    // Check authentication
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if user is admin
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single();
+
+    if (!profile?.is_admin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Parse and validate request body
+    const body = await request.json();
+    const validatedData = bugReportUpdateSchema.parse(body);
+
+    // Prepare update data
+    const updateData: {
+      status: string;
+      resolution_notes?: string;
+      resolved_at?: string;
+      updated_at: string;
+    } = {
+      status: validatedData.status,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Add resolution notes if provided
+    if (validatedData.resolutionNotes !== undefined) {
+      updateData.resolution_notes = validatedData.resolutionNotes;
+    }
+
+    // Set resolved_at timestamp if status is resolved
+    if (validatedData.status === 'resolved' || validatedData.status === 'closed') {
+      updateData.resolved_at = new Date().toISOString();
+    }
+
+    // Update bug report in database
+    const { data: updatedReport, error: updateError } = await supabase
+      .from('bug_reports')
+      .update(updateData)
+      .eq('id', validatedData.id)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Bug report update error:', updateError);
+      return NextResponse.json(
+        { error: 'Failed to update bug report' },
+        { status: 500 }
+      );
+    }
+
+    if (!updatedReport) {
+      return NextResponse.json(
+        { error: 'Bug report not found' },
+        { status: 404 }
+      );
+    }
+
+    console.log('Bug report updated:', {
+      id: updatedReport.id,
+      status: updatedReport.status,
+      updatedBy: profile?.is_admin ? 'admin' : 'user',
+    });
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Bug report updated successfully',
+        bugReport: updatedReport,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Bug report PATCH API error:', error);
+
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Invalid update data', details: error.issues },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
