@@ -9,27 +9,8 @@ import { createClient } from '@/lib/supabase/server';
 import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
+import { messageRateLimiter } from '@/lib/security/rate-limiter';
 import { z } from 'zod';
-
-// Rate limiting for message operations
-const messageCounts = new Map<string, { count: number; resetTime: number }>();
-
-function checkMessageRateLimit(userId: string, maxMessages: number = 50, windowMs: number = 60000): boolean {
-  const now = Date.now();
-  const userLimit = messageCounts.get(userId);
-
-  if (!userLimit || now > userLimit.resetTime) {
-    messageCounts.set(userId, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-
-  if (userLimit.count >= maxMessages) {
-    return false;
-  }
-
-  userLimit.count += 1;
-  return true;
-}
 
 async function getCurrentUser() {
   const supabase = await createClient();
@@ -155,11 +136,9 @@ export async function POST(
     }
 
     // Check rate limit for sending messages
-    if (!checkMessageRateLimit(user.id)) {
-      return NextResponse.json(
-        { error: 'You are sending messages too quickly. Please slow down.' },
-        { status: 429 }
-      );
+    const rateLimitResponse = await messageRateLimiter.middleware(request, user.id);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
     const conversationId = params.id;

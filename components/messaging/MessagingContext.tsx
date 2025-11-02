@@ -12,6 +12,8 @@ interface MessageThread {
   conversation: ConversationWithDetails | null
   loading: boolean
   error: string | null
+  hasMoreMessages: boolean
+  isLoadingMore: boolean
 }
 
 /**
@@ -26,6 +28,7 @@ interface MessagingContextType {
   // Message thread state
   messageThread: MessageThread
   loadMessages: (conversationId: string) => Promise<void>
+  loadMoreMessages: () => Promise<void>
   handleSendMessage: (content: string, messageType?: 'text' | 'help_request_update') => Promise<void>
   setMessageThread: React.Dispatch<React.SetStateAction<MessageThread>>
 
@@ -89,7 +92,9 @@ export function MessagingProvider({
     messages: [],
     conversation: null,
     loading: false,
-    error: null
+    error: null,
+    hasMoreMessages: true,
+    isLoadingMore: false
   })
   const [activeTab, setActiveTab] = useState<'active' | 'pending'>('active')
   const [pendingOffers, setPendingOffers] = useState<any[]>([])
@@ -135,17 +140,23 @@ export function MessagingProvider({
         .eq('id', conversation.helper_id)
         .single()
 
-      // Get messages
+      // Get messages with pagination (limit to 50 most recent)
+      const INITIAL_MESSAGE_LIMIT = 50;
       const { data: messages, error: msgError } = await supabase
         .from('messages_v2')
         .select('*')
         .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true })
+        .order('created_at', { ascending: false })
+        .limit(INITIAL_MESSAGE_LIMIT + 1) // Fetch 1 extra to check if more exist
 
       if (msgError) throw msgError
 
+      // Check if there are more messages
+      const hasMoreMessages = messages && messages.length > INITIAL_MESSAGE_LIMIT;
+      const limitedMessages = messages?.slice(0, INITIAL_MESSAGE_LIMIT).reverse() || []; // Reverse to oldest-first for display
+
       // Fetch sender profiles for all messages
-      const senderIds = [...new Set(messages?.map(m => m.sender_id) || [])]
+      const senderIds = [...new Set(limitedMessages?.map(m => m.sender_id) || [])]
       const { data: senderProfiles } = await supabase
         .from('profiles')
         .select('id, name, location')
@@ -153,7 +164,7 @@ export function MessagingProvider({
 
       // Map profiles to messages
       const profileMap = new Map(senderProfiles?.map(p => [p.id, p]) || [])
-      const messagesWithSenders = messages?.map(msg => ({
+      const messagesWithSenders = limitedMessages?.map(msg => ({
         ...msg,
         sender: profileMap.get(msg.sender_id)
       })) || []
@@ -185,7 +196,9 @@ export function MessagingProvider({
         messages: messagesWithSenders,
         conversation: conversationWithDetails,
         loading: false,
-        error: null
+        error: null,
+        hasMoreMessages,
+        isLoadingMore: false
       })
     } catch (error) {
       console.error('Error loading messages:', error)
@@ -193,10 +206,79 @@ export function MessagingProvider({
         messages: [],
         conversation: null,
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to load messages'
+        error: error instanceof Error ? error.message : 'Failed to load messages',
+        hasMoreMessages: false,
+        isLoadingMore: false
       })
     }
   }, [supabase])
+
+  /**
+   * Load more (older) messages
+   */
+  const loadMoreMessages = useCallback(async () => {
+    if (!selectedConversation || messageThread.isLoadingMore || !messageThread.hasMoreMessages) {
+      return;
+    }
+
+    setMessageThread(prev => ({ ...prev, isLoadingMore: true }));
+
+    try {
+      const supabase = createClient();
+      const LOAD_MORE_BATCH_SIZE = 25;
+      const oldestMessage = messageThread.messages[0]; // First message is oldest
+
+      if (!oldestMessage) {
+        setMessageThread(prev => ({ ...prev, isLoadingMore: false }));
+        return;
+      }
+
+      // Fetch older messages
+      const { data: olderMessages, error: msgError } = await supabase
+        .from('messages_v2')
+        .select('*')
+        .eq('conversation_id', selectedConversation)
+        .lt('created_at', oldestMessage.created_at)
+        .order('created_at', { ascending: false })
+        .limit(LOAD_MORE_BATCH_SIZE + 1); // Fetch 1 extra to check if more exist
+
+      if (msgError) throw msgError;
+
+      const hasMoreMessages = olderMessages && olderMessages.length > LOAD_MORE_BATCH_SIZE;
+      const limitedMessages = olderMessages?.slice(0, LOAD_MORE_BATCH_SIZE).reverse() || [];
+
+      if (limitedMessages.length > 0) {
+        // Fetch sender profiles for new messages
+        const senderIds = [...new Set(limitedMessages.map(m => m.sender_id))];
+        const { data: senderProfiles } = await supabase
+          .from('profiles')
+          .select('id, name, location')
+          .in('id', senderIds);
+
+        const profileMap = new Map(senderProfiles?.map(p => [p.id, p]) || []);
+        const messagesWithSenders = limitedMessages.map(msg => ({
+          ...msg,
+          sender: profileMap.get(msg.sender_id)
+        }));
+
+        setMessageThread(prev => ({
+          ...prev,
+          messages: [...messagesWithSenders, ...prev.messages], // Prepend older messages
+          hasMoreMessages,
+          isLoadingMore: false
+        }));
+      } else {
+        setMessageThread(prev => ({
+          ...prev,
+          hasMoreMessages: false,
+          isLoadingMore: false
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading more messages:', error);
+      setMessageThread(prev => ({ ...prev, isLoadingMore: false }));
+    }
+  }, [selectedConversation, messageThread.messages, messageThread.isLoadingMore, messageThread.hasMoreMessages]);
 
   /**
    * Send a message
@@ -334,6 +416,7 @@ export function MessagingProvider({
 
     // Actions
     loadMessages,
+    loadMoreMessages,
     handleSendMessage,
     loadPendingOffers,
     handleAcceptOffer,

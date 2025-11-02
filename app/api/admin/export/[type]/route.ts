@@ -192,7 +192,6 @@ async function exportMessages(supabase: any): Promise<string> {
       id,
       conversation_id,
       sender_id,
-      content,
       message_type,
       encryption_status,
       moderation_status,
@@ -222,12 +221,11 @@ async function exportMessages(supabase: any): Promise<string> {
     return acc
   }, {}) || {}
 
-  // CSV header
+  // CSV header (content removed for privacy)
   const headers = [
     'ID',
     'Conversation ID',
     'Sender Name',
-    'Content Preview',
     'Message Type',
     'Encryption Status',
     'Moderation Status',
@@ -239,7 +237,7 @@ async function exportMessages(supabase: any): Promise<string> {
     'Read Date'
   ]
 
-  // Convert data to CSV
+  // Convert data to CSV (content field removed for privacy)
   const rows = messages.map((message: any) => {
     const messageReports = reportsByMessage[message.id] || []
     const reportReasons = messageReports.map((r: any) => r.report_reason).join('; ')
@@ -248,7 +246,6 @@ async function exportMessages(supabase: any): Promise<string> {
       message.id,
       message.conversation_id,
       escapeCsvField(message.sender?.name || 'Unknown'),
-      escapeCsvField(message.content ? message.content.substring(0, 100) + '...' : ''),
       message.message_type || '',
       message.encryption_status || '',
       message.moderation_status || '',
@@ -265,10 +262,17 @@ async function exportMessages(supabase: any): Promise<string> {
 }
 
 function escapeCsvField(field: string): string {
-  if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-    return `"${field.replace(/"/g, '""')}"`
+  // CSV Injection protection: Prefix formulas with single quote
+  const csvInjectionChars = ['=', '+', '-', '@', '\t', '\r'];
+  if (csvInjectionChars.some(char => field.startsWith(char))) {
+    field = "'" + field;  // Excel will treat as text, not formula
   }
-  return field
+
+  // Standard CSV escaping
+  if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+    return `"${field.replace(/"/g, '""')}"`;
+  }
+  return field;
 }
 
 function formatDate(dateString: string | null): string {

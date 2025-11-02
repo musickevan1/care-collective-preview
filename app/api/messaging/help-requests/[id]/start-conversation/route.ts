@@ -8,26 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 import { messagingValidation } from '@/lib/messaging/types';
 import { moderationService } from '@/lib/messaging/moderation';
 import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
-
-// Rate limiting for help request conversations
-const helpConversationCounts = new Map<string, { count: number; resetTime: number }>();
-
-function checkHelpConversationRateLimit(userId: string, maxConversations: number = 10, windowMs: number = 3600000): boolean {
-  const now = Date.now();
-  const userLimit = helpConversationCounts.get(userId);
-
-  if (!userLimit || now > userLimit.resetTime) {
-    helpConversationCounts.set(userId, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-
-  if (userLimit.count >= maxConversations) {
-    return false;
-  }
-
-  userLimit.count += 1;
-  return true;
-}
+import { helpRequestRateLimiter } from '@/lib/security/rate-limiter';
 
 async function getCurrentUser() {
   const supabase = await createClient();
@@ -97,11 +78,9 @@ export async function POST(
     }
 
     // Check rate limit for starting help conversations (10 per hour)
-    if (!checkHelpConversationRateLimit(user.id)) {
-      return NextResponse.json(
-        { error: 'You have started too many help conversations recently. Please wait before offering more help.' },
-        { status: 429 }
-      );
+    const rateLimitResponse = await helpRequestRateLimiter.middleware(request, user.id);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
     const helpRequestId = params.id;

@@ -6,23 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { moderationService } from '@/lib/messaging/moderation';
-
-async function getCurrentUser() {
-  const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    return null;
-  }
-
-  return user;
-}
-
-async function isAdminUser(userId: string): Promise<boolean> {
-  // In production, implement proper admin role checking
-  // For demo purposes, allowing all authenticated users to be admins
-  return true;
-}
+import { requireAdminAuth } from '@/lib/api/admin-auth';
 
 /**
  * GET /api/admin/moderation/queue
@@ -30,14 +14,9 @@ async function isAdminUser(userId: string): Promise<boolean> {
  */
 export async function GET(request: NextRequest) {
   try {
-    const user = await getCurrentUser();
+    // SECURITY: Verify admin access using proper authentication
+    const user = await requireAdminAuth();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check admin privileges
-    const isAdmin = await isAdminUser(user.id);
-    if (!isAdmin) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 
@@ -146,14 +125,9 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const user = await getCurrentUser();
+    // SECURITY: Verify admin access using proper authentication
+    const user = await requireAdminAuth();
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check admin privileges
-    const isAdmin = await isAdminUser(user.id);
-    if (!isAdmin) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
 

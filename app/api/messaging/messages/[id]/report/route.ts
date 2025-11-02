@@ -8,26 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 import { emailService } from '@/lib/email-service';
 import { messagingClient } from '@/lib/messaging/client';
 import { messagingValidation } from '@/lib/messaging/types';
-
-// Rate limiting for reports (prevent spam reporting)
-const reportCounts = new Map<string, { count: number; resetTime: number }>();
-
-function checkReportRateLimit(userId: string, maxReports: number = 5, windowMs: number = 300000): boolean {
-  const now = Date.now();
-  const userLimit = reportCounts.get(userId);
-
-  if (!userLimit || now > userLimit.resetTime) {
-    reportCounts.set(userId, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-
-  if (userLimit.count >= maxReports) {
-    return false;
-  }
-
-  userLimit.count += 1;
-  return true;
-}
+import { reportRateLimiter } from '@/lib/security/rate-limiter';
 
 async function getCurrentUser() {
   const supabase = await createClient();
@@ -54,12 +35,10 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check rate limit for reporting (5 reports per 5 minutes)
-    if (!checkReportRateLimit(user.id)) {
-      return NextResponse.json(
-        { error: 'You are submitting reports too quickly. Please wait before reporting again.' },
-        { status: 429 }
-      );
+    // Check rate limit for reporting (5 reports per hour)
+    const rateLimitResponse = await reportRateLimiter.middleware(request, user.id);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
     }
 
     const messageId = params.id;

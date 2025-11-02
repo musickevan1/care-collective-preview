@@ -640,7 +640,19 @@ export function useRealTimeMessages(
   useEffect(() => {
     if (!conversationId || !enabled) return;
 
-    const channel = supabase.channel(`conversation:${conversationId}`)
+    // Clean up previous channel before creating new one
+    if (channelRef.current) {
+      console.debug('[useRealTimeMessages] Cleaning up previous channel before new subscription');
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+
+    const channel = supabase.channel(`conversation:${conversationId}`, {
+      config: {
+        broadcast: { self: false }, // Don't receive own messages via broadcast
+        presence: { key: userId }
+      }
+    })
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -723,7 +735,13 @@ export function useRealTimeMessages(
           }
         }));
       })
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.debug('[useRealTimeMessages] Successfully subscribed to conversation:', conversationId);
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('[useRealTimeMessages] Channel error for conversation:', conversationId);
+        }
+      });
 
     channelRef.current = channel;
 
@@ -734,9 +752,18 @@ export function useRealTimeMessages(
     }
 
     return () => {
-      channel.unsubscribe();
+      console.debug('[useRealTimeMessages] Cleaning up channel for conversation:', conversationId);
+
+      // Clear typing timeout
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = null;
+      }
+
+      // Properly remove channel (better than unsubscribe alone)
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
       }
     };
   }, [conversationId, enabled, userId, encryptionEnabled, supabase, loadMessages]);

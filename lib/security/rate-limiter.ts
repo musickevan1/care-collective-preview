@@ -323,7 +323,7 @@ export const helpRequestRateLimiter = new RateLimiter({
 
 export const messageRateLimiter = new RateLimiter({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 10, // 10 messages per minute
+  max: 50, // 50 messages per minute (allows active conversations)
   message: 'Too many messages sent. Please slow down to maintain a respectful conversation.',
 })
 
