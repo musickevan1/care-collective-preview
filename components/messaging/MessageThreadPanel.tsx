@@ -76,7 +76,7 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
           </div>
         ) : (
           <>
-            {/* Conversation Header */}
+            {/* Conversation Header - Fixed at top */}
             {messageThread.conversation && (
               <ConversationHeader
                 conversation={messageThread.conversation}
@@ -86,28 +86,27 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
               />
             )}
 
-            {/* Messages Area */}
-            <div ref={messageThreadRef} className="flex-1 flex flex-col min-h-0">
+            {/* Messages Area - Scrollable middle section */}
+            <div ref={messageThreadRef} className="flex-1 min-h-0 flex flex-col">
               <MessageThreadView
                 messages={messageThread.messages}
                 loading={messageThread.loading}
                 error={messageThread.error}
                 userId={userId}
                 onRetry={() => selectedConversation && loadMessages(selectedConversation)}
-                className="flex-1"
               />
 
-              {/* Typing Indicator */}
+              {/* Typing Indicator - Inside scroll area but at bottom */}
               {!messageThread.loading && !messageThread.error && (
                 <TypingIndicator
                   conversationId={selectedConversation}
                   currentUserId={userId}
-                  className="border-t border-border"
+                  className="border-t border-border flex-shrink-0"
                 />
               )}
             </div>
 
-            {/* Message Input */}
+            {/* Message Input - Fixed at bottom */}
             {!messageThread.loading && (
               <MessageInput
                 onSendMessage={handleSendMessage}

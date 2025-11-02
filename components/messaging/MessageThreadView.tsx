@@ -90,7 +90,7 @@ export function MessageThreadView({
 
   // Messages display with virtualization
   return (
-    <div ref={containerRef} className={`flex-1 overflow-hidden ${className || ''}`}>
+    <div ref={containerRef} className="flex-1 min-h-0">
       <VirtualizedMessageList
         messages={messages}
         currentUserId={userId}
