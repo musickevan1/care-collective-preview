@@ -300,14 +300,17 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </div>
         )}
 
-        {/* Preview Notice */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        {/* Beta Testing Notice */}
+        <div className="bg-gradient-to-r from-sage/10 to-primary/10 border-2 border-sage/30 rounded-lg p-4 mb-6">
           <div className="flex items-start gap-3">
-            <div className="text-blue-600 text-xl">ℹ️</div>
-            <div>
-              <h3 className="font-semibold text-blue-900 mb-1">Preview Mode</h3>
-              <p className="text-blue-800 text-sm">
-                This is a demonstration of the member portal functionality. In production, users will access this dashboard through your main Wix website after logging in.
+            <div className="text-2xl">🚀</div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-secondary mb-1 flex items-center gap-2">
+                Beta Testing Phase
+                <Badge variant="secondary" className="text-xs">Active</Badge>
+              </h3>
+              <p className="text-secondary/80 text-sm">
+                Welcome to Care Collective Beta! You&apos;re helping us build something special. Your feedback shapes the future of mutual aid in our community. Report issues or suggestions to help us improve.
               </p>
             </div>
           </div>
@@ -328,66 +331,66 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">🙋‍♀️</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <span className="text-xl">🙋‍♀️</span>
                 Need Help?
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-sm">
                 Post a request and let the community help you out
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <Link href="/requests/new">
-                <Button className="w-full">
+                <Button className="w-full min-h-[44px]">
                   Create Help Request
                 </Button>
               </Link>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">🤝</span>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <span className="text-xl">🤝</span>
                 Want to Help?
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-sm">
                 Browse requests from people who need assistance
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <Link href="/requests">
-                <Button variant="secondary" className="w-full">
+                <Button variant="secondary" className="w-full min-h-[44px]">
                   Browse Requests
                 </Button>
               </Link>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">💬</span>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <span className="text-xl">💬</span>
                 Messages
                 {dashboardData.unreadCount > 0 && (
-                  <Badge variant="destructive" className="ml-2">
+                  <Badge variant="destructive" className="ml-1 text-xs">
                     {dashboardData.unreadCount}
                   </Badge>
                 )}
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-sm">
                 Connect and communicate with community members
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <Link href="/messages">
-                <Button variant="sage" className="w-full">
+                <Button variant="sage" className="w-full min-h-[44px]">
                   Open Messages
                   {dashboardData.unreadCount > 0 && (
-                    <Badge variant="secondary" className="ml-2">
+                    <Badge variant="secondary" className="ml-2 text-xs">
                       {dashboardData.unreadCount} unread
                     </Badge>
                   )}
@@ -398,26 +401,26 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <Link href="/requests">
-            <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Your Requests</CardTitle>
+            <Card className="hover:bg-muted/50 hover:shadow-md transition-all cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base font-semibold text-muted-foreground">Your Requests</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-primary mb-2">{dashboardData.userRequestsCount}</div>
+              <CardContent className="pt-0">
+                <div className="text-4xl font-bold text-primary mb-1">{dashboardData.userRequestsCount}</div>
                 <p className="text-sm text-muted-foreground">Active help requests</p>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/messages">
-            <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Messages</CardTitle>
+            <Card className="hover:bg-muted/50 hover:shadow-md transition-all cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base font-semibold text-muted-foreground">Messages</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-sage mb-2">{dashboardData.unreadCount}</div>
+              <CardContent className="pt-0">
+                <div className="text-4xl font-bold text-sage mb-1">{dashboardData.unreadCount}</div>
                 <p className="text-sm text-muted-foreground">Unread messages</p>
                 <div className="text-xs text-muted-foreground mt-1">
                   {dashboardData.activeConversations} active conversation{dashboardData.activeConversations !== 1 ? 's' : ''}
@@ -426,28 +429,28 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </Card>
           </Link>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Community Impact</CardTitle>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base font-semibold text-muted-foreground">Community Impact</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-accent mb-2">{dashboardData.helpedCount}</div>
+            <CardContent className="pt-0">
+              <div className="text-4xl font-bold text-accent mb-1">{dashboardData.helpedCount}</div>
               <p className="text-sm text-muted-foreground">People helped</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
           {/* User's Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Activity</CardTitle>
-              <CardDescription>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Your Activity</CardTitle>
+              <CardDescription className="text-sm">
                 Your recent help requests and their status
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               {dashboardData.userRequests.length > 0 ? (
                 <div className="space-y-3">
                   {dashboardData.userRequests.map((request: any) => (
@@ -490,14 +493,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </Card>
 
           {/* Recent Community Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Community Activity</CardTitle>
-              <CardDescription>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg">Recent Community Activity</CardTitle>
+              <CardDescription className="text-sm">
                 Stay updated with what&apos;s happening in your community
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               {dashboardData.recentRequests.length > 0 ? (
                 <div className="space-y-4">
                   {dashboardData.recentRequests.map((request: any) => (
