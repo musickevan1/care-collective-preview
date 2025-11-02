@@ -260,32 +260,8 @@ export function MessageInput({
           </div>
         </div>
 
-        {/* Send button and shortcuts */}
-        <div className="flex items-center justify-between">
-          <div className="text-xs text-muted-foreground">
-            {isTouchDevice ? (
-              // Mobile keyboard shortcut hint
-              <>
-                <kbd className="px-2 py-1 bg-muted text-muted-foreground rounded text-xs">
-                  Enter
-                </kbd>{' '}
-                to send,{' '}
-                <kbd className="px-2 py-1 bg-muted text-muted-foreground rounded text-xs">
-                  Shift+Enter
-                </kbd>{' '}
-                for new line
-              </>
-            ) : (
-              // Desktop keyboard shortcut hint
-              <>
-                <kbd className="px-2 py-1 bg-muted text-muted-foreground rounded text-xs">
-                  Ctrl+Enter
-                </kbd>{' '}
-                to send
-              </>
-            )}
-          </div>
-
+        {/* Send button */}
+        <div className="flex items-center justify-end">
           <Button
             type="submit"
             disabled={!canSend}
