@@ -5,6 +5,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { overlock, fontClasses, atkinsonHyperlegible } from "@/lib/fonts";
 import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
+import { BetaTesterWrapper } from "@/components/beta/BetaTesterWrapper";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'),
@@ -64,6 +65,9 @@ export default function RootLayout({
               </p>
             </div>
           </footer>
+
+          {/* Beta Testing Bug Report Button (only shown to beta testers) */}
+          <BetaTesterWrapper />
         </Providers>
 
         {/* Service Worker and Performance Monitoring */}

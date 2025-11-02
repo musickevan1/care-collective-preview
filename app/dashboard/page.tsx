@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { DiagnosticPanel } from '@/components/DiagnosticPanel'
+import { BetaTesterWrapper } from '@/components/beta/BetaTesterWrapper'
 import Link from 'next/link'
 
 // Force dynamic rendering since this page uses authentication
@@ -288,10 +289,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   };
 
   return (
-    <PlatformLayout 
-      user={user} 
+    <PlatformLayout
+      user={user}
       messagingData={messagingData}
     >
+      {/* Beta Welcome Modal - Only shows to beta testers on first dashboard visit */}
+      <BetaTesterWrapper showWelcomeModal={true} />
+
       <div className="container mx-auto px-4 py-8">
         {/* Error Messages */}
         {hasAdminError && (

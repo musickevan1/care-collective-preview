@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# beta testing - credentials with real data
+docs/beta/BETA_CREDENTIALS.md
