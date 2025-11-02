@@ -154,12 +154,13 @@ async function getDashboardData(userId: string) {
   const supabase = await createClient();
   
   try {
-    // Get user's help requests count
+    // Get user's help requests count (excluding cancelled and closed)
     const { count: userRequestsCount, error: requestsError } = await supabase
       .from('help_requests')
       .select('*', { count: 'exact' })
       .eq('user_id', userId)
-      .neq('status', 'closed');
+      .neq('status', 'closed')
+      .neq('status', 'cancelled');
 
     // Get unread messages count
     const { count: unreadCount, error: unreadError } = await supabase
@@ -187,7 +188,7 @@ async function getDashboardData(userId: string) {
       .eq('helper_id', userId)
       .eq('status', 'completed');
 
-    // Get recent activity - help requests and conversations
+    // Get recent activity - help requests and conversations (exclude cancelled)
     const { data: recentRequests } = await supabase
       .from('help_requests')
       .select(`
@@ -198,6 +199,7 @@ async function getDashboardData(userId: string) {
         created_at,
         profiles!user_id (name)
       `)
+      .neq('status', 'cancelled')
       .order('created_at', { ascending: false })
       .limit(5);
 

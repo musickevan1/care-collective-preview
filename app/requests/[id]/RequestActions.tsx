@@ -3,6 +3,17 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/lib/database.types'
 
@@ -56,27 +67,25 @@ export function RequestActions({
   }
 
   const handleCancelRequest = async () => {
-    const reason = prompt('Please provide a reason for cancellation (optional):')
-    
     setLoading(true)
     setError(null)
-    
+
     const { error } = await supabase
       .from('help_requests')
       .update({
         status: 'cancelled',
-        cancelled_at: new Date().toISOString(),
-        cancel_reason: reason || null
+        cancelled_at: new Date().toISOString()
       })
       .eq('id', request.id)
-    
+
     if (error) {
       setError('Failed to cancel request. Please try again.')
       console.error('Error cancelling request:', error)
     } else {
       router.refresh()
+      router.push('/requests')
     }
-    
+
     setLoading(false)
   }
 
@@ -165,36 +174,86 @@ export function RequestActions({
         {isOwner && (
           <>
             {request.status === 'open' && (
-              <Button 
-                onClick={handleCancelRequest}
-                disabled={loading}
-                variant="outline"
-              >
-                Cancel Request
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    disabled={loading}
+                    variant="outline"
+                  >
+                    Cancel Request
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Cancel Help Request?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      <div className="space-y-2">
+                        <p>Are you sure you want to cancel this request?</p>
+                        <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3 text-destructive text-sm">
+                          <strong>Warning:</strong> This will permanently remove your request from the public help board. This action cannot be undone.
+                        </div>
+                      </div>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Keep Request</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleCancelRequest}
+                      className="bg-destructive hover:bg-destructive/90"
+                    >
+                      Yes, Cancel Request
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
-            
+
             {request.status === 'in_progress' && (
               <>
-                <Button 
+                <Button
                   onClick={handleCompleteRequest}
                   disabled={loading}
                   variant="default"
                 >
                   Mark as Completed
                 </Button>
-                <Button 
-                  onClick={handleCancelRequest}
-                  disabled={loading}
-                  variant="outline"
-                >
-                  Cancel Request
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      disabled={loading}
+                      variant="outline"
+                    >
+                      Cancel Request
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Cancel Help Request?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        <div className="space-y-2">
+                          <p>Are you sure you want to cancel this request?</p>
+                          <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3 text-destructive text-sm">
+                            <strong>Warning:</strong> This will permanently remove your request from the public help board. This action cannot be undone.
+                          </div>
+                        </div>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Keep Request</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleCancelRequest}
+                        className="bg-destructive hover:bg-destructive/90"
+                      >
+                        Yes, Cancel Request
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </>
             )}
-            
+
             {(request.status === 'completed' || request.status === 'cancelled') && (
-              <Button 
+              <Button
                 onClick={handleReopenRequest}
                 disabled={loading}
                 variant="outline"

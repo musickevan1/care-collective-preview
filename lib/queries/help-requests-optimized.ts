@@ -73,8 +73,12 @@ export async function getOptimizedHelpRequests(
     }
 
     // Apply filters in optimal order for index usage
+    // ALWAYS exclude cancelled requests from public board
     if (status !== 'all') {
       query = query.eq('status', status)
+    } else {
+      // When showing 'all' statuses, exclude cancelled requests
+      query = query.neq('status', 'cancelled')
     }
 
     if (category !== 'all') {
