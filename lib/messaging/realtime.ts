@@ -112,6 +112,10 @@ export class RealtimeMessaging {
     this.unsubscribeFromConversation(conversationId);
 
     // Subscribe to new messages in this conversation
+    // NOTE (Dual-Schema): Subscribe to V1 'messages' table (not 'messages_v2')
+    // New messages are written to messages_v2, then synced to messages via trigger
+    // We listen to 'messages' for backward compatibility during V1→V2 migration
+    // See: docs/database/dual-schema-sync-strategy.md
     const messageChannel = this.supabase
       .channel(`conversation:${conversationId}:messages`)
       .on(
@@ -119,7 +123,7 @@ export class RealtimeMessaging {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
+          table: 'messages',  // V1 table receives synced data from messages_v2
           filter: `conversation_id=eq.${conversationId}`
         },
         async (payload) => {

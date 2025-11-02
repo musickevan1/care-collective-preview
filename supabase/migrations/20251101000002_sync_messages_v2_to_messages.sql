@@ -1,8 +1,11 @@
--- Phase 1B Fix: Sync messages_v2 to messages table
+-- Phase 1B Fix: Sync messages_v2 to messages table (Dual-Schema Strategy)
 -- CRITICAL: Fixes real-time message delivery (writes go to messages_v2, subscriptions listen to messages)
 --
 -- Strategy: Create trigger to sync messages_v2 → messages (Option A)
 -- This maintains backward compatibility while we complete migration to single schema
+--
+-- Documentation: See docs/database/dual-schema-sync-strategy.md for full details
+-- Migration Path: Plan to consolidate to single schema in Phase 2.X (Q1 2026)
 
 BEGIN;
 
