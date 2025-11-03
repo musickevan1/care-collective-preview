@@ -17,11 +17,12 @@ export function LogoutButton({ variant = 'destructive', size = 'sm', className }
     try {
       setIsLoading(true)
       await signOut()
+      // Redirect to home page after successful logout
+      window.location.href = window.location.origin + '/'
     } catch (error) {
       console.error('Logout failed:', error)
-      // You could add a toast notification here
-    } finally {
       setIsLoading(false)
+      // You could add a toast notification here
     }
   }
 

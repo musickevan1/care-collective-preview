@@ -51,7 +51,7 @@ const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuth
 export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'dashboard' }) => {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const { isAuthenticated, isAdmin: userIsAdmin, displayName, isLoading } = useAuthNavigation()
+  const { isAuthenticated, isAdmin: userIsAdmin, displayName, isLoading, user } = useAuthNavigation()
   const handleSmoothScroll = useSmoothScroll()
   
   // Use prop isAdmin for dashboard variant, userIsAdmin for homepage variant
@@ -254,11 +254,11 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
                     <div className="space-y-3">
                       <div className="text-center pb-2">
                         <p className="text-sm text-secondary-foreground/70">Signed in as:</p>
-                        <p className="font-semibold text-secondary-foreground">{displayName || 'Member'}</p>
+                        <p className="font-semibold text-secondary-foreground">{displayName || user?.email || 'Member'}</p>
                       </div>
-                      <LogoutButton 
-                        variant="destructive" 
-                        size="default" 
+                      <LogoutButton
+                        variant="destructive"
+                        size="default"
                         className="w-full min-h-[48px] font-semibold"
                       />
                     </div>
@@ -293,11 +293,11 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
                   <div className="space-y-3">
                     <div className="text-center pb-2">
                       <p className="text-sm text-secondary-foreground/70">Signed in as:</p>
-                      <p className="font-semibold text-secondary-foreground">{displayName || 'Member'}</p>
+                      <p className="font-semibold text-secondary-foreground">{displayName || user?.email || 'Member'}</p>
                     </div>
-                    <LogoutButton 
-                      variant="destructive" 
-                      size="default" 
+                    <LogoutButton
+                      variant="destructive"
+                      size="default"
                       className="w-full min-h-[48px] font-semibold"
                     />
                   </div>

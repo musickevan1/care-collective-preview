@@ -12,7 +12,7 @@ interface Profile {
   created_at: string
 }
 
-interface AuthNavigationState {
+export interface AuthNavigationState {
   user: User | null
   profile: Profile | null
   isLoading: boolean
@@ -72,14 +72,14 @@ export function useAuthNavigation(): AuthNavigationState {
               profilePromise,
               profileTimeoutPromise
             ]) as any
-            
+
             if (!profileError && profileData) {
               setProfile(profileData)
             } else if (profileError) {
-              console.debug('Profile query error:', profileError.message)
+              console.error('Profile query error:', profileError.message, '- User will see email fallback')
             }
           } catch (profileTimeoutError) {
-            console.debug('Profile query timed out, continuing without profile data')
+            console.error('Profile query timed out after 3 seconds - continuing without profile data. User will see email fallback.')
           }
         } else {
           setUser(null)
@@ -113,9 +113,11 @@ export function useAuthNavigation(): AuthNavigationState {
               .select('*')
               .eq('id', session.user.id)
               .single()
-              
+
             if (!profileError && profileData) {
               setProfile(profileData)
+            } else if (profileError) {
+              console.error('Failed to fetch profile on auth state change:', profileError.message, '- User will see email fallback')
             }
           }
         } else {
