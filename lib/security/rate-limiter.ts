@@ -286,7 +286,7 @@ export class RateLimiter {
 // Pre-configured rate limiters for different use cases
 export const authRateLimiter = new RateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts per 15 minutes
+  max: 100, // 100 attempts per 15 minutes (increased for testing)
   message: 'Too many authentication attempts, please try again in 15 minutes.',
 })
 
