@@ -51,11 +51,11 @@ export async function notifyHelpRequestOffer(params: {
   await NotificationService.createNotification({
     userId: requesterId,
     type: 'help_request_offer',
-    title: `${helperName} offered to help`,
-    content: `${helperName} wants to help with: ${requestTitle}`,
+    title: `${helperName} wants to help! 🙌`,
+    content: `${helperName} has offered to help with "${requestTitle}". You can now message them to coordinate assistance. Click to view your messages and get started.`,
     relatedId: requestId,
     relatedType: 'help_request',
-    actionUrl: `/requests/${requestId}`,
+    actionUrl: `/messages?help_request=${requestId}`,
   });
 }
 

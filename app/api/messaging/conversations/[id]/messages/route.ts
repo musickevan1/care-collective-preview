@@ -116,15 +116,36 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const debugLog = (step: string, data: Record<string, unknown>) => {
+    console.log(`[MESSAGE_SEND_DEBUG] ${step}:`, {
+      timestamp: new Date().toISOString(),
+      conversationId: params.id,
+      ...data
+    });
+  };
+
   try {
+    debugLog('START', { url: request.url });
+
     const user = await getCurrentUser();
     if (!user) {
+      debugLog('AUTH_FAILED', { reason: 'No user found' });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    debugLog('AUTH_SUCCESS', { userId: user.id, email: user.email });
 
     // Check user restrictions first
     const restrictionCheck = await moderationService.checkUserRestrictions(user.id, 'send_message');
+    debugLog('RESTRICTION_CHECK', {
+      allowed: restrictionCheck.allowed,
+      restrictionLevel: restrictionCheck.restrictionLevel,
+      dailyCount: restrictionCheck.dailyMessageCount,
+      dailyLimit: restrictionCheck.dailyLimit,
+      reason: restrictionCheck.reason
+    });
+
     if (!restrictionCheck.allowed) {
+      debugLog('RESTRICTION_BLOCKED', { reason: restrictionCheck.reason });
       return NextResponse.json(
         {
           error: restrictionCheck.reason || 'You are restricted from sending messages.',
@@ -137,13 +158,17 @@ export async function POST(
     }
 
     // Check rate limit for sending messages
+    debugLog('RATE_LIMIT_CHECK_START', {});
     const rateLimitResponse = await messageRateLimiter.middleware(request, user.id);
     if (rateLimitResponse) {
+      debugLog('RATE_LIMIT_BLOCKED', { status: rateLimitResponse.status });
       return rateLimitResponse;
     }
+    debugLog('RATE_LIMIT_PASSED', {});
 
     const conversationId = params.id;
     if (!conversationId) {
+      debugLog('VALIDATION_ERROR', { error: 'Missing conversation ID' });
       return NextResponse.json(
         { error: 'Conversation ID is required' },
         { status: 400 }
@@ -153,13 +178,16 @@ export async function POST(
     // Validate UUID format
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(conversationId)) {
+      debugLog('UUID_INVALID', { conversationId });
       return NextResponse.json(
         { error: 'Invalid conversation ID format' },
         { status: 400 }
       );
     }
+    debugLog('UUID_VALID', { conversationId });
 
     const body = await request.json();
+    debugLog('BODY_PARSED', { contentLength: body.content?.length, messageType: body.message_type });
 
     // Validate message content
     const validation = z.object({
@@ -168,32 +196,43 @@ export async function POST(
     }).safeParse(body);
 
     if (!validation.success) {
+      debugLog('CONTENT_VALIDATION_FAILED', {
+        errors: validation.error.issues.map(i => ({ path: i.path, message: i.message }))
+      });
       return NextResponse.json(
         { error: 'Invalid message data', details: validation.error.issues },
         { status: 400 }
       );
     }
+    debugLog('CONTENT_VALIDATION_PASSED', { contentLength: validation.data.content.length });
 
     // Basic content moderation - check for prohibited content
     const content = validation.data.content.trim();
     if (containsProhibitedContent(content)) {
+      debugLog('PROHIBITED_CONTENT', { contentPreview: content.substring(0, 50) });
       return NextResponse.json(
         { error: 'Message contains prohibited content. Please revise your message.' },
         { status: 400 }
       );
     }
+    debugLog('CONTENT_MODERATION_PASSED', {});
 
     // Send the message using V2 RPC
+    debugLog('RPC_CALL_START', { service: 'messagingServiceV2.sendMessage' });
     const result = await messagingServiceV2.sendMessage({
       conversation_id: conversationId,
       sender_id: user.id,
       content: validation.data.content
     });
+    debugLog('RPC_CALL_COMPLETE', { success: result.success, error: result.error, messageId: result.message_id });
 
     if (!result.success) {
+      debugLog('RPC_ERROR', { errorCode: result.error, errorMessage: result.message });
+
       // Map V2 error codes to HTTP responses with user-friendly messages
       switch (result.error) {
         case 'not_found':
+          debugLog('ERROR_NOT_FOUND', { conversationId });
           return NextResponse.json(
             {
               error: 'Conversation not found',
@@ -203,6 +242,7 @@ export async function POST(
             { status: 404 }
           );
         case 'access_denied':
+          debugLog('ERROR_ACCESS_DENIED', { userId: user.id });
           return NextResponse.json(
             {
               error: 'You do not have access to this conversation',
@@ -212,6 +252,7 @@ export async function POST(
             { status: 403 }
           );
         case 'permission_denied':
+          debugLog('ERROR_PERMISSION_DENIED', { message: result.message });
           // Check if it's a pending conversation error
           if (result.message?.includes('must be accepted')) {
             return NextResponse.json(
@@ -232,6 +273,7 @@ export async function POST(
             { status: 403 }
           );
         case 'validation_error':
+          debugLog('ERROR_VALIDATION', { message: result.message });
           return NextResponse.json(
             {
               error: result.message || 'Invalid message data',
@@ -241,6 +283,7 @@ export async function POST(
             { status: 400 }
           );
         default:
+          debugLog('ERROR_UNKNOWN', { errorCode: result.error, message: result.message });
           return NextResponse.json(
             {
               error: 'Failed to send message',
@@ -251,6 +294,8 @@ export async function POST(
           );
       }
     }
+
+    debugLog('MESSAGE_SENT_SUCCESS', { messageId: result.message_id });
 
     // Get the message with sender details for response
     const supabase = await createClient();
@@ -299,24 +344,53 @@ export async function POST(
     }, { status: 201 });
 
   } catch (error) {
-    console.error('Error sending message:', error);
+    const debugLog = (step: string, data: Record<string, unknown>) => {
+      console.log(`[MESSAGE_SEND_DEBUG] ${step}:`, {
+        timestamp: new Date().toISOString(),
+        conversationId: params.id,
+        ...data
+      });
+    };
+
+    debugLog('EXCEPTION_CAUGHT', {
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+      errorMessage: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined
+    });
+
+    console.error('[MESSAGE_SEND_ERROR] Unhandled exception:', error);
 
     if (error instanceof Error && error.message.includes('access')) {
+      debugLog('EXCEPTION_ACCESS', { message: error.message });
       return NextResponse.json(
-        { error: 'You do not have access to this conversation' },
+        {
+          error: 'You do not have access to this conversation',
+          userMessage: 'Access denied. Please refresh the page and try again.'
+        },
         { status: 403 }
       );
     }
 
     if (error instanceof Error && error.message.includes('not found')) {
+      debugLog('EXCEPTION_NOT_FOUND', { message: error.message });
       return NextResponse.json(
-        { error: 'Conversation not found' },
+        {
+          error: 'Conversation not found',
+          userMessage: 'This conversation could not be found. Please refresh the page.'
+        },
         { status: 404 }
       );
     }
 
+    debugLog('EXCEPTION_UNKNOWN', {
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+
     return NextResponse.json(
-      { error: 'Failed to send message' },
+      {
+        error: 'Failed to send message',
+        userMessage: 'An unexpected error occurred. Please try again in a moment.'
+      },
       { status: 500 }
     );
   }

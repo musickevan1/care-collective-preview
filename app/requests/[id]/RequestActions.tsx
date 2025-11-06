@@ -14,6 +14,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { EditRequestForm } from '@/components/help-requests/EditRequestForm'
+import { Pencil } from 'lucide-react'
 import { Database } from '@/lib/database.types'
 
 type HelpRequest = Database['public']['Tables']['help_requests']['Row']
@@ -36,6 +46,7 @@ export function RequestActions({
 }: RequestActionsProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
   const router = useRouter()
 
   // NOTE: "Offer to Help" functionality has been moved to HelpRequestCardWithMessaging
@@ -144,6 +155,11 @@ export function RequestActions({
     setLoading(false)
   }
 
+  const handleEditSuccess = () => {
+    setEditDialogOpen(false)
+    router.refresh()
+  }
+
   return (
     <div className="space-y-4">
       {error && (
@@ -180,42 +196,94 @@ export function RequestActions({
         {isOwner && (
           <>
             {request.status === 'open' && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    disabled={loading}
-                    variant="outline"
-                  >
-                    Cancel Request
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Cancel Help Request?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      <div className="space-y-2">
-                        <p>Are you sure you want to cancel this request?</p>
-                        <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3 text-destructive text-sm">
-                          <strong>Warning:</strong> This will permanently remove your request from the public help board. This action cannot be undone.
-                        </div>
-                      </div>
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Keep Request</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleCancelRequest}
-                      className="bg-destructive hover:bg-destructive/90"
+              <>
+                <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      disabled={loading}
+                      variant="default"
+                      className="min-h-[44px]"
                     >
-                      Yes, Cancel Request
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit Request
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Edit Help Request</DialogTitle>
+                      <DialogDescription>
+                        Update the details of your help request. Changes will be visible immediately.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <EditRequestForm
+                      request={request}
+                      onSuccess={handleEditSuccess}
+                      onCancel={() => setEditDialogOpen(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      disabled={loading}
+                      variant="outline"
+                    >
+                      Cancel Request
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Cancel Help Request?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        <div className="space-y-2">
+                          <p>Are you sure you want to cancel this request?</p>
+                          <div className="bg-destructive/10 border border-destructive/20 rounded-md p-3 text-destructive text-sm">
+                            <strong>Warning:</strong> This will permanently remove your request from the public help board. This action cannot be undone.
+                          </div>
+                        </div>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Keep Request</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleCancelRequest}
+                        className="bg-destructive hover:bg-destructive/90"
+                      >
+                        Yes, Cancel Request
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </>
             )}
 
             {request.status === 'in_progress' && (
               <>
+                <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      disabled={loading}
+                      variant="outline"
+                      className="min-h-[44px]"
+                    >
+                      <Pencil className="mr-2 h-4 w-4" />
+                      Edit Request
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Edit Help Request</DialogTitle>
+                      <DialogDescription>
+                        Update the details of your help request. Changes will be visible immediately.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <EditRequestForm
+                      request={request}
+                      onSuccess={handleEditSuccess}
+                      onCancel={() => setEditDialogOpen(false)}
+                    />
+                  </DialogContent>
+                </Dialog>
                 <Button
                   onClick={handleCompleteRequest}
                   disabled={loading}

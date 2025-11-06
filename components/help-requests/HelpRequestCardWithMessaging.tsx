@@ -159,17 +159,10 @@ export function HelpRequestCardWithMessaging({
       // Notify parent component
       onConversationStarted?.(data.conversation_id);
 
-      // Close dialog after success
+      // Auto-navigate to messages after showing success (no prompt needed - success message already tells them)
       setTimeout(() => {
-        setShowOfferDialog(false);
-        setSuccess(false);
-        setOfferMessage('');
-
-        // Navigate to messaging with the specific conversation
-        if (window.confirm('Would you like to go to your messages to continue the conversation?')) {
-          router.push(`/messages?conversation=${data.conversation_id}`);
-        }
-      }, 2000);
+        router.push(`/messages?conversation=${data.conversation_id}`);
+      }, 2500);
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to offer help');
@@ -314,11 +307,15 @@ export function HelpRequestCardWithMessaging({
             </DialogTitle>
             <DialogDescription>
               {success ? (
-                `Offer sent to ${request.profiles.name}! They'll review it and can start messaging if they accept.`
+                <>
+                  <span className="text-green-600 font-medium">✓ Your offer has been sent!</span>
+                  <br />
+                  {request.profiles.name} has been notified. You can now start messaging to coordinate help.
+                </>
               ) : (
                 <>
-                  Send an offer to {request.profiles.name}.{' '}
-                  <strong className="text-secondary">Your offer will be pending until they accept it.</strong>
+                  Send a message to {request.profiles.name} to offer your help.{' '}
+                  <strong className="text-secondary">You'll be able to message once you send your offer.</strong>
                 </>
               )}
             </DialogDescription>
@@ -383,12 +380,19 @@ export function HelpRequestCardWithMessaging({
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <p className="text-sm text-muted-foreground">
-                Redirecting to messages...
+              <p className="text-lg font-medium text-secondary mb-2">
+                Offer Sent Successfully!
               </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Opening your conversation with {request.profiles.name}...
+              </p>
+              <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Redirecting to messages</span>
+              </div>
             </div>
           )}
 
