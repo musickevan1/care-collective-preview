@@ -5,6 +5,7 @@ import { ReactElement } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 import { errorTracker } from '@/lib/error-tracking'
+import { format } from 'date-fns'
 
 interface PresenceIndicatorProps {
   userId: string
@@ -179,7 +180,7 @@ export function PresenceIndicator({
     } else if (diffDays < 7) {
       return `${diffDays}d ago`
     } else {
-      return lastSeenDate.toLocaleDateString()
+      return format(lastSeenDate, 'MMM d, yyyy')
     }
   }
 

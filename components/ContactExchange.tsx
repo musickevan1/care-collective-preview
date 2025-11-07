@@ -21,6 +21,7 @@ import {
   trackContactExchange,
   trackEncryption
 } from '@/lib/security/privacy-event-tracker'
+import { format } from 'date-fns'
 
 interface HelpRequest {
   id: string
@@ -923,7 +924,7 @@ export function ContactExchange({
           {exchangeExpiry && (
             <div className="flex items-center gap-1 text-green-700 text-xs mt-2">
               <Clock className="h-3 w-3" />
-              Auto-deletion: {exchangeExpiry.toLocaleDateString()}
+              Auto-deletion: {format(exchangeExpiry, 'MMM d, yyyy')}
             </div>
           )}
         </div>

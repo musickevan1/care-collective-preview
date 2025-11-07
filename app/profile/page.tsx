@@ -13,6 +13,7 @@ import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { RequestsListWithModal } from '@/components/help-requests/RequestsListWithModal'
 import Link from 'next/link'
 import { User, Mail, MapPin, Calendar } from 'lucide-react'
+import { format } from 'date-fns'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -255,7 +256,7 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                     Member Since
                   </div>
                   <p className="text-secondary font-medium">
-                    {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
+                    {user.created_at ? format(new Date(user.created_at), 'MMM d, yyyy') : 'N/A'}
                   </p>
                 </div>
 

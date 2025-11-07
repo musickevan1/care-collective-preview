@@ -8,6 +8,7 @@ import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { DiagnosticPanel } from '@/components/DiagnosticPanel'
 import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
 import Link from 'next/link'
+import { format } from 'date-fns'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
@@ -458,7 +459,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {request.category} • {new Date(request.created_at).toLocaleDateString()}
+                          {request.category} • {format(new Date(request.created_at), 'MMM d, yyyy')}
                         </p>
                       </div>
                       <Link href={`/requests/my-requests?id=${request.id}`}>
@@ -508,7 +509,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          by {request.profiles?.name || 'Anonymous'} • {new Date(request.created_at).toLocaleDateString()}
+                          by {request.profiles?.name || 'Anonymous'} • {format(new Date(request.created_at), 'MMM d, yyyy')}
                         </p>
                       </div>
                       <Link href={`/requests/${request.id}`}>

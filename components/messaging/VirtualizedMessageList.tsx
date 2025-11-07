@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronDown, CornerDownRight, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 interface VirtualizedMessageListProps {
   messages: MessageWithSender[];
@@ -111,7 +112,7 @@ function MessageItem({ index, style, data }: ListChildComponentProps<MessageItem
     return (
       <div style={style} className="flex justify-center">
         <div className="bg-muted px-3 py-1 rounded-full text-xs text-muted-foreground">
-          {new Date(targetGroup.date).toLocaleDateString()}
+          {format(new Date(targetGroup.date), 'MMM d, yyyy')}
         </div>
       </div>
     );
@@ -390,7 +391,7 @@ export function VirtualizedMessageList({
                 {showDateSeparators && group.date && (
                   <div className="flex justify-center">
                     <div className="bg-muted px-3 py-1 rounded-full text-xs text-muted-foreground">
-                      {new Date(group.date).toLocaleDateString()}
+                      {format(new Date(group.date), 'MMM d, yyyy')}
                     </div>
                   </div>
                 )}

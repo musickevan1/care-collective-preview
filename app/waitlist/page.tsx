@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ReactElement } from 'react'
+import { format } from 'date-fns'
 
 interface UserProfile {
   id: string
@@ -146,11 +147,7 @@ export default function WaitlistPage(): ReactElement {
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'Unknown'
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
+    return format(new Date(dateString), 'MMMM d, yyyy')
   }
 
   if (loading) {

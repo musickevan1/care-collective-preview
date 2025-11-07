@@ -3,7 +3,8 @@ import validator from 'validator'
 
 // Common validation helpers
 const sanitizeString = (str: string) => str.trim().slice(0, 1000) // Limit length and trim
-const sanitizeHTML = (str: string) => validator.escape(str) // HTML escape
+// Note: HTML escaping removed - React auto-escapes JSX content, and we render as plain text
+// const sanitizeHTML = (str: string) => validator.escape(str) // HTML escape - REMOVED to fix &#x27; display issue
 
 // User authentication schemas
 export const loginSchema = z.object({
@@ -27,7 +28,6 @@ export const signupSchema = z.object({
     .min(1, 'Name is required')
     .max(100, 'Name too long')
     .transform(sanitizeString)
-    .transform(sanitizeHTML)
     .refine((name) => !validator.contains(name, '<script'), 'Invalid characters in name')
     .refine((name) => /^[a-zA-Z\s\-'\.]+$/.test(name), 'Name can only contain letters, spaces, hyphens, apostrophes, and periods'),
   email: z
@@ -62,13 +62,11 @@ export const helpRequestSchema = z.object({
     .min(1, 'Title is required')
     .max(100, 'Title too long')
     .transform(sanitizeString)
-    .transform(sanitizeHTML)
     .refine((title) => !validator.contains(title, '<script'), 'Invalid characters in title'),
   description: z
     .string()
     .max(500, 'Description too long')
     .transform(sanitizeString)
-    .transform(sanitizeHTML)
     .refine((desc) => !validator.contains(desc, '<script'), 'Invalid characters in description')
     .optional()
     .nullable(),
@@ -78,7 +76,6 @@ export const helpRequestSchema = z.object({
     .string()
     .max(200, 'Location too long')
     .transform(sanitizeString)
-    .transform(sanitizeHTML)
     .refine((loc) => !validator.contains(loc, '<script'), 'Invalid characters in location')
     .optional()
     .nullable(),
@@ -92,14 +89,12 @@ export const profileUpdateSchema = z.object({
     .min(1, 'Name is required')
     .max(100, 'Name too long')
     .transform(sanitizeString)
-    .transform(sanitizeHTML)
     .refine((name) => !validator.contains(name, '<script'), 'Invalid characters in name')
     .refine((name) => /^[a-zA-Z\s\-'\.]+$/.test(name), 'Name can only contain letters, spaces, hyphens, apostrophes, and periods'),
   location: z
     .string()
     .max(200, 'Location too long')
     .transform(sanitizeString)
-    .transform(sanitizeHTML)
     .refine((loc) => !validator.contains(loc, '<script'), 'Invalid characters in location')
     .optional()
     .nullable(),
@@ -112,7 +107,6 @@ export const adminActionSchema = z.object({
     .string()
     .max(500, 'Reason too long')
     .transform(sanitizeString)
-    .transform(sanitizeHTML)
     .refine((reason) => !validator.contains(reason, '<script'), 'Invalid characters in reason')
     .optional()
     .nullable(),
@@ -185,9 +179,10 @@ export const sanitizeSearchQuery = (query: string): string => {
 }
 
 // XSS prevention helpers
-export const sanitizeForDisplay = (content: string): string => {
-  return validator.escape(content)
-}
+// Note: Not needed - React auto-escapes JSX content
+// export const sanitizeForDisplay = (content: string): string => {
+//   return validator.escape(content)
+// }
 
 // CSRF token validation (for future use)
 export const csrfTokenSchema = z.object({

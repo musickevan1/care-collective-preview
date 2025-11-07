@@ -25,6 +25,7 @@ import {
   History
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { format } from 'date-fns'
 import {
   UserPrivacyControlsService,
   getUserPrivacySettings,
@@ -695,9 +696,9 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
                       </div>
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span>Fields: {item.fields_shared.join(', ')}</span>
-                        <span>Shared: {new Date(item.shared_at).toLocaleDateString()}</span>
+                        <span>Shared: {format(new Date(item.shared_at), 'MMM d, yyyy')}</span>
                         {item.expires_at && (
-                          <span>Expires: {new Date(item.expires_at).toLocaleDateString()}</span>
+                          <span>Expires: {format(new Date(item.expires_at), 'MMM d, yyyy')}</span>
                         )}
                       </div>
                     </div>
@@ -805,7 +806,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
                               {request.request_type.replace('_', ' ')}
                             </h4>
                             <p className="text-sm text-muted-foreground">
-                              Requested: {new Date(request.requested_at).toLocaleDateString()}
+                              Requested: {format(new Date(request.requested_at), 'MMM d, yyyy')}
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
@@ -856,7 +857,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {privacySettings.gdpr_consent_date
-                        ? `Given on ${new Date(privacySettings.gdpr_consent_date).toLocaleDateString()}`
+                        ? `Given on ${format(new Date(privacySettings.gdpr_consent_date), 'MMM d, yyyy')}`
                         : "Required for using contact exchange features"
                       }
                     </p>

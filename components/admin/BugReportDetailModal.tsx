@@ -2,6 +2,7 @@
 
 import { ReactElement, useState } from 'react';
 import { X } from 'lucide-react';
+import { format } from 'date-fns';
 
 type BugReportStatus = 'open' | 'in_progress' | 'resolved' | 'closed' | 'wont_fix';
 type BugReportSeverity = 'low' | 'medium' | 'high' | 'critical';
@@ -138,13 +139,13 @@ export function BugReportDetailModal({
               <div>
                 <span className="font-medium text-text/70">Created:</span>{' '}
                 <span className="text-secondary">
-                  {new Date(report.created_at).toLocaleString()}
+                  {format(new Date(report.created_at), 'MMM d, yyyy h:mm a')}
                 </span>
               </div>
               <div>
                 <span className="font-medium text-text/70">Updated:</span>{' '}
                 <span className="text-secondary">
-                  {new Date(report.updated_at).toLocaleString()}
+                  {format(new Date(report.updated_at), 'MMM d, yyyy h:mm a')}
                 </span>
               </div>
             </div>
@@ -198,7 +199,7 @@ export function BugReportDetailModal({
               <div>
                 <span className="font-medium text-text/70">Timestamp:</span>{' '}
                 <span className="text-text/80">
-                  {new Date(report.context.timestamp).toLocaleString()}
+                  {format(new Date(report.context.timestamp), 'MMM d, yyyy h:mm a')}
                 </span>
               </div>
             </div>
@@ -271,7 +272,7 @@ export function BugReportDetailModal({
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
               <h4 className="font-semibold text-green-800 mb-2">Resolved</h4>
               <p className="text-sm text-green-700 mb-1">
-                Resolved on {new Date(report.resolved_at).toLocaleString()}
+                Resolved on {format(new Date(report.resolved_at), 'MMM d, yyyy h:mm a')}
               </p>
               {report.resolution_notes && (
                 <p className="text-sm text-green-700 mt-2">

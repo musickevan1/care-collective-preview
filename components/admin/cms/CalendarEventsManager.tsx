@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import type { Tables } from '@/lib/database.types';
+import { format } from 'date-fns';
 
 type CalendarEvent = Tables<'calendar_events'> & {
   event_categories?: { id: string; name: string; slug: string; color: string } | null;
@@ -447,8 +448,8 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">
-                        {new Date(event.start_date).toLocaleString()} →{' '}
-                        {new Date(event.end_date).toLocaleString()}
+                        {format(new Date(event.start_date), 'MMM d, yyyy h:mm a')} →{' '}
+                        {format(new Date(event.end_date), 'MMM d, yyyy h:mm a')}
                       </p>
                     </div>
                     <div className="flex gap-2 flex-wrap">

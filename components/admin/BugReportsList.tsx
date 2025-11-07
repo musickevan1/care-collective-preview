@@ -2,6 +2,7 @@
 
 import { ReactElement, useState, useEffect } from 'react';
 import { BugReportDetailModal } from './BugReportDetailModal';
+import { format } from 'date-fns';
 
 type BugReportStatus = 'open' | 'in_progress' | 'resolved' | 'closed' | 'wont_fix';
 type BugReportSeverity = 'low' | 'medium' | 'high' | 'critical';
@@ -248,7 +249,7 @@ export function BugReportsList(): ReactElement {
                       by {report.reporter_name || 'Unknown'}
                     </span>
                     <span className="text-text/60">
-                      {new Date(report.created_at).toLocaleDateString()}
+                      {format(new Date(report.created_at), 'MMM d, yyyy')}
                     </span>
                   </div>
                 </div>

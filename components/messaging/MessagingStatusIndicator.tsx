@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { MessageCircle, Clock, Users } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
 
 interface HelpRequestMessagingStatus {
   conversationCount: number
@@ -40,11 +41,8 @@ function formatTimeAgo(dateString: string): string {
   
   const diffInDays = Math.floor(diffInHours / 24)
   if (diffInDays < 7) return `${diffInDays}d ago`
-  
-  return date.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric' 
-  })
+
+  return format(date, 'MMM d')
 }
 
 export function MessagingStatusIndicator({

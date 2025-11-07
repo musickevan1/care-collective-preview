@@ -1,8 +1,9 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
 import { authRateLimiter } from '@/lib/security/rate-limiter'
 import { addSecurityHeaders, createErrorResponse, createSuccessResponse, logSecurityEvent } from '@/lib/security/middleware'
 import { z } from 'zod'
+import { cookies } from 'next/headers'
 
 // Validation schema for login request
 const loginSchema = z.object({
@@ -55,8 +56,29 @@ export async function POST(request: NextRequest) {
 
     const { email, password } = validation.data
 
-    // Create Supabase client
-    const supabase = await createClient()
+    // CRITICAL FIX: Create a response object and Supabase client that sets cookies on it
+    // This ensures session cookies are properly set in the API response
+    const cookieStore = await cookies()
+    let response = NextResponse.json({ success: false })
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll()
+          },
+          setAll(cookiesToSet) {
+            // Set cookies on both the cookie store and the response object
+            cookiesToSet.forEach(({ name, value, options }) => {
+              cookieStore.set(name, value, options)
+              response.cookies.set(name, value, options)
+            })
+          },
+        },
+      }
+    )
 
     // Attempt login
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -69,18 +91,28 @@ export async function POST(request: NextRequest) {
         email,
         error: authError.message
       })
-      return createErrorResponse(
-        authError.message,
-        401
+      response = NextResponse.json(
+        {
+          success: false,
+          error: authError.message,
+          timestamp: new Date().toISOString()
+        },
+        { status: 401 }
       )
+      return response
     }
 
     if (!authData?.user) {
       logSecurityEvent('login_failed_no_user', request, { email })
-      return createErrorResponse(
-        'Authentication failed',
-        401
+      response = NextResponse.json(
+        {
+          success: false,
+          error: 'Authentication failed',
+          timestamp: new Date().toISOString()
+        },
+        { status: 401 }
       )
+      return response
     }
 
     // SECURITY: Check verification status BEFORE allowing access
@@ -97,10 +129,15 @@ export async function POST(request: NextRequest) {
       })
       // Sign out user if we can't verify their status
       await supabase.auth.signOut()
-      return createErrorResponse(
-        'Unable to verify account status',
-        500
+      response = NextResponse.json(
+        {
+          success: false,
+          error: 'Unable to verify account status',
+          timestamp: new Date().toISOString()
+        },
+        { status: 500 }
       )
+      return response
     }
 
     // Log successful authentication with status
@@ -118,11 +155,16 @@ export async function POST(request: NextRequest) {
         userId: authData.user.id,
         email: authData.user.email
       })
-      return createSuccessResponse({
-        status: 'rejected',
-        redirect: '/access-denied?reason=rejected',
-        message: 'Access denied: Account has been rejected'
+      response = NextResponse.json({
+        success: true,
+        data: {
+          status: 'rejected',
+          redirect: '/access-denied?reason=rejected',
+          message: 'Access denied: Account has been rejected'
+        },
+        timestamp: new Date().toISOString()
       })
+      return response
     }
 
     if (profile.verification_status === 'pending') {
@@ -130,11 +172,16 @@ export async function POST(request: NextRequest) {
         userId: authData.user.id,
         email: authData.user.email
       })
-      return createSuccessResponse({
-        status: 'pending',
-        redirect: '/waitlist',
-        message: 'Account pending approval'
+      response = NextResponse.json({
+        success: true,
+        data: {
+          status: 'pending',
+          redirect: '/waitlist',
+          message: 'Account pending approval'
+        },
+        timestamp: new Date().toISOString()
       })
+      return response
     }
 
     if (profile.verification_status === 'approved') {
@@ -142,11 +189,16 @@ export async function POST(request: NextRequest) {
         userId: authData.user.id,
         email: authData.user.email
       })
-      return createSuccessResponse({
-        status: 'approved',
-        redirect: '/dashboard',
-        message: 'Login successful'
+      response = NextResponse.json({
+        success: true,
+        data: {
+          status: 'approved',
+          redirect: '/dashboard',
+          message: 'Login successful'
+        },
+        timestamp: new Date().toISOString()
       })
+      return response
     }
 
     // Unknown status: treat as pending for safety
@@ -155,20 +207,29 @@ export async function POST(request: NextRequest) {
       email: authData.user.email,
       verificationStatus: profile.verification_status
     })
-    return createSuccessResponse({
-      status: 'unknown',
-      redirect: '/waitlist',
-      message: 'Account verification pending'
+    response = NextResponse.json({
+      success: true,
+      data: {
+        status: 'unknown',
+        redirect: '/waitlist',
+        message: 'Account verification pending'
+      },
+      timestamp: new Date().toISOString()
     })
+    return response
 
   } catch (error) {
     logSecurityEvent('login_exception', request, {
       error: String(error)
     })
     console.error('[Login API] Unexpected error:', error)
-    return createErrorResponse(
-      'An unexpected error occurred during login',
-      500
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'An unexpected error occurred during login',
+        timestamp: new Date().toISOString()
+      },
+      { status: 500 }
     )
   }
 }

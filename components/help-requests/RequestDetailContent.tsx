@@ -15,6 +15,7 @@ import { HelpRequestCardWithMessaging } from '@/components/help-requests/HelpReq
 import { MessagingStatusIndicator } from '@/components/messaging/MessagingStatusIndicator'
 import { ClientOnly } from '@/components/ClientOnly'
 import Link from 'next/link'
+import { format } from 'date-fns'
 
 // Import RequestActions dynamically as it's a client component
 const RequestActions = dynamic(
@@ -51,13 +52,7 @@ const categoryColors = {
 } as const
 
 function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit'
-  })
+  return format(new Date(dateString), 'MMMM d, yyyy h:mm a')
 }
 
 interface RequestDetailContentProps {
