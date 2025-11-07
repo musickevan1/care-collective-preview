@@ -8,8 +8,8 @@ import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { 
-  MessageCircle, 
+import {
+  MessageCircle,
   User,
   MapPin,
   Clock,
@@ -18,6 +18,7 @@ import {
   Users
 } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { ClientOnly } from '@/components/ClientOnly'
 
 interface ConversationListProps {
   conversations: ConversationWithDetails[]
@@ -152,7 +153,9 @@ function ConversationItem({
               <span>{lastMessage.sender_name}</span>
               <span>•</span>
               <time dateTime={lastMessage.created_at}>
-                {formatDistanceToNow(new Date(lastMessage.created_at), { addSuffix: true })}
+                <ClientOnly>
+                  {formatDistanceToNow(new Date(lastMessage.created_at), { addSuffix: true })}
+                </ClientOnly>
               </time>
             </div>
           </div>
@@ -168,7 +171,9 @@ function ConversationItem({
           </div>
 
           <time dateTime={conversation.last_message_at}>
-            Updated {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
+            <ClientOnly>
+              Updated {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
+            </ClientOnly>
           </time>
         </div>
       </div>

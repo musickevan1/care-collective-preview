@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { ClientOnly } from '@/components/ClientOnly';
 
 interface HelpRequest {
   id: string;
@@ -72,7 +73,6 @@ export function HelpRequestCardWithMessaging({
   const [success, setSuccess] = useState(false);
 
   const isOwnRequest = currentUserId === request.user_id;
-  const timeAgo = formatDistanceToNow(new Date(request.created_at), { addSuffix: true });
 
   // Urgency styling configuration
   const urgencyConfig = {
@@ -250,7 +250,9 @@ export function HelpRequestCardWithMessaging({
                   <div className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     <time dateTime={request.created_at} title={new Date(request.created_at).toLocaleString()}>
-                      {timeAgo}
+                      <ClientOnly>
+                        {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
+                      </ClientOnly>
                     </time>
                   </div>
                 </div>

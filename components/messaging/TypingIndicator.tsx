@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { ReactElement } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
@@ -28,7 +28,7 @@ export function TypingIndicator({
   className
 }: TypingIndicatorProps): ReactElement {
   const [typingUsers, setTypingUsers] = useState<TypingUser[]>([])
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     if (!conversationId || !currentUserId) return
@@ -105,7 +105,7 @@ export function TypingIndicator({
     }, 5000)
 
     return () => {
-      channel.unsubscribe()
+      supabase.removeChannel(channel)
       clearInterval(cleanupInterval)
     }
   }, [conversationId, currentUserId, supabase])
@@ -169,9 +169,48 @@ export function useTypingStatus({
 }: UseTypingStatusOptions): UseTypingStatusReturn {
   const [isTyping, setIsTyping] = useState(false)
   const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
-  const broadcastTypingStart = async () => {
+  const broadcastTypingStop = useCallback(async () => {
+    if (!enabled || !conversationId || !userId) return
+
+    try {
+      setIsTyping(false)
+
+      if (typingTimeout) {
+        clearTimeout(typingTimeout)
+        setTypingTimeout(null)
+      }
+
+      // Update user presence to stop typing
+      await supabase.rpc('update_user_presence', {
+        user_uuid: userId,
+        new_status: 'online',
+        conversation_uuid: conversationId,
+        typing_in_conversation: null
+      });
+
+      // Also broadcast for compatibility
+      supabase
+        .channel(`presence:conversation:${conversationId}`)
+        .send({
+          type: 'broadcast',
+          event: 'typing_stop',
+          payload: {
+            user_id: userId,
+            conversation_id: conversationId
+          }
+        });
+    } catch (error) {
+      errorTracker.captureError(error as Error, {
+        component: 'useTypingStatus',
+        action: 'broadcast_typing_stop',
+        severity: 'low'
+      });
+    }
+  }, [enabled, conversationId, userId, typingTimeout, supabase])
+
+  const broadcastTypingStart = useCallback(async () => {
     if (!enabled || !conversationId || !userId) return
 
     try {
@@ -218,46 +257,7 @@ export function useTypingStatus({
         severity: 'low'
       });
     }
-  }
-
-  const broadcastTypingStop = async () => {
-    if (!enabled || !conversationId || !userId) return
-
-    try {
-      setIsTyping(false)
-
-      if (typingTimeout) {
-        clearTimeout(typingTimeout)
-        setTypingTimeout(null)
-      }
-
-      // Update user presence to stop typing
-      await supabase.rpc('update_user_presence', {
-        user_uuid: userId,
-        new_status: 'online',
-        conversation_uuid: conversationId,
-        typing_in_conversation: null
-      });
-
-      // Also broadcast for compatibility
-      supabase
-        .channel(`presence:conversation:${conversationId}`)
-        .send({
-          type: 'broadcast',
-          event: 'typing_stop',
-          payload: {
-            user_id: userId,
-            conversation_id: conversationId
-          }
-        });
-    } catch (error) {
-      errorTracker.captureError(error as Error, {
-        component: 'useTypingStatus',
-        action: 'broadcast_typing_stop',
-        severity: 'low'
-      });
-    }
-  }
+  }, [enabled, conversationId, userId, userName, isTyping, typingTimeout, supabase, broadcastTypingStop])
 
   // Cleanup on unmount
   useEffect(() => {
@@ -267,7 +267,7 @@ export function useTypingStatus({
       }
       broadcastTypingStop()
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [typingTimeout, broadcastTypingStop])
 
   return {
     broadcastTypingStart,

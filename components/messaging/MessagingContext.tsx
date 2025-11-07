@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useCallback, ReactNode, ReactElement } from 'react'
+import React, { createContext, useContext, useState, useCallback, useMemo, ReactNode, ReactElement } from 'react'
 import { ConversationWithDetails, MessageWithSender } from '@/lib/messaging/types'
 import { createClient } from '@/lib/supabase/client'
 
@@ -407,7 +407,7 @@ export function MessagingProvider({
     }
   }, [loadMessages, isMobile, onMobileNavigate])
 
-  const value: MessagingContextType = {
+  const value: MessagingContextType = useMemo(() => ({
     // State
     conversations,
     selectedConversation,
@@ -428,7 +428,25 @@ export function MessagingProvider({
     handleAcceptOffer,
     handleRejectOffer,
     handleConversationSelect
-  }
+  }), [
+    conversations,
+    selectedConversation,
+    setSelectedConversation,
+    messageThread,
+    setMessageThread,
+    activeTab,
+    setActiveTab,
+    pendingOffers,
+    isLoadingOffers,
+    userId,
+    loadMessages,
+    loadMoreMessages,
+    handleSendMessage,
+    loadPendingOffers,
+    handleAcceptOffer,
+    handleRejectOffer,
+    handleConversationSelect
+  ])
 
   return (
     <MessagingContext.Provider value={value}>

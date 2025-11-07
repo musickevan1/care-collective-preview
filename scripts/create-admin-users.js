@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Create Beta Test Users Script
- * Creates approved test users for beta testing the Care Collective platform
+ * Create Admin Users Script
+ * Creates admin accounts for Care Collective platform
  */
 
 const { createClient } = require('@supabase/supabase-js')
@@ -22,49 +22,28 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1)
 }
 
-// Beta test users configuration
-const BETA_USERS = [
+// Admin users configuration
+const ADMIN_USERS = [
   {
-    email: 'tmbarakat1958@gmail.com',
-    password: 'CareTest2024!Terry',
-    name: 'Terry Barakat',
+    email: 'MaureenTempleman@MissouriState.edu',
+    password: 'TempAdminPass123!',
+    name: 'Maureen Templeman',
     location: 'Springfield, MO',
-    is_admin: false,
+    is_admin: true,
   },
   {
-    email: 'ariadne.miranda.phd@gmail.com',
-    password: 'CareTest2024!Ariadne',
-    name: 'Ariadne Miranda',
+    email: 'evanmusick.dev@gmail.com',
+    password: 'TempAdminPass123!',
+    name: 'Evan Musick',
     location: 'Springfield, MO',
-    is_admin: false,
-  },
-  {
-    email: 'cconaway@missouristate.edu',
-    password: 'CareTest2024!Christy',
-    name: 'Christy Conaway',
-    location: 'Springfield, MO',
-    is_admin: false,
-  },
-  {
-    email: 'templemk@gmail.com',
-    password: 'CareTest2024!Keith',
-    name: 'Keith Templeman',
-    location: 'Springfield, MO',
-    is_admin: false,
-  },
-  {
-    email: 'dianemusick@att.net',
-    password: 'CareTest2024!Diane',
-    name: 'Diane Musick',
-    location: 'Springfield, MO',
-    is_admin: false,
+    is_admin: true,
   },
 ]
 
-async function createBetaUser(supabase, userConfig) {
+async function createAdminUser(supabase, userConfig) {
   const { email, password, name, location, is_admin } = userConfig
 
-  console.log(`\n👤 Creating user: ${name} (${email})`)
+  console.log(`\n👤 Creating admin user: ${name} (${email})`)
 
   try {
     // 1. Create the auth user
@@ -74,7 +53,8 @@ async function createBetaUser(supabase, userConfig) {
       email_confirm: true, // Auto-confirm email
       user_metadata: {
         name,
-        role: is_admin ? 'admin' : 'user'
+        role: 'admin',
+        email_verified: true
       }
     })
 
@@ -96,7 +76,7 @@ async function createBetaUser(supabase, userConfig) {
           await supabase.auth.admin.updateUserById(userId, {
             password,
             email_confirm: true,
-            user_metadata: { name, role: is_admin ? 'admin' : 'user' }
+            user_metadata: { name, role: 'admin', email_verified: true }
           })
         }
       } else {
@@ -115,7 +95,8 @@ async function createBetaUser(supabase, userConfig) {
         id: userId,
         name,
         location,
-        is_admin,
+        is_admin: true,
+        is_beta_tester: false,
         verification_status: 'approved',
         email_confirmed: true,
         email_confirmed_at: new Date().toISOString(),
@@ -140,8 +121,8 @@ async function createBetaUser(supabase, userConfig) {
   }
 }
 
-async function createAllBetaUsers() {
-  console.log('🚀 Creating beta test users for Care Collective...\n')
+async function createAllAdminUsers() {
+  console.log('🚀 Creating admin users for Care Collective...\n')
 
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -153,17 +134,17 @@ async function createAllBetaUsers() {
 
   const results = []
 
-  for (const userConfig of BETA_USERS) {
-    const userId = await createBetaUser(supabase, userConfig)
+  for (const userConfig of ADMIN_USERS) {
+    const userId = await createAdminUser(supabase, userConfig)
     results.push({ ...userConfig, userId, success: !!userId })
   }
 
   // Summary
   console.log('\n' + '='.repeat(60))
-  console.log('🎉 Beta User Creation Complete!')
+  console.log('🎉 Admin User Creation Complete!')
   console.log('='.repeat(60))
 
-  console.log('\n📋 Created Users:')
+  console.log('\n📋 Created Admin Users:')
   results.forEach(({ name, email, password, location, userId, success }) => {
     if (success) {
       console.log(`\n   ✅ ${name}`)
@@ -177,14 +158,13 @@ async function createAllBetaUsers() {
   })
 
   const successCount = results.filter(r => r.success).length
-  console.log(`\n📊 Success Rate: ${successCount}/${results.length} users created`)
+  console.log(`\n📊 Success Rate: ${successCount}/${results.length} admin users created`)
 
   console.log('\n🔗 Next Steps:')
   console.log(`   1. Visit: ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/login`)
-  console.log('   2. Login with any of the credentials above')
-  console.log('   3. Test help requests: /requests/new')
-  console.log('   4. Test messaging: /messages')
-  console.log('   5. Test dashboard: /dashboard')
+  console.log('   2. Login with admin credentials above')
+  console.log('   3. Access admin panel: /admin')
+  console.log('   4. Change passwords from temporary credentials')
 }
 
-createAllBetaUsers().catch(console.error)
+createAllAdminUsers().catch(console.error)

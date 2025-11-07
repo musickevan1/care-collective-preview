@@ -7,8 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { DiagnosticPanel } from '@/components/DiagnosticPanel'
 import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
+import { FormattedDate } from '@/components/FormattedDate'
 import Link from 'next/link'
-import { format } from 'date-fns'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
@@ -459,7 +459,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {request.category} • {format(new Date(request.created_at), 'MMM d, yyyy')}
+                          {request.category} • <FormattedDate date={request.created_at} />
                         </p>
                       </div>
                       <Link href={`/requests/my-requests?id=${request.id}`}>
@@ -509,7 +509,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          by {request.profiles?.name || 'Anonymous'} • {format(new Date(request.created_at), 'MMM d, yyyy')}
+                          by {request.profiles?.name || 'Anonymous'} • <FormattedDate date={request.created_at} />
                         </p>
                       </div>
                       <Link href={`/requests/${request.id}`}>

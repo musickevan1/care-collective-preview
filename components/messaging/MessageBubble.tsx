@@ -12,6 +12,7 @@ import {
   Clock,
   AlertTriangle
 } from 'lucide-react'
+import { ClientOnly } from '@/components/ClientOnly'
 
 interface MessageBubbleProps {
   message: MessageWithSender
@@ -112,7 +113,9 @@ export function MessageBubble({
         <div className="max-w-xs bg-muted/50 text-muted-foreground text-sm px-4 py-2 rounded-full border">
           <p className="text-center">{message.content}</p>
           <p className="text-xs text-center mt-1 opacity-70">
-            {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+            <ClientOnly>
+              {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+            </ClientOnly>
           </p>
         </div>
       </div>
@@ -171,14 +174,16 @@ export function MessageBubble({
         </div>
 
         {/* Timestamp and status */}
-        <div 
+        <div
           className={cn(
             "flex items-center gap-1 px-2 text-xs text-muted-foreground",
             isCurrentUser ? "justify-end" : "justify-start"
           )}
         >
           <time dateTime={message.created_at}>
-            {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+            <ClientOnly>
+              {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+            </ClientOnly>
           </time>
           
           {/* Show status icon only for current user's messages */}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef, useCallback, ReactElement } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo, ReactElement } from 'react'
 import { ConversationWithDetails } from '@/lib/messaging/types'
 import { MessagingProvider, useMessagingContext } from './MessagingContext'
 import { ConversationPanel } from './ConversationPanel'
@@ -172,7 +172,7 @@ function RealTimeSubscriptions({
 }): null {
   const { selectedConversation, setMessageThread, loadMessages, loadPendingOffers, handleConversationSelect } =
     useMessagingContext()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   // Initial conversation selection
   useEffect(() => {
@@ -244,7 +244,7 @@ function RealTimeSubscriptions({
       .subscribe()
 
     return () => {
-      subscription.unsubscribe()
+      supabase.removeChannel(subscription)
     }
   }, [enableRealtime, selectedConversation, supabase, loadMessages, setMessageThread])
 

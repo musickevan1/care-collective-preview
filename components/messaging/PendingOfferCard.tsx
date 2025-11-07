@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * @fileoverview Card component for displaying a single pending help offer
  * Shows helper info, initial message, help request context, and accept/reject actions
@@ -7,6 +9,7 @@
 import { ReactElement, useState } from 'react';
 import { Check, X, MapPin, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { ClientOnly } from '@/components/ClientOnly';
 
 interface PendingOffer {
   id: string;
@@ -75,13 +78,6 @@ export function PendingOfferCard({
     }
   };
 
-  const formatRelativeTime = (date: string) => {
-    try {
-      return formatDistanceToNow(new Date(date), { addSuffix: true });
-    } catch {
-      return 'recently';
-    }
-  };
 
   return (
     <article
@@ -124,7 +120,9 @@ export function PendingOfferCard({
         </p>
         <div className="flex items-center gap-2 text-gray-600">
           <Clock className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-          <span>Sent {formatRelativeTime(offer.created_at)}</span>
+          <span>
+            Sent <ClientOnly>{formatDistanceToNow(new Date(offer.created_at), { addSuffix: true })}</ClientOnly>
+          </span>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useState } from 'react'
+import { ReactElement, useState, useEffect } from 'react'
 
 interface DiagnosticData {
   authUserId: string
@@ -22,15 +22,18 @@ interface DiagnosticData {
  * the auth bug occurs without needing access to Vercel runtime logs.
  */
 export function DiagnosticPanel({ data }: { data: DiagnosticData }): ReactElement | null {
-  const [isVisible, setIsVisible] = useState(() => {
-    return typeof window !== 'undefined' ? localStorage.getItem('diagnosticPanelClosed') !== 'true' : true;
-  })
+  // Start with false to match SSR, then check localStorage on client
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    // Only run on client-side
+    const wasClosed = localStorage.getItem('diagnosticPanelClosed') === 'true'
+    setIsVisible(!wasClosed)
+  }, [])
 
   const handleClose = () => {
     setIsVisible(false);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('diagnosticPanelClosed', 'true');
-    }
+    localStorage.setItem('diagnosticPanelClosed', 'true');
   }
 
   if (!isVisible) return null;

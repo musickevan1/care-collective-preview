@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { ReactElement } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
@@ -26,7 +26,7 @@ export function PresenceIndicator({
 }: PresenceIndicatorProps): ReactElement {
   const [status, setStatus] = useState<PresenceStatus>('offline')
   const [lastSeen, setLastSeen] = useState<string | null>(null)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     if (!userId) return
@@ -127,7 +127,7 @@ export function PresenceIndicator({
       .subscribe()
 
     return () => {
-      channel.unsubscribe()
+      supabase.removeChannel(channel)
     }
   }, [userId, supabase])
 
@@ -227,7 +227,7 @@ export function usePresenceStatus({
   enabled = true
 }: UsePresenceStatusOptions): UsePresenceStatusReturn {
   const [currentStatus, setCurrentStatus] = useState<PresenceStatus>('online')
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     if (!enabled || !userId) return
@@ -294,7 +294,7 @@ export function usePresenceStatus({
 
     return () => {
       updatePresenceInDatabase('offline')
-      channel.unsubscribe()
+      supabase.removeChannel(channel)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('beforeunload', handleBeforeUnload)
       clearInterval(presenceInterval)

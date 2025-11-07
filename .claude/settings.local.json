@@ -58,7 +58,8 @@
       "Bash(netstat -tlnp)",
       "Bash(tee:*)",
       "Bash(npx playwright test --headed=false --project=chromium -g \"test request detail page\")",
-      "mcp__supabase__list_tables"
+      "mcp__supabase__list_tables",
+      "Bash(npm view:*)"
     ],
     "deny": [],
     "ask": []

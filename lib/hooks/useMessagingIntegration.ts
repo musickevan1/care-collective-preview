@@ -193,8 +193,8 @@ export function useMessagingIntegration(userId?: string): UseMessagingIntegratio
       .subscribe();
 
     return () => {
-      messagesSubscription.unsubscribe();
-      conversationsSubscription.unsubscribe();
+      supabase.removeChannel(messagesSubscription);
+      supabase.removeChannel(conversationsSubscription);
     };
   }, [userId, supabase, fetchMessagingData]);
 

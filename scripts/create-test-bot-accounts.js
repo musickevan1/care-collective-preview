@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Create Beta Test Users Script
- * Creates approved test users for beta testing the Care Collective platform
+ * Create Test Bot Accounts Script
+ * Creates test bot accounts for automated testing without affecting real beta users
  */
 
 const { createClient } = require('@supabase/supabase-js')
@@ -22,49 +22,35 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1)
 }
 
-// Beta test users configuration
-const BETA_USERS = [
+// Test bot accounts configuration
+const TEST_BOTS = [
   {
-    email: 'tmbarakat1958@gmail.com',
-    password: 'CareTest2024!Terry',
-    name: 'Terry Barakat',
+    email: 'playwright.testbot.alpha@gmail.com',
+    password: 'TestBot123!',
+    name: '[TEST] Bot Alpha',
     location: 'Springfield, MO',
     is_admin: false,
   },
   {
-    email: 'ariadne.miranda.phd@gmail.com',
-    password: 'CareTest2024!Ariadne',
-    name: 'Ariadne Miranda',
+    email: 'playwright.testbot.beta@gmail.com',
+    password: 'TestBot123!',
+    name: '[TEST] Bot Beta',
     location: 'Springfield, MO',
     is_admin: false,
   },
   {
-    email: 'cconaway@missouristate.edu',
-    password: 'CareTest2024!Christy',
-    name: 'Christy Conaway',
-    location: 'Springfield, MO',
-    is_admin: false,
-  },
-  {
-    email: 'templemk@gmail.com',
-    password: 'CareTest2024!Keith',
-    name: 'Keith Templeman',
-    location: 'Springfield, MO',
-    is_admin: false,
-  },
-  {
-    email: 'dianemusick@att.net',
-    password: 'CareTest2024!Diane',
-    name: 'Diane Musick',
-    location: 'Springfield, MO',
+    email: 'playwright.testbot.gamma@gmail.com',
+    password: 'TestBot123!',
+    name: '[TEST] Bot Gamma',
+    location: 'Branson, MO',
     is_admin: false,
   },
 ]
 
-async function createBetaUser(supabase, userConfig) {
-  const { email, password, name, location, is_admin } = userConfig
+async function createTestBot(supabase, botConfig) {
+  const { email, password, name, location, is_admin } = botConfig
 
-  console.log(`\n👤 Creating user: ${name} (${email})`)
+  console.log(`\n🤖 Creating test bot: ${name} (${email})`)
 
   try {
     // 1. Create the auth user
@@ -74,15 +60,21 @@ async function createBetaUser(supabase, userConfig) {
       email_confirm: true, // Auto-confirm email
       user_metadata: {
         name,
-        role: is_admin ? 'admin' : 'user'
+        role: is_admin ? 'admin' : 'user',
+        is_test_bot: true, // Flag as test bot
+        created_by: 'automated_testing',
       }
     })
 
     let userId
 
     if (authError) {
+      console.error(`   ❌ Auth Error: ${authError.message}`)
+      console.error(`   Error Code: ${authError.code || 'N/A'}`)
+      console.error(`   Error Details:`, JSON.stringify(authError, null, 2))
+
       if (authError.message.includes('User already registered') || authError.code === 'email_exists') {
-        console.log('   ⚠️  User already exists, updating...')
+        console.log('   ⚠️  Test bot already exists, updating...')
 
         // Get existing user
         const { data: users } = await supabase.auth.admin.listUsers()
@@ -90,17 +82,21 @@ async function createBetaUser(supabase, userConfig) {
 
         if (existingUser) {
           userId = existingUser.id
-          console.log(`   ✅ Found existing user: ${userId}`)
+          console.log(`   ✅ Found existing test bot: ${userId}`)
 
-          // Update password
+          // Update password and metadata
           await supabase.auth.admin.updateUserById(userId, {
             password,
             email_confirm: true,
-            user_metadata: { name, role: is_admin ? 'admin' : 'user' }
+            user_metadata: {
+              name,
+              role: is_admin ? 'admin' : 'user',
+              is_test_bot: true,
+              created_by: 'automated_testing',
+            }
           })
         }
       } else {
-        console.error(`   ❌ Error creating user: ${authError.message}`)
         return null
       }
     } else {
@@ -140,8 +136,9 @@ async function createBetaUser(supabase, userConfig) {
   }
 }
 
-async function createAllBetaUsers() {
-  console.log('🚀 Creating beta test users for Care Collective...\n')
+async function createAllTestBots() {
+  console.log('🤖 Creating test bot accounts for Care Collective testing...\n')
+  console.log('⚠️  These accounts are flagged as test bots and should NOT be used by real users\n')
 
   // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -153,38 +150,39 @@ async function createAllBetaUsers() {
 
   const results = []
 
-  for (const userConfig of BETA_USERS) {
-    const userId = await createBetaUser(supabase, userConfig)
-    results.push({ ...userConfig, userId, success: !!userId })
+  for (const botConfig of TEST_BOTS) {
+    const userId = await createTestBot(supabase, botConfig)
+    results.push({ ...botConfig, userId, success: !!userId })
   }
 
   // Summary
   console.log('\n' + '='.repeat(60))
-  console.log('🎉 Beta User Creation Complete!')
+  console.log('🎉 Test Bot Creation Complete!')
   console.log('='.repeat(60))
 
-  console.log('\n📋 Created Users:')
+  console.log('\n📋 Created Test Bots:')
   results.forEach(({ name, email, password, location, userId, success }) => {
     if (success) {
-      console.log(`\n   ✅ ${name}`)
+      console.log(`\n   🤖 ${name}`)
       console.log(`      Email: ${email}`)
       console.log(`      Password: ${password}`)
       console.log(`      Location: ${location}`)
       console.log(`      User ID: ${userId}`)
+      console.log(`      🏷️  Flagged as: TEST BOT`)
     } else {
       console.log(`\n   ❌ ${name} - FAILED`)
     }
   })
 
   const successCount = results.filter(r => r.success).length
-  console.log(`\n📊 Success Rate: ${successCount}/${results.length} users created`)
+  console.log(`\n📊 Success Rate: ${successCount}/${results.length} test bots created`)
 
-  console.log('\n🔗 Next Steps:')
-  console.log(`   1. Visit: ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/login`)
-  console.log('   2. Login with any of the credentials above')
-  console.log('   3. Test help requests: /requests/new')
-  console.log('   4. Test messaging: /messages')
-  console.log('   5. Test dashboard: /dashboard')
+  console.log('\n🔗 Use These Credentials for Testing:')
+  console.log(`   URL: ${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/login`)
+  console.log('   Email: testbot1@carecollective.test')
+  console.log('   Password: TestBot123!')
+
+  console.log('\n⚠️  Remember: These are test accounts and can be safely deleted')
 }
 
-createAllBetaUsers().catch(console.error)
+createAllTestBots().catch(console.error)
