@@ -42,3 +42,12 @@ next-env.d.ts
 
 # beta testing - credentials with real data
 docs/beta/BETA_CREDENTIALS.md
+docs/beta/CREDENTIALS_SUMMARY.md
+docs/beta/BETA_WELCOME_EMAIL_SIMPLE.md
+docs/beta/EMAIL_TO_MAUREEN_SIMPLE.md
+docs/beta/archive/*EMAIL*.md
+docs/beta/archive/*CREDENTIALS*.md
+docs/beta/emails/
+BETA_LAUNCH_READY.md
+*CREDENTIALS*.md
+*_PASSWORDS_*.md
