@@ -10,7 +10,7 @@ import {
   Heart,
   Star,
   Sprout,
-  Hands,
+  HandHelping,
   GraduationCap,
   Home,
   BookOpen,
@@ -274,7 +274,7 @@ export default function HomePage(): ReactElement {
                 <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
                   <div className="text-center mb-6">
                     <div className="flex justify-center mb-4">
-                      <Hands className="w-12 h-12 text-sage-dark" aria-label="Offering support" />
+                      <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Offering support" />
                     </div>
                     <h3 className="text-2xl font-bold text-foreground mb-4">Our Story</h3>
                   </div>
