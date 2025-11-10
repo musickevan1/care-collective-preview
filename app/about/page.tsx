@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export const metadata = {
-  title: 'About Us - Care Collective',
+  title: 'About Us - CARE Collective',
   description: 'Learn about the CARE Collective mission, vision, values, and community standards for family caregivers in Southwest Missouri.',
 };
 
@@ -27,7 +27,7 @@ export default function AboutPage(): ReactElement {
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">About CARE Collective</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Building stronger communities through caregiver support and mutual aid
+            Building stronger communities through caregiver support and mutual assistance
           </p>
         </div>
 
@@ -37,7 +37,7 @@ export default function AboutPage(): ReactElement {
             <CardContent className="p-8">
               <p className="text-lg text-foreground leading-relaxed">
                 The CARE Collective is a network of family caregivers in Southwest Missouri who support each other
-                through mutual aid, practical help, and shared resources. Together, we are building a space where
+                through mutual assistance, practical help, and shared resources. Together, we are building a space where
                 caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
               </p>
             </CardContent>

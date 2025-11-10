@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { RequestsListWithModal } from '@/components/help-requests/RequestsListWithModal'
+import { ClipboardList } from 'lucide-react'
 import Link from 'next/link'
 
 // Force dynamic rendering
@@ -242,7 +243,9 @@ export default async function MyRequestsPage({ searchParams }: PageProps) {
         {requests.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
-              <div className="text-6xl mb-4">📋</div>
+              <div className="flex justify-center mb-4">
+                <ClipboardList className="w-16 h-16 text-primary" aria-hidden="true" />
+              </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 {statusFilter === 'all'
                   ? "No Requests Yet"

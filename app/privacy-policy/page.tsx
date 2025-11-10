@@ -9,7 +9,7 @@ import { Shield, Eye, Lock, Database, UserCheck, AlertCircle } from 'lucide-reac
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Privacy Policy - Care Collective',
+  title: 'Privacy Policy - CARE Collective',
   description: 'Privacy Policy for the CARE Collective mutual aid platform. Learn how we protect your data and privacy.',
 };
 

@@ -9,6 +9,7 @@ import { DiagnosticPanel } from '@/components/DiagnosticPanel'
 import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
 import { FormattedDate } from '@/components/FormattedDate'
 import Link from 'next/link'
+import { HandHeart, Handshake, Sparkles } from 'lucide-react'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
@@ -327,7 +328,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
-                <span className="text-xl">🙋‍♀️</span>
+                <div className="flex justify-center">
+                  <HandHeart className="w-6 h-6 text-primary fill-primary" aria-label="Need help" />
+                </div>
                 Need Help?
               </CardTitle>
               <CardDescription className="text-sm">
@@ -346,7 +349,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
-                <span className="text-xl">🤝</span>
+                <div className="flex justify-center">
+                  <Handshake className="w-6 h-6 text-sage-dark" aria-label="Want to help" />
+                </div>
                 Want to Help?
               </CardTitle>
               <CardDescription className="text-sm">
@@ -525,8 +530,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <div className="text-6xl mb-4">🌟</div>
-                  <h3 className="text-lg font-medium text-secondary mb-2">Welcome to Care Collective!</h3>
+                  <div className="flex justify-center mb-4">
+                    <Sparkles className="w-12 h-12 text-accent" aria-label="Welcome" />
+                  </div>
+                  <h3 className="text-lg font-medium text-secondary mb-2">Welcome to CARE Collective!</h3>
                   <p className="text-muted-foreground mb-4">
                     You&apos;re all set up. Start by creating your first help request or browse what others need.
                   </p>

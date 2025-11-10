@@ -4,7 +4,7 @@ import { AlertTriangle, Shield, FileText, Scale } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Terms of Service - Care Collective',
+  title: 'Terms of Service - CARE Collective',
   description: 'Terms of Service and user agreement for the CARE Collective mutual aid platform.',
 };
 

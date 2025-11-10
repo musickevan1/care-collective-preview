@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Mail } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ReactElement } from 'react'
@@ -160,7 +161,9 @@ export default function VerifyEmailPage(): ReactElement {
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <Card>
           <CardHeader className="text-center">
-            <div className="text-6xl mb-4">📧</div>
+            <div className="flex justify-center mb-4">
+              <Mail className="w-16 h-16 text-primary" aria-hidden="true" />
+            </div>
             <CardTitle className="text-2xl">Email Verification Required</CardTitle>
             <CardDescription>
               Please verify your email to access all platform features
@@ -168,7 +171,7 @@ export default function VerifyEmailPage(): ReactElement {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-900 mb-2">Welcome to Care Collective, {profile?.name}!</h3>
+              <h3 className="font-semibold text-blue-900 mb-2">Welcome to CARE Collective, {profile?.name}!</h3>
               <p className="text-blue-800 text-sm mb-3">
                 Your application has been approved! To access all features of the platform including 
                 creating help requests and messaging other members, please verify your email address.
@@ -192,7 +195,7 @@ export default function VerifyEmailPage(): ReactElement {
             <div className="space-y-4">
               <h3 className="font-semibold text-foreground">How to verify your email:</h3>
               <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
-                <li>Check your email inbox for a message from Care Collective</li>
+                <li>Check your email inbox for a message from CARE Collective</li>
                 <li>Click the verification link in the email</li>
                 <li>You&apos;ll be automatically redirected back to the platform</li>
                 <li>Start connecting with your community!</li>

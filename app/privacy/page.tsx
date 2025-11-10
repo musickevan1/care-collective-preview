@@ -51,6 +51,6 @@ export default async function PrivacyPage(): Promise<ReactElement> {
 }
 
 export const metadata = {
-  title: 'Privacy Settings - Care Collective',
-  description: 'Manage your privacy settings and control how your data is shared in the Care Collective community'
+  title: 'Privacy Settings - CARE Collective',
+  description: 'Manage your privacy settings and control how your data is shared in the CARE Collective community'
 };

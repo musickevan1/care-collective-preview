@@ -3,11 +3,12 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import Image from 'next/image'
+import { HandHeart, Handshake, Home, Users, ClipboardList } from 'lucide-react'
 
 const workflows = [
   {
     title: "For Those Needing Help",
-    icon: "🙋‍♀️",
+    icon: "hand-heart",
     steps: [
       { number: 1, title: "Create an Account", description: "Sign up with your email and complete your profile" },
       { number: 2, title: "Post a Request", description: "Click 'Create Help Request' and describe what you need" },
@@ -19,7 +20,7 @@ const workflows = [
   },
   {
     title: "For Those Offering Help",
-    icon: "🤝",
+    icon: "handshake",
     steps: [
       { number: 1, title: "Browse Requests", description: "View all open help requests in your community" },
       { number: 2, title: "Find a Match", description: "Look for requests that match your skills and availability" },
@@ -123,7 +124,12 @@ export default function WorkflowsPage() {
             <Card key={workflow.title} className="h-full">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">{workflow.icon}</span>
+                  {workflow.icon === 'hand-heart' && (
+                    <HandHeart className="w-7 h-7 text-sage-dark" aria-label="Hand with heart icon" />
+                  )}
+                  {workflow.icon === 'handshake' && (
+                    <Handshake className="w-7 h-7 text-sage-dark" aria-label="Handshake icon" />
+                  )}
                   {workflow.title}
                 </CardTitle>
               </CardHeader>
@@ -161,23 +167,34 @@ export default function WorkflowsPage() {
               {[
                 { icon: '🛒', label: 'Groceries' },
                 { icon: '🚗', label: 'Transportation' },
-                { icon: '🏠', label: 'Household' },
+                { icon: 'home', label: 'Household' },
                 { icon: '💊', label: 'Medical' },
                 { icon: '🍽️', label: 'Meals' },
                 { icon: '👶', label: 'Childcare' },
                 { icon: '🐾', label: 'Pet Care' },
                 { icon: '💻', label: 'Technology' },
-                { icon: '👥', label: 'Companionship' },
+                { icon: 'users', label: 'Companionship' },
                 { icon: '💆', label: 'Respite Care' },
                 { icon: '💝', label: 'Emotional Support' },
-                { icon: '📋', label: 'Other' }
+                { icon: 'clipboard-list', label: 'Other' }
               ].map((category) => (
-                <Badge 
-                  key={category.label} 
-                  variant="outline" 
+                <Badge
+                  key={category.label}
+                  variant="outline"
                   className="py-2 px-3 justify-center text-center"
                 >
-                  <span className="mr-1">{category.icon}</span>
+                  {category.icon === 'home' && (
+                    <Home className="w-5 h-5 mr-1 inline" aria-label="Home icon" />
+                  )}
+                  {category.icon === 'users' && (
+                    <Users className="w-5 h-5 mr-1 inline" aria-label="Users icon" />
+                  )}
+                  {category.icon === 'clipboard-list' && (
+                    <ClipboardList className="w-5 h-5 mr-1 inline" aria-label="Clipboard list icon" />
+                  )}
+                  {!['home', 'users', 'clipboard-list'].includes(category.icon) && (
+                    <span className="mr-1">{category.icon}</span>
+                  )}
                   {category.label}
                 </Badge>
               ))}

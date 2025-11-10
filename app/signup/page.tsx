@@ -105,7 +105,7 @@ export default function SignUpPage() {
             <CardHeader className="text-center">
               <CardTitle className="text-2xl text-foreground">Application Submitted!</CardTitle>
               <CardDescription>
-                Thank you for your interest in joining Care Collective
+                Thank you for your interest in joining CARE Collective
               </CardDescription>
             </CardHeader>
             <CardContent className="text-center space-y-4">
@@ -167,7 +167,7 @@ export default function SignUpPage() {
                 className="rounded-lg"
               />
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Join Care Collective</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Join CARE Collective</h1>
             <p className="text-muted-foreground">Create your account to start helping your community</p>
           </div>
         </div>
@@ -255,18 +255,18 @@ export default function SignUpPage() {
 
               <div className="space-y-2">
                 <label htmlFor="applicationReason" className="text-sm font-medium text-foreground">
-                  Why do you want to join Care Collective? (Optional)
+                  Why do you want to join CARE Collective? (Optional)
                 </label>
                 <Textarea
                   id="applicationReason"
                   value={applicationReason}
                   onChange={(e) => setApplicationReason(e.target.value)}
-                  placeholder="Tell us briefly why you're interested in joining our mutual aid community..."
+                  placeholder="Tell us briefly why you're interested in joining our mutual support community..."
                   disabled={loading}
                   rows={3}
                 />
                 <p className="text-xs text-muted-foreground">
-                  This helps us understand your interest in community mutual aid
+                  This helps us understand your interest in community mutual support
                 </p>
               </div>
 

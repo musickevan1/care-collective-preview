@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { OptimizedQueries } from '@/lib/db-cache'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { ClipboardList, Users, Handshake, Shield, BarChart3, TrendingUp, FileText, Bug } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -140,7 +141,10 @@ export default async function AdminDashboard() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Admin Notice */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-8">
-          <h2 className="text-base sm:text-lg font-semibold text-blue-900 mb-1 sm:mb-2">🛡️ Admin Dashboard</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-blue-900 mb-1 sm:mb-2 flex items-center gap-2">
+            <Shield className="w-5 h-5" aria-hidden="true" />
+            Admin Dashboard
+          </h2>
           <p className="text-sm sm:text-base text-blue-800">
             Complete admin oversight with user management, request moderation, and community statistics.
           </p>
@@ -200,38 +204,45 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent className="space-y-3">
             <Link href="/admin/applications">
-              <Button variant="outline" className="w-full justify-start">
-                📋 Review Applications
+              <Button variant="outline" className="w-full justify-start gap-2">
+                <ClipboardList className="w-4 h-4" aria-hidden="true" />
+                Review Applications
               </Button>
             </Link>
             <Link href="/admin/users">
-              <Button variant="outline" className="w-full justify-start">
-                👥 Manage Users
+              <Button variant="outline" className="w-full justify-start gap-2">
+                <Users className="w-4 h-4" aria-hidden="true" />
+                Manage Users
               </Button>
             </Link>
             <Link href="/admin/help-requests">
-              <Button variant="outline" className="w-full justify-start">
-                🤝 Review Help Requests
+              <Button variant="outline" className="w-full justify-start gap-2">
+                <Handshake className="w-4 h-4" aria-hidden="true" />
+                Review Help Requests
               </Button>
             </Link>
             <Link href="/admin/performance">
-              <Button variant="outline" className="w-full justify-start">
-                📊 Performance Dashboard
+              <Button variant="outline" className="w-full justify-start gap-2">
+                <BarChart3 className="w-4 h-4" aria-hidden="true" />
+                Performance Dashboard
               </Button>
             </Link>
             <Link href="/admin/reports">
-              <Button variant="outline" className="w-full justify-start">
-                📈 Admin Reports & Analytics
+              <Button variant="outline" className="w-full justify-start gap-2">
+                <TrendingUp className="w-4 h-4" aria-hidden="true" />
+                Admin Reports & Analytics
               </Button>
             </Link>
             <Link href="/admin/cms">
-              <Button variant="outline" className="w-full justify-start">
-                📝 Content Management (CMS)
+              <Button variant="outline" className="w-full justify-start gap-2">
+                <FileText className="w-4 h-4" aria-hidden="true" />
+                Content Management (CMS)
               </Button>
             </Link>
             <Link href="/admin/bug-reports">
-              <Button variant="outline" className="w-full justify-start">
-                🐛 Bug Reports
+              <Button variant="outline" className="w-full justify-start gap-2">
+                <Bug className="w-4 h-4" aria-hidden="true" />
+                Bug Reports
               </Button>
             </Link>
           </CardContent>

@@ -6,7 +6,7 @@ import { ContactForm } from '@/components/ContactForm';
 import { Button } from '@/components/ui/button';
 
 export const metadata = {
-  title: 'Contact Us - Care Collective',
+  title: 'Contact Us - CARE Collective',
   description: 'Get in touch with the CARE Collective team for questions, concerns, or support.',
 };
 

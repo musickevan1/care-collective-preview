@@ -1,13 +1,16 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Sprout } from 'lucide-react'
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="text-center max-w-lg mx-auto p-8">
         {/* Friendly search icon */}
-        <div className="text-6xl mb-6">🌱</div>
+        <div className="flex justify-center mb-6">
+          <Sprout className="w-16 h-16 text-sage" aria-hidden="true" />
+        </div>
         
         <h1 className="text-2xl font-bold text-foreground mb-4">
           This page isn&apos;t here

@@ -19,7 +19,7 @@ export default async function AccessDeniedPage({ searchParams }: AccessDeniedPag
   const messages = {
     rejected: {
       title: 'Application Not Approved',
-      description: 'Your application to join the Care Collective has been reviewed.',
+      description: 'Your application to join the CARE Collective has been reviewed.',
       icon: '🚫',
       color: 'yellow',
       details: 'After careful review, we\'re unable to approve your membership at this time. This decision is made to ensure the safety and trust of our community.',
@@ -30,7 +30,7 @@ export default async function AccessDeniedPage({ searchParams }: AccessDeniedPag
       description: 'You do not have administrator privileges for this area.',
       icon: '🔒',
       color: 'red',
-      details: 'This section is restricted to Care Collective administrators only.',
+      details: 'This section is restricted to CARE Collective administrators only.',
       action: 'If you need admin access, please contact a current administrator.',
     },
     session_invalidated: {
@@ -39,7 +39,7 @@ export default async function AccessDeniedPage({ searchParams }: AccessDeniedPag
       icon: '⏱️',
       color: 'blue',
       details: 'This may occur if your account status changed or you logged in from another device.',
-      action: 'Please log in again to continue using Care Collective.',
+      action: 'Please log in again to continue using CARE Collective.',
     },
     default: {
       title: 'Access Denied',

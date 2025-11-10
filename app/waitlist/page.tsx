@@ -190,7 +190,7 @@ export default function WaitlistPage(): ReactElement {
       <main className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-primary">Welcome to Care Collective!</CardTitle>
+            <CardTitle className="text-2xl text-primary">Welcome to CARE Collective!</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <div className="text-6xl mb-4">🎉</div>
@@ -333,7 +333,7 @@ export default function WaitlistPage(): ReactElement {
                 
                 <div className="space-y-2">
                   <label htmlFor="applicationReason" className="text-sm font-medium text-foreground">
-                    Brief reason for joining Care Collective *
+                    Brief reason for joining CARE Collective *
                   </label>
                   <Textarea
                     id="applicationReason"
@@ -385,7 +385,7 @@ export default function WaitlistPage(): ReactElement {
             <div className="space-y-3 text-sm">
               <p>
                 <strong>What happens next?</strong><br/>
-                Our team reviews applications to ensure Care Collective remains a safe, 
+                Our team reviews applications to ensure CARE Collective remains a safe,
                 trusted community for mutual aid in Southwest Missouri.
               </p>
               <p>

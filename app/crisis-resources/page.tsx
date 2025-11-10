@@ -411,6 +411,6 @@ export default function ResourcesPage(): ReactElement {
 }
 
 export const metadata = {
-  title: 'Crisis Resources - Care Collective',
+  title: 'Crisis Resources - CARE Collective',
   description: 'Crisis support resources, hotlines, and community mental health services'
 };

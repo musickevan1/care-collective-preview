@@ -119,7 +119,7 @@ export default function LoginPage() {
               />
             </div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-            <p className="text-muted-foreground">Sign in to your Care Collective account</p>
+            <p className="text-muted-foreground">Sign in to your CARE Collective account</p>
           </div>
         </div>
 

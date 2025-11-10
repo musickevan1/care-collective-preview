@@ -3,6 +3,19 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ReactElement } from 'react'
+import {
+  Users,
+  HandHeart,
+  Handshake,
+  Heart,
+  Star,
+  Sprout,
+  Hands,
+  GraduationCap,
+  Home,
+  BookOpen,
+  Mail
+} from 'lucide-react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
 import { Button } from '@/components/ui/button'
@@ -104,7 +117,7 @@ export default function HomePage(): ReactElement {
                       </div>
                       <div>
                         <h4 className="text-lg font-semibold text-foreground mb-1">Resource Sharing Workshop</h4>
-                        <p className="text-muted-foreground">Learn about mutual aid principles</p>
+                        <p className="text-muted-foreground">Learn about mutual assistance principles</p>
                       </div>
                     </div>
                   </div>
@@ -151,7 +164,9 @@ export default function HomePage(): ReactElement {
                   <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">
                     1
                   </div>
-                  <div className="text-5xl mb-6 mt-4">👥</div>
+                  <div className="flex justify-center mb-6 mt-4">
+                    <Users className="w-12 h-12 text-sage-dark" aria-label="Community members" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-4">Join the Community</h3>
                   <p className="text-muted-foreground">
                     Sign up with your basic information to become part of our trusted community network.
@@ -162,7 +177,9 @@ export default function HomePage(): ReactElement {
                   <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">
                     2
                   </div>
-                  <div className="text-5xl mb-6 mt-4">🙋‍♀️</div>
+                  <div className="flex justify-center mb-6 mt-4">
+                    <HandHeart className="w-12 h-12 text-primary fill-primary" aria-label="Request or offer help" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-4">Request or Offer Help</h3>
                   <p className="text-muted-foreground">
                     Post what you need help with, or browse requests to see how you can assist others.
@@ -173,7 +190,9 @@ export default function HomePage(): ReactElement {
                   <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">
                     3
                   </div>
-                  <div className="text-5xl mb-6 mt-4">🤝</div>
+                  <div className="flex justify-center mb-6 mt-4">
+                    <Handshake className="w-12 h-12 text-sage-dark" aria-label="Connect with neighbors" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-4">Connect with Neighbors</h3>
                   <p className="text-muted-foreground">
                     Build meaningful relationships while giving and receiving support in your community.
@@ -207,24 +226,32 @@ export default function HomePage(): ReactElement {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
                 <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
-                  <div className="text-5xl mb-4">🤝</div>
+                  <div className="flex justify-center mb-4">
+                    <Handshake className="w-12 h-12 text-sage-dark" aria-label="Community connection" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">Community</h3>
                   <p className="text-muted-foreground">Building real connections between neighbors</p>
                 </div>
                 <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
-                  <div className="text-5xl mb-4">💖</div>
+                  <div className="flex justify-center mb-4">
+                    <Heart className="w-12 h-12 text-primary fill-primary" aria-label="Support and care" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">Support</h3>
                   <p className="text-muted-foreground">Practical help when you need it most</p>
                 </div>
                 <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
-                  <div className="text-5xl mb-4">🌟</div>
+                  <div className="flex justify-center mb-4">
+                    <Star className="w-12 h-12 text-accent" aria-label="Trust and quality" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">Trust</h3>
                   <p className="text-muted-foreground">Safe and welcoming environment</p>
                 </div>
                 <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
-                  <div className="text-5xl mb-4">🌱</div>
+                  <div className="flex justify-center mb-4">
+                    <Sprout className="w-12 h-12 text-sage" aria-label="Growth and nurturing" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">Growth</h3>
-                  <p className="text-muted-foreground">Stronger communities through mutual aid</p>
+                  <p className="text-muted-foreground">Stronger communities through mutual support</p>
                 </div>
               </div>
             </div>
@@ -239,14 +266,16 @@ export default function HomePage(): ReactElement {
                 About CARE Collective
               </h2>
               <p className="text-xl font-medium text-muted-foreground mb-12 max-w-3xl mx-auto">
-                Building stronger communities through caregiver support and mutual aid
+                Building stronger communities through caregiver support and mutual assistance
               </p>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
                 {/* Main Content */}
                 <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
                   <div className="text-center mb-6">
-                    <div className="text-5xl mb-4">🤲</div>
+                    <div className="flex justify-center mb-4">
+                      <Hands className="w-12 h-12 text-sage-dark" aria-label="Offering support" />
+                    </div>
                     <h3 className="text-2xl font-bold text-foreground mb-4">Our Story</h3>
                   </div>
                   <div className="text-left space-y-4">
@@ -266,7 +295,9 @@ export default function HomePage(): ReactElement {
                 {/* Academic Partnership */}
                 <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
                   <div className="text-center mb-6">
-                    <div className="text-5xl mb-4">🎓</div>
+                    <div className="flex justify-center mb-4">
+                      <GraduationCap className="w-12 h-12 text-dusty-rose-accessible" aria-label="Academic partnership" />
+                    </div>
                     <h3 className="text-2xl font-bold text-dusty-rose-accessible mb-4">Academic Partnership</h3>
                   </div>
                   <div className="bg-dusty-rose-light/30 p-6 rounded-lg">
@@ -312,28 +343,36 @@ export default function HomePage(): ReactElement {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
                 {/* Essentials */}
                 <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
-                  <div className="text-5xl mb-4">🏠</div>
+                  <div className="flex justify-center mb-4">
+                    <Home className="w-12 h-12 text-sage-dark" aria-label="Essential needs" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">Essentials</h3>
                   <p className="text-muted-foreground">Food, housing, and everyday needs</p>
                 </div>
 
                 {/* Well-Being */}
                 <div className="text-center p-6 border-2 border-dusty-rose-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-dusty-rose transition-all">
-                  <div className="text-5xl mb-4">💖</div>
+                  <div className="flex justify-center mb-4">
+                    <Heart className="w-12 h-12 text-dusty-rose fill-dusty-rose" aria-label="Well-being support" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">Well-Being</h3>
                   <p className="text-muted-foreground">Emotional health and caregiving support</p>
                 </div>
 
                 {/* Community */}
                 <div className="text-center p-6 border-2 border-primary-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-primary transition-all">
-                  <div className="text-5xl mb-4">👥</div>
+                  <div className="flex justify-center mb-4">
+                    <Users className="w-12 h-12 text-primary" aria-label="Community programs" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">Community</h3>
                   <p className="text-muted-foreground">Local programs and connections</p>
                 </div>
 
                 {/* Learning */}
                 <div className="text-center p-6 border-2 border-accent-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-accent transition-all">
-                  <div className="text-5xl mb-4">📚</div>
+                  <div className="flex justify-center mb-4">
+                    <BookOpen className="w-12 h-12 text-accent" aria-label="Educational resources" />
+                  </div>
                   <h3 className="text-xl font-bold text-foreground mb-2">Learning</h3>
                   <p className="text-muted-foreground">Training and educational programs</p>
                 </div>
@@ -366,7 +405,9 @@ export default function HomePage(): ReactElement {
                 {/* Email */}
                 <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
                   <div className="text-center mb-6">
-                    <div className="text-5xl mb-4">📧</div>
+                    <div className="flex justify-center mb-4">
+                      <Mail className="w-12 h-12 text-sage-dark" aria-label="Email contact" />
+                    </div>
                     <h3 className="text-2xl font-bold text-foreground mb-4">Email Us</h3>
                   </div>
                   <div className="text-center">

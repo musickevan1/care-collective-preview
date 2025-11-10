@@ -40,7 +40,7 @@ export default function HelpPage(): ReactElement {
             Help & Support
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            We're here to help you connect with your community and provide mutual aid safely and effectively.
+            We're here to help you connect with your community and provide mutual support safely and effectively.
           </p>
         </div>
 
@@ -117,7 +117,7 @@ export default function HelpPage(): ReactElement {
                 <CardContent className="p-4">
                   <h3 className="font-medium text-secondary mb-2">Getting Started</h3>
                   <p className="text-sm text-muted-foreground mb-3">
-                    New to Care Collective? Learn how to create your first help request or offer assistance.
+                    New to CARE Collective? Learn how to create your first help request or offer assistance.
                   </p>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
@@ -195,7 +195,7 @@ export default function HelpPage(): ReactElement {
                 <CardContent className="p-4">
                   <h3 className="font-medium text-secondary mb-2">Safety Tips</h3>
                   <p className="text-sm text-muted-foreground mb-3">
-                    Best practices for safe mutual aid interactions.
+                    Best practices for safe mutual support interactions.
                   </p>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
@@ -296,6 +296,6 @@ export default function HelpPage(): ReactElement {
 }
 
 export const metadata = {
-  title: 'Help & Support - Care Collective',
-  description: 'Get help using the Care Collective platform and find community support resources'
+  title: 'Help & Support - CARE Collective',
+  description: 'Get help using the CARE Collective platform and find community support resources'
 };

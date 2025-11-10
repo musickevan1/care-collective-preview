@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Rocket, ClipboardList } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -57,8 +58,9 @@ export default function AdminSignupPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-secondary">
-            🚀 Create Admin Account
+          <CardTitle className="text-2xl font-bold text-secondary flex items-center justify-center gap-2">
+            <Rocket className="w-6 h-6" aria-hidden="true" />
+            Create Admin Account
           </CardTitle>
           <CardDescription>
             Phase 2.3 Admin Panel Setup
@@ -122,7 +124,10 @@ export default function AdminSignupPage() {
           </form>
 
           <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-            <h4 className="font-semibold text-blue-900 mb-2">📋 Next Steps:</h4>
+            <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+              <ClipboardList className="w-4 h-4" aria-hidden="true" />
+              Next Steps:
+            </h4>
             <ol className="text-sm text-blue-800 space-y-1">
               <li>1. Create your admin account here</li>
               <li>2. Check email for verification link</li>

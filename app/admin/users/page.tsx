@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { UserDetailModal } from '@/components/admin/UserDetailModal'
 import { UserActionDropdown } from '@/components/admin/UserActionDropdown'
 import { BulkUserActions } from '@/components/admin/BulkUserActions'
+import { Users, MapPin, Calendar, Phone, Shield } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Database } from '@/lib/database.types'
@@ -155,7 +156,10 @@ export default function UsersPage(): ReactElement {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Admin Notice */}
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-8">
-          <h2 className="text-base sm:text-lg font-semibold text-green-900 mb-1 sm:mb-2">🛡️ User Management Panel</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-green-900 mb-1 sm:mb-2 flex items-center gap-2">
+            <Shield className="w-5 h-5" aria-hidden="true" />
+            User Management Panel
+          </h2>
           <p className="text-sm sm:text-base text-green-800">
             Full administrative capabilities: manage user verification, view detailed activity, and perform user actions.
           </p>
@@ -278,19 +282,19 @@ export default function UsersPage(): ReactElement {
                         <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-500 mb-2">
                           {user.location && (
                             <span className="whitespace-nowrap flex items-center gap-1">
-                              <span className="text-gray-400">📍</span>
+                              <MapPin className="w-3 h-3 text-gray-400" aria-hidden="true" />
                               <span>{user.location}</span>
                             </span>
                           )}
-                          
+
                           <span className="whitespace-nowrap flex items-center gap-1">
-                            <span className="text-gray-400">📅</span>
+                            <Calendar className="w-3 h-3 text-gray-400" aria-hidden="true" />
                             <span>{formatTimeAgo(user.created_at)}</span>
                           </span>
-                          
+
                           {user.phone && (
                             <span className="whitespace-nowrap flex items-center gap-1">
-                              <span className="text-gray-400">📞</span>
+                              <Phone className="w-3 h-3 text-gray-400" aria-hidden="true" />
                               <span>{user.phone}</span>
                             </span>
                           )}
@@ -324,13 +328,15 @@ export default function UsersPage(): ReactElement {
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="text-6xl mb-4">👥</div>
+                <div className="flex justify-center mb-4">
+                  <Users className="w-16 h-16 text-gray-400" aria-hidden="true" />
+                </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                   {state.searchTerm || state.filterStatus !== 'all' ? 'No users match your criteria' : 'No users found'}
                 </h3>
                 <p className="text-gray-600">
-                  {state.searchTerm || state.filterStatus !== 'all' 
-                    ? 'Try adjusting your search or filter settings.' 
+                  {state.searchTerm || state.filterStatus !== 'all'
+                    ? 'Try adjusting your search or filter settings.'
                     : 'No users have registered yet.'}
                 </p>
               </div>

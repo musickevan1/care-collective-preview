@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export const metadata = {
-  title: 'Community Resources - Care Collective',
+  title: 'Community Resources - CARE Collective',
   description: 'Trusted local and regional organizations offering practical support, guidance, and connection in Southwest Missouri.',
 };
 

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/StatusBadge'
+import { ClipboardList, Shield, User, MapPin, Handshake, Clock } from 'lucide-react'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
@@ -104,7 +105,10 @@ export default async function AdminHelpRequestsPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Admin Notice */}
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-8">
-          <h2 className="text-base sm:text-lg font-semibold text-green-900 mb-1 sm:mb-2">🛡️ Admin Panel</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-green-900 mb-1 sm:mb-2 flex items-center gap-2">
+            <Shield className="w-5 h-5" aria-hidden="true" />
+            Admin Panel
+          </h2>
           <p className="text-sm sm:text-base text-green-800">
             Full administrative capabilities: change request status, assign helpers, and maintain audit logs.
           </p>
@@ -115,7 +119,8 @@ export default async function AdminHelpRequestsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                📋 Total
+                <ClipboardList className="w-4 h-4 text-gray-600" aria-hidden="true" />
+                Total
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -126,7 +131,8 @@ export default async function AdminHelpRequestsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                🟢 Open
+                <div className="w-3 h-3 rounded-full bg-green-500" aria-hidden="true" />
+                Open
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -137,7 +143,8 @@ export default async function AdminHelpRequestsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                🔵 In Progress
+                <div className="w-3 h-3 rounded-full bg-blue-500" aria-hidden="true" />
+                In Progress
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -148,7 +155,8 @@ export default async function AdminHelpRequestsPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                ✅ Completed
+                <div className="w-3 h-3 rounded-full bg-gray-500" aria-hidden="true" />
+                Completed
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -208,23 +216,23 @@ export default async function AdminHelpRequestsPage() {
                       
                       <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-gray-500">
                         <span className="whitespace-nowrap flex items-center gap-1">
-                          <span className="text-gray-400">👤</span>
+                          <User className="w-3 h-3 text-gray-400" aria-hidden="true" />
                           <span className="font-medium text-gray-700">{request.profiles?.name || 'Anonymous'}</span>
                         </span>
                         {request.profiles?.location && (
                           <span className="whitespace-nowrap flex items-center gap-1">
-                            <span className="text-gray-400">📍</span>
+                            <MapPin className="w-3 h-3 text-gray-400" aria-hidden="true" />
                             <span>{request.profiles.location}</span>
                           </span>
                         )}
                         {request.helper && (
                           <span className="whitespace-nowrap flex items-center gap-1">
-                            <span className="text-green-500">🤝</span>
+                            <Handshake className="w-3 h-3 text-green-500" aria-hidden="true" />
                             <span className="font-medium text-green-700">{request.helper.name}</span>
                           </span>
                         )}
                         <span className="whitespace-nowrap flex items-center gap-1">
-                          <span className="text-gray-400">🕒</span>
+                          <Clock className="w-3 h-3 text-gray-400" aria-hidden="true" />
                           <span>{formatTimeAgo(request.created_at)}</span>
                         </span>
                       </div>
@@ -238,7 +246,9 @@ export default async function AdminHelpRequestsPage() {
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="text-6xl mb-4">📋</div>
+                <div className="flex justify-center mb-4">
+                  <ClipboardList className="w-16 h-16 text-gray-400" aria-hidden="true" />
+                </div>
                 <h3 className="text-lg font-medium text-foreground mb-2">
                   No help requests found
                 </h3>

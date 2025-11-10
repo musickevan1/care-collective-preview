@@ -10,6 +10,7 @@ import { FilterPanel } from '@/components/FilterPanel'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { getOptimizedHelpRequests, type OptimizedHelpRequest } from '@/lib/queries/help-requests-optimized'
 import { RequestsListWithModal } from '@/components/help-requests/RequestsListWithModal'
+import { Handshake } from 'lucide-react'
 import Link from 'next/link'
 
 // Force dynamic rendering - no caching for authenticated pages
@@ -385,7 +386,9 @@ export default async function RequestsPage({ searchParams }: PageProps) {
         ) : !safeRequests || safeRequests.length === 0 ? (
           <Card className="text-center py-12">
             <CardContent>
-              <div className="text-6xl mb-4">🤝</div>
+              <div className="flex justify-center mb-4">
+                <Handshake className="w-16 h-16 text-sage" aria-hidden="true" />
+              </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">No Active Requests</h3>
               <p className="text-muted-foreground mb-6">
                 There are no active help requests at the moment. Check back soon or create your own request.
