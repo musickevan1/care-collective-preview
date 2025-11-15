@@ -104,23 +104,7 @@ export default function Hero(): ReactElement {
             </Link>
           </div>
 
-          {/* Community Stats - Placeholder for future implementation */}
-          <div className="mt-12 pt-8 border-t border-sage/10 animate-fade-in-up delay-600">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
-              <div className="text-center group cursor-default">
-                <div className="text-3xl font-black text-sage-dark group-hover:scale-105 transition-transform duration-200">150+</div>
-                <div className="text-sm text-muted-foreground font-medium">Community Members</div>
-              </div>
-              <div className="text-center group cursor-default">
-                <div className="text-3xl font-black text-dusty-rose-dark group-hover:scale-105 transition-transform duration-200">89</div>
-                <div className="text-sm text-muted-foreground font-medium">Help Requests Fulfilled</div>
-              </div>
-              <div className="text-center group cursor-default">
-                <div className="text-3xl font-black text-terracotta group-hover:scale-105 transition-transform duration-200">12</div>
-                <div className="text-sm text-muted-foreground font-medium">Active This Week</div>
-              </div>
-            </div>
-          </div>
+          {/* Community stats removed - will be added when real data is available */}
 
           {/* Scroll Indicator */}
           <div className="mt-12 animate-pulse">

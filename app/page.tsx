@@ -22,6 +22,7 @@ import { MobileNav } from '@/components/MobileNav'
 import { Button } from '@/components/ui/button'
 import { useAuthNavigation } from '@/lib/hooks/useAuthNavigation'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
+import WhatsHappeningSection from '@/components/WhatsHappeningSection'
 
 export default function HomePage(): ReactElement {
   const { isAuthenticated, displayName, isLoading } = useAuthNavigation()
@@ -332,49 +333,7 @@ export default function HomePage(): ReactElement {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
                 What's Happening
               </h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto text-left">
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
-                    Upcoming Events
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm">
-                      <div className="bg-sage-dark text-white px-3 py-2 rounded-lg text-sm font-bold text-center min-w-[60px] flex-shrink-0 shadow-md">
-                        Jan 15
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground mb-1">Community Meet & Greet</h4>
-                        <p className="text-muted-foreground">Join us for coffee and connection</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm">
-                      <div className="bg-sage-dark text-white px-3 py-2 rounded-lg text-sm font-bold text-center min-w-[60px] flex-shrink-0 shadow-md">
-                        Jan 22
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground mb-1">Resource Sharing Workshop</h4>
-                        <p className="text-muted-foreground">Learn about mutual assistance principles</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
-                    Community Updates
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm">
-                      <h4 className="text-lg font-semibold text-foreground mb-1">Welcome New Members!</h4>
-                      <p className="text-muted-foreground">15 new community members joined this week</p>
-                    </div>
-                    <div className="p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm">
-                      <h4 className="text-lg font-semibold text-foreground mb-1">Help Requests Fulfilled</h4>
-                      <p className="text-muted-foreground">23 successful connections made this month</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <WhatsHappeningSection />
 
               <div className="mt-12">
                 <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
