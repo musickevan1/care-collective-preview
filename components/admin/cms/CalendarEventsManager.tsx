@@ -123,11 +123,20 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
         ? `/api/admin/cms/calendar-events/${editingId}`
         : '/api/admin/cms/calendar-events';
 
+      // Convert datetime-local format to ISO 8601 with timezone
+      const formatDateForAPI = (dateStr: string) => {
+        if (!dateStr) return dateStr;
+        // datetime-local gives us "2025-12-15T10:00", need "2025-12-15T10:00:00.000Z"
+        return dateStr.includes('Z') ? dateStr : `${dateStr}:00.000Z`;
+      };
+
       const response = await fetch(url, {
         method: editingId ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          start_date: formatDateForAPI(formData.start_date),
+          end_date: formatDateForAPI(formData.end_date),
           category_id: formData.category_id || null,
           max_attendees: formData.max_attendees || null,
         }),

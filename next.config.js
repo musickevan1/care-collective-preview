@@ -221,9 +221,8 @@ const nextConfig = {
       },
     }
 
-    // Tree shaking optimization
-    config.optimization.usedExports = true
-    config.optimization.sideEffects = false
+    // Tree shaking is handled automatically by Next.js
+    // Manual usedExports/sideEffects settings conflict with cacheUnaffected
 
     return config
   },
