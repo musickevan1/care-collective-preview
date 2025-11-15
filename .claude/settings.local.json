@@ -59,7 +59,10 @@
       "Bash(tee:*)",
       "Bash(npx playwright test --headed=false --project=chromium -g \"test request detail page\")",
       "mcp__supabase__list_tables",
-      "Bash(npm view:*)"
+      "Bash(npm view:*)",
+      "Bash(while read file)",
+      "Bash(do wc -l \"$file\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

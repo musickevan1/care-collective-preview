@@ -1,3 +1,0 @@
-Deployment trigger: 2025-10-06 15:30 CDT
-Reason: Force fresh deployment after RLS bug fix
-Previous deployment may have cached old middleware behavior

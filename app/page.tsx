@@ -20,7 +20,7 @@ import {
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
 import { Button } from '@/components/ui/button'
-import { useAuthNavigation } from '@/lib/hooks/useAuthNavigation'
+import { useAuthNavigation } from '@/hooks/useAuthNavigation'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 import WhatsHappeningSection from '@/components/WhatsHappeningSection'
 

@@ -4,7 +4,7 @@ import React, { useState, useMemo, useCallback, memo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LogoutButton } from '@/components/LogoutButton'
-import { useAuthNavigation } from '@/lib/hooks/useAuthNavigation'
+import { useAuthNavigation } from '@/hooks/useAuthNavigation'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
 interface MobileNavProps {
