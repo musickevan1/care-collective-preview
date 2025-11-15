@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { ReactElement } from 'react'
 import {
   Users,
-  HandHeart,
+  Hand,
   Handshake,
   Heart,
   Star,
@@ -178,7 +178,7 @@ export default function HomePage(): ReactElement {
                     2
                   </div>
                   <div className="flex justify-center mb-6 mt-4">
-                    <HandHeart className="w-12 h-12 text-primary fill-primary" aria-label="Request or offer help" />
+                    <Hand className="w-12 h-12 text-primary" aria-label="Request or offer help" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground mb-4">Request or Offer Help</h3>
                   <p className="text-muted-foreground">
