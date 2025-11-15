@@ -62,7 +62,7 @@ export default function Hero(): ReactElement {
           {/* Subtitle with Enhanced Typography */}
           <div className="mb-8 animate-fade-in-up delay-300">
             <p className="text-xl md:text-3xl lg:text-4xl text-sage-dark mb-4 font-bold tracking-wide">
-              Building community through mutual aid
+              Building community through mutual support
             </p>
             <div className="w-24 h-1 bg-gradient-to-r from-dusty-rose to-sage mx-auto rounded-full"></div>
           </div>
@@ -125,10 +125,10 @@ export default function Hero(): ReactElement {
           {/* Scroll Indicator */}
           <div className="mt-12 animate-pulse">
             <Link
-              href="#mission"
+              href="#how-it-works"
               onClick={handleSmoothScroll}
               className="inline-block text-sage-dark hover:text-sage transition-all duration-300 hover:scale-110"
-              aria-label="Scroll to learn more about our mission"
+              aria-label="Scroll to learn how it works"
             >
               <svg className="w-6 h-6 mx-auto opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />

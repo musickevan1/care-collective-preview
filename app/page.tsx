@@ -14,7 +14,8 @@ import {
   GraduationCap,
   Home,
   BookOpen,
-  Mail
+  Mail,
+  MapPin
 } from 'lucide-react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
@@ -50,9 +51,10 @@ export default function HomePage(): ReactElement {
             <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
               <ul className="flex items-center gap-3 xl:gap-4 list-none">
                 <li><Link href="#home" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Home</Link></li>
-                <li><Link href="#whats-happening" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What's Happening</Link></li>
                 <li><Link href="#how-it-works" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">How It Works</Link></li>
+                <li><Link href="#why-join" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Why Join?</Link></li>
                 <li><Link href="#about" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">About Us</Link></li>
+                <li><Link href="#whats-happening" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What's Happening</Link></li>
                 <li><Link href="#resources-preview" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Resources</Link></li>
                 <li><Link href="#contact-preview" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Contact Us</Link></li>
               </ul>
@@ -89,71 +91,11 @@ export default function HomePage(): ReactElement {
         {/* Enhanced Hero Section */}
         <Hero />
 
-        {/* What's Happening Section */}
-        <section id="whats-happening" className="py-16 md:py-20 bg-white">
-          <div className="container mx-auto px-4 max-w-7xl">
-            <div className="text-center">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
-                What's Happening
-              </h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto text-left">
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
-                    Upcoming Events
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="flex gap-4 p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
-                      <div className="bg-sage-dark text-white px-3 py-2 rounded-lg text-sm font-bold text-center min-w-[60px] flex-shrink-0 shadow-md">
-                        Jan 15
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground mb-1">Community Meet & Greet</h4>
-                        <p className="text-muted-foreground">Join us for coffee and connection</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-4 p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
-                      <div className="bg-sage-dark text-white px-3 py-2 rounded-lg text-sm font-bold text-center min-w-[60px] flex-shrink-0 shadow-md">
-                        Jan 22
-                      </div>
-                      <div>
-                        <h4 className="text-lg font-semibold text-foreground mb-1">Resource Sharing Workshop</h4>
-                        <p className="text-muted-foreground">Learn about mutual assistance principles</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
-                    Community Updates
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
-                      <h4 className="text-lg font-semibold text-foreground mb-1">Welcome New Members!</h4>
-                      <p className="text-muted-foreground">15 new community members joined this week</p>
-                    </div>
-                    <div className="p-4 bg-background rounded-lg border-l-4 border-dusty-rose">
-                      <h4 className="text-lg font-semibold text-foreground mb-1">Help Requests Fulfilled</h4>
-                      <p className="text-muted-foreground">23 successful connections made this month</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-12">
-                <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
-                  <span>View All in Member Portal</span>
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Terra Cotta Divider */}
+        <div className="h-1 bg-primary w-full" />
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="py-16 md:py-20 bg-gradient-to-br from-sage-light to-green-50">
+        <section id="how-it-works" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
@@ -212,54 +154,105 @@ export default function HomePage(): ReactElement {
           </div>
         </section>
 
-        {/* Mission Section */}
-        <section id="mission" className="py-16 md:py-20 bg-white">
+        {/* Terra Cotta Divider */}
+        <div className="h-1 bg-primary w-full" />
+
+        {/* Why Join CARE Collective Section */}
+        <section id="why-join" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
-                Our Mission
+                Why Join CARE Collective?
               </h2>
-              <p className="text-xl font-medium text-foreground mb-12 max-w-3xl mx-auto">
-                To connect caregivers with one another for the exchange of practical help,
-                shared resources, and mutual support.
+              <p className="text-xl font-medium text-muted-foreground mb-12 max-w-3xl mx-auto">
+                Discover the benefits of being part of our caregiver community
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {/* Community Building */}
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
                   <div className="flex justify-center mb-4">
-                    <Handshake className="w-12 h-12 text-sage-dark" aria-label="Community connection" />
+                    <Users className="w-12 h-12 text-sage-dark" aria-label="Community building" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">Community</h3>
-                  <p className="text-muted-foreground">Building real connections between neighbors</p>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Community Building</h3>
+                  <p className="text-muted-foreground">
+                    Connect with neighbors who understand the unique challenges of caregiving
+                  </p>
                 </div>
-                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+
+                {/* Practical Help */}
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
                   <div className="flex justify-center mb-4">
-                    <Heart className="w-12 h-12 text-primary fill-primary" aria-label="Support and care" />
+                    <HandHelping className="w-12 h-12 text-primary" aria-label="Practical help" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">Support</h3>
-                  <p className="text-muted-foreground">Practical help when you need it most</p>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Practical Help</h3>
+                  <p className="text-muted-foreground">
+                    Exchange real support for everyday needs like groceries, transportation, and household tasks
+                  </p>
                 </div>
-                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+
+                {/* Resource Sharing */}
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
                   <div className="flex justify-center mb-4">
-                    <Star className="w-12 h-12 text-accent" aria-label="Trust and quality" />
+                    <BookOpen className="w-12 h-12 text-accent" aria-label="Resource sharing" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">Trust</h3>
-                  <p className="text-muted-foreground">Safe and welcoming environment</p>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Resource Sharing</h3>
+                  <p className="text-muted-foreground">
+                    Access community knowledge, local resources, and trusted information
+                  </p>
                 </div>
-                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+
+                {/* Emotional Support */}
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
                   <div className="flex justify-center mb-4">
-                    <Sprout className="w-12 h-12 text-sage" aria-label="Growth and nurturing" />
+                    <Heart className="w-12 h-12 text-dusty-rose fill-dusty-rose" aria-label="Emotional support" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">Growth</h3>
-                  <p className="text-muted-foreground">Stronger communities through mutual support</p>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Emotional Support</h3>
+                  <p className="text-muted-foreground">
+                    Find understanding, encouragement, and connection from those who truly get it
+                  </p>
                 </div>
+
+                {/* Local Connections */}
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
+                  <div className="flex justify-center mb-4">
+                    <MapPin className="w-12 h-12 text-sage" aria-label="Local connections" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Local Connections</h3>
+                  <p className="text-muted-foreground">
+                    Build relationships with people in your Missouri community who are close by
+                  </p>
+                </div>
+
+                {/* Sustainable Caregiving */}
+                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
+                  <div className="flex justify-center mb-4">
+                    <Sprout className="w-12 h-12 text-sage-dark" aria-label="Sustainable caregiving" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Sustainable Caregiving</h3>
+                  <p className="text-muted-foreground">
+                    Create lasting networks of mutual support that help prevent caregiver burnout
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-12">
+                <Link href="/signup" className="inline-flex items-center justify-center bg-sage text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-sage-dark transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sage/20 min-h-[48px] group">
+                  <span>Join Our Community</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
+        {/* Terra Cotta Divider */}
+        <div className="h-1 bg-primary w-full" />
+
         {/* About Section */}
-        <section id="about" className="py-16 md:py-20 bg-gradient-to-br from-dusty-rose-light to-pink-50">
+        <section id="about" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
@@ -329,8 +322,77 @@ export default function HomePage(): ReactElement {
           </div>
         </section>
 
+        {/* Terra Cotta Divider */}
+        <div className="h-1 bg-primary w-full" />
+
+        {/* What's Happening Section */}
+        <section id="whats-happening" className="py-16 md:py-20 bg-background">
+          <div className="container mx-auto px-4 max-w-7xl">
+            <div className="text-center">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
+                What's Happening
+              </h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto text-left">
+                <div>
+                  <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
+                    Upcoming Events
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm">
+                      <div className="bg-sage-dark text-white px-3 py-2 rounded-lg text-sm font-bold text-center min-w-[60px] flex-shrink-0 shadow-md">
+                        Jan 15
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-foreground mb-1">Community Meet & Greet</h4>
+                        <p className="text-muted-foreground">Join us for coffee and connection</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm">
+                      <div className="bg-sage-dark text-white px-3 py-2 rounded-lg text-sm font-bold text-center min-w-[60px] flex-shrink-0 shadow-md">
+                        Jan 22
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-foreground mb-1">Resource Sharing Workshop</h4>
+                        <p className="text-muted-foreground">Learn about mutual assistance principles</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
+                    Community Updates
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm">
+                      <h4 className="text-lg font-semibold text-foreground mb-1">Welcome New Members!</h4>
+                      <p className="text-muted-foreground">15 new community members joined this week</p>
+                    </div>
+                    <div className="p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm">
+                      <h4 className="text-lg font-semibold text-foreground mb-1">Help Requests Fulfilled</h4>
+                      <p className="text-muted-foreground">23 successful connections made this month</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-12">
+                <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
+                  <span>View All in Member Portal</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Terra Cotta Divider */}
+        <div className="h-1 bg-primary w-full" />
+
         {/* Resources Preview Section */}
-        <section id="resources-preview" className="py-16 md:py-20 bg-white">
+        <section id="resources-preview" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
@@ -342,7 +404,7 @@ export default function HomePage(): ReactElement {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
                 {/* Essentials */}
-                <div className="text-center p-6 border-2 border-sage-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-sage transition-all">
+                <div className="text-center bg-white p-6 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
                   <div className="flex justify-center mb-4">
                     <Home className="w-12 h-12 text-sage-dark" aria-label="Essential needs" />
                   </div>
@@ -351,7 +413,7 @@ export default function HomePage(): ReactElement {
                 </div>
 
                 {/* Well-Being */}
-                <div className="text-center p-6 border-2 border-dusty-rose-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-dusty-rose transition-all">
+                <div className="text-center bg-white p-6 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
                   <div className="flex justify-center mb-4">
                     <Heart className="w-12 h-12 text-dusty-rose fill-dusty-rose" aria-label="Well-being support" />
                   </div>
@@ -360,7 +422,7 @@ export default function HomePage(): ReactElement {
                 </div>
 
                 {/* Community */}
-                <div className="text-center p-6 border-2 border-primary-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-primary transition-all">
+                <div className="text-center bg-white p-6 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
                   <div className="flex justify-center mb-4">
                     <Users className="w-12 h-12 text-primary" aria-label="Community programs" />
                   </div>
@@ -369,7 +431,7 @@ export default function HomePage(): ReactElement {
                 </div>
 
                 {/* Learning */}
-                <div className="text-center p-6 border-2 border-accent-light rounded-lg hover:transform hover:-translate-y-2 hover:shadow-xl hover:border-accent transition-all">
+                <div className="text-center bg-white p-6 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
                   <div className="flex justify-center mb-4">
                     <BookOpen className="w-12 h-12 text-accent" aria-label="Educational resources" />
                   </div>
@@ -390,8 +452,11 @@ export default function HomePage(): ReactElement {
           </div>
         </section>
 
+        {/* Terra Cotta Divider */}
+        <div className="h-1 bg-primary w-full" />
+
         {/* Contact Preview Section */}
-        <section id="contact-preview" className="py-16 md:py-20 bg-gradient-to-br from-sage-light to-green-50">
+        <section id="contact-preview" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
