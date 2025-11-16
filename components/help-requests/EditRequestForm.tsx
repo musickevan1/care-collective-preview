@@ -19,13 +19,13 @@ import { Loader2 } from 'lucide-react'
 interface HelpRequest {
   id: string
   title: string
-  description?: string
+  description?: string | null
   category: string
-  subcategory?: string
+  subcategory?: string | null
   urgency: string
-  location_override?: string
-  location_privacy?: string
-  exchange_offer?: string
+  location_override?: string | null
+  location_privacy?: string | null
+  exchange_offer?: string | null
   status: string
 }
 

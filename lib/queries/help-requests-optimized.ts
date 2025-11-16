@@ -20,11 +20,15 @@ export interface OptimizedHelpRequest {
   title: string
   description: string | null
   category: string
+  subcategory?: string | null
   urgency: string
   status: string
   created_at: string
   user_id: string
   helper_id: string | null
+  location_override?: string | null
+  location_privacy?: string | null
+  exchange_offer?: string | null
   // Nested profiles from foreign key join (RLS now fixed)
   profiles: {
     name: string
