@@ -9,7 +9,7 @@
 'use client'
 
 import { ReactElement } from 'react'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Drawer, DrawerContent } from '@/components/ui/drawer'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { RequestDetailContent } from './RequestDetailContent'
@@ -50,22 +50,20 @@ export function RequestDetailModal({
   if (isDesktop) {
     return (
       <Dialog open={open} onOpenChange={(open) => !open && handleClose()}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          {/* Close button for better UX */}
-          <button
-            onClick={handleClose}
-            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-            aria-label="Close"
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </button>
+        <DialogContent className="max-w-3xl max-h-[90vh] p-0 overflow-hidden flex flex-col">
+          {/* Fixed Header */}
+          <DialogHeader className="px-6 py-4 border-b bg-background flex-shrink-0">
+            <DialogTitle>Request Details</DialogTitle>
+          </DialogHeader>
 
-          <RequestDetailContent
-            request={request}
-            currentUserId={currentUserId}
-            helpRequestMessagingStatus={helpRequestMessagingStatus}
-          />
+          {/* Scrollable Content Area */}
+          <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 min-h-0">
+            <RequestDetailContent
+              request={request}
+              currentUserId={currentUserId}
+              helpRequestMessagingStatus={helpRequestMessagingStatus}
+            />
+          </div>
         </DialogContent>
       </Dialog>
     )
@@ -74,9 +72,9 @@ export function RequestDetailModal({
   // Mobile: Drawer (Bottom Sheet)
   return (
     <Drawer open={open} onOpenChange={(open) => !open && handleClose()}>
-      <DrawerContent className="max-h-[95vh] overflow-y-auto">
+      <DrawerContent className="max-h-[95vh] overflow-hidden flex flex-col">
         {/* Header with close button for mobile */}
-        <div className="sticky top-0 bg-background border-b px-4 py-3 flex items-center justify-between z-10">
+        <div className="bg-background border-b px-4 py-3 flex items-center justify-between flex-shrink-0">
           <h2 className="text-lg font-semibold">Request Details</h2>
           <Button
             variant="ghost"
@@ -88,7 +86,8 @@ export function RequestDetailModal({
           </Button>
         </div>
 
-        <div className="p-4">
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 min-h-0">
           <RequestDetailContent
             request={request}
             currentUserId={currentUserId}
@@ -99,3 +98,4 @@ export function RequestDetailModal({
     </Drawer>
   )
 }
+

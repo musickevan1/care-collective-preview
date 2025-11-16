@@ -244,27 +244,27 @@ export function HelpRequestCardWithMessaging({
           )}
 
           {/* Requester Info and Actions */}
-          <div className="flex items-center justify-between pt-3 border-t">
-            <div className="flex items-center gap-3">
-              <Avatar 
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t">
+            <div className="flex items-center gap-3 min-w-0">
+              <Avatar
                 name={request.profiles.name}
                 size="md"
-                className="bg-dusty-rose text-white"
+                className="bg-dusty-rose text-white flex-shrink-0"
               />
               <div className="min-w-0">
                 <p className="font-medium text-secondary">
                   {request.profiles.name}
                   {isOwnRequest && <span className="ml-2 text-xs text-muted-foreground">(You)</span>}
                 </p>
-                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
                   {request.profiles.location && (
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3" />
+                    <div className="flex items-center gap-1 min-w-0">
+                      <MapPin className="w-3 h-3 flex-shrink-0" />
                       <span className="truncate">{request.profiles.location}</span>
                     </div>
                   )}
                   <div className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
+                    <Clock className="w-3 h-3 flex-shrink-0" />
                     <time dateTime={request.created_at} title={new Date(request.created_at).toLocaleString()}>
                       <ClientOnly>
                         {formatDistanceToNow(new Date(request.created_at), { addSuffix: true })}
@@ -276,11 +276,11 @@ export function HelpRequestCardWithMessaging({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0 sm:ml-auto">
               {!isOwnRequest && request.status === 'open' ? (
-                <Button 
+                <Button
                   onClick={handleOfferHelp}
-                  className="bg-sage hover:bg-sage-dark text-white flex items-center gap-2"
+                  className="bg-sage hover:bg-sage-dark text-white flex items-center gap-2 w-full sm:w-auto"
                   size="sm"
                 >
                   <Heart className="w-4 h-4" />
@@ -291,7 +291,7 @@ export function HelpRequestCardWithMessaging({
                   variant="outline"
                   size="sm"
                   onClick={() => router.push(`/messages?help_request=${request.id}`)}
-                  className="flex items-center gap-2 border-sage/30 text-sage hover:bg-sage/5"
+                  className="flex items-center gap-2 border-sage/30 text-sage hover:bg-sage/5 w-full sm:w-auto"
                 >
                   <MessageCircle className="w-4 h-4" />
                   View Messages

@@ -118,10 +118,10 @@ export function RequestDetailContent({
   } : null
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0">
       {/* Messaging Status */}
       {helpRequestMessagingStatus.conversationCount > 0 && (
-        <div>
+        <div className="min-w-0">
           <MessagingStatusIndicator
             helpRequestId={request.id}
             status={helpRequestMessagingStatus}
@@ -177,33 +177,33 @@ export function RequestDetailContent({
           <div>
             <h3 className="font-semibold mb-2">Timeline</h3>
             <div className="text-sm space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Created:</span>
+              <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                <span className="text-muted-foreground flex-shrink-0">Created:</span>
                 <ClientOnly fallback={<span className="text-muted-foreground">Loading...</span>}>
-                  <span>{formatDate(request.created_at)}</span>
+                  <span className="text-right">{formatDate(request.created_at)}</span>
                 </ClientOnly>
               </div>
               {request.helped_at && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Help started:</span>
+                <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                  <span className="text-muted-foreground flex-shrink-0">Help started:</span>
                   <ClientOnly fallback={<span className="text-muted-foreground">Loading...</span>}>
-                    <span>{formatDate(request.helped_at)}</span>
+                    <span className="text-right">{formatDate(request.helped_at)}</span>
                   </ClientOnly>
                 </div>
               )}
               {request.completed_at && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Completed:</span>
+                <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                  <span className="text-muted-foreground flex-shrink-0">Completed:</span>
                   <ClientOnly fallback={<span className="text-muted-foreground">Loading...</span>}>
-                    <span>{formatDate(request.completed_at)}</span>
+                    <span className="text-right">{formatDate(request.completed_at)}</span>
                   </ClientOnly>
                 </div>
               )}
               {request.cancelled_at && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Cancelled:</span>
+                <div className="flex flex-wrap justify-between gap-x-4 gap-y-1">
+                  <span className="text-muted-foreground flex-shrink-0">Cancelled:</span>
                   <ClientOnly fallback={<span className="text-muted-foreground">Loading...</span>}>
-                    <span>{formatDate(request.cancelled_at)}</span>
+                    <span className="text-right">{formatDate(request.cancelled_at)}</span>
                   </ClientOnly>
                 </div>
               )}
