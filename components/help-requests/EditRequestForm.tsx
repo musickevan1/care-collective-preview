@@ -25,6 +25,7 @@ interface HelpRequest {
   urgency: string
   location_override?: string
   location_privacy?: string
+  exchange_offer?: string
   status: string
 }
 
@@ -58,6 +59,7 @@ export function EditRequestForm({ request, onSuccess, onCancel }: EditRequestFor
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [nothingToOffer, setNothingToOffer] = useState(!request.exchange_offer)
 
   // Form state initialized with existing request data
   const [formData, setFormData] = useState({
@@ -67,7 +69,8 @@ export function EditRequestForm({ request, onSuccess, onCancel }: EditRequestFor
     subcategory: request.subcategory || '',
     urgency: request.urgency,
     location_override: request.location_override || '',
-    location_privacy: request.location_privacy || 'public'
+    location_privacy: request.location_privacy || 'public',
+    exchange_offer: request.exchange_offer || ''
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,6 +109,12 @@ export function EditRequestForm({ request, onSuccess, onCancel }: EditRequestFor
       }
       if (formData.location_privacy !== (request.location_privacy || 'public')) {
         changes.location_privacy = formData.location_privacy
+        hasChanges = true
+      }
+      // Handle exchange_offer - if nothingToOffer is checked, we send null/empty
+      const newExchangeOffer = nothingToOffer ? '' : formData.exchange_offer
+      if (newExchangeOffer !== (request.exchange_offer || '')) {
+        changes.exchange_offer = newExchangeOffer || null
         hasChanges = true
       }
 
@@ -224,6 +233,60 @@ export function EditRequestForm({ request, onSuccess, onCancel }: EditRequestFor
         <p className="text-xs text-muted-foreground">
           {formData.description.length}/500 characters
         </p>
+      </div>
+
+      {/* Exchange Offer Section - Mutual Aid Reciprocity */}
+      <div className="space-y-3 p-4 bg-sage/5 border border-sage/20 rounded-lg">
+        <div>
+          <label htmlFor="exchange_offer" className="text-sm font-medium text-foreground">
+            What Can You Offer in Exchange? <span className="text-muted-foreground">(Optional)</span>
+          </label>
+          <p className="text-xs text-muted-foreground mt-1">
+            Mutual aid is about community members supporting each other.
+          </p>
+        </div>
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={nothingToOffer}
+            onChange={(e) => {
+              setNothingToOffer(e.target.checked)
+              if (e.target.checked) {
+                setFormData({ ...formData, exchange_offer: '' })
+              }
+            }}
+            disabled={loading}
+            className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-primary flex-shrink-0 mt-0.5"
+          />
+          <div>
+            <div className="text-sm font-medium text-foreground">I don&apos;t have anything to exchange right now</div>
+            <div className="text-xs text-muted-foreground">
+              That&apos;s completely okay
+            </div>
+          </div>
+        </label>
+
+        {!nothingToOffer && (
+          <div className="space-y-2">
+            <Textarea
+              id="exchange_offer"
+              value={formData.exchange_offer}
+              onChange={(e) => setFormData({ ...formData, exchange_offer: e.target.value })}
+              placeholder="e.g., Fresh tomatoes from my garden, can help with computer questions..."
+              maxLength={300}
+              rows={3}
+              disabled={loading}
+              className="resize-none"
+            />
+            <div className="flex justify-between items-center">
+              <p className="text-xs text-muted-foreground">
+                Share what you can - skills, produce, favors
+              </p>
+              <span className="text-xs text-muted-foreground">{formData.exchange_offer.length}/300</span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">

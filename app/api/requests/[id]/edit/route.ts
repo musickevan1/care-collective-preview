@@ -15,7 +15,8 @@ const editRequestSchema = z.object({
   subcategory: z.string().max(100).optional(),
   urgency: z.enum(['normal', 'urgent', 'critical']).optional(),
   location_override: z.string().max(200).optional(),
-  location_privacy: z.enum(['public', 'helpers_only', 'after_match']).optional()
+  location_privacy: z.enum(['public', 'helpers_only', 'after_match']).optional(),
+  exchange_offer: z.string().max(300, 'Exchange offer too long').nullable().optional()
 });
 
 /**

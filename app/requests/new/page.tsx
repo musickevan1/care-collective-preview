@@ -28,6 +28,8 @@ export default function NewRequestPage() {
   const [urgency, setUrgency] = useState('normal')
   const [locationOverride, setLocationOverride] = useState('')
   const [locationPrivacy, setLocationPrivacy] = useState('public')
+  const [exchangeOffer, setExchangeOffer] = useState('')
+  const [nothingToOffer, setNothingToOffer] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -104,7 +106,8 @@ export default function NewRequestPage() {
         category,
         urgency,
         location_override: locationOverride.trim() || null,
-        location_privacy: locationPrivacy
+        location_privacy: locationPrivacy,
+        exchange_offer: nothingToOffer ? null : (exchangeOffer.trim() || null)
       }
 
       const validatedData = helpRequestSchema.parse(formData)
@@ -122,6 +125,7 @@ export default function NewRequestPage() {
           user_id: user.id,
           location_override: validatedData.location_override || null,
           location_privacy: validatedData.location_privacy,
+          exchange_offer: validatedData.exchange_offer || null,
         })
 
       if (error) {
@@ -333,6 +337,63 @@ export default function NewRequestPage() {
                 </p>
                 {fieldErrors.description && (
                   <p className="text-sm text-red-600">{fieldErrors.description}</p>
+                )}
+              </div>
+
+              {/* Exchange Offer Section - Mutual Aid Reciprocity */}
+              <div className="space-y-3 p-4 bg-sage/5 border border-sage/20 rounded-lg">
+                <div>
+                  <label htmlFor="exchangeOffer" className="text-sm font-medium text-foreground">
+                    What Can You Offer in Exchange? (Optional)
+                  </label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Mutual aid is about community members supporting each other. If you have something to share in return (garden produce, a skill, a favor), let helpers know! This is completely optional.
+                  </p>
+                </div>
+
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={nothingToOffer}
+                    onChange={(e) => {
+                      setNothingToOffer(e.target.checked)
+                      if (e.target.checked) {
+                        setExchangeOffer('')
+                      }
+                    }}
+                    disabled={loading}
+                    className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-primary flex-shrink-0 mt-0.5"
+                  />
+                  <div>
+                    <div className="text-sm font-medium text-foreground">I don&apos;t have anything to exchange right now</div>
+                    <div className="text-xs text-muted-foreground">
+                      That&apos;s completely okay - accepting help is also a gift to the community
+                    </div>
+                  </div>
+                </label>
+
+                {!nothingToOffer && (
+                  <div className="space-y-2">
+                    <textarea
+                      id="exchangeOffer"
+                      value={exchangeOffer}
+                      onChange={(e) => setExchangeOffer(e.target.value)}
+                      placeholder="e.g., Fresh tomatoes from my garden, can help with computer questions, will bake cookies..."
+                      disabled={loading}
+                      rows={3}
+                      maxLength={300}
+                      className={`flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none ${fieldErrors.exchange_offer ? 'border-red-500' : ''}`}
+                    />
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-muted-foreground">
+                        Share what you can - skills, produce, favors, or anything else
+                      </p>
+                      <span className="text-xs text-muted-foreground">{exchangeOffer.length}/300</span>
+                    </div>
+                    {fieldErrors.exchange_offer && (
+                      <p className="text-sm text-red-600">{fieldErrors.exchange_offer}</p>
+                    )}
+                  </div>
                 )}
               </div>
 

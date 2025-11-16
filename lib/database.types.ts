@@ -838,6 +838,7 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           description: string | null
+          exchange_offer: string | null
           expires_at: string | null
           helped_at: string | null
           helper_id: string | null
@@ -859,6 +860,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           description?: string | null
+          exchange_offer?: string | null
           expires_at?: string | null
           helped_at?: string | null
           helper_id?: string | null
@@ -880,6 +882,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           description?: string | null
+          exchange_offer?: string | null
           expires_at?: string | null
           helped_at?: string | null
           helper_id?: string | null

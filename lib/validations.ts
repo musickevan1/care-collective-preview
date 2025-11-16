@@ -70,6 +70,13 @@ export const helpRequestSchema = z.object({
     .refine((desc) => !validator.contains(desc, '<script'), 'Invalid characters in description')
     .optional()
     .nullable(),
+  exchange_offer: z
+    .string()
+    .max(300, 'Exchange offer description too long (max 300 characters)')
+    .transform(sanitizeString)
+    .refine((offer) => !validator.contains(offer, '<script'), 'Invalid characters in exchange offer')
+    .optional()
+    .nullable(),
   category: categorySchema,
   urgency: urgencySchema,
   location_override: z

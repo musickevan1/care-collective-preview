@@ -47,6 +47,7 @@ interface HelpRequest {
   urgency: 'normal' | 'urgent' | 'critical';
   status: 'open' | 'in_progress' | 'closed';
   created_at: string;
+  exchange_offer?: string;
   profiles: {
     id: string;
     name: string;
@@ -214,6 +215,21 @@ export function HelpRequestCardWithMessaging({
             <p className="text-gray-600 mb-4 leading-relaxed">
               {request.description}
             </p>
+          )}
+
+          {/* Exchange Offer - Mutual Aid Indicator */}
+          {request.exchange_offer && (
+            <div className="mb-4 p-3 bg-sage/5 border border-sage/20 rounded-lg">
+              <div className="flex items-start gap-2">
+                <Heart className="w-4 h-4 text-sage mt-0.5 flex-shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-sage-dark mb-1">In exchange, I can offer:</p>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {request.exchange_offer}
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Critical Request Alert */}

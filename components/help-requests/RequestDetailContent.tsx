@@ -152,6 +152,19 @@ export function RequestDetailContent({
             </p>
           </div>
 
+          {/* Exchange Offer - Mutual Aid Reciprocity */}
+          {request.exchange_offer && (
+            <div className="p-4 bg-sage/5 border border-sage/20 rounded-lg">
+              <h3 className="font-semibold mb-2 text-sage-dark">In Exchange, I Can Offer:</h3>
+              <p className="text-foreground whitespace-pre-wrap">
+                {request.exchange_offer}
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                This is optional and not required to receive help
+              </p>
+            </div>
+          )}
+
           {/* Category */}
           <div>
             <h3 className="font-semibold mb-2">Category</h3>
