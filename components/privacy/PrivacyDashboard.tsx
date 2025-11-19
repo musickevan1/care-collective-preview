@@ -201,7 +201,8 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
     try {
       const exportId = await requestDataExport(userId, {
         request_type: exportType,
-        export_format: 'json'
+        export_format: 'json',
+        include_deleted_data: false
       })
 
       // Reload export requests
