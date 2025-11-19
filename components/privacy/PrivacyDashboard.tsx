@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ReactElement } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -80,30 +80,49 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
   const supabase = createClient()
 
-  useEffect(() => {
-    loadPrivacyData()
-  }, [userId])
-
-  const loadPrivacyData = async () => {
+  const loadPrivacyData = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
 
       // Load privacy settings
-      const settings = await getUserPrivacySettings(userId)
+      const { data: settings, error: settingsError } = await supabase
+        .from('user_privacy_settings')
+        .select('*')
+        .eq('user_id', userId)
+        .single()
+
+      if (settingsError && settingsError.code !== 'PGRST116') throw settingsError
       setPrivacySettings(settings)
 
       // Load sharing history
-      const history = await UserPrivacyControlsService.getInstance().getContactSharingHistory(userId, { limit: 20 })
-      setSharingHistory(history as ContactSharingHistoryItem[])
+      const { data: history, error: historyError } = await supabase
+        .from('contact_sharing_history')
+        .select(`
+          *,
+          help_requests (title),
+          shared_with_profile:profiles!contact_sharing_history_shared_with_user_id_fkey (name)
+        `)
+        .eq('user_id', userId)
+        .order('shared_at', { ascending: false })
+
+      if (historyError) throw historyError
+      setSharingHistory(history)
 
       // Load export requests
-      const exports = await UserPrivacyControlsService.getInstance().getDataExportRequests(userId)
+      const { data: exports, error: exportsError } = await supabase
+        .from('data_export_requests')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+
+      if (exportsError) throw exportsError
       setExportRequests(exports)
 
-      // Get encryption status
-      const encryption = getContactEncryptionStatus()
-      setEncryptionStatus(encryption)
+      // Check encryption status
+      // This would typically check if the user has set up their encryption keys
+      const hasKeys = localStorage.getItem(`enc_keys_${userId}`)
+      setEncryptionStatus(!!hasKeys)
 
       addBreadcrumb({
         message: 'Privacy dashboard loaded',
@@ -123,7 +142,11 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
     } finally {
       setLoading(false)
     }
-  }
+  }, [userId, supabase])
+
+  useEffect(() => {
+    loadPrivacyData()
+  }, [loadPrivacyData])
 
   const handleUpdateSettings = async (updates: Partial<UserPrivacySettings>) => {
     if (!privacySettings) return
@@ -651,7 +674,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
             <CardHeader>
               <CardTitle>Contact Sharing History</CardTitle>
               <CardDescription>
-                View and manage all instances where you've shared contact information
+                View and manage all instances where you&apos;ve shared contact information
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -659,7 +682,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
                 <div className="text-center py-8">
                   <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-muted-foreground mb-2">No Sharing History</h3>
-                  <p className="text-muted-foreground">You haven't shared contact information yet.</p>
+                  <p className="text-muted-foreground">You haven&apos;t shared contact information yet.</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -794,7 +817,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
                   <div className="text-center py-8">
                     <Download className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-muted-foreground mb-2">No Export Requests</h3>
-                    <p className="text-muted-foreground">You haven't requested any data exports yet.</p>
+                    <p className="text-muted-foreground">You haven&apos;t requested any data exports yet.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -906,7 +929,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
                         <AlertDialogTitle>Delete Account</AlertDialogTitle>
                         <AlertDialogDescription>
                           This will permanently delete your account and all associated data.
-                          Type "DELETE_MY_ACCOUNT" to confirm.
+                          Type &quot;DELETE_MY_ACCOUNT&quot; to confirm.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <div className="my-4">

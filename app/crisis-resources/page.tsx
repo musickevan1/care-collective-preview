@@ -35,7 +35,7 @@ export default function ResourcesPage(): ReactElement {
                   Emergency? Call 911 Immediately
                 </h3>
                 <p className="text-sm text-red-700 dark:text-red-300">
-                  If you're in immediate danger or having a medical emergency, call 911 or your local emergency services right away.
+                  If you&apos;re in immediate danger or having a medical emergency, call 911 or your local emergency services right away.
                 </p>
               </div>
             </div>
@@ -305,7 +305,7 @@ export default function ResourcesPage(): ReactElement {
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground mb-4">
-              You don't have to wait until things feel unbearable. Reach out for support if you're experiencing:
+              You don&apos;t have to wait until things feel unbearable. Reach out for support if you&apos;re experiencing:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div className="space-y-2">

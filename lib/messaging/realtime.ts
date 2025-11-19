@@ -460,6 +460,7 @@ export function useRealtimeMessaging(options: UseRealtimeMessagingOptions) {
     return () => {
       realtimeRef.current?.cleanup();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options.userId]);
 
   // Subscribe to specific conversation (only when online)

@@ -327,7 +327,7 @@ export default function PermissionsPage() {
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-500 text-white font-bold">1</div>
               <div>
                 <p className="font-medium">User Registration</p>
-                <p className="text-sm text-muted-foreground">Email signup → Supabase Auth → Profile created with 'pending' status</p>
+                <p className="text-sm text-muted-foreground">Email signup → Supabase Auth → Profile created with &apos;pending&apos; status</p>
               </div>
             </div>
             <div className="flex items-center gap-4">

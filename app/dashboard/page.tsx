@@ -480,7 +480,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                 </div>
               ) : (
                 <div className="text-center py-6">
-                  <p className="text-muted-foreground mb-3">You haven't created any requests yet</p>
+                  <p className="text-muted-foreground mb-3">You haven&apos;t created any requests yet</p>
                   <Link href="/requests/new">
                     <Button size="sm">Create Your First Request</Button>
                   </Link>

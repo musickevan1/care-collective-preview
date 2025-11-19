@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { OptimizedQueries } from '@/lib/db-cache'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ClipboardList, Users, Handshake, Shield, BarChart3, TrendingUp, FileText, Bug } from 'lucide-react'
+import { Users, Handshake, Shield, BarChart3, TrendingUp, FileText, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -205,7 +205,7 @@ export default async function AdminDashboard() {
           <CardContent className="space-y-3">
             <Link href="/admin/applications">
               <Button variant="outline" className="w-full justify-start gap-2">
-                <ClipboardList className="w-4 h-4" aria-hidden="true" />
+                <FileText className="w-4 h-4" aria-hidden="true" />
                 Review Applications
               </Button>
             </Link>
@@ -241,7 +241,7 @@ export default async function AdminDashboard() {
             </Link>
             <Link href="/admin/bug-reports">
               <Button variant="outline" className="w-full justify-start gap-2">
-                <Bug className="w-4 h-4" aria-hidden="true" />
+                <AlertCircle className="w-4 h-4" aria-hidden="true" />
                 Bug Reports
               </Button>
             </Link>

@@ -239,7 +239,7 @@ export default function WaitlistPage(): ReactElement {
               <div>
                 <CardTitle className="text-2xl">Application Status</CardTitle>
                 <CardDescription>
-                  Welcome {profile?.name}, here's your current status
+                  Welcome {profile?.name}, here&apos;s your current status
                 </CardDescription>
               </div>
               {profile && getStatusBadge(profile.verification_status)}
@@ -253,7 +253,7 @@ export default function WaitlistPage(): ReactElement {
                   <div>
                     <h3 className="font-semibold text-yellow-900 mb-1">Application Under Review</h3>
                     <p className="text-yellow-800 text-sm mb-2">
-                      Your application is currently being reviewed by our team. We'll notify you once a decision has been made.
+                      Your application is currently being reviewed by our team. We&apos;ll notify you once a decision has been made.
                     </p>
                     <p className="text-yellow-700 text-xs">
                       Applied on: {formatDate(profile.applied_at)}
@@ -279,7 +279,7 @@ export default function WaitlistPage(): ReactElement {
                       </div>
                     )}
                     <p className="text-red-700 text-sm mb-3">
-                      You can reapply by updating your information below and explaining how you've addressed any concerns.
+                      You can reapply by updating your information below and explaining how you&apos;ve addressed any concerns.
                     </p>
                     {!isReapplying && (
                       <Button 
@@ -348,7 +348,7 @@ export default function WaitlistPage(): ReactElement {
                     rows={4}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Please explain how you've addressed any concerns from your previous application.
+                    Please explain how you&apos;ve addressed any concerns from your previous application.
                   </p>
                 </div>
 

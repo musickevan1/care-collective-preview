@@ -288,7 +288,7 @@ export function FilterPanel({
           <span className="text-sm text-muted-foreground">Active filters:</span>
           {filters.search && (
             <Badge variant="secondary" className="text-xs">
-              Search: "{filters.search}"
+              Search: &quot;{filters.search}&quot;
               <Button
                 variant="ghost"
                 size="sm"

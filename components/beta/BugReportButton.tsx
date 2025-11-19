@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactElement, useState, useEffect } from 'react';
-import { Bug, X, Send } from 'lucide-react';
+import { AlertCircle, X, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface BugReportFormData {
@@ -109,7 +109,7 @@ export function BugReportButton(): ReactElement {
         aria-label="Report a bug"
         title="Report a bug or issue"
       >
-        <Bug className="w-5 h-5" />
+        <AlertCircle className="w-5 h-5" />
         <span className="hidden sm:inline font-medium">Report Bug</span>
       </button>
 
@@ -123,7 +123,7 @@ export function BugReportButton(): ReactElement {
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <Bug className="w-6 h-6 text-primary" />
+                <AlertCircle className="w-6 h-6 text-primary" />
                 <h2 className="text-2xl font-bold text-secondary">Report a Bug</h2>
               </div>
               <button
@@ -172,7 +172,7 @@ export function BugReportButton(): ReactElement {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                   <p className="mt-1 text-xs text-gray-600">
-                    Minimum 5 characters (e.g., "Cannot upload profile picture on mobile")
+                    Minimum 5 characters (e.g., &quot;Cannot upload profile picture on mobile&quot;)
                   </p>
                 </div>
 

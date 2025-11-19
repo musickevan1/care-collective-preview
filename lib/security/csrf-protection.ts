@@ -276,7 +276,7 @@ export function getSecurityHeaders(): Record<string, string> {
 export const csrfProtection = new CSRFProtection()
 export const rateLimiter = new RateLimiter()
 
-export default {
+const securityUtils = {
   CSRFProtection,
   CSPBuilder,
   RateLimiter,
@@ -284,3 +284,5 @@ export default {
   csrfProtection,
   rateLimiter
 }
+
+export default securityUtils

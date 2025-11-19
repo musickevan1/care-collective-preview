@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState, useCallback } from 'react'
 import { ErrorBoundary } from './ErrorBoundary'
 import { LoadingErrorState, NetworkErrorState } from './ErrorState'
 import { useAsyncErrorHandler } from '@/hooks/useErrorHandler'
@@ -43,7 +43,7 @@ export function SafeAsyncComponent<T>({
   
   const { executeAsync, isError, error: handlerError, clearError } = useAsyncErrorHandler(componentName)
 
-  const executeOperation = async () => {
+  const executeOperation = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }))
     clearError()
 
@@ -68,7 +68,7 @@ export function SafeAsyncComponent<T>({
         onError(finalError)
       }
     }
-  }
+  }, [asyncOperation, componentName, executeAsync, handlerError, onError, clearError])
 
   const handleRetry = async () => {
     if (attemptCount < retryCount) {
@@ -79,6 +79,7 @@ export function SafeAsyncComponent<T>({
 
   useEffect(() => {
     executeOperation()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [executeOperation, ...dependencies])
 
   // Loading state
@@ -233,7 +234,7 @@ export function useAsyncState<T>(
   
   const { executeAsync, isError, error: handlerError, clearError } = useAsyncErrorHandler(componentName)
 
-  const execute = async () => {
+  const execute = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }))
     clearError()
 
@@ -256,7 +257,7 @@ export function useAsyncState<T>(
       }))
       throw finalError
     }
-  }
+  }, [asyncOperation, componentName, executeAsync, handlerError, clearError])
 
   const retryOperation = async () => {
     if (retry && attemptCount < retryCount) {
@@ -269,6 +270,7 @@ export function useAsyncState<T>(
     if (immediate) {
       execute()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [execute, immediate, ...dependencies])
 
   return {

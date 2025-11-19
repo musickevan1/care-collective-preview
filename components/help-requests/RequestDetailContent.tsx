@@ -263,7 +263,7 @@ export function RequestDetailContent({
                 </p>
                 {!isOwner && canHelp && (
                   <p className="text-sm text-muted-foreground">
-                    Use the "Offer Help" button above to start messaging.
+                    Use the &quot;Offer Help&quot; button above to start messaging.
                   </p>
                 )}
               </div>

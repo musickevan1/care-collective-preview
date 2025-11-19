@@ -40,7 +40,7 @@ export default function HelpPage(): ReactElement {
             Help & Support
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            We're here to help you connect with your community and provide mutual support safely and effectively.
+            We&apos;re here to help you connect with your community and provide mutual support safely and effectively.
           </p>
         </div>
 
@@ -228,7 +228,7 @@ export default function HelpPage(): ReactElement {
           <CardContent>
             <div className="text-center mb-6">
               <p className="text-muted-foreground">
-                Can't find what you're looking for? Our community support team is here to help.
+                Can&apos;t find what you&apos;re looking for? Our community support team is here to help.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -269,7 +269,7 @@ export default function HelpPage(): ReactElement {
                 Need Immediate Support?
               </h3>
               <p className="text-muted-foreground mb-4">
-                If you're in crisis or need immediate assistance, we have resources to help.
+                If you&apos;re in crisis or need immediate assistance, we have resources to help.
               </p>
               <Button asChild>
                 <Link href="/resources" className="inline-flex items-center">

@@ -41,9 +41,9 @@ export function MessageBubble({
   onHeightMeasured,
   showSenderName = true,
   className,
-  showThreadIndicator = false, // eslint-disable-line @typescript-eslint/no-unused-vars
-  compact = false, // eslint-disable-line @typescript-eslint/no-unused-vars
-  onThreadOpen, // eslint-disable-line @typescript-eslint/no-unused-vars
+  showThreadIndicator = false,
+  compact = false,
+  onThreadOpen,
 }: MessageBubbleProps): ReactElement {
   const messageRef = useRef<HTMLDivElement>(null)
   const [isTouchDevice, setIsTouchDevice] = useState(false)
