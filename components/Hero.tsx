@@ -71,7 +71,7 @@ export default function Hero(): ReactElement {
           <div className="mb-10 animate-fade-in-up delay-400">
             <p className="text-lg md:text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
               A community for caregivers to exchange practical help, shared resources, and mutual support. 
-              Together, we're building a space where caregivers can find connection, strength, and the support they deserve.
+              Together, we&apos;re building a space where caregivers can find connection, strength, and the support they deserve.
             </p>
           </div>
 

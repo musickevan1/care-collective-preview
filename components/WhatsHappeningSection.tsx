@@ -127,7 +127,7 @@ export default function WhatsHappeningSection(): ReactElement {
                 Events Coming Soon
               </h4>
               <p className="text-muted-foreground">
-                We're planning exciting community gatherings. Check back soon!
+                We&apos;re planning exciting community gatherings. Check back soon!
               </p>
             </div>
           )}

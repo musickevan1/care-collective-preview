@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactElement, useEffect, useState } from 'react';
-import { X, Bug, MessageSquare } from 'lucide-react';
+import { ReactElement, useEffect, useState, useCallback } from 'react';
+import { X, AlertCircle, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const MODAL_STORAGE_KEY = 'beta_welcome_modal_shown';
@@ -34,6 +34,16 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
     }
   }, [forceOpen]);
 
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+    // Mark as shown permanently (only if not force-opened)
+    if (!forceOpen) {
+      localStorage.setItem(MODAL_STORAGE_KEY, 'true');
+    }
+    // Notify parent component if callback provided
+    onOpenChange?.(false);
+  }, [forceOpen, onOpenChange]);
+
   // ESC key handler for closing modal
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -46,17 +56,7 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
       window.addEventListener('keydown', handleEsc);
       return () => window.removeEventListener('keydown', handleEsc);
     }
-  }, [isOpen]);
-
-  const handleClose = () => {
-    setIsOpen(false);
-    // Mark as shown permanently (only if not force-opened)
-    if (!forceOpen) {
-      localStorage.setItem(MODAL_STORAGE_KEY, 'true');
-    }
-    // Notify parent component if callback provided
-    onOpenChange?.(false);
-  };
+  }, [isOpen, handleClose]);
 
   // Handle backdrop click to close
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -91,7 +91,7 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome, Beta Tester!</h1>
             <p className="text-lg md:text-xl font-semibold opacity-90">
-              You're part of something special
+              You&apos;re part of something special
             </p>
           </div>
         </div>
@@ -112,12 +112,12 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
           {/* Key Points */}
           <div className="grid gap-5 my-6">
             <div className="flex items-start gap-4 p-5 bg-primary/5 rounded-lg border border-primary/20">
-              <Bug className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
+              <AlertCircle className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
               <div>
                 <p className="font-bold text-lg text-secondary mb-2">Report Bugs Easily</p>
                 <p className="text-base text-gray-700 leading-relaxed">
-                  Look for the <span className="font-bold text-primary">"Report Bug"</span> button
-                  in the bottom-right corner - use it whenever something doesn't work right!
+                  Look for the <span className="font-bold text-primary">&quot;Report Bug&quot;</span> button
+                  in the bottom-right corner - use it whenever something doesn&apos;t work right!
                 </p>
               </div>
             </div>
@@ -152,7 +152,7 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
             className="w-full text-lg font-bold py-6 shadow-lg hover:shadow-xl transition-all"
             size="lg"
           >
-            Got it! Let's get started 🚀
+            Got it! Let&apos;s get started 🚀
           </Button>
           <p className="text-center text-sm text-gray-600">
             Need help? Check the beta tester guide or use the bug report button anytime.

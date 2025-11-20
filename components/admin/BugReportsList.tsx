@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useState, useEffect } from 'react';
+import { ReactElement, useState, useEffect, useCallback } from 'react';
 import { BugReportDetailModal } from './BugReportDetailModal';
 import { format } from 'date-fns';
 
@@ -44,7 +44,7 @@ export function BugReportsList(): ReactElement {
   const [severityFilter, setSeverityFilter] = useState<string>('');
   const [betaFilter, setBetaFilter] = useState<string>('');
 
-  const fetchBugReports = async () => {
+  const fetchBugReports = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -67,11 +67,11 @@ export function BugReportsList(): ReactElement {
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, severityFilter, betaFilter]);
 
   useEffect(() => {
     fetchBugReports();
-  }, [statusFilter, severityFilter, betaFilter]);
+  }, [fetchBugReports]);
 
   const getSeverityColor = (severity: BugReportSeverity): string => {
     switch (severity) {
@@ -152,7 +152,7 @@ export function BugReportsList(): ReactElement {
               <option value="in_progress">In Progress</option>
               <option value="resolved">Resolved</option>
               <option value="closed">Closed</option>
-              <option value="wont_fix">Won't Fix</option>
+              <option value="wont_fix">Won&apos;t Fix</option>
             </select>
           </div>
 

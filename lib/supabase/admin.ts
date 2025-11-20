@@ -76,7 +76,7 @@ export async function getProfileWithServiceRole(userId: string) {
 
     const { data: profile, error } = await admin
       .from('profiles')
-      .select('id, name, verification_status, is_admin, email_confirmed')
+      .select('id, name, verification_status, is_admin, email_confirmed, location, created_at')
       .eq('id', userId)
       .single()
 

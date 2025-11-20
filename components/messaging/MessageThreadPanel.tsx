@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 interface MessageThreadPanelProps {
   isMobile: boolean
   showConversationList: boolean
-  messageThreadRef: React.RefObject<HTMLDivElement>
+  messageThreadRef: React.RefObject<HTMLDivElement | null>
   userName?: string
   onBack?: () => void
   className?: string

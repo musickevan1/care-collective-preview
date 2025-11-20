@@ -185,7 +185,7 @@ export default function PrivacyPolicyPage(): ReactElement {
               </ul>
               <p className="text-foreground mt-4">
                 If you close your account, we will delete or anonymize your personal information within
-                30 days, except where we're required to retain certain data for legal or safety purposes.
+                30 days, except where we&apos;re required to retain certain data for legal or safety purposes.
               </p>
             </CardContent>
           </Card>
@@ -239,7 +239,7 @@ export default function PrivacyPolicyPage(): ReactElement {
 
         {/* 8. Children's Privacy */}
         <section className="mb-8">
-          <h2 className="text-2xl font-bold text-foreground mb-4">8. Children's Privacy</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">8. Children&apos;s Privacy</h2>
           <Card>
             <CardContent className="p-6 space-y-4">
               <p className="text-foreground">
@@ -261,7 +261,7 @@ export default function PrivacyPolicyPage(): ReactElement {
                 we will:
               </p>
               <ul className="list-disc list-inside space-y-2 text-foreground ml-4">
-                <li>Update the "Last Updated" date at the top</li>
+                <li>Update the &quot;Last Updated&quot; date at the top</li>
                 <li>Notify active users via email or platform notification</li>
                 <li>Post the updated policy on this page</li>
               </ul>

@@ -244,7 +244,9 @@ function RealTimeSubscriptions({
       .subscribe()
 
     return () => {
-      supabase.removeChannel(subscription)
+      if (supabase.removeChannel) {
+        supabase.removeChannel(subscription)
+      }
     }
   }, [enableRealtime, selectedConversation, supabase, loadMessages, setMessageThread])
 

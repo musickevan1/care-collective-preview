@@ -5,7 +5,7 @@
 
 import { ReactElement } from 'react';
 import { PendingOfferCard } from './PendingOfferCard';
-import { Inbox } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 interface PendingOffer {
   id: string;
@@ -61,7 +61,7 @@ export function PendingOffersSection({
   if (offers.length === 0) {
     return (
       <div className="text-center py-12 px-4">
-        <Inbox className="w-16 h-16 mx-auto text-gray-300 mb-4" aria-hidden="true" />
+        <Mail className="w-12 h-12 text-muted-foreground mb-3 opacity-50" aria-hidden="true" />
         <h3 className="text-lg font-semibold text-secondary mb-2">
           No Pending Offers
         </h3>
@@ -70,7 +70,7 @@ export function PendingOffersSection({
             When you offer to help with a request, it will appear here until the person accepts it.
           </p>
           <p>
-            Offers you've received from others will also show here for you to review.
+            Offers you&apos;ve received from others will also show here for you to review.
           </p>
         </div>
       </div>

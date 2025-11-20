@@ -333,7 +333,7 @@ export function HelpRequestCardWithMessaging({
               ) : (
                 <>
                   Send a message to {request.profiles.name} to offer your help.{' '}
-                  <strong className="text-secondary">You'll be able to message once you send your offer.</strong>
+                  <strong className="text-secondary">You&apos;ll be able to message once you send your offer.</strong>
                 </>
               )}
             </DialogDescription>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ReactElement } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -78,52 +78,7 @@ export function AdminPrivacyDashboard({ adminUserId, className }: AdminPrivacyDa
   const [resolutionNotes, setResolutionNotes] = useState('')
   const supabase = createClient()
 
-  useEffect(() => {
-    loadDashboardData()
-  }, [filterSeverity, filterStatus])
-
-  const loadDashboardData = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-
-      // Load privacy alerts
-      const alertOptions: any = { limit: 50 }
-      if (filterSeverity !== 'all') alertOptions.severity = filterSeverity
-      if (filterStatus !== 'all') alertOptions.status = filterStatus
-
-      const alertsData = await getPrivacyAlerts(alertOptions)
-      setAlerts(alertsData as PrivacyAlert[])
-
-      // Calculate metrics
-      const metricsData = await calculatePrivacyMetrics()
-      setMetrics(metricsData)
-
-      addBreadcrumb({
-        message: 'Admin privacy dashboard loaded',
-        category: 'admin_privacy',
-        level: 'info',
-        data: {
-          alertsCount: alertsData.length,
-          filters: { severity: filterSeverity, status: filterStatus }
-        }
-      })
-
-    } catch (err) {
-      console.error('Error loading dashboard data:', err)
-      captureError(err as Error, {
-        component: 'AdminPrivacyDashboard',
-        action: 'loadDashboardData',
-        userId: adminUserId,
-        severity: 'medium'
-      })
-      setError('Failed to load dashboard data')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const calculatePrivacyMetrics = async (): Promise<PrivacyMetrics> => {
+  const calculatePrivacyMetrics = useCallback(async (): Promise<PrivacyMetrics> => {
     try {
       // Get all alerts for metrics calculation
       const allAlerts = await getPrivacyAlerts({})
@@ -178,7 +133,52 @@ export function AdminPrivacyDashboard({ adminUserId, className }: AdminPrivacyDa
         gdpr_requests: 0
       }
     }
-  }
+  }, [supabase])
+
+  const loadDashboardData = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Load privacy alerts
+      const alertOptions: any = { limit: 50 }
+      if (filterSeverity !== 'all') alertOptions.severity = filterSeverity
+      if (filterStatus !== 'all') alertOptions.status = filterStatus
+
+      const alertsData = await getPrivacyAlerts(alertOptions)
+      setAlerts(alertsData as PrivacyAlert[])
+
+      // Calculate metrics
+      const metricsData = await calculatePrivacyMetrics()
+      setMetrics(metricsData)
+
+      addBreadcrumb({
+        message: 'Admin privacy dashboard loaded',
+        category: 'admin_privacy',
+        level: 'info',
+        data: {
+          alertsCount: alertsData.length,
+          filters: { severity: filterSeverity, status: filterStatus }
+        }
+      })
+
+    } catch (err) {
+      console.error('Error loading dashboard data:', err)
+      captureError(err as Error, {
+        component: 'AdminPrivacyDashboard',
+        action: 'loadDashboardData',
+        userId: adminUserId,
+        severity: 'medium'
+      })
+      setError('Failed to load dashboard data')
+    } finally {
+      setLoading(false)
+    }
+  }, [filterSeverity, filterStatus, adminUserId, calculatePrivacyMetrics])
+
+  useEffect(() => {
+    loadDashboardData()
+  }, [loadDashboardData])
 
   const handleResolveAlert = async (alertId: string, resolution: 'resolved' | 'false_positive') => {
     try {

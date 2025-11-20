@@ -171,7 +171,7 @@ export function NotificationDropdown({
                 <Bell className="w-12 h-12 mx-auto text-gray-300 mb-3" />
                 <p className="text-sm font-medium text-gray-900 mb-1">No notifications</p>
                 <p className="text-sm text-gray-500">
-                  You're all caught up! Check back later for updates.
+                  You&apos;re all caught up! Check back later for updates.
                 </p>
               </div>
             )}

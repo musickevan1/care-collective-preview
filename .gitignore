@@ -51,3 +51,5 @@ docs/beta/emails/
 BETA_LAUNCH_READY.md
 *CREDENTIALS*.md
 *_PASSWORDS_*.md
+# Playwright MCP artifacts
+.playwright-mcp/

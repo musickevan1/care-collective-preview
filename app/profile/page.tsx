@@ -303,7 +303,7 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>My Help Requests</CardTitle>
-                    <CardDescription>Recent requests you've created</CardDescription>
+                    <CardDescription>Recent requests you&apos;ve created</CardDescription>
                   </div>
                   <Link href="/requests/my-requests">
                     <Button variant="outline" size="sm">View All</Button>
@@ -317,9 +317,7 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                     <h3 className="text-lg font-semibold text-foreground mb-2">
                       No Requests Yet
                     </h3>
-                    <p className="text-muted-foreground mb-4">
-                      You haven't created any help requests yet
-                    </p>
+                    <p className="text-muted-foreground">You haven&apos;t created any help requests yet.</p>
                     <Link href="/requests/new">
                       <Button>Create First Request</Button>
                     </Link>

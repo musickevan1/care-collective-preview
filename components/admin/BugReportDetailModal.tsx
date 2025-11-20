@@ -224,7 +224,7 @@ export function BugReportDetailModal({
                   <option value="in_progress">In Progress</option>
                   <option value="resolved">Resolved</option>
                   <option value="closed">Closed</option>
-                  <option value="wont_fix">Won't Fix</option>
+                  <option value="wont_fix">Won&apos;t Fix</option>
                 </select>
               </div>
 

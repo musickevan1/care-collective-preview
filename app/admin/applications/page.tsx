@@ -184,7 +184,7 @@ export default async function ApplicationsPage(): Promise<ReactElement> {
                           <div className="bg-white rounded p-3 border">
                             <p className="text-sm font-medium mb-1">Reason for joining:</p>
                             <p className="text-sm text-muted-foreground">
-                              "{application.application_reason}"
+                              &quot;{application.application_reason}&quot;
                             </p>
                           </div>
                         )}

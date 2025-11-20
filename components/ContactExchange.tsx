@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -94,40 +94,7 @@ export function ContactExchange({
   const isRequester = currentUserId === requesterId
   const isHelper = currentUserId !== null && currentUserId !== requesterId
 
-  useEffect(() => {
-    // Get current user and check encryption support
-    const getCurrentUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setCurrentUserId(user.id)
-
-        // Check if encryption is supported
-        const encryptionStatus = ContactEncryptionService.getInstance().getEncryptionStatus()
-        setEncryptionEnabled(encryptionStatus.supported)
-
-        // Load user privacy settings
-        await loadUserPrivacySettings(user.id)
-
-        addBreadcrumb({
-          message: 'Contact exchange initialized',
-          category: 'contact_exchange',
-          data: {
-            requestId: helpRequest.id,
-            encryptionSupported: encryptionStatus.supported
-          }
-        })
-      }
-    }
-    getCurrentUser()
-  }, [supabase.auth, helpRequest.id])
-
-  useEffect(() => {
-    if (currentUserId) {
-      checkExistingExchange()
-    }
-  }, [requestId, currentUserId])
-
-  const loadUserPrivacySettings = async (userId: string) => {
+  const loadUserPrivacySettings = useCallback(async (userId: string) => {
     try {
       const { data: settings } = await supabase
         .from('user_privacy_settings')
@@ -147,9 +114,165 @@ export function ContactExchange({
         }
       })
     }
-  }
+  }, [supabase])
 
-  const checkExistingExchange = async () => {
+  const loadContactInfo = useCallback(async (exchangeRecord?: any) => {
+    if (!currentUserId) return
+
+    try {
+      setLoading(true)
+
+      // Get the exchange record if not provided
+      let exchange = exchangeRecord
+      if (!exchange) {
+        const { data } = await supabase
+          .from('contact_exchanges')
+          .select('*')
+          .eq('request_id', requestId)
+          .eq('helper_id', currentUserId)
+          .eq('requester_id', requesterId)
+          .single()
+        exchange = data
+      }
+
+      if (!exchange) {
+        throw new Error('Contact exchange record not found')
+      }
+
+      let contactData: ContactInfo | null = null
+
+      // Check if data is encrypted
+      if (exchange.encrypted_contact_data && isContactEncrypted(exchange.encrypted_contact_data)) {
+        try {
+          // Decrypt contact information
+          const decryptedData = await decryptContact(
+            exchange.encrypted_contact_data,
+            currentUserId,
+            requestId
+          )
+
+          // Track successful decryption
+          await trackEncryption('success', 'decrypt', currentUserId, requestId)
+
+          // Get basic profile info for name and location (non-sensitive)
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('name, location')
+            .eq('id', requesterId)
+            .single()
+
+          contactData = {
+            name: profile?.name || 'Unknown',
+            location: profile?.location,
+            ...decryptedData
+          }
+
+          addBreadcrumb({
+            message: 'Contact information decrypted successfully',
+            category: 'contact_exchange',
+            level: 'info'
+          })
+
+        } catch (decryptError) {
+          // Track decryption failure
+          await trackEncryption('failure', 'decrypt', currentUserId, requestId, decryptError instanceof Error ? decryptError.message : 'Unknown decryption error')
+
+          captureError(decryptError as Error, {
+            component: 'ContactExchange',
+            action: 'loadContactInfo',
+            userId: currentUserId,
+            severity: 'high',
+            extra: { requestId }
+          })
+
+          // Fall back to basic profile information
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('name, location')
+            .eq('id', requesterId)
+            .single()
+
+          contactData = {
+            name: profile?.name || 'Unknown',
+            location: profile?.location
+          }
+
+          setError('Contact information is encrypted but could not be decrypted')
+        }
+      } else if (exchange.contact_shared) {
+        // Use legacy plain contact data
+        contactData = exchange.contact_shared as ContactInfo
+      } else {
+        // Fetch basic profile information
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('name, location')
+          .eq('id', requesterId)
+          .single()
+
+        contactData = {
+          name: profile?.name || 'Unknown',
+          location: profile?.location,
+          email: `${profile?.name.toLowerCase().replace(' ', '.')}@email.com`
+        }
+      }
+
+      setContactInfo(contactData)
+
+      // Update exchange record to completed if not already
+      if (exchange.status !== 'completed') {
+        await supabase
+          .from('contact_exchanges')
+          .update({
+            status: 'completed',
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', exchange.id)
+
+        // Create completion audit entry
+        try {
+          const { createAuditEntry } = await import('@/lib/validations/contact-exchange')
+          const auditEntry = createAuditEntry('CONTACT_EXCHANGE_COMPLETED', {
+            requestId,
+            helperId: currentUserId,
+            requesterId,
+            metadata: {
+              encryption_used: !!exchange.encrypted_contact_data,
+              completion_method: 'automatic'
+            }
+          })
+
+          await supabase
+            .from('contact_exchange_audit')
+            .insert({
+              action: auditEntry.action,
+              request_id: auditEntry.requestId,
+              helper_id: auditEntry.helperId,
+              requester_id: auditEntry.requesterId,
+              timestamp: auditEntry.timestamp,
+              metadata: auditEntry.metadata
+            })
+        } catch {
+          // Don't block user experience for audit failures
+        }
+      }
+
+    } catch (err) {
+      console.error('Error loading contact info:', err)
+      captureError(err as Error, {
+        component: 'ContactExchange',
+        action: 'loadContactInfo',
+        userId: currentUserId,
+        severity: 'medium',
+        extra: { requestId }
+      })
+      setError('Failed to load contact information')
+    } finally {
+      setLoading(false)
+    }
+  }, [currentUserId, requestId, requesterId, supabase])
+
+  const checkExistingExchange = useCallback(async () => {
     if (!currentUserId) return
 
     try {
@@ -175,7 +298,40 @@ export function ContactExchange({
     } catch {
       setLoading(false)
     }
-  }
+  }, [currentUserId, requestId, requesterId, supabase, loadContactInfo])
+
+  useEffect(() => {
+    // Get current user and check encryption support
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setCurrentUserId(user.id)
+
+        // Check if encryption is supported
+        const encryptionStatus = ContactEncryptionService.getInstance().getEncryptionStatus()
+        setEncryptionEnabled(encryptionStatus.supported)
+
+        // Load user privacy settings
+        await loadUserPrivacySettings(user.id)
+
+        addBreadcrumb({
+          message: 'Contact exchange initialized',
+          category: 'contact_exchange',
+          data: {
+            requestId: helpRequest.id,
+            encryptionSupported: encryptionStatus.supported
+          }
+        })
+      }
+    }
+    getCurrentUser()
+  }, [supabase.auth, helpRequest.id, loadUserPrivacySettings])
+
+  useEffect(() => {
+    if (currentUserId) {
+      checkExistingExchange()
+    }
+  }, [requestId, currentUserId, checkExistingExchange])
 
   const handleConsentRequest = () => {
     setShowConsentDialog(true)
@@ -498,161 +654,7 @@ export function ContactExchange({
     }
   }
 
-  const loadContactInfo = async (exchangeRecord?: any) => {
-    if (!currentUserId) return
 
-    try {
-      setLoading(true)
-
-      // Get the exchange record if not provided
-      let exchange = exchangeRecord
-      if (!exchange) {
-        const { data } = await supabase
-          .from('contact_exchanges')
-          .select('*')
-          .eq('request_id', requestId)
-          .eq('helper_id', currentUserId)
-          .eq('requester_id', requesterId)
-          .single()
-        exchange = data
-      }
-
-      if (!exchange) {
-        throw new Error('Contact exchange record not found')
-      }
-
-      let contactData: ContactInfo | null = null
-
-      // Check if data is encrypted
-      if (exchange.encrypted_contact_data && isContactEncrypted(exchange.encrypted_contact_data)) {
-        try {
-          // Decrypt contact information
-          const decryptedData = await decryptContact(
-            exchange.encrypted_contact_data,
-            currentUserId,
-            requestId
-          )
-
-          // Track successful decryption
-          await trackEncryption('success', 'decrypt', currentUserId, requestId)
-
-          // Get basic profile info for name and location (non-sensitive)
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('name, location')
-            .eq('id', requesterId)
-            .single()
-
-          contactData = {
-            name: profile?.name || 'Unknown',
-            location: profile?.location,
-            ...decryptedData
-          }
-
-          addBreadcrumb({
-            message: 'Contact information decrypted successfully',
-            category: 'contact_exchange',
-            level: 'info'
-          })
-
-        } catch (decryptError) {
-          // Track decryption failure
-          await trackEncryption('failure', 'decrypt', currentUserId, requestId, decryptError instanceof Error ? decryptError.message : 'Unknown decryption error')
-
-          captureError(decryptError as Error, {
-            component: 'ContactExchange',
-            action: 'loadContactInfo',
-            userId: currentUserId,
-            severity: 'high',
-            extra: { requestId }
-          })
-
-          // Fall back to basic profile information
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('name, location')
-            .eq('id', requesterId)
-            .single()
-
-          contactData = {
-            name: profile?.name || 'Unknown',
-            location: profile?.location
-          }
-
-          setError('Contact information is encrypted but could not be decrypted')
-        }
-      } else if (exchange.contact_shared) {
-        // Use legacy plain contact data
-        contactData = exchange.contact_shared as ContactInfo
-      } else {
-        // Fetch basic profile information
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('name, location')
-          .eq('id', requesterId)
-          .single()
-
-        contactData = {
-          name: profile?.name || 'Unknown',
-          location: profile?.location,
-          email: `${profile?.name.toLowerCase().replace(' ', '.')}@email.com`
-        }
-      }
-
-      setContactInfo(contactData)
-
-      // Update exchange record to completed if not already
-      if (exchange.status !== 'completed') {
-        await supabase
-          .from('contact_exchanges')
-          .update({
-            status: 'completed',
-            completed_at: new Date().toISOString()
-          })
-          .eq('id', exchange.id)
-
-        // Create completion audit entry
-        try {
-          const { createAuditEntry } = await import('@/lib/validations/contact-exchange')
-          const auditEntry = createAuditEntry('CONTACT_EXCHANGE_COMPLETED', {
-            requestId,
-            helperId: currentUserId,
-            requesterId,
-            metadata: {
-              encryption_used: !!exchange.encrypted_contact_data,
-              completion_method: 'automatic'
-            }
-          })
-
-          await supabase
-            .from('contact_exchange_audit')
-            .insert({
-              action: auditEntry.action,
-              request_id: auditEntry.requestId,
-              helper_id: auditEntry.helperId,
-              requester_id: auditEntry.requesterId,
-              timestamp: auditEntry.timestamp,
-              metadata: auditEntry.metadata
-            })
-        } catch {
-          // Don't block user experience for audit failures
-        }
-      }
-
-    } catch (err) {
-      console.error('Error loading contact info:', err)
-      captureError(err as Error, {
-        component: 'ContactExchange',
-        action: 'loadContactInfo',
-        userId: currentUserId,
-        severity: 'medium',
-        extra: { requestId }
-      })
-      setError('Failed to load contact information')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   if (!isHelper && !isRequester) {
     return null // Don't show contact info to non-participants
@@ -708,7 +710,7 @@ export function ContactExchange({
             <CardTitle className="text-amber-800">Contact Sharing Consent</CardTitle>
           </div>
           <CardDescription className="text-amber-700">
-            You're about to share contact information with another community member.
+            You&apos;re about to share contact information with another community member.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

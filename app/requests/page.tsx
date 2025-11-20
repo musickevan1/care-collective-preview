@@ -356,7 +356,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
               <div className="text-6xl mb-4">⚠️</div>
               <h3 className="text-xl font-semibold text-foreground mb-2">Service Temporarily Unavailable</h3>
               <p className="text-muted-foreground mb-6">
-                We're having trouble connecting to our database. This is usually temporary.
+                We&apos;re having trouble connecting to our database. This is usually temporary.
                 Please try refreshing the page or check back in a few moments.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
@@ -391,7 +391,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">No Active Requests</h3>
               <p className="text-muted-foreground mb-6">
-                There are no active help requests at the moment. Check back soon or create your own request.
+                We couldn&apos;t find any requests matching your criteria. Check back soon or create your own request.
               </p>
               <Link href="/requests/new">
                 <Button>

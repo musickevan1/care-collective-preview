@@ -80,7 +80,7 @@ function ConversationItem({
         "border border-transparent hover:border-muted",
         isSelected && "bg-sage/10 border-sage/30 shadow-sm"
       )}
-      aria-pressed={isSelected}
+      aria-selected={isSelected}
       role="option"
       tabIndex={0}
     >

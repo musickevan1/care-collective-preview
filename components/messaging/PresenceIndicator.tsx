@@ -15,6 +15,12 @@ interface PresenceIndicatorProps {
 
 type PresenceStatus = 'online' | 'away' | 'busy' | 'offline'
 
+interface PresencePayload {
+  user_id: string
+  status: PresenceStatus
+  last_seen: string
+}
+
 /**
  * PresenceIndicator - Shows real-time user presence status
  * Features: Online/offline detection, automatic status updates
@@ -104,7 +110,7 @@ export function PresenceIndicator({
         const userPresence = state[userId]
 
         if (userPresence && userPresence.length > 0) {
-          const latestPresence = userPresence[0]
+          const latestPresence = userPresence[0] as unknown as PresencePayload
           setStatus(latestPresence.status || 'offline')
           setLastSeen(latestPresence.last_seen || null)
         } else {
@@ -113,7 +119,7 @@ export function PresenceIndicator({
       })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
         if (key === userId) {
-          const presence = newPresences[0]
+          const presence = newPresences[0] as unknown as PresencePayload
           setStatus(presence.status || 'online')
           setLastSeen(presence.last_seen || null)
         }
@@ -294,7 +300,9 @@ export function usePresenceStatus({
 
     return () => {
       updatePresenceInDatabase('offline')
-      supabase.removeChannel(channel)
+      if (supabase.removeChannel) {
+        supabase.removeChannel(channel)
+      }
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('beforeunload', handleBeforeUnload)
       clearInterval(presenceInterval)
