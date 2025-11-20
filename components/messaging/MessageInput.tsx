@@ -184,7 +184,8 @@ export function MessageInput({
   const isAtLimit = characterCount >= maxLength
   const isNearLimit = characterCount >= maxLength * 0.8
   const isPending = conversationStatus === 'pending'
-  const canSend = content.trim().length > 0 && !isSending && !disabled && !isPending
+  const isRejected = conversationStatus === 'rejected'
+  const canSend = content.trim().length > 0 && !isSending && !disabled && !isPending && !isRejected
 
   return (
     <div
@@ -204,6 +205,16 @@ export function MessageInput({
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>
               This conversation is pending. You can send messages once the recipient accepts your offer to help.
+            </span>
+          </div>
+        )}
+
+        {/* Rejected conversation notice */}
+        {isRejected && (
+          <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-lg">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+            <span>
+              This offer was declined. You cannot send messages in this conversation.
             </span>
           </div>
         )}

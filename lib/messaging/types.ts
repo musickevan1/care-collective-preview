@@ -11,7 +11,7 @@ export interface Conversation {
   help_request_id?: string;
   created_by: string;
   title?: string;
-  status: 'active' | 'closed' | 'blocked';
+  status: 'pending' | 'accepted' | 'rejected';
   created_at: string;
   updated_at: string;
   last_message_at: string;
@@ -183,7 +183,7 @@ export const isValidMessageStatus = (status: string): status is Message['status'
 };
 
 export const isValidConversationStatus = (status: string): status is Conversation['status'] => {
-  return ['active', 'closed', 'blocked'].includes(status);
+  return ['pending', 'accepted', 'rejected'].includes(status);
 };
 
 export const isValidMessageType = (type: string): type is Message['message_type'] => {
