@@ -204,11 +204,11 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
               </button>
             </div>
 
-            <nav className="p-4 sm:p-6 flex-1 overflow-y-auto">
-              <ul className="space-y-1">
+            <nav className="p-3 sm:p-4 flex-1 overflow-y-auto">
+              <ul className="space-y-0.5">
                 {navItems.map((item, index) => {
                   const isActive = pathname === item.href
-                  const linkClassName = `block px-4 py-3 rounded-lg transition-all duration-200 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset group relative ${
+                  const linkClassName = `block px-3 py-2.5 rounded-lg transition-all duration-200 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset group relative ${
                     isActive
                       ? 'bg-white/20 text-secondary-foreground font-semibold shadow-sm'
                       : 'text-secondary-foreground/80 hover:bg-white/10 hover:text-secondary-foreground hover:translate-x-1'
@@ -237,11 +237,11 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
               </ul>
 
               {/* Authentication section */}
-              <div className="mt-4 pt-6 border-t border-white/10 bg-secondary/20 -mx-4 sm:-mx-6 px-4 sm:px-6 pb-4 sm:pb-6">
+              <div className="mt-3 pt-4 border-t border-white/10 bg-secondary/20 -mx-3 sm:-mx-4 px-3 sm:px-4 pb-3 sm:pb-4">
                 {variant === 'homepage' ? (
                   isLoading ? (
-                    <div className="space-y-3">
-                      <div className="text-center pb-2">
+                    <div className="space-y-2">
+                      <div className="text-center pb-1">
                         <p className="text-sm text-secondary-foreground/70">Loading...</p>
                       </div>
                       <div className="w-full px-4 py-3 bg-secondary/50 rounded-lg min-h-[48px] flex items-center justify-center">
@@ -252,8 +252,8 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
                       </div>
                     </div>
                   ) : isAuthenticated ? (
-                    <div className="space-y-3">
-                      <div className="text-center pb-2">
+                    <div className="space-y-2">
+                      <div className="text-center pb-1">
                         <p className="text-sm text-secondary-foreground/70">Signed in as:</p>
                         <p className="font-semibold text-secondary-foreground">{displayName || user?.email || 'Member'}</p>
                       </div>
@@ -264,8 +264,8 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
                       />
                     </div>
                   ) : (
-                    <div className="space-y-3">
-                      <div className="text-center pb-2">
+                    <div className="space-y-2">
+                      <div className="text-center pb-1">
                         <p className="text-sm text-secondary-foreground/70">Join the Community</p>
                       </div>
                       <Link
@@ -291,8 +291,8 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
                     </div>
                   )
                 ) : (
-                  <div className="space-y-3">
-                    <div className="text-center pb-2">
+                  <div className="space-y-2">
+                    <div className="text-center pb-1">
                       <p className="text-sm text-secondary-foreground/70">Signed in as:</p>
                       <p className="font-semibold text-secondary-foreground">{displayName || user?.email || 'Member'}</p>
                     </div>

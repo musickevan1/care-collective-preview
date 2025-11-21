@@ -469,7 +469,7 @@ export default function HomePage(): ReactElement {
             <div>
               <h4 className="text-sm font-semibold text-sage-light mb-3 uppercase tracking-wide">Contact</h4>
               <div className="space-y-1 text-sm">
-                <p className="text-white/80">Springfield, MO 65897</p>
+                <p className="text-white/80">Springfield, MO</p>
                 <a href="mailto:swmocarecollective@gmail.com" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">
                   swmocarecollective@gmail.com
                 </a>
