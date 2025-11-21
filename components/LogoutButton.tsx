@@ -12,6 +12,7 @@ interface LogoutButtonProps {
 
 export function LogoutButton({ variant = 'destructive', size = 'sm', className }: LogoutButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -27,12 +28,15 @@ export function LogoutButton({ variant = 'destructive', size = 'sm', className }
   }
 
   return (
-    <Button 
-      variant={variant} 
-      size={size} 
+    <Button
+      variant="ghost"
+      size={size}
       onClick={handleLogout}
       disabled={isLoading}
-      className={className}
+      className={`text-white focus:ring-[#BB6446]/50 ${className}`}
+      style={{ backgroundColor: isHovered ? '#A55639' : '#BB6446' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {isLoading ? 'Signing out...' : 'Sign Out'}
     </Button>
