@@ -7,6 +7,7 @@
 
 import { ReactElement, ReactNode, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -136,10 +137,15 @@ export function PlatformLayout({
           <div className="flex h-16 items-center justify-between">
             {/* Logo and Brand */}
             <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80">
-                <div className="w-8 h-8 bg-sage rounded-lg flex items-center justify-center">
-                  <Heart className="w-5 h-5 text-white" />
-                </div>
+              <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <Image
+                  src="/logo-textless.png"
+                  alt="CARE Collective Logo"
+                  width={40}
+                  height={40}
+                  className="rounded w-8 h-8 sm:w-10 sm:h-10"
+                  priority
+                />
                 <span className="font-bold text-lg text-secondary hidden sm:block">
                   CARE Collective
                 </span>
