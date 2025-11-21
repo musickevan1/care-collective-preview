@@ -268,22 +268,22 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
                       <div className="text-center pb-2">
                         <p className="text-sm text-secondary-foreground/70">Join the Community</p>
                       </div>
-                      <Link 
-                        href="/login" 
+                      <Link
+                        href="/signup"
                         onClick={handleClose}
                         className="block w-full px-4 py-3 bg-sage text-white rounded-lg font-semibold hover:bg-sage-dark transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light text-center min-h-[48px] flex items-center justify-center group"
                       >
-                        <span>Member Login</span>
+                        <span>Join Community</span>
                         <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>
                       </Link>
-                      <Link 
-                        href="/signup" 
+                      <Link
+                        href="/login"
                         onClick={handleClose}
-                        className="block w-full px-4 py-3 border-2 border-sage text-sage rounded-lg font-semibold hover:bg-sage/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sage-light text-center min-h-[48px] flex items-center justify-center group"
+                        className="block w-full px-4 py-3 border-2 border-white text-white rounded-lg font-semibold hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white text-center min-h-[48px] flex items-center justify-center group"
                       >
-                        <span>Join Community</span>
+                        <span>Member Login</span>
                         <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>

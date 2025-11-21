@@ -9,6 +9,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
 
+// Request deduplication for signup
+let signupPromise: Promise<void> | null = null
+
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,6 +27,13 @@ export default function SignUpPage() {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Prevent double-click: if signup is already in progress, return immediately
+    if (signupPromise) {
+      console.debug('Signup already in progress, ignoring duplicate request')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -33,8 +43,9 @@ export default function SignUpPage() {
       return
     }
 
-    try {
-      const { data: signUpData, error } = await supabase.auth.signUp({
+    signupPromise = (async () => {
+      try {
+        const { data: signUpData, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -89,11 +100,19 @@ export default function SignUpPage() {
           window.location.href = '/waitlist'
         }, 2500)
       }
-    } catch (err) {
-      console.error('Signup error:', err)
-      setError('An unexpected error occurred. Please try again.')
+      } catch (err) {
+        console.error('Signup error:', err)
+        setError('An unexpected error occurred. Please try again.')
+      } finally {
+        setLoading(false)
+      }
+    })()
+
+    try {
+      await signupPromise
     } finally {
-      setLoading(false)
+      // Clear the promise to allow future signup attempts
+      signupPromise = null
     }
   }
 

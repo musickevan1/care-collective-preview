@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/lib/auth-context'
 
 interface Profile {
   id: string
@@ -21,118 +22,76 @@ export interface AuthNavigationState {
   displayName: string | null
 }
 
+// Cache for profile requests to prevent duplicate fetching
+let profileCache: { [userId: string]: Promise<Profile | null> } = {}
+let profileData: { [userId: string]: Profile | null } = {}
+
+async function fetchProfile(userId: string): Promise<Profile | null> {
+  // Return cached data if available
+  if (profileData[userId]) {
+    return profileData[userId]
+  }
+
+  // Return in-flight request if exists
+  if (profileCache[userId]) {
+    return profileCache[userId]
+  }
+
+  // Create new request
+  const supabase = createClient()
+  profileCache[userId] = (async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (error) {
+        console.error('Profile query error:', error.message)
+        return null
+      }
+
+      profileData[userId] = data
+      return data
+    } catch (error) {
+      console.error('Profile fetch failed:', error)
+      return null
+    } finally {
+      // Clear cache after request completes
+      delete profileCache[userId]
+    }
+  })()
+
+  return profileCache[userId]
+}
+
 export function useAuthNavigation(): AuthNavigationState {
-  const [user, setUser] = useState<User | null>(null)
+  // Use AuthProvider's auth state instead of duplicating
+  const { user, loading: authLoading } = useAuth()
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [profileLoading, setProfileLoading] = useState(false)
 
   useEffect(() => {
-    const supabase = createClient()
-
-    const getInitialSession = async () => {
-      try {
-        setIsLoading(true)
-        
-        // Add timeout to prevent infinite loading
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Auth timeout')), 5000)
-        })
-        
-        // Race between auth check and timeout
-        const authPromise = supabase.auth.getSession()
-        const { data: { session }, error: sessionError } = await Promise.race([
-          authPromise,
-          timeoutPromise
-        ]) as any
-        
-        if (sessionError) {
-          // Auth errors are common when not logged in - just log at debug level
-          console.debug('Session error (expected when not authenticated):', sessionError.message)
-          setUser(null)
-          setProfile(null)
-          return
-        }
-
-        if (session?.user) {
-          setUser(session.user)
-          
-          // Fetch user profile with timeout
-          const profilePromise = supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single()
-            
-          const profileTimeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => reject(new Error('Profile timeout')), 3000)
-          })
-          
-          try {
-            const { data: profileData, error: profileError } = await Promise.race([
-              profilePromise,
-              profileTimeoutPromise
-            ]) as any
-
-            if (!profileError && profileData) {
-              setProfile(profileData)
-            } else if (profileError) {
-              console.error('Profile query error:', profileError.message, '- User will see email fallback')
-            }
-          } catch (profileTimeoutError) {
-            console.error('Profile query timed out after 3 seconds - continuing without profile data. User will see email fallback.')
-          }
-        } else {
-          setUser(null)
-          setProfile(null)
-        }
-      } catch (error) {
-        // Catch and handle auth-related errors gracefully
-        console.debug('Auth initialization error (likely not authenticated):', error)
-        setUser(null)
-        setProfile(null)
-      } finally {
-        setIsLoading(false)
-      }
+    if (!user) {
+      setProfile(null)
+      setProfileLoading(false)
+      return
     }
 
-    // Get initial session
-    getInitialSession()
+    // Fetch profile when user changes
+    setProfileLoading(true)
+    fetchProfile(user.id)
+      .then(data => {
+        setProfile(data)
+      })
+      .finally(() => {
+        setProfileLoading(false)
+      })
+  }, [user?.id])
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event)
-        
-        if (session?.user) {
-          setUser(session.user)
-          
-          // Fetch updated profile when user logs in
-          if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-            const { data: profileData, error: profileError } = await supabase
-              .from('profiles')
-              .select('*')
-              .eq('id', session.user.id)
-              .single()
-
-            if (!profileError && profileData) {
-              setProfile(profileData)
-            } else if (profileError) {
-              console.error('Failed to fetch profile on auth state change:', profileError.message, '- User will see email fallback')
-            }
-          }
-        } else {
-          setUser(null)
-          setProfile(null)
-        }
-        
-        setIsLoading(false)
-      }
-    )
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }, [])
+  // Combined loading state: loading if either auth or profile is loading
+  const isLoading = authLoading || profileLoading
 
   return {
     user,

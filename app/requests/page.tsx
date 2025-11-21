@@ -333,10 +333,7 @@ export default async function RequestsPage({ searchParams }: PageProps) {
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-secondary">Help Requests</h1>
-            <p className="text-muted-foreground">Browse community requests for help</p>
-          </div>
+          <h1 className="text-2xl font-bold text-secondary">Help Requests</h1>
           <Link href="/requests/new">
             <Button>
               Create Request

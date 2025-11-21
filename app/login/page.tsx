@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
+// Request deduplication for login
+let loginPromise: Promise<void> | null = null
+
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -25,18 +28,26 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Prevent double-click: if login is already in progress, return immediately
+    if (loginPromise) {
+      console.debug('Login already in progress, ignoring duplicate request')
+      return
+    }
+
     setLoading(true)
     setError('')
 
-    try {
-      // Call rate-limited login API endpoint
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      })
+    loginPromise = (async () => {
+      try {
+        // Call rate-limited login API endpoint
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        })
 
       const data = await response.json()
 
@@ -88,14 +99,22 @@ export default function LoginPage() {
         // Unknown status: redirect to waitlist for safety
         window.location.replace(redirect || '/waitlist')
       }
-    } catch (err) {
-      console.error('Login error:', err)
-      setError('An unexpected error occurred. Please try again.')
+      } catch (err) {
+        console.error('Login error:', err)
+        setError('An unexpected error occurred. Please try again.')
+      } finally {
+        // Always reset loading state after a brief delay to ensure user feedback
+        setTimeout(() => {
+          setLoading(false)
+        }, 500)
+      }
+    })()
+
+    try {
+      await loginPromise
     } finally {
-      // Always reset loading state after a brief delay to ensure user feedback
-      setTimeout(() => {
-        setLoading(false)
-      }, 500)
+      // Clear the promise to allow future login attempts
+      loginPromise = null
     }
   }
 

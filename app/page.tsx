@@ -76,8 +76,8 @@ export default function HomePage(): ReactElement {
                 </>
               ) : (
                 <>
-                  <Link href="/signup" className="border border-sage text-sage px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Join Community</Link>
-                  <Link href="/login" className="bg-sage-accessible text-white px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Member Login</Link>
+                  <Link href="/signup" className="bg-sage text-white px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Join Community</Link>
+                  <Link href="/login" className="border-2 border-white text-white px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-white/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-navy min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Member Login</Link>
                 </>
               )}
             </div>
@@ -456,36 +456,50 @@ export default function HomePage(): ReactElement {
       </main>
 
       {/* Footer */}
-      <footer id="contact" className="bg-navy text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-8">
+      <footer id="contact" className="bg-navy text-white py-8">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            {/* Column 1: Branding */}
             <div>
-              <h3 className="text-xl font-bold text-sage-light mb-6">Contact Information</h3>
-              <p className="mb-2">
-                <strong>Email:</strong> {' '}
-                <a href="mailto:swmocarecollective@gmail.com" className="text-white hover:text-sage-light transition-colors focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-1 py-0.5">
+              <h3 className="text-lg font-bold text-sage-light mb-3">CARE Collective</h3>
+              <p className="text-sm text-white/80">Community mutual aid for Southwest Missouri</p>
+            </div>
+
+            {/* Column 2: Contact Info */}
+            <div>
+              <h4 className="text-sm font-semibold text-sage-light mb-3 uppercase tracking-wide">Contact</h4>
+              <div className="space-y-1 text-sm">
+                <p className="text-white/80">Springfield, MO 65897</p>
+                <a href="mailto:swmocarecollective@gmail.com" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">
                   swmocarecollective@gmail.com
                 </a>
-              </p>
-              <p><strong>Location:</strong> Springfield, 65897</p>
+              </div>
             </div>
-            
+
+            {/* Column 3: Quick Actions */}
             <div>
-              <h3 className="text-xl font-bold text-sage-light mb-6">Quick Links</h3>
-              <ul className="space-y-2 list-none">
-                <li><Link href="/login" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Member Login</Link></li>
-                <li><Link href="/signup" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Join Community</Link></li>
-                <li><Link href="#contact" onClick={handleSmoothScroll} className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Contact Us</Link></li>
-                <li><Link href="/dashboard" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Member Portal</Link></li>
-                <li><Link href="/help" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Help & Support</Link></li>
-                <li><Link href="/terms" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Terms of Service</Link></li>
-                <li><Link href="/privacy-policy" className="text-white hover:text-sage-light transition-colors inline-block py-1 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded px-2">Privacy Policy</Link></li>
+              <h4 className="text-sm font-semibold text-sage-light mb-3 uppercase tracking-wide">Get Started</h4>
+              <ul className="space-y-1 list-none text-sm">
+                <li><Link href="/signup" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Join Community</Link></li>
+                <li><Link href="/login" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Member Login</Link></li>
+                <li><Link href="/dashboard" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Dashboard</Link></li>
+              </ul>
+            </div>
+
+            {/* Column 4: Legal & Resources */}
+            <div>
+              <h4 className="text-sm font-semibold text-sage-light mb-3 uppercase tracking-wide">Resources</h4>
+              <ul className="space-y-1 list-none text-sm">
+                <li><Link href="/help" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Help & Support</Link></li>
+                <li><Link href="/terms" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Terms of Service</Link></li>
+                <li><Link href="/privacy-policy" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
-          
-          <div className="border-t border-white/10 pt-6 text-center">
-            <p className="text-white/70">&copy; 2025 CARE Collective - Southwest Missouri</p>
+
+          {/* Copyright */}
+          <div className="border-t border-white/20 pt-4 mt-2 text-center">
+            <p className="text-sm text-white/60">&copy; 2025 CARE Collective - Southwest Missouri. All rights reserved.</p>
           </div>
         </div>
       </footer>

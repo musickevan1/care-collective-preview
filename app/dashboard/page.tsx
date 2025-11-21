@@ -311,16 +311,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-secondary mb-2">
+          <h1 className="text-3xl font-bold text-secondary">
             Welcome back, {user.name}!
             {user.isAdmin && <Badge variant="secondary" className="ml-2">Admin</Badge>}
           </h1>
-          <p className="text-muted-foreground">
-            Here&apos;s what&apos;s happening in your community today. 
-            <Link href="/help/workflows" className="text-sage hover:text-sage-dark underline ml-1">
-              Learn how it works
-            </Link>
-          </p>
         </div>
 
         {/* Quick Actions */}
@@ -493,9 +487,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg">Recent Community Activity</CardTitle>
-              <CardDescription className="text-sm">
-                Stay updated with what&apos;s happening in your community
-              </CardDescription>
             </CardHeader>
             <CardContent className="pt-0">
               {dashboardData.recentRequests.length > 0 ? (

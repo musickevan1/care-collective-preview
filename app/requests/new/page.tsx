@@ -213,26 +213,10 @@ export default function NewRequestPage() {
       breadcrumbs={breadcrumbs}
     >
       <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-secondary">Create Help Request</h1>
-            <p className="text-muted-foreground">Let the community know how they can help you</p>
-          </div>
-          <Link href="/requests">
-            <Button variant="outline">
-              ← Back to Requests
-            </Button>
-          </Link>
-        </div>
-
         <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle>Request Details</CardTitle>
-            <CardDescription>
-              Fill out the form below to let others know how they can help you.
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
