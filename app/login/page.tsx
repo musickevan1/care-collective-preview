@@ -119,28 +119,35 @@ export default function LoginPage() {
   }
 
   return (
-    <main id="main-content" className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-md">
-        <div className="mb-8">
-          <div className="mb-6">
-            <Button asChild variant="default" size="sm">
-              <Link href="/">← Back to Home</Link>
-            </Button>
-          </div>
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
+    <>
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-navy text-white shadow-lg">
+        <nav className="container mx-auto max-w-7xl">
+          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3">
               <Image
-                src="/logo.png"
-                alt="Care Collective Logo"
-                width={256}
-                height={256}
-                className="rounded-lg"
+                src="/logo-textless.png"
+                alt="CARE Collective Logo"
+                width={48}
+                height={48}
+                className="rounded w-10 h-10 sm:w-12 sm:h-12"
+                priority
               />
-            </div>
+              <span className="text-lg sm:text-xl font-bold">CARE Collective</span>
+            </Link>
+            <Link href="/" className="text-white hover:text-sage-light transition-colors py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">
+              ← Back to Home
+            </Link>
+          </div>
+        </nav>
+      </header>
+
+      <main id="main-content" className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6 pt-24">
+        <div className="w-full max-w-md">
+          <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
             <p className="text-muted-foreground">Sign in to your CARE Collective account</p>
           </div>
-        </div>
 
         <Card>
           <CardHeader className="space-y-4">
@@ -210,5 +217,6 @@ export default function LoginPage() {
         </Card>
       </div>
     </main>
+    </>
   )
 }
