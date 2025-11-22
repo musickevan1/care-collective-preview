@@ -4,6 +4,7 @@ import { ReactElement } from 'react'
 import { useMessagingContext } from './MessagingContext'
 import { ConversationList } from './ConversationList'
 import { PendingOffersSection } from './PendingOffersSection'
+import { HelpTooltip } from './HelpTooltip'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -53,14 +54,24 @@ export function ConversationPanel({
           : "w-80 min-w-80",
         className
       )}
+      data-tour="conversation-list"
     >
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <MessageCircle className="w-5 h-5 text-sage" />
-            Messages
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <MessageCircle className="w-5 h-5 text-sage" />
+              Messages
+            </h2>
+            <div data-tour="help-tooltip">
+              <HelpTooltip
+                content="Your active conversations appear below. Click on any conversation to view and send messages."
+                side="right"
+                ariaLabel="Help: About conversations"
+              />
+            </div>
+          </div>
           <Button
             variant="ghost"
             size="sm"

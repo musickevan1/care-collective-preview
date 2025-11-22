@@ -7,6 +7,8 @@ import { ConversationPanel } from './ConversationPanel'
 import { MessageThreadPanel } from './MessageThreadPanel'
 import { usePresenceStatus } from './PresenceIndicator'
 import { ViewportFix } from './ViewportFix'
+import { MessagingOnboarding } from './MessagingOnboarding'
+import { HelpTooltip } from './HelpTooltip'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
 
@@ -134,6 +136,7 @@ export function MessagingDashboard({
       onMobileNavigate={handleMobileNavigate}
     >
       <ViewportFix />
+      <MessagingOnboarding />
       <RealTimeSubscriptions
         enableRealtime={enableRealtime}
         selectedConversationId={selectedConversationId}

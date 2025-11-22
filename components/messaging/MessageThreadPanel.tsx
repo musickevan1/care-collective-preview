@@ -90,7 +90,11 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
             </div>
 
             {/* Messages Area - Scrollable middle section */}
-            <div ref={messageThreadRef} className="flex-1 min-h-0 flex flex-col">
+            <div
+              ref={messageThreadRef}
+              className="flex-1 min-h-0 flex flex-col"
+              data-tour="message-thread"
+            >
               <MessageThreadView
                 messages={messageThread.messages}
                 loading={messageThread.loading}
@@ -110,7 +114,7 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
             </div>
 
             {/* Message Input - Fixed at bottom, never scrolls */}
-            <div className="flex-none">
+            <div className="flex-none" data-tour="message-input">
               {!messageThread.loading && (
                 <MessageInput
                   onSendMessage={handleSendMessage}

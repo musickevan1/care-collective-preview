@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ClientOnly } from '@/components/ClientOnly'
+import { ConversationSkeleton } from './ConversationSkeleton'
 
 interface ConversationListProps {
   conversations: ConversationWithDetails[]
@@ -202,25 +203,8 @@ export function ConversationList({
 }: ConversationListProps): ReactElement {
   if (loading) {
     return (
-      <div className={cn("flex-1 p-6", className)}>
-        <div className="space-y-4">
-          {/* Loading skeleton */}
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="p-4 animate-pulse">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-muted rounded-full" />
-                    <div className="w-24 h-4 bg-muted rounded" />
-                  </div>
-                  <div className="w-6 h-4 bg-muted rounded-full" />
-                </div>
-                <div className="w-full h-3 bg-muted rounded" />
-                <div className="w-3/4 h-3 bg-muted rounded" />
-              </div>
-            </Card>
-          ))}
-        </div>
+      <div className={cn("flex-1", className)}>
+        <ConversationSkeleton count={3} />
       </div>
     )
   }
