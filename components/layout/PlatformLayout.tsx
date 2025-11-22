@@ -137,16 +137,16 @@ export function PlatformLayout({
           <div className="flex h-16 items-center justify-between">
             {/* Logo and Brand */}
             <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Link href="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
                 <Image
                   src="/logo-textless.png"
                   alt="CARE Collective Logo"
-                  width={40}
-                  height={40}
-                  className="rounded w-8 h-8 sm:w-10 sm:h-10"
+                  width={56}
+                  height={56}
+                  className="rounded w-12 h-12 sm:w-14 sm:h-14"
                   priority
                 />
-                <span className="font-bold text-lg text-secondary hidden sm:block">
+                <span className="font-bold text-xl text-secondary hidden sm:block">
                   CARE Collective
                 </span>
               </Link>
