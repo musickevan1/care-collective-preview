@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactElement, useState, useEffect } from 'react';
+import { ReactElement, useState, useEffect, useCallback } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -21,9 +21,10 @@ interface TourStep {
    */
   targetSelector: string | null;
   /**
-   * Position of the tooltip relative to the highlighted element
+   * Preferred position of the tooltip relative to the highlighted element
+   * Will auto-adjust if tooltip would go off-screen
    */
-  position: 'top' | 'bottom' | 'left' | 'right' | 'center';
+  preferredPosition: 'top' | 'bottom' | 'left' | 'right' | 'center';
 }
 
 const TOUR_STEPS: TourStep[] = [
@@ -31,33 +32,122 @@ const TOUR_STEPS: TourStep[] = [
     title: 'Welcome to Messaging',
     description: 'This guided tour will help you understand how messaging works in Care Collective. You can skip it anytime.',
     targetSelector: null,
-    position: 'center'
+    preferredPosition: 'center'
   },
   {
     title: 'Your Conversations',
     description: 'All your active conversations appear here. Click on any conversation to view and send messages.',
     targetSelector: '[data-tour="conversation-list"]',
-    position: 'right'
+    preferredPosition: 'right'
   },
   {
     title: 'Message Thread',
     description: 'When you select a conversation, messages appear here. Scroll up to see older messages.',
     targetSelector: '[data-tour="message-thread"]',
-    position: 'left'
+    preferredPosition: 'bottom'
   },
   {
     title: 'Send Messages',
     description: 'Type your message here and press Enter or click Send. Messages are sent in real-time.',
     targetSelector: '[data-tour="message-input"]',
-    position: 'top'
+    preferredPosition: 'top'
   },
   {
     title: 'Need Help?',
     description: 'Look for help icons (?) throughout the interface for contextual assistance.',
     targetSelector: '[data-tour="help-tooltip"]',
-    position: 'bottom'
+    preferredPosition: 'bottom'
   }
 ];
+
+const TOOLTIP_PADDING = 20; // Gap between tooltip and highlighted element
+const VIEWPORT_PADDING = 16; // Minimum distance from screen edges
+
+interface TooltipPosition {
+  top: number;
+  left: number;
+  position: 'top' | 'bottom' | 'left' | 'right' | 'center';
+}
+
+/**
+ * Calculates the optimal position for the tooltip based on viewport constraints
+ */
+function calculateTooltipPosition(
+  highlightedRect: DOMRect | null,
+  preferredPosition: 'top' | 'bottom' | 'left' | 'right' | 'center',
+  tooltipWidth: number,
+  tooltipHeight: number
+): TooltipPosition {
+  if (!highlightedRect || preferredPosition === 'center') {
+    // Center of viewport
+    return {
+      top: window.innerHeight / 2 - tooltipHeight / 2,
+      left: window.innerWidth / 2 - tooltipWidth / 2,
+      position: 'center'
+    };
+  }
+
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  // Try preferred position first
+  let position = preferredPosition;
+  let top = 0;
+  let left = 0;
+
+  // Calculate position based on preferred placement
+  switch (preferredPosition) {
+    case 'top':
+      top = highlightedRect.top - tooltipHeight - TOOLTIP_PADDING;
+      left = highlightedRect.left + (highlightedRect.width / 2) - (tooltipWidth / 2);
+      break;
+    case 'bottom':
+      top = highlightedRect.bottom + TOOLTIP_PADDING;
+      left = highlightedRect.left + (highlightedRect.width / 2) - (tooltipWidth / 2);
+      break;
+    case 'left':
+      top = highlightedRect.top + (highlightedRect.height / 2) - (tooltipHeight / 2);
+      left = highlightedRect.left - tooltipWidth - TOOLTIP_PADDING;
+      break;
+    case 'right':
+      top = highlightedRect.top + (highlightedRect.height / 2) - (tooltipHeight / 2);
+      left = highlightedRect.right + TOOLTIP_PADDING;
+      break;
+  }
+
+  // Check if tooltip would go off-screen and adjust
+  // Check horizontal bounds
+  if (left < VIEWPORT_PADDING) {
+    left = VIEWPORT_PADDING;
+  } else if (left + tooltipWidth > viewportWidth - VIEWPORT_PADDING) {
+    left = viewportWidth - tooltipWidth - VIEWPORT_PADDING;
+  }
+
+  // Check vertical bounds and flip position if needed
+  if (top < VIEWPORT_PADDING) {
+    // Too high, try bottom instead
+    if (preferredPosition === 'top') {
+      position = 'bottom';
+      top = highlightedRect.bottom + TOOLTIP_PADDING;
+    } else {
+      top = VIEWPORT_PADDING;
+    }
+  } else if (top + tooltipHeight > viewportHeight - VIEWPORT_PADDING) {
+    // Too low, try top instead
+    if (preferredPosition === 'bottom') {
+      position = 'top';
+      top = highlightedRect.top - tooltipHeight - TOOLTIP_PADDING;
+    } else {
+      top = viewportHeight - tooltipHeight - VIEWPORT_PADDING;
+    }
+  }
+
+  // Final boundary clamp
+  top = Math.max(VIEWPORT_PADDING, Math.min(top, viewportHeight - tooltipHeight - VIEWPORT_PADDING));
+  left = Math.max(VIEWPORT_PADDING, Math.min(left, viewportWidth - tooltipWidth - VIEWPORT_PADDING));
+
+  return { top, left, position };
+}
 
 /**
  * MessagingOnboarding Component
@@ -68,7 +158,8 @@ const TOUR_STEPS: TourStep[] = [
  * - Keyboard navigation (Arrow keys, Escape)
  * - localStorage tracking to show only once
  * - WCAG 2.1 AA compliant
- * - Mobile-responsive
+ * - Fully responsive across all viewport sizes
+ * - Auto-adjusts position to stay on screen
  *
  * @component
  */
@@ -76,22 +167,25 @@ export function MessagingOnboarding(): ReactElement | null {
   const [isVisible, setIsVisible] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [highlightedRect, setHighlightedRect] = useState<DOMRect | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<TooltipPosition | null>(null);
 
   // Check if user has completed the tour
   useEffect(() => {
     const hasCompletedTour = localStorage.getItem(ONBOARDING_STORAGE_KEY);
     if (!hasCompletedTour) {
-      setIsVisible(true);
+      // Small delay to ensure page is fully rendered
+      setTimeout(() => setIsVisible(true), 500);
     }
   }, []);
 
-  // Update highlighted element position when step changes
-  useEffect(() => {
+  // Update highlighted element position and calculate tooltip position
+  const updatePositions = useCallback(() => {
     if (!isVisible) return;
 
     const step = TOUR_STEPS[currentStep];
     if (!step.targetSelector) {
       setHighlightedRect(null);
+      setTooltipPosition(null);
       return;
     }
 
@@ -99,8 +193,42 @@ export function MessagingOnboarding(): ReactElement | null {
     if (element) {
       const rect = element.getBoundingClientRect();
       setHighlightedRect(rect);
+
+      // Calculate tooltip position (estimate 384px width, 200px height for max-w-md)
+      const tooltipWidth = Math.min(384, window.innerWidth - 2 * VIEWPORT_PADDING);
+      const tooltipHeight = 200; // Approximate height
+      const position = calculateTooltipPosition(
+        rect,
+        step.preferredPosition,
+        tooltipWidth,
+        tooltipHeight
+      );
+      setTooltipPosition(position);
+    } else {
+      // Element not found, center the tooltip
+      const tooltipWidth = Math.min(384, window.innerWidth - 2 * VIEWPORT_PADDING);
+      const tooltipHeight = 200;
+      setHighlightedRect(null);
+      setTooltipPosition(calculateTooltipPosition(null, 'center', tooltipWidth, tooltipHeight));
     }
   }, [currentStep, isVisible]);
+
+  // Update positions when step changes or window resizes
+  useEffect(() => {
+    updatePositions();
+
+    const handleResize = () => {
+      updatePositions();
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('scroll', updatePositions, true);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', updatePositions, true);
+    };
+  }, [updatePositions]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -161,13 +289,14 @@ export function MessagingOnboarding(): ReactElement | null {
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm">
         {highlightedRect && (
           <div
-            className="absolute border-4 border-primary rounded-lg animate-pulse"
+            className="absolute border-4 border-primary rounded-lg transition-all duration-300"
             style={{
               top: `${highlightedRect.top - 8}px`,
               left: `${highlightedRect.left - 8}px`,
               width: `${highlightedRect.width + 16}px`,
               height: `${highlightedRect.height + 16}px`,
-              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
+              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)',
+              animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
             }}
           />
         )}
@@ -175,29 +304,26 @@ export function MessagingOnboarding(): ReactElement | null {
 
       {/* Tour content card */}
       <div
-        className={cn(
-          "absolute bg-background border border-border rounded-lg shadow-lg p-6 max-w-md w-full mx-4",
-          step.position === 'center' && "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-          step.position === 'top' && highlightedRect && "left-1/2 -translate-x-1/2",
-          step.position === 'bottom' && highlightedRect && "left-1/2 -translate-x-1/2",
-          step.position === 'left' && highlightedRect && "top-1/2 -translate-y-1/2",
-          step.position === 'right' && highlightedRect && "top-1/2 -translate-y-1/2"
-        )}
+        className="absolute bg-background border border-border rounded-lg shadow-lg p-6 max-w-md w-full transition-all duration-300"
         style={
-          highlightedRect
+          tooltipPosition
             ? {
-                ...(step.position === 'top' && { top: `${highlightedRect.top - 200}px` }),
-                ...(step.position === 'bottom' && { top: `${highlightedRect.bottom + 20}px` }),
-                ...(step.position === 'left' && { left: `${highlightedRect.left - 400}px` }),
-                ...(step.position === 'right' && { left: `${highlightedRect.right + 20}px` })
+                top: `${tooltipPosition.top}px`,
+                left: `${tooltipPosition.left}px`,
+                margin: `0 ${VIEWPORT_PADDING}px`
               }
-            : undefined
+            : {
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                margin: `0 ${VIEWPORT_PADDING}px`
+              }
         }
       >
         {/* Close button */}
         <button
           onClick={handleSkip}
-          className="absolute right-2 top-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          className="absolute right-2 top-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
           aria-label="Close tour"
         >
           <X className="h-4 w-4" />
@@ -206,7 +332,7 @@ export function MessagingOnboarding(): ReactElement | null {
         {/* Content */}
         <div className="space-y-4">
           <div>
-            <h2 id="tour-title" className="text-lg font-semibold text-foreground">
+            <h2 id="tour-title" className="text-lg font-semibold text-foreground pr-8">
               {step.title}
             </h2>
             <p id="tour-description" className="text-sm text-muted-foreground mt-2">
