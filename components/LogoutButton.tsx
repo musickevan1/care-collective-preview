@@ -33,8 +33,8 @@ export function LogoutButton({ variant = 'destructive', size = 'sm', className }
       size={size}
       onClick={handleLogout}
       disabled={isLoading}
-      className={`text-white focus:ring-[#BB6446]/50 ${className}`}
-      style={{ backgroundColor: isHovered ? '#A55639' : '#BB6446' }}
+      className={`text-white focus:ring-[#E89B94]/50 ${className}`}
+      style={{ backgroundColor: isHovered ? '#D88983' : '#E89B94' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

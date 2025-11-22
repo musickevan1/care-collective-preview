@@ -69,7 +69,7 @@ export default function HomePage(): ReactElement {
                 <>
                   <Link href="/dashboard" className="bg-secondary text-secondary-foreground px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-secondary/90 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary/50 min-h-[44px] flex items-center text-sm xl:text-base">Dashboard</Link>
                   <form action="/api/auth/logout" method="post" className="inline">
-                    <button type="submit" className="px-3 xl:px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 min-h-[44px] flex items-center text-sm xl:text-base text-white focus:ring-[#BB6446]/50" style={{ backgroundColor: '#BB6446' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A55639'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#BB6446'}>
+                    <button type="submit" className="px-3 xl:px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 min-h-[44px] flex items-center text-sm xl:text-base text-white focus:ring-[#E89B94]/50" style={{ backgroundColor: '#E89B94' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#D88983'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#E89B94'}>
                       Sign Out
                     </button>
                   </form>
