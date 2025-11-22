@@ -38,31 +38,14 @@ export class MessagingClient {
     const offset = (page - 1) * limit;
 
     const supabase = await this.getClient();
-    const { data: conversations, error, count } = await supabase
-      .from('conversations')
-      .select(`
-        *,
-        help_requests (
-          id,
-          title,
-          category,
-          urgency,
-          status
-        ),
-        conversation_participants!inner (
-          user_id,
-          role,
-          profiles (
-            id,
-            name,
-            location
-          )
-        )
-      `, { count: 'exact' })
-      .eq('conversation_participants.user_id', userId)
-      .is('conversation_participants.left_at', null)
-      .order('last_message_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+
+    // Use optimized RPC function to eliminate N+1 queries (40+ queries → 1)
+    const { data, error } = await supabase.rpc('get_conversations_optimized', {
+      p_user_id: userId,
+      p_status: null,
+      p_limit: limit,
+      p_offset: offset,
+    });
 
     if (error) {
       throw new MessagingError(
@@ -72,36 +55,17 @@ export class MessagingClient {
       );
     }
 
-    // Get unread counts and last messages for each conversation
-    const conversationsWithDetails: ConversationWithDetails[] = await Promise.all(
-      (conversations || []).map(async (conv: any) => {
-        const [unreadCount, lastMessage] = await Promise.all([
-          this.getUnreadMessageCount(conv.id, userId),
-          this.getLastMessage(conv.id)
-        ]);
-
-        return {
-          ...conv,
-          participants: conv.conversation_participants.map((cp: any) => ({
-            user_id: cp.profiles.id,
-            name: cp.profiles.name,
-            location: cp.profiles.location,
-            role: cp.role,
-          })),
-          help_request: conv.help_requests,
-          last_message: lastMessage,
-          unread_count: unreadCount,
-        };
-      })
-    );
+    const result = data as { conversations: any[]; total: number };
+    const conversations = result?.conversations || [];
+    const total = result?.total || 0;
 
     return {
-      conversations: conversationsWithDetails,
+      conversations: conversations as ConversationWithDetails[],
       pagination: {
         page,
         limit,
-        total: count || 0,
-        has_more: (count || 0) > offset + limit,
+        total,
+        has_more: total > offset + limit,
       },
     };
   }
