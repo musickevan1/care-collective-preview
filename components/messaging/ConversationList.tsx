@@ -20,6 +20,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ClientOnly } from '@/components/ClientOnly'
 import { ConversationSkeleton } from './ConversationSkeleton'
+import { Avatar } from '@/components/ui/avatar'
 
 interface ConversationListProps {
   conversations: ConversationWithDetails[]
@@ -85,37 +86,44 @@ function ConversationItem({
       role="option"
       tabIndex={0}
     >
-      <div className="w-full space-y-3">
-        {/* Header: Participant info and help request */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+      <div className="w-full flex gap-3">
+        {/* Avatar */}
+        <Avatar
+          name={otherParticipant?.name || 'Unknown User'}
+          avatarUrl={otherParticipant?.avatar_url}
+          size="lg"
+          className="flex-shrink-0"
+        />
+
+        {/* Content */}
+        <div className="flex-1 min-w-0 space-y-3">
+          {/* Header: Participant info and help request */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-sm truncate">
                 {otherParticipant?.name || 'Unknown User'}
               </h3>
+
+              {otherParticipant?.location && (
+                <div className="flex items-center gap-1 mt-1">
+                  <MapPin className="w-3 h-3 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground truncate">
+                    {otherParticipant.location}
+                  </span>
+                </div>
+              )}
             </div>
-            
-            {otherParticipant?.location && (
-              <div className="flex items-center gap-1 mt-1">
-                <MapPin className="w-3 h-3 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground truncate">
-                  {otherParticipant.location}
-                </span>
-              </div>
+
+            {/* Unread count badge */}
+            {conversation.unread_count > 0 && (
+              <Badge
+                className="bg-sage text-white text-xs px-2 py-1 rounded-full min-w-[20px] text-center flex-shrink-0"
+                aria-label={`${conversation.unread_count} unread messages`}
+              >
+                {conversation.unread_count > 99 ? '99+' : conversation.unread_count}
+              </Badge>
             )}
           </div>
-
-          {/* Unread count badge */}
-          {conversation.unread_count > 0 && (
-            <Badge 
-              className="bg-sage text-white text-xs px-2 py-1 rounded-full min-w-[20px] text-center"
-              aria-label={`${conversation.unread_count} unread messages`}
-            >
-              {conversation.unread_count > 99 ? '99+' : conversation.unread_count}
-            </Badge>
-          )}
-        </div>
 
         {/* Help request context (if applicable) */}
         {conversation.help_request && (
@@ -176,6 +184,7 @@ function ConversationItem({
               Updated {formatDistanceToNow(new Date(conversation.last_message_at), { addSuffix: true })}
             </ClientOnly>
           </time>
+        </div>
         </div>
       </div>
 

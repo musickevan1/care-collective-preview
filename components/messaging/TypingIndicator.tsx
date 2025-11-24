@@ -124,23 +124,27 @@ export function TypingIndicator({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground animate-fade-in",
+        "flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground",
+        "animate-in fade-in slide-in-from-bottom-2 duration-300",
         className
       )}
+      role="status"
+      aria-live="polite"
+      aria-label={typingText}
     >
-      <div className="flex gap-1">
+      <div className="flex gap-1 items-center" aria-hidden="true">
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="w-1.5 h-1.5 bg-sage rounded-full animate-pulse"
+            className="w-2 h-2 bg-sage rounded-full animate-bounce"
             style={{
-              animationDelay: `${i * 0.2}s`,
-              animationDuration: '1.5s'
+              animationDelay: `${i * 150}ms`,
+              animationDuration: '1000ms'
             }}
           />
         ))}
       </div>
-      <span>{typingText}</span>
+      <span className="animate-in fade-in duration-200">{typingText}</span>
     </div>
   )
 }

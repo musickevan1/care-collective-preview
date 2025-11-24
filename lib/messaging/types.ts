@@ -82,6 +82,7 @@ export interface ConversationWithDetails extends Conversation {
     user_id: string;
     name: string;
     location?: string;
+    avatar_url?: string | null;
     role: 'member' | 'moderator';
   }>;
   help_request?: {
@@ -102,11 +103,13 @@ export interface MessageWithSender extends Message {
     id: string;
     name: string;
     location?: string;
+    avatar_url?: string | null;
   };
   recipient: {
     id: string;
     name: string;
     location?: string;
+    avatar_url?: string | null;
   };
   // Threading support for message threads
   thread_id?: string;

@@ -13,6 +13,7 @@ import {
   AlertTriangle
 } from 'lucide-react'
 import { ClientOnly } from '@/components/ClientOnly'
+import { Avatar } from '@/components/ui/avatar'
 
 interface MessageBubbleProps {
   message: MessageWithSender
@@ -126,16 +127,27 @@ export function MessageBubble({
     <div
       ref={messageRef}
       className={cn(
-        "flex w-full mb-4 group",
-        isCurrentUser ? "justify-end" : "justify-start",
+        "flex w-full mb-4 group gap-2",
+        "animate-in fade-in slide-in-from-bottom-2 duration-300",
+        isCurrentUser ? "justify-end flex-row-reverse" : "justify-start",
         className
       )}
       role="article"
       aria-label={`Message from ${message.sender.name}`}
     >
-      <div 
+      {/* Avatar */}
+      {!compact && (
+        <Avatar
+          name={message.sender.name}
+          avatarUrl={message.sender.avatar_url}
+          size="md"
+          className="mt-auto"
+        />
+      )}
+
+      <div
         className={cn(
-          "max-w-[75%] sm:max-w-md space-y-1",
+          "max-w-[70%] sm:max-w-md space-y-1 flex flex-col",
           isCurrentUser ? "items-end" : "items-start"
         )}
       >
@@ -154,53 +166,60 @@ export function MessageBubble({
         )}
 
         {/* Message bubble */}
-        <div 
+        <div
           className={cn(
-            "relative px-4 py-3 rounded-2xl shadow-sm break-words",
+            "relative px-4 py-3 rounded-2xl break-words",
+            "shadow-md hover:shadow-lg transition-all duration-200",
             getMessageTypeColor(),
-            // Rounded corner adjustments for message direction
-            isCurrentUser 
-              ? "rounded-br-sm" 
-              : "rounded-bl-sm"
+            // Rounded corner adjustments for message direction (tail effect)
+            isCurrentUser
+              ? "rounded-tr-none"
+              : "rounded-tl-none"
           )}
         >
           {/* Message content */}
           <p className="text-sm leading-relaxed whitespace-pre-wrap">
             {message.content}
           </p>
-
-          {/* Message actions removed - simplified UX per user feedback */}
-          {/* Previous dropdown menu with copy/reply/report/delete actions removed */}
         </div>
 
         {/* Timestamp and status */}
         <div
           className={cn(
-            "flex items-center gap-1 px-2 text-xs text-muted-foreground",
-            isCurrentUser ? "justify-end" : "justify-start"
+            "flex items-center gap-1.5 px-2 text-xs",
+            isCurrentUser ? "flex-row-reverse" : "flex-row"
           )}
         >
-          <time dateTime={message.created_at}>
+          <time
+            dateTime={message.created_at}
+            className="text-muted-foreground"
+          >
             <ClientOnly>
               {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
             </ClientOnly>
           </time>
-          
+
           {/* Show status icon only for current user's messages */}
           {isCurrentUser && (
-            <>
-              <span className="text-muted-foreground/50">•</span>
-              {getStatusIcon()}
-            </>
+            <span className="flex items-center">
+              {message.status === 'read' ? (
+                <CheckCheck className="w-4 h-4 text-sage" aria-label="Read" />
+              ) : message.status === 'delivered' ? (
+                <CheckCheck className="w-4 h-4 text-muted-foreground" aria-label="Delivered" />
+              ) : message.status === 'sent' ? (
+                <Check className="w-4 h-4 text-muted-foreground" aria-label="Sent" />
+              ) : message.status === 'failed' ? (
+                <AlertTriangle className="w-4 h-4 text-destructive" aria-label="Failed" />
+              ) : null}
+            </span>
           )}
 
           {/* Flagged indicator */}
           {message.is_flagged && (
-            <>
-              <span className="text-muted-foreground/50">•</span>
-              <Flag className="w-3 h-3 text-yellow-600" />
-              <span className="text-yellow-600">Flagged</span>
-            </>
+            <span className="flex items-center gap-1 text-yellow-600">
+              <Flag className="w-3 h-3" />
+              <span>Flagged</span>
+            </span>
           )}
         </div>
       </div>

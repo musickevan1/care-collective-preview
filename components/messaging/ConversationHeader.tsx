@@ -5,6 +5,7 @@ import { ConversationWithDetails } from '@/lib/messaging/types'
 import { PresenceIndicator } from './PresenceIndicator'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Avatar } from '@/components/ui/avatar'
 import { ArrowLeft, Users, MoreVertical } from 'lucide-react'
 
 interface ConversationHeaderProps {
@@ -58,22 +59,28 @@ export function ConversationHeader({
           )}
 
           {/* Participant Info */}
-          <div>
-            <h3 className="font-semibold flex items-center gap-2">
-              <Users className="w-4 h-4 text-muted-foreground" />
-              {otherParticipant?.name || 'Unknown User'}
-              {otherParticipant && (
-                <PresenceIndicator
-                  userId={otherParticipant.user_id}
-                  showStatus={false}
-                />
+          <div className="flex items-center gap-3">
+            <Avatar
+              name={otherParticipant?.name || 'Unknown User'}
+              avatarUrl={otherParticipant?.avatar_url}
+              size="md"
+            />
+            <div>
+              <h3 className="font-semibold flex items-center gap-2">
+                {otherParticipant?.name || 'Unknown User'}
+                {otherParticipant && (
+                  <PresenceIndicator
+                    userId={otherParticipant.user_id}
+                    showStatus={false}
+                  />
+                )}
+              </h3>
+              {conversation.help_request && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Re: {conversation.help_request.title}
+                </p>
               )}
-            </h3>
-            {conversation.help_request && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Re: {conversation.help_request.title}
-              </p>
-            )}
+            </div>
           </div>
         </div>
 
