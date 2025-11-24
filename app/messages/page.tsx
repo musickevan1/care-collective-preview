@@ -67,20 +67,40 @@ async function getMessagingData(userId: string) {
     }
 
     // Format conversations from RPC response
-    const conversations = result.conversations.map((conv: any) => ({
-      id: conv.id,
-      help_request_id: conv.help_request_id,
-      created_by: conv.requester_id,
-      title: conv.title || 'Conversation',
-      status: conv.status,
-      created_at: conv.created_at,
-      updated_at: conv.updated_at,
-      last_message_at: conv.last_message_at || conv.created_at,
-      unread_count: conv.unread_count || 0,
-      participants: conv.participants || [],
-      help_request: conv.help_request || undefined,
-      last_message: conv.last_message || undefined
-    }));
+    const conversations = result.conversations.map((conv: any) => {
+      // Transform other_participant object to participants array format
+      const participants = conv.other_participant ? [{
+        user_id: conv.other_participant.id,
+        name: conv.other_participant.name || 'Unknown',
+        location: conv.other_participant.location,
+        avatar_url: conv.other_participant.avatar_url,
+        role: 'member' as const
+      }] : [];
+
+      // Transform last_message to expected format
+      const lastMessage = conv.last_message ? {
+        id: conv.last_message.id || '',
+        content: conv.last_message.content,
+        sender_id: conv.last_message.sender_id,
+        created_at: conv.last_message.created_at,
+        sender_name: conv.last_message.sender_id === userId ? 'You' : (conv.other_participant?.name || 'Unknown')
+      } : undefined;
+
+      return {
+        id: conv.id,
+        help_request_id: conv.help_request_id,
+        created_by: conv.requester_id,
+        title: conv.help_request?.title || 'Conversation',
+        status: conv.status,
+        created_at: conv.created_at,
+        updated_at: conv.updated_at,
+        last_message_at: conv.last_message_at || conv.created_at,
+        unread_count: conv.unread_count || 0,
+        participants,
+        help_request: conv.help_request || undefined,
+        last_message: lastMessage
+      };
+    });
 
     // Calculate total unread
     const unreadCount = conversations.reduce((sum: number, conv: any) => sum + (conv.unread_count || 0), 0);
