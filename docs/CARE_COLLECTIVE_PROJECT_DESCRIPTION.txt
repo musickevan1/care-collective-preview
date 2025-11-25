@@ -1,0 +1,3456 @@
+================================================================================
+CARE COLLECTIVE - COMPREHENSIVE PROJECT DESCRIPTION
+================================================================================
+
+Generated: 2025-11-20
+Purpose: Complete technical documentation for platform recreation
+Status: Phase 2.3 (Admin Panel) - Production Ready
+Production URL: https://care-collective-preview.vercel.app
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+CARE Collective is a mutual aid platform connecting caregivers in Southwest
+Missouri (Springfield, Branson, Joplin) for support and resource sharing.
+Built with Next.js 14.2.32, Supabase, and TypeScript, the platform emphasizes
+accessibility (WCAG 2.1 AA), privacy, and community safety.
+
+Mission:
+  Help requests (groceries, transport, household, medical), resource sharing,
+  secure contact exchange, community building
+
+Core Values:
+  - Accessibility (WCAG 2.1 AA compliance)
+  - Privacy (consent-based contact exchange)
+  - Community-focused design
+  - Inclusivity for all users
+  - Simplicity for crisis situations
+
+Technology Stack:
+  - Frontend: Next.js 14.2.32, React 18.3.1, TypeScript 5
+  - Backend: Supabase (PostgreSQL, Auth, Realtime)
+  - Styling: Tailwind CSS 4, Radix UI components
+  - Deployment: Vercel (automatic via Git integration)
+
+Philosophy:
+  KISS (Keep It Simple) + YAGNI (You Aren't Gonna Need It)
+  Mobile-first, progressive enhancement, trust & safety in every feature
+
+================================================================================
+1. DESIGN SYSTEM
+================================================================================
+
+1.1 COLOR PALETTE
+--------------------------------------------------
+
+PRIMARY BRAND COLORS:
+
+  Sage (Primary Action Color)
+    - Standard: #7A9E99
+    - Accessible: #5A7D78 (4.52:1 contrast ratio)
+    - Dark: #4A6B66
+    - Usage: Primary buttons, links, active states
+
+  Dusty Rose (Secondary Accent)
+    - Standard: #D8A8A0
+    - Accessible: #9A6B61
+    - Light: #E5C6C1
+    - Usage: Secondary actions, highlights, accents
+
+  Terracotta (Legacy/Specific Elements)
+    - Color: #BC6547
+    - Usage: Specific branded elements
+
+  Navy (Headers/Text)
+    - Color: #324158
+    - Usage: Headings, important text
+
+  Cream (Background)
+    - Color: #FBF2E9
+    - Usage: Page backgrounds, cards
+
+  Brown (Body Text)
+    - Color: #483129
+    - Usage: Body text, paragraphs
+
+  Tan (Accent)
+    - Color: #C39778
+    - Usage: Subtle accents, borders
+
+SEMANTIC COLORS:
+
+  Destructive: #D32F2F (red) - Delete actions, errors
+  Warning: #F57C00 (orange) - Warnings, caution states
+  Success: #388E3C (green) - Success messages, confirmations
+  Info: #1976D2 (blue) - Informational messages
+
+CSS IMPLEMENTATION (app/styles/tokens.css):
+
+  :root {
+    /* Brand Colors */
+    --color-sage: #5A7E79;
+    --color-sage-dark: #4A6B66;
+    --color-sage-accessible: #4A6B66;
+    --color-dusty-rose: #D8A8A0;
+    --color-dusty-rose-accessible: #9A6B61;
+    --color-primary: var(--color-sage-dark);
+    --color-secondary: var(--color-dusty-rose-accessible);
+
+    /* Semantic */
+    --color-destructive: #D32F2F;
+    --color-success: #388E3C;
+
+    /* Focus Ring */
+    --focus-ring: 0 0 0 3px rgba(122, 158, 153, 0.35);
+  }
+
+TAILWIND CONFIGURATION (tailwind.config.ts):
+
+  colors: {
+    primary: {
+      DEFAULT: "#5A7D78",
+      contrast: "#4A6B66"
+    },
+    secondary: {
+      DEFAULT: "#9A6B61"
+    },
+    sage: "#7A9E99",
+    "dusty-rose": "#D8A8A0",
+    terracotta: "#BC6547",
+    navy: "#324158",
+    cream: "#FBF2E9",
+    destructive: "#D32F2F",
+    success: "#388E3C"
+  }
+
+1.2 TYPOGRAPHY
+--------------------------------------------------
+
+FONT FAMILIES:
+
+  1. Overlock (Primary Brand Font)
+     - Weights: 400, 700, 900
+     - Source: Google Fonts via next/font/google
+     - Variable: --font-overlock
+     - Display: swap (performance)
+     - Preload: true
+     - Fallback: system-ui, sans-serif
+
+  2. Atkinson Hyperlegible (Accessibility Mode)
+     - Weights: 400, 700
+     - Source: Google Fonts
+     - Variable: --font-atkinson
+     - Usage: Enhanced readability mode for users with vision challenges
+
+  3. Inter (System Fallback)
+     - Variable: --font-inter
+     - Usage: Fallback when custom fonts fail to load
+
+FONT SCALE (Design Tokens):
+
+  --font-size-xs: 13px
+  --font-size-sm: 15px
+  --font-size-base: 16px       (default)
+  --font-size-lg: 18px
+  --font-size-xl: 20px
+  --font-size-2xl: 24px
+  --font-size-3xl: 30px
+  --font-size-4xl: 36px
+  --font-size-5xl: 48px
+
+LINE HEIGHTS:
+
+  --line-height-tight: 1.25
+  --line-height-normal: 1.5     (default)
+  --line-height-relaxed: 1.75
+
+READABLE MODE FEATURES:
+
+  - Increases all font sizes by 1-2px
+  - Switches to Atkinson Hyperlegible font
+  - Adjusts spacing for improved readability
+  - User-configurable setting
+
+MOBILE FONT CONSIDERATIONS:
+
+  - Minimum 16px for input fields (prevents iOS zoom)
+  - Responsive scaling for smaller screens
+  - Maintains readability on all devices
+
+1.3 COMPONENT STYLING PATTERNS
+--------------------------------------------------
+
+BUTTON COMPONENT (components/ui/button.tsx):
+
+  Using class-variance-authority (CVA) for variants:
+
+  const buttonVariants = cva(
+    "inline-flex items-center justify-center rounded-lg text-sm
+     font-medium transition-colors focus-visible:ring-2
+     disabled:opacity-50",
+    {
+      variants: {
+        variant: {
+          default: "bg-primary text-primary-foreground
+                    hover:bg-primary/90",
+          destructive: "bg-destructive text-destructive-foreground
+                        hover:bg-destructive/90",
+          outline: "border border-input bg-background
+                    hover:bg-accent",
+          secondary: "bg-secondary text-secondary-foreground
+                      hover:bg-secondary/80",
+          sage: "bg-sage-dark text-white hover:bg-sage-accessible",
+          rose: "bg-dusty-rose-accessible text-white
+                 hover:bg-dusty-rose-accessible/90",
+          ghost: "hover:bg-accent hover:text-accent-foreground",
+          link: "text-primary underline-offset-4 hover:underline"
+        },
+        size: {
+          default: "h-11 px-4 py-2 min-h-[44px]",  // WCAG 2.5.5
+          sm: "h-11 rounded-md px-3 min-h-[44px]",
+          lg: "h-12 rounded-md px-8 min-h-[48px]",
+          icon: "h-11 w-11 min-h-[44px] min-w-[44px]"
+        }
+      },
+      defaultVariants: {
+        variant: "default",
+        size: "default"
+      }
+    }
+  )
+
+DESIGN TOKEN SYSTEM:
+
+  File Structure:
+    - app/styles/tokens.css       (CSS custom properties)
+    - app/styles/buttons.css      (Button-specific styles)
+    - tailwind.config.ts          (Tailwind theme extension)
+    - app/globals.css             (Global styles + accessibility)
+
+ACCESSIBILITY FEATURES:
+
+  Touch Targets (WCAG 2.5.5):
+    - Minimum 44×44px for all interactive elements
+    - Mobile: 48×48px for primary actions
+    - Enforced via CSS min-height/min-width
+
+  Focus Rings:
+    - Visible: box-shadow: 0 0 0 3px rgba(122, 158, 153, 0.35)
+    - Always visible for keyboard navigation
+    - Never removed with outline: none
+
+  Reduced Motion:
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+
+  High Contrast Mode:
+    @media (prefers-contrast: high) {
+      .hover\:bg-white\/10:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+MOBILE NAVIGATION ENHANCEMENTS:
+
+  - Backdrop blur for better readability
+  - Safe area insets for iOS notch
+  - Dynamic viewport height handling
+  - Optimized touch targets (48×48px minimum)
+
+================================================================================
+2. CODE ARCHITECTURE
+================================================================================
+
+2.1 PROJECT STRUCTURE
+--------------------------------------------------
+
+care-collective-preview/
+│
+├── app/                          # Next.js 14 App Router
+│   ├── (auth)/                   # Auth route group
+│   │   ├── login/
+│   │   ├── signup/
+│   │   └── waitlist/
+│   │
+│   ├── dashboard/                # User dashboard
+│   │   └── page.tsx
+│   │
+│   ├── requests/                 # Help requests
+│   │   ├── new/                  # Create request
+│   │   ├── my-requests/          # User's requests
+│   │   ├── [id]/                 # Request detail
+│   │   └── page.tsx              # Request feed
+│   │
+│   ├── messages/                 # Messaging system
+│   │   ├── [conversationId]/     # Message thread
+│   │   └── page.tsx              # Conversation list
+│   │
+│   ├── admin/                    # Admin panel
+│   │   ├── applications/         # Member applications
+│   │   ├── help-requests/        # Request moderation
+│   │   ├── messaging/            # Message moderation
+│   │   │   ├── moderation/
+│   │   │   └── analytics/
+│   │   ├── privacy/              # Privacy dashboard
+│   │   ├── users/                # User management
+│   │   ├── bug-reports/          # Bug tracking
+│   │   ├── cms/                  # Content management
+│   │   │   ├── calendar-events/
+│   │   │   ├── community-updates/
+│   │   │   └── site-content/
+│   │   └── reports/              # Analytics & reporting
+│   │
+│   ├── privacy/                  # Privacy controls
+│   │   └── page.tsx
+│   │
+│   ├── resources/                # Community resources
+│   │   └── page.tsx
+│   │
+│   ├── api/                      # API routes
+│   │   ├── auth/                 # Authentication
+│   │   │   ├── login/route.ts
+│   │   │   └── signup/route.ts
+│   │   ├── admin/                # Admin APIs
+│   │   │   └── applications/route.ts
+│   │   ├── messages/             # Messaging APIs
+│   │   │   ├── send/route.ts
+│   │   │   └── conversations/route.ts
+│   │   └── health/               # Health checks
+│   │
+│   ├── styles/                   # Design tokens
+│   │   ├── tokens.css
+│   │   └── buttons.css
+│   │
+│   ├── globals.css               # Global styles
+│   ├── layout.tsx                # Root layout
+│   └── page.tsx                  # Homepage
+│
+├── components/                   # React components
+│   ├── ui/                       # Base UI components
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── dialog.tsx
+│   │   ├── input.tsx
+│   │   ├── select.tsx
+│   │   ├── form-field.tsx
+│   │   └── ... (20+ components)
+│   │
+│   ├── help-requests/            # Help request components
+│   │   ├── HelpRequestCardWithMessaging.tsx
+│   │   ├── EditRequestForm.tsx
+│   │   ├── RequestDetailContent.tsx
+│   │   └── RequestsListWithModal.tsx
+│   │
+│   ├── messaging/                # Messaging components
+│   │   ├── ConversationList.tsx
+│   │   ├── MessageThreadView.tsx
+│   │   ├── MessageInput.tsx
+│   │   ├── MessageBubble.tsx
+│   │   ├── TypingIndicator.tsx
+│   │   ├── PresenceIndicator.tsx
+│   │   └── VirtualizedMessageList.tsx
+│   │
+│   ├── admin/                    # Admin components
+│   │   ├── AdminDashboardDynamic.tsx
+│   │   ├── ModerationDashboard.tsx
+│   │   ├── PrivacyDashboard.tsx
+│   │   ├── BulkUserActions.tsx
+│   │   └── cms/                  # CMS components
+│   │
+│   ├── privacy/                  # Privacy components
+│   │   └── PrivacyDashboard.tsx
+│   │
+│   ├── dashboard/                # Dashboard components
+│   ├── layout/                   # Layout components
+│   │   ├── PlatformLayout.tsx
+│   │   ├── MobileNav.tsx
+│   │   └── Footer.tsx
+│   └── notifications/            # Notification system
+│
+├── lib/                          # Core utilities & logic
+│   ├── supabase/                 # Supabase clients
+│   │   ├── server.ts             # Server-side client
+│   │   ├── client.ts             # Browser client
+│   │   ├── middleware.ts         # Auth middleware
+│   │   └── admin.ts              # Service role client
+│   │
+│   ├── messaging/                # Messaging system
+│   │   ├── client.ts             # Business logic
+│   │   ├── realtime.ts           # Real-time subscriptions
+│   │   ├── encryption.ts         # Message encryption
+│   │   ├── moderation.ts         # Content moderation
+│   │   └── types.ts              # Type definitions
+│   │
+│   ├── security/                 # Security utilities
+│   │   ├── contact-encryption.ts
+│   │   └── env-validation.ts
+│   │
+│   ├── privacy/                  # Privacy features
+│   ├── notifications/            # Notification system
+│   ├── constants/                # App constants
+│   │   └── categories.ts         # Help request categories
+│   │
+│   ├── auth/                     # Auth utilities
+│   │   ├── session-monitor.ts
+│   │   └── session-sync.ts
+│   │
+│   ├── queries/                  # Database queries
+│   ├── validations.ts            # Zod validation schemas
+│   ├── database.types.ts         # Generated Supabase types (2355 lines)
+│   ├── features.ts               # Feature flags
+│   ├── fonts.ts                  # Font configuration
+│   ├── logger.ts                 # Logging utility
+│   ├── error-tracking.ts         # Error handling
+│   └── utils.ts                  # Utility functions
+│
+├── hooks/                        # React hooks
+│   ├── useAuthNavigation.ts
+│   ├── useMessaging.ts
+│   ├── useRealTimeMessages.ts
+│   ├── useNotifications.ts
+│   ├── useNetworkStatus.ts
+│   └── useErrorHandler.ts
+│
+├── supabase/                     # Database migrations & config
+│   ├── migrations/               # SQL migrations (20+ files)
+│   │   ├── 20240811000000_initial_schema.sql
+│   │   ├── 20250107_comprehensive_messaging_system.sql
+│   │   ├── 20250922000000_enhance_contact_privacy_encryption.sql
+│   │   └── ... (Phase-based migrations)
+│   ├── config.toml
+│   └── seed.sql
+│
+├── public/                       # Static assets
+│   ├── logo.png
+│   ├── logo-textless.png
+│   └── sw.js                     # Service worker
+│
+├── tests/                        # Test files
+├── types/                        # TypeScript types
+├── middleware.ts                 # Next.js middleware (auth)
+├── tailwind.config.ts            # Tailwind configuration
+├── next.config.js                # Next.js configuration
+├── tsconfig.json                 # TypeScript config
+├── package.json                  # Dependencies
+├── CLAUDE.md                     # Project documentation
+└── PROJECT_STATUS.md             # Development status
+
+2.2 FILE ORGANIZATION PATTERNS
+--------------------------------------------------
+
+RULES:
+  - Maximum 500 lines per file (enforced guideline)
+  - Components under 200 lines preferred
+  - Functions under 50 lines preferred
+  - Clear feature separation with dedicated folders
+
+NAMING CONVENTIONS:
+  - Components: PascalCase (UserProfile.tsx)
+  - Utilities: camelCase (formatDate.ts)
+  - Types: PascalCase (UserProfile type)
+  - Constants: UPPER_SNAKE_CASE (MAX_FILE_SIZE)
+
+SERVER VS CLIENT COMPONENTS:
+  - Server Components: Default (no 'use client')
+  - Client Components: Marked with 'use client' directive
+  - Preference: Server Components for data fetching
+  - Client: Only for interactivity (forms, real-time, state)
+
+CO-LOCATION:
+  - Tests next to components (Component.test.tsx)
+  - Types with implementations when specific
+  - Shared types in types/ directory
+
+2.3 KEY DIRECTORIES & PURPOSES
+--------------------------------------------------
+
+app/
+  Purpose: Next.js 14 App Router with server/client components
+  Pattern: Route groups for organization (e.g., (auth))
+  Features: Parallel routes, layouts, API routes
+
+components/
+  Purpose: Reusable React components
+  Organization: ui/ for base, feature folders for specific
+  Pattern: Server/client separation
+
+lib/
+  Purpose: Business logic, utilities, non-React code
+  Organization: Domain-specific modules (messaging, security)
+  Pattern: No React dependencies, pure functions
+
+hooks/
+  Purpose: Reusable React hooks
+  Pattern: use* prefix, custom logic extraction
+
+supabase/
+  Purpose: Database schema, migrations, configuration
+  Organization: Sequential migrations with timestamps
+  Pattern: One migration per feature/change
+
+================================================================================
+3. FEATURE IMPLEMENTATION DETAILS
+================================================================================
+
+3.1 AUTHENTICATION FLOW
+--------------------------------------------------
+
+SIGN UP PROCESS:
+
+  1. User submits application at /signup
+  2. Form validated with Zod (lib/validations.ts):
+     - Name: 1-100 characters, letters/spaces/hyphens only
+     - Email: Valid email format, max 320 characters
+     - Password: Min 8 characters, requires uppercase, lowercase, number
+     - Terms: Must accept (literal true)
+
+  3. Account created with verification_status: 'pending'
+  4. User redirected to /waitlist
+  5. Admin reviews in /admin/applications
+  6. Upon approval:
+     - verification_status → 'approved'
+     - User gains full platform access
+  7. Upon rejection:
+     - verification_status → 'rejected'
+     - User redirected to /access-denied
+
+LOGIN FLOW:
+
+  Endpoint: POST /api/auth/login
+
+  Process:
+    1. Client submits email/password
+    2. Server validates with Zod
+    3. Supabase Auth verification
+    4. Check verification_status:
+       - pending → redirect to /waitlist
+       - rejected → redirect to /access-denied
+       - approved → redirect to /dashboard
+    5. Set auth cookies via Supabase SSR
+    6. Middleware validates on every request
+
+SESSION MANAGEMENT:
+
+  Server Client (lib/supabase/server.ts):
+    - Uses createServerClient from @supabase/ssr
+    - Cookie-based session storage
+    - Auto-refresh disabled (prevents parsing issues)
+    - Read-only cookies in server components
+
+  Browser Client (lib/supabase/client.ts):
+    - Uses createBrowserClient
+    - localStorage persistence
+    - Auto-refresh disabled
+    - Client-side session management
+
+  Middleware (middleware.ts):
+    - Runs on every request
+    - Calls updateSession() to verify auth state
+    - Blocks unauthenticated access to protected routes
+    - Verifies verification_status for approved-only routes
+
+VALIDATION SCHEMA (lib/validations.ts):
+
+  export const signupSchema = z.object({
+    name: z.string()
+      .min(1, 'Name is required')
+      .max(100, 'Name too long')
+      .refine((name) => /^[a-zA-Z\s\-'\.]+$/.test(name),
+              'Only letters, spaces, hyphens, apostrophes'),
+
+    email: z.string()
+      .email('Invalid email')
+      .max(320)
+      .refine((email) => validator.isEmail(email)),
+
+    password: z.string()
+      .min(8, 'Minimum 8 characters')
+      .max(128)
+      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+             'Must contain uppercase, lowercase, and number'),
+
+    termsAccepted: z.literal(true, {
+      errorMap: () => ({ message: "Must accept terms" })
+    })
+  })
+
+3.2 USER ROLES AND PERMISSIONS
+--------------------------------------------------
+
+ROLE SYSTEM (profiles table):
+
+  Fields:
+    - is_admin: boolean (admin privileges)
+    - verification_status: enum ('pending', 'approved', 'rejected')
+    - is_internal_tester: boolean (beta tester access)
+
+PERMISSION LEVELS:
+
+  1. GUEST (Unauthenticated)
+     - View: Homepage, about, resources
+     - Cannot: Access member content, see requests, message
+
+  2. PENDING (Waitlist)
+     - Account created, awaiting approval
+     - View: Waitlist page only
+     - Cannot: Access any member features
+
+  3. REJECTED
+     - Account rejected by admin
+     - View: Access denied page
+     - Cannot: Access platform features
+
+  4. MEMBER (Approved)
+     - Full platform access
+     - Can:
+       * Create/view/edit help requests
+       * Send/receive messages
+       * Access dashboard
+       * View resources
+       * Manage privacy settings
+       * Participate in community
+
+  5. ADMIN
+     - All member permissions plus:
+       * Review applications (/admin/applications)
+       * Moderate content (/admin/help-requests, /admin/messaging)
+       * Manage users (/admin/users)
+       * View analytics (/admin/reports)
+       * Access privacy dashboard (/admin/privacy)
+       * Manage CMS content (/admin/cms)
+       * View system logs
+       * Perform bulk operations
+
+ROUTE PROTECTION:
+
+  Middleware Pattern (middleware.ts):
+    export async function middleware(request: NextRequest) {
+      const result = await updateSession(request)
+      // Checks auth state, refreshes session
+      // Blocks unauthenticated access
+      // Verifies verification_status
+      return result
+    }
+
+  Server Component Pattern:
+    const user = await getUser()
+    if (!user) redirect('/login')
+    if (user.verificationStatus !== 'approved') redirect('/waitlist')
+
+  Admin Check:
+    if (!user.isAdmin) redirect('/dashboard?error=admin_required')
+
+3.3 HELP REQUESTS SYSTEM
+--------------------------------------------------
+
+DATABASE SCHEMA:
+
+  Table: help_requests
+
+  Columns:
+    id                  uuid PRIMARY KEY
+    user_id             uuid REFERENCES profiles(id)
+    title               text NOT NULL (max 100 chars)
+    description         text (max 500 chars)
+    exchange_offer      text (max 300 chars) -- mutual aid exchange
+    category            text CHECK (7 category values)
+    urgency             enum ('normal', 'urgent', 'critical')
+    status              enum ('open', 'in_progress', 'completed',
+                              'cancelled', 'closed')
+    location_override   text
+    location_privacy    enum ('public', 'helpers_only', 'after_match')
+    helper_id           uuid REFERENCES profiles(id)
+    created_at          timestamptz
+    updated_at          timestamptz
+
+CATEGORIES (lib/constants/categories.ts):
+
+  1. Health & Caregiving (💊)
+     Subcategories:
+       - Advocacy/accompaniment to appointments
+       - Caregiving tasks assistance
+       - Medical supply pickup
+       - Respite care
+
+  2. Groceries & Meals (🛒)
+     Subcategories:
+       - Grocery shopping/delivery
+       - Meal preparation/meal train
+
+  3. Transportation & Errands (🚗)
+     Subcategories:
+       - Rides to appointments
+       - Prescription pickup
+       - General errands
+
+  4. Household & Yard (🏠)
+     Subcategories:
+       - Cleaning, laundry
+       - Pet sitting
+       - Home repairs
+       - Yardwork, snow shoveling
+
+  5. Technology & Administrative (💻)
+     Subcategories:
+       - Tech support
+       - Financial/insurance paperwork
+       - Translation services
+
+  6. Social & Companionship (👥)
+     Subcategories:
+       - Visits, check-ins
+       - Event attendance
+
+  7. Other Requests (📋)
+
+URGENCY LEVELS:
+
+  normal: Standard request, no rush
+  urgent: Needed soon, within 1-2 days
+  critical: Immediate need, emergency
+
+STATUS FLOW:
+
+  open → in_progress → completed
+    ↓
+  cancelled / closed
+
+REQUEST CREATION FLOW:
+
+  1. User navigates to /requests/new
+  2. Fills form with:
+     - Title (required, 1-100 chars)
+     - Description (optional, max 500 chars)
+     - Exchange offer (optional, max 300 chars)
+     - Category (required)
+     - Urgency (default: normal)
+     - Location privacy (default: public)
+
+  3. Client-side validation (Zod)
+  4. POST /api/requests/create
+  5. Server-side validation + sanitization
+  6. Insert into help_requests table
+  7. Redirect to /requests with success message
+
+VALIDATION SCHEMA (lib/validations.ts):
+
+  const sanitizeString = (str: string) => str.trim().slice(0, 1000)
+
+  export const helpRequestSchema = z.object({
+    title: z.string()
+      .min(1, 'Title required')
+      .max(100, 'Title too long')
+      .transform(sanitizeString)
+      .refine((title) => !validator.contains(title, '<script'),
+              'Invalid characters'),
+
+    description: z.string()
+      .max(500)
+      .transform(sanitizeString)
+      .optional(),
+
+    exchange_offer: z.string()
+      .max(300)
+      .transform(sanitizeString)
+      .optional(),
+
+    category: z.enum([
+      'health-caregiving',
+      'groceries-meals',
+      'transportation-errands',
+      'household-yard',
+      'technology-administrative',
+      'social-companionship',
+      'other'
+    ]),
+
+    urgency: z.enum(['normal', 'urgent', 'critical'])
+      .default('normal'),
+
+    location_privacy: z.enum([
+      'public',           // Full location visible to all
+      'helpers_only',     // Location after offering help
+      'after_match'       // Location after request accepted
+    ]).default('public')
+  })
+
+REQUEST DISPLAY:
+
+  Component: HelpRequestCardWithMessaging.tsx
+
+  Features:
+    - Card layout with title, description
+    - Category badge with icon
+    - Urgency indicator (badge color)
+    - Exchange offer display (mutual aid)
+    - Status badge (open, in progress, completed)
+    - "Offer Help" button → opens messaging
+    - Accessible with ARIA labels
+
+REQUEST MANAGEMENT:
+
+  Users can:
+    - Edit their own requests (/requests/my-requests)
+    - Update status (open → in_progress → completed)
+    - Cancel requests
+    - Mark as completed
+
+  Admin can:
+    - Moderate all requests
+    - Hide inappropriate content
+    - Delete spam
+
+3.4 MESSAGING SYSTEM (Phase 2.1-2.2)
+--------------------------------------------------
+
+DATABASE SCHEMA:
+
+  Table: conversations
+    id                  uuid PRIMARY KEY
+    help_request_id     uuid REFERENCES help_requests(id)
+    created_by          uuid REFERENCES profiles(id)
+    title               text
+    status              text ('active', 'closed', 'blocked')
+    created_at          timestamptz
+    updated_at          timestamptz
+    last_message_at     timestamptz
+
+  Table: conversation_participants
+    conversation_id     uuid REFERENCES conversations(id)
+    user_id             uuid REFERENCES profiles(id)
+    joined_at           timestamptz
+    left_at             timestamptz
+    role                text ('member', 'moderator')
+    PRIMARY KEY (conversation_id, user_id)
+
+  Table: messages
+    id                  uuid PRIMARY KEY
+    conversation_id     uuid REFERENCES conversations(id)
+    sender_id           uuid REFERENCES profiles(id)
+    recipient_id        uuid REFERENCES profiles(id)
+    content             text (max 1000 chars)
+    message_type        text ('text', 'system', 'help_request_update')
+    status              text ('sent', 'delivered', 'read', 'failed')
+    read_at             timestamptz
+    is_flagged          boolean
+    moderation_status   text ('pending', 'approved', 'hidden', 'removed')
+    created_at          timestamptz
+    updated_at          timestamptz
+    deleted_at          timestamptz
+
+  Table: messaging_preferences
+    user_id                     uuid REFERENCES profiles(id)
+    can_receive_from            text ('anyone', 'helpers_only', 'nobody')
+    auto_accept_help_requests   boolean
+    email_notifications         boolean
+    push_notifications          boolean
+    quiet_hours_start           time
+    quiet_hours_end             time
+
+  Table: message_reports
+    id                  uuid PRIMARY KEY
+    message_id          uuid REFERENCES messages(id)
+    reported_by         uuid REFERENCES profiles(id)
+    reason              text ('spam', 'harassment', 'inappropriate',
+                              'scam', 'other')
+    description         text
+    status              text ('pending', 'reviewed', 'dismissed',
+                              'action_taken')
+    created_at          timestamptz
+    reviewed_at         timestamptz
+
+REAL-TIME IMPLEMENTATION (lib/messaging/realtime.ts):
+
+  WebSocket Subscription via Supabase Realtime:
+
+  export function useRealTimeMessages(conversationId: string) {
+    const [messages, setMessages] = useState([])
+
+    useEffect(() => {
+      const channel = supabase
+        .channel(`messages:${conversationId}`)
+        .on('postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `conversation_id=eq.${conversationId}`
+          },
+          (payload) => {
+            // New message received
+            setMessages(prev => [...prev, payload.new])
+          }
+        )
+        .on('postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'messages'
+          },
+          (payload) => {
+            // Message updated (read status, etc.)
+            setMessages(prev =>
+              prev.map(msg =>
+                msg.id === payload.new.id ? payload.new : msg
+              )
+            )
+          }
+        )
+        .subscribe()
+
+      return () => supabase.removeChannel(channel)
+    }, [conversationId])
+
+    return { messages }
+  }
+
+MESSAGE ENCRYPTION (lib/messaging/encryption.ts):
+
+  export class MessageEncryptionService {
+    async encryptMessage(
+      content: string,
+      senderId: string,
+      recipientId: string,
+      conversationId: string
+    ) {
+      // Analyze content sensitivity
+      const sensitivityLevel = this.analyzeSensitivity(content)
+
+      if (sensitivityLevel === 'high') {
+        // Encrypt messages containing:
+        // - Phone numbers
+        // - Email addresses
+        // - Physical addresses
+        // - SSN, financial info
+
+        return await this.contactEncryption.encryptSensitiveData(
+          content,
+          `conversation:${conversationId}`,
+          { senderId, recipientId }
+        )
+      }
+
+      // Store plain text for normal messages
+      return {
+        encrypted_content: content,
+        encryption_status: 'none'
+      }
+    }
+
+    analyzeSensitivity(content: string): 'low' | 'medium' | 'high' {
+      // PII pattern detection
+      const piiPatterns = {
+        phone: /\b\d{3}[-.]?\d{3}[-.]?\d{4}\b/,
+        email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/,
+        ssn: /\b\d{3}-\d{2}-\d{4}\b/,
+        address: /\b\d+\s+[\w\s]+(?:street|st|avenue|ave|road|rd|lane|ln)\b/i
+      }
+
+      for (const [key, pattern] of Object.entries(piiPatterns)) {
+        if (pattern.test(content)) return 'high'
+      }
+
+      return 'low'
+    }
+  }
+
+CONTENT MODERATION (lib/messaging/moderation.ts):
+
+  export class ContentModerationService {
+    async moderateContent(
+      content: string,
+      userId: string
+    ): Promise<ModerationResult> {
+      // 1. Pattern Detection
+      const patternResult = this.checkPatterns(content)
+
+      // 2. User Reputation Scoring
+      const userScore = await this.getUserModerationScore(userId)
+
+      // 3. Context Analysis
+      const contextScore = this.analyzeContext(content, userScore)
+
+      // 4. Final Decision
+      return this.calculateFinalResult(patternResult, contextScore)
+    }
+
+    checkPatterns(content: string): PatternResult {
+      const patterns = {
+        profanity: this.profanityList,
+        spam: /\b(buy now|click here|limited time|act now)\b/i,
+        harassment: /\b(hate|kill|die|stupid)\b/i,
+        scam: /\b(wire money|send cash|gift card|bitcoin)\b/i
+      }
+
+      const violations = []
+      for (const [type, pattern] of Object.entries(patterns)) {
+        if (Array.isArray(pattern)) {
+          if (pattern.some(word => content.toLowerCase().includes(word))) {
+            violations.push(type)
+          }
+        } else if (pattern.test(content)) {
+          violations.push(type)
+        }
+      }
+
+      return { violations, severity: this.calculateSeverity(violations) }
+    }
+
+    async getUserModerationScore(userId: string): Promise<number> {
+      // Calculate based on:
+      // - Account age
+      // - Previous violations
+      // - Community standing
+      // - Report history
+
+      const restrictions = await this.getUserRestrictions(userId)
+      if (restrictions.restriction_level === 'banned') return 0
+      if (restrictions.restriction_level === 'suspended') return 0.3
+      if (restrictions.restriction_level === 'limited') return 0.6
+
+      return 1.0 // Good standing
+    }
+  }
+
+USER RESTRICTIONS SYSTEM:
+
+  Table: user_restrictions
+    id                      uuid PRIMARY KEY
+    user_id                 uuid REFERENCES profiles(id)
+    restriction_level       enum ('none', 'limited', 'suspended', 'banned')
+    can_send_messages       boolean DEFAULT true
+    requires_pre_approval   boolean DEFAULT false
+    message_limit_per_day   integer DEFAULT 50
+    restriction_reason      text
+    expires_at              timestamptz
+
+  Restriction Levels:
+    - none: Full access
+    - limited: Reduced message limit, pre-approval for requests
+    - suspended: Cannot send messages, temporary ban
+    - banned: Permanent platform ban
+
+MESSAGING UI COMPONENTS:
+
+  ConversationList.tsx
+    - Left sidebar on desktop, full screen on mobile
+    - Conversation preview with last message
+    - Unread count badges
+    - Search/filter functionality
+    - Real-time updates
+
+  MessageThreadView.tsx
+    - Center panel with message history
+    - Auto-scroll to bottom on new messages
+    - Date dividers
+    - Read receipts
+    - Message status indicators
+
+  MessageInput.tsx
+    - Bottom input field
+    - Emoji picker
+    - Character counter (1000 max)
+    - Send button
+    - Typing indicator broadcast
+    - File upload (future)
+
+  MessageBubble.tsx
+    - Individual message component
+    - Sender avatar and name
+    - Timestamp
+    - Read status
+    - Own messages: right-aligned, sage background
+    - Other messages: left-aligned, gray background
+
+  TypingIndicator.tsx
+    - "User is typing..." animation
+    - Real-time via Realtime broadcast channel
+    - Auto-hide after 3 seconds
+
+  PresenceIndicator.tsx
+    - Online/offline status dot
+    - Real-time presence tracking
+    - Last seen timestamp
+
+  VirtualizedMessageList.tsx
+    - Performance optimization for 1000+ messages
+    - Uses react-window for virtual scrolling
+    - Renders only visible messages
+    - Overscan for smooth scrolling
+
+PERFORMANCE OPTIMIZATIONS:
+
+  Virtualization (react-window):
+    import { FixedSizeList as List } from 'react-window'
+
+    export function VirtualizedMessageList({
+      messages,
+      height,
+      itemHeight
+    }) {
+      return (
+        <List
+          height={height}
+          itemCount={messages.length}
+          itemSize={itemHeight}
+          overscanCount={5}
+        >
+          {({ index, style }) => (
+            <div style={style}>
+              <MessageBubble message={messages[index]} />
+            </div>
+          )}
+        </List>
+      )
+    }
+
+  Memory Management:
+    const BUFFER_SIZE = 500
+
+    useEffect(() => {
+      if (messageBuffer.length > BUFFER_SIZE) {
+        setMessageBuffer(prev => prev.slice(-BUFFER_SIZE))
+      }
+    }, [messageBuffer])
+
+  Debouncing:
+    const debouncedTypingIndicator = useMemo(
+      () => debounce(() => {
+        supabase.channel(`typing:${conversationId}`).send({
+          type: 'broadcast',
+          event: 'typing',
+          payload: { user_id: userId }
+        })
+      }, 300),
+      [conversationId]
+    )
+
+MOBILE MESSAGING LAYOUT (app/globals.css):
+
+  /* Mobile-optimized messaging */
+  .messaging-page-container {
+    height: calc(100dvh - 64px); /* Dynamic viewport height */
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  [data-component="MessageInput"] {
+    position: sticky;
+    bottom: 0;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    /* iOS notch support */
+  }
+
+  /* 44×44px touch targets (WCAG 2.5.5) */
+  @media (max-width: 640px) {
+    .messaging-action-button {
+      min-width: 44px !important;
+      min-height: 44px !important;
+    }
+  }
+
+3.5 ADMIN PANEL CAPABILITIES
+--------------------------------------------------
+
+ADMIN DASHBOARD (/admin):
+
+  Overview Metrics:
+    - Total users (approved, pending, rejected)
+    - Active help requests
+    - Total messages sent today
+    - Pending moderation items
+    - Privacy violations detected
+    - System health status
+
+  Quick Actions:
+    - Review pending applications
+    - Moderate flagged content
+    - View recent activity
+    - Access system logs
+
+  Recent Activity Timeline:
+    - New user registrations
+    - Help request creations
+    - Messages flagged for review
+    - Admin actions taken
+
+APPLICATION REVIEW (/admin/applications):
+
+  Workflow:
+    1. View list of pending applications
+    2. Click application to view details:
+       - Name, email
+       - Registration date
+       - Submitted information
+    3. Review application
+    4. Take action:
+       - Approve with optional welcome message
+       - Reject with reasoning
+    5. Email notification sent to applicant
+    6. User status updated in database
+
+  API Endpoint: POST /api/admin/applications
+
+  Payload:
+    {
+      userId: string,
+      action: 'approve' | 'reject',
+      reasoning?: string
+    }
+
+USER MANAGEMENT (/admin/users):
+
+  Features:
+    - User list with filters:
+      * Status (pending, approved, rejected)
+      * Role (member, admin)
+      * Date joined
+      * Activity level
+
+    - User details modal:
+      * Profile information
+      * Activity history
+      * Message count
+      * Help requests created/completed
+      * Restriction status
+
+    - Actions per user:
+      * Edit profile
+      * Change role (promote/demote admin)
+      * Apply restrictions
+      * Suspend account
+      * Ban permanently
+      * View full activity log
+
+    - Bulk operations:
+      * Approve multiple applications
+      * Suspend multiple users
+      * Export user data
+
+CONTENT MODERATION (/admin/messaging/moderation):
+
+  Moderation Queue:
+    - Flagged messages requiring review
+    - Automatic flagging based on patterns
+    - User-reported messages
+    - Priority sorting (high-risk first)
+
+  Review Interface:
+    - Message content display
+    - Conversation context
+    - User history
+    - Previous violations
+
+  Actions:
+    - Dismiss flag (false positive)
+    - Hide message (from conversation)
+    - Remove message (delete permanently)
+    - Warn user (send warning)
+    - Restrict user (apply limitations)
+    - Suspend user (temporary ban)
+    - Ban user (permanent ban)
+
+  Audit Trail:
+    - All moderation decisions logged
+    - Admin who took action
+    - Timestamp
+    - Reasoning
+    - Result
+
+PRIVACY DASHBOARD (/admin/privacy):
+
+  Contact Exchange Tracking:
+    - All contact exchanges logged
+    - Consent verification
+    - Encryption status
+    - Access logs
+
+  Privacy Violation Detection:
+    - Automatic PII exposure detection
+    - Contact sharing without consent
+    - Suspicious activity patterns
+
+  Encryption Audit Logs:
+    - Messages encrypted/decrypted
+    - Encryption keys used
+    - Access attempts
+
+  Data Access Requests:
+    - User requests for data export
+    - User requests for data deletion
+    - Admin compliance actions
+
+  Compliance Monitoring:
+    - GDPR-style compliance tracking
+    - Privacy policy acceptance
+    - Terms of service versioning
+
+CMS (/admin/cms):
+
+  Calendar Events (/admin/cms/calendar-events):
+    - Create/edit community events
+    - Fields:
+      * Title, description
+      * Event type (meeting, workshop, social)
+      * Start/end time
+      * Location (physical/virtual)
+      * Publish status
+    - Event list with filters
+    - Publish/draft workflow
+
+  Community Updates (/admin/cms/community-updates):
+    - Create/edit announcements
+    - Fields:
+      * Title, content
+      * Update type (news, announcement, alert)
+      * Priority (low, medium, high)
+      * Publish status
+    - Rich text editor
+    - Preview before publishing
+
+  Site Content (/admin/cms/site-content):
+    - Manage static pages
+    - Editable pages:
+      * About
+      * Resources
+      * FAQ
+      * Terms of Service
+      * Privacy Policy
+    - Version control
+    - Rollback capability
+
+REPORTING & ANALYTICS (/admin/reports):
+
+  User Growth Metrics:
+    - New registrations over time
+    - Approval rate
+    - Active users (daily/weekly/monthly)
+    - User retention
+
+  Help Request Analytics:
+    - Requests created over time
+    - Completion rate
+    - Average time to completion
+    - Category distribution
+    - Urgency breakdown
+
+  Messaging Activity:
+    - Messages sent over time
+    - Active conversations
+    - Response time metrics
+    - Moderation actions
+
+  Geographic Distribution:
+    - Users by location
+    - Heat maps (Springfield, Branson, Joplin)
+    - Regional activity levels
+
+BUG REPORTS (/admin/bug-reports):
+
+  Features:
+    - User-submitted bug reports
+    - Priority management (low, medium, high, critical)
+    - Status tracking (new, in progress, resolved, closed)
+    - Assignment to developers
+    - Comments/discussion
+    - Resolution tracking
+
+3.6 DASHBOARD FEATURES
+--------------------------------------------------
+
+USER DASHBOARD (/dashboard):
+
+  Layout Structure:
+    - Welcome section with user name
+    - Admin badge (if applicable)
+    - Quick action cards
+    - Stats overview
+    - Recent activity sections
+
+  Quick Action Cards:
+    1. Create Help Request
+       - Icon: HandHeart
+       - Link: /requests/new
+       - Description: "Post a new request for community support"
+
+    2. Browse Requests
+       - Icon: Handshake
+       - Link: /requests
+       - Description: "See how you can help others"
+
+    3. Messages
+       - Icon: MessageSquare
+       - Unread count badge
+       - Link: /messages
+       - Description: "View and respond to messages"
+
+  Stats Cards:
+    1. Your Requests
+       - Count of active requests
+       - Link: /requests/my-requests
+
+    2. Messages
+       - Unread message count
+       - Active conversations count
+       - Link: /messages
+
+    3. Community Impact
+       - People helped count
+       - Requests completed
+       - Community member since date
+
+  Recent Activity Sections:
+
+    Your Activity:
+      - User's help requests with status
+      - Recent messages
+      - Completed exchanges
+
+    Community Activity:
+      - Recent help requests from others
+      - New members joined
+      - Community updates
+
+  Data Fetching (Server Component):
+    async function getDashboardData(userId: string) {
+      // Fetch user's active requests
+      const { count: userRequestsCount } = await supabase
+        .from('help_requests')
+        .select('*', { count: 'exact' })
+        .eq('user_id', userId)
+        .neq('status', 'closed')
+        .neq('status', 'cancelled')
+
+      // Fetch unread messages
+      const { count: unreadCount } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact' })
+        .eq('recipient_id', userId)
+        .is('read_at', null)
+
+      // Fetch people helped
+      const { count: helpedCount } = await supabase
+        .from('help_requests')
+        .select('*', { count: 'exact' })
+        .eq('helper_id', userId)
+        .eq('status', 'completed')
+
+      return {
+        userRequestsCount,
+        unreadCount,
+        helpedCount
+      }
+    }
+
+  Dynamic Components:
+    - Server-side rendering for initial data
+    - Client components for interactivity
+    - Real-time updates for new messages
+    - Optimistic UI updates
+
+3.7 PRIVACY CONTROLS
+--------------------------------------------------
+
+USER PRIVACY SETTINGS (/privacy):
+
+  Contact Exchange Preferences:
+    - Who can initiate contact:
+      * anyone - Any community member
+      * helpers_only - Only after offering help
+      * nobody - Disable contact requests
+
+    - Auto-accept help requests (boolean)
+    - Email notifications (boolean)
+    - Push notifications (boolean)
+    - Quiet hours:
+      * Start time (e.g., 22:00)
+      * End time (e.g., 08:00)
+
+  Location Privacy (per help request):
+    - public: Full location visible to all
+    - helpers_only: Location shown after offering help
+    - after_match: Location revealed after request accepted
+
+  Message Privacy:
+    - Block users list
+    - Report inappropriate messages
+    - Message history export (GDPR compliance)
+    - Delete message history
+
+  Data Management:
+    - Export all user data
+    - Request account deletion
+    - Download activity log
+
+PRIVACY DASHBOARD (User-facing):
+
+  Components:
+    - Privacy score meter (0-100)
+    - Contact exchange history
+    - Data access log (who viewed what)
+    - Privacy violation reports
+    - Encryption status for messages
+    - Active data sharing permissions
+
+ADMIN PRIVACY FEATURES:
+
+  Privacy Event Tracking (Table: privacy_events):
+    - Event types:
+      * contact_shared
+      * data_exported
+      * account_deleted
+      * location_viewed
+      * message_read
+    - User ID
+    - Context data (JSON)
+    - Violation detected (boolean)
+    - Violation type
+
+  Violation Detection:
+    - PII exposure in messages
+    - Contact sharing without consent
+    - Suspicious data access patterns
+    - Unusual location sharing
+
+  Encryption Audit Logs:
+    - Messages encrypted/decrypted
+    - Encryption keys accessed
+    - Decryption attempts
+
+  Compliance Reporting:
+    - GDPR-style data access requests
+    - Data deletion requests
+    - Consent management
+    - Privacy policy acceptance tracking
+
+3.8 RESOURCE LIBRARY
+--------------------------------------------------
+
+STRUCTURE:
+
+  Categories:
+    1. Essentials
+       - Food assistance
+       - Housing support
+       - Emergency financial aid
+       - Utility assistance
+
+    2. Well-Being
+       - Mental health resources
+       - Caregiving support
+       - Counseling services
+       - Support groups
+
+    3. Community
+       - Local programs
+       - Community centers
+       - Volunteer opportunities
+       - Social connections
+
+    4. Learning
+       - Training programs
+       - Educational resources
+       - Skill-building workshops
+       - Career development
+
+IMPLEMENTATION:
+
+  - CMS-managed content (/admin/cms/site-content)
+  - Category-based organization
+  - Search functionality
+  - External links to trusted organizations
+  - Mobile-optimized display
+  - Accessible for screen readers
+
+CRISIS RESOURCES:
+
+  Immediate Help:
+    - National Suicide Prevention Lifeline: 988
+    - Crisis Text Line: Text HOME to 741741
+    - Domestic Violence Hotline: 1-800-799-7233
+    - Mental Health Crisis: 1-800-273-8255
+    - Emergency Services: 911
+
+  Located Prominently:
+    - Homepage sidebar
+    - Resources page header
+    - Help request creation page
+    - Messaging interface
+
+  Features:
+    - Click-to-call functionality
+    - Always visible, no login required
+    - Multilingual support (future)
+
+================================================================================
+4. DATABASE SCHEMA
+================================================================================
+
+4.1 CORE TABLES
+--------------------------------------------------
+
+PROFILES:
+
+  Purpose: User profiles and account information
+
+  CREATE TABLE profiles (
+    id                    uuid PRIMARY KEY
+                          REFERENCES auth.users(id) ON DELETE CASCADE,
+    name                  text NOT NULL CHECK (char_length(name) <= 100),
+    location              text CHECK (char_length(location) <= 200),
+    is_admin              boolean DEFAULT false,
+    verification_status   text DEFAULT 'pending'
+                          CHECK (verification_status IN
+                                 ('pending', 'approved', 'rejected')),
+    is_internal_tester    boolean DEFAULT false,
+    bio                   text CHECK (char_length(bio) <= 500),
+    contact_visible       boolean DEFAULT false,
+    created_at            timestamptz DEFAULT now(),
+    updated_at            timestamptz DEFAULT now()
+  );
+
+  Indexes:
+    CREATE INDEX idx_profiles_verification_status
+      ON profiles(verification_status);
+    CREATE INDEX idx_profiles_is_admin
+      ON profiles(is_admin) WHERE is_admin = true;
+
+HELP_REQUESTS:
+
+  Purpose: Community help requests
+
+  CREATE TABLE help_requests (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id               uuid NOT NULL REFERENCES profiles(id)
+                          ON DELETE CASCADE,
+    title                 text NOT NULL CHECK (char_length(title) BETWEEN 1 AND 100),
+    description           text CHECK (char_length(description) <= 500),
+    exchange_offer        text CHECK (char_length(exchange_offer) <= 300),
+    category              text NOT NULL CHECK (category IN (
+                            'health-caregiving',
+                            'groceries-meals',
+                            'transportation-errands',
+                            'household-yard',
+                            'technology-administrative',
+                            'social-companionship',
+                            'other'
+                          )),
+    urgency               text DEFAULT 'normal' CHECK (urgency IN
+                            ('normal', 'urgent', 'critical')),
+    status                text DEFAULT 'open' CHECK (status IN
+                            ('open', 'in_progress', 'completed',
+                             'cancelled', 'closed')),
+    location_override     text CHECK (char_length(location_override) <= 200),
+    location_privacy      text DEFAULT 'public' CHECK (location_privacy IN
+                            ('public', 'helpers_only', 'after_match')),
+    helper_id             uuid REFERENCES profiles(id) ON DELETE SET NULL,
+    created_at            timestamptz DEFAULT now(),
+    updated_at            timestamptz DEFAULT now()
+  );
+
+  Indexes:
+    CREATE INDEX idx_help_requests_user_id ON help_requests(user_id);
+    CREATE INDEX idx_help_requests_status ON help_requests(status);
+    CREATE INDEX idx_help_requests_created_at
+      ON help_requests(created_at DESC);
+    CREATE INDEX idx_help_requests_category ON help_requests(category);
+    CREATE INDEX idx_help_requests_urgency ON help_requests(urgency);
+    CREATE INDEX idx_help_requests_helper_id
+      ON help_requests(helper_id) WHERE helper_id IS NOT NULL;
+
+CONVERSATIONS:
+
+  Purpose: Message conversation threads
+
+  CREATE TABLE conversations (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    help_request_id       uuid REFERENCES help_requests(id)
+                          ON DELETE SET NULL,
+    created_by            uuid NOT NULL REFERENCES profiles(id)
+                          ON DELETE CASCADE,
+    title                 text,
+    status                text DEFAULT 'active' CHECK (status IN
+                            ('active', 'closed', 'blocked')),
+    created_at            timestamptz DEFAULT now(),
+    updated_at            timestamptz DEFAULT now(),
+    last_message_at       timestamptz
+  );
+
+  Indexes:
+    CREATE INDEX idx_conversations_help_request
+      ON conversations(help_request_id);
+    CREATE INDEX idx_conversations_created_by
+      ON conversations(created_by);
+    CREATE INDEX idx_conversations_updated_at
+      ON conversations(updated_at DESC);
+    CREATE INDEX idx_conversations_last_message
+      ON conversations(last_message_at DESC NULLS LAST);
+
+CONVERSATION_PARTICIPANTS:
+
+  Purpose: Track conversation membership
+
+  CREATE TABLE conversation_participants (
+    conversation_id       uuid NOT NULL REFERENCES conversations(id)
+                          ON DELETE CASCADE,
+    user_id               uuid NOT NULL REFERENCES profiles(id)
+                          ON DELETE CASCADE,
+    joined_at             timestamptz DEFAULT now(),
+    left_at               timestamptz,
+    role                  text DEFAULT 'member' CHECK (role IN
+                            ('member', 'moderator')),
+    PRIMARY KEY (conversation_id, user_id)
+  );
+
+  Indexes:
+    CREATE INDEX idx_conv_participants_user
+      ON conversation_participants(user_id, left_at)
+      WHERE left_at IS NULL;
+    CREATE INDEX idx_conv_participants_conversation
+      ON conversation_participants(conversation_id);
+
+MESSAGES:
+
+  Purpose: Individual messages in conversations
+
+  CREATE TABLE messages (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id       uuid NOT NULL REFERENCES conversations(id)
+                          ON DELETE CASCADE,
+    sender_id             uuid NOT NULL REFERENCES profiles(id)
+                          ON DELETE CASCADE,
+    recipient_id          uuid REFERENCES profiles(id) ON DELETE SET NULL,
+    content               text NOT NULL CHECK (char_length(content) BETWEEN 1 AND 1000),
+    message_type          text DEFAULT 'text' CHECK (message_type IN
+                            ('text', 'system', 'help_request_update')),
+    status                text DEFAULT 'sent' CHECK (status IN
+                            ('sent', 'delivered', 'read', 'failed')),
+    read_at               timestamptz,
+    is_flagged            boolean DEFAULT false,
+    moderation_status     text DEFAULT 'approved' CHECK (moderation_status IN
+                            ('pending', 'approved', 'hidden', 'removed')),
+    created_at            timestamptz DEFAULT now(),
+    updated_at            timestamptz DEFAULT now(),
+    deleted_at            timestamptz
+  );
+
+  Indexes:
+    CREATE INDEX idx_messages_conversation
+      ON messages(conversation_id, created_at DESC);
+    CREATE INDEX idx_messages_sender ON messages(sender_id);
+    CREATE INDEX idx_messages_recipient ON messages(recipient_id);
+    CREATE INDEX idx_messages_unread
+      ON messages(recipient_id, read_at) WHERE read_at IS NULL;
+    CREATE INDEX idx_messages_flagged
+      ON messages(is_flagged, moderation_status)
+      WHERE is_flagged = true;
+    CREATE INDEX idx_messages_created_at
+      ON messages(created_at DESC);
+
+CONTACT_EXCHANGES:
+
+  Purpose: Track contact information sharing for privacy
+
+  CREATE TABLE contact_exchanges (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    request_id            uuid NOT NULL REFERENCES help_requests(id)
+                          ON DELETE CASCADE,
+    requester_id          uuid NOT NULL REFERENCES profiles(id)
+                          ON DELETE CASCADE,
+    helper_id             uuid NOT NULL REFERENCES profiles(id)
+                          ON DELETE CASCADE,
+    contact_shared        boolean DEFAULT false,
+    consent_given         boolean NOT NULL,
+    encrypted_contact     text,
+    exchange_status       text DEFAULT 'pending' CHECK (exchange_status IN
+                            ('pending', 'approved', 'rejected', 'expired')),
+    created_at            timestamptz DEFAULT now(),
+    expires_at            timestamptz
+  );
+
+  Indexes:
+    CREATE INDEX idx_contact_exchanges_request
+      ON contact_exchanges(request_id);
+    CREATE INDEX idx_contact_exchanges_requester
+      ON contact_exchanges(requester_id);
+    CREATE INDEX idx_contact_exchanges_helper
+      ON contact_exchanges(helper_id);
+    CREATE INDEX idx_contact_exchanges_status
+      ON contact_exchanges(exchange_status);
+
+PRIVACY_EVENTS:
+
+  Purpose: Track privacy-related events and violations
+
+  CREATE TABLE privacy_events (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_type            text NOT NULL,
+    user_id               uuid REFERENCES profiles(id) ON DELETE SET NULL,
+    context_data          jsonb,
+    violation_detected    boolean DEFAULT false,
+    violation_type        text,
+    created_at            timestamptz DEFAULT now()
+  );
+
+  Indexes:
+    CREATE INDEX idx_privacy_events_user ON privacy_events(user_id);
+    CREATE INDEX idx_privacy_events_type ON privacy_events(event_type);
+    CREATE INDEX idx_privacy_events_violation
+      ON privacy_events(violation_detected, created_at DESC)
+      WHERE violation_detected = true;
+
+MESSAGING_PREFERENCES:
+
+  Purpose: User messaging preferences and settings
+
+  CREATE TABLE messaging_preferences (
+    user_id                     uuid PRIMARY KEY REFERENCES profiles(id)
+                                ON DELETE CASCADE,
+    can_receive_from            text DEFAULT 'anyone' CHECK (can_receive_from IN
+                                  ('anyone', 'helpers_only', 'nobody')),
+    auto_accept_help_requests   boolean DEFAULT true,
+    email_notifications         boolean DEFAULT true,
+    push_notifications          boolean DEFAULT false,
+    quiet_hours_start           time,
+    quiet_hours_end             time,
+    created_at                  timestamptz DEFAULT now(),
+    updated_at                  timestamptz DEFAULT now()
+  );
+
+USER_RESTRICTIONS:
+
+  Purpose: User account restrictions for moderation
+
+  CREATE TABLE user_restrictions (
+    id                      uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id                 uuid NOT NULL REFERENCES profiles(id)
+                            ON DELETE CASCADE,
+    restriction_level       text DEFAULT 'none' CHECK (restriction_level IN
+                              ('none', 'limited', 'suspended', 'banned')),
+    can_send_messages       boolean DEFAULT true,
+    requires_pre_approval   boolean DEFAULT false,
+    message_limit_per_day   integer DEFAULT 50 CHECK (message_limit_per_day > 0),
+    restriction_reason      text,
+    expires_at              timestamptz,
+    created_at              timestamptz DEFAULT now(),
+    updated_at              timestamptz DEFAULT now()
+  );
+
+  Indexes:
+    CREATE UNIQUE INDEX idx_user_restrictions_user
+      ON user_restrictions(user_id);
+    CREATE INDEX idx_user_restrictions_level
+      ON user_restrictions(restriction_level)
+      WHERE restriction_level != 'none';
+
+MESSAGE_REPORTS:
+
+  Purpose: User reports of inappropriate messages
+
+  CREATE TABLE message_reports (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    message_id            uuid NOT NULL REFERENCES messages(id)
+                          ON DELETE CASCADE,
+    reported_by           uuid NOT NULL REFERENCES profiles(id)
+                          ON DELETE CASCADE,
+    reason                text NOT NULL CHECK (reason IN
+                            ('spam', 'harassment', 'inappropriate',
+                             'scam', 'other')),
+    description           text CHECK (char_length(description) <= 500),
+    status                text DEFAULT 'pending' CHECK (status IN
+                            ('pending', 'reviewed', 'dismissed',
+                             'action_taken')),
+    created_at            timestamptz DEFAULT now(),
+    reviewed_at           timestamptz
+  );
+
+  Indexes:
+    CREATE INDEX idx_message_reports_message
+      ON message_reports(message_id);
+    CREATE INDEX idx_message_reports_reporter
+      ON message_reports(reported_by);
+    CREATE INDEX idx_message_reports_status
+      ON message_reports(status, created_at DESC)
+      WHERE status = 'pending';
+
+ADMIN_ACTION_AUDIT:
+
+  Purpose: Audit log for admin actions
+
+  CREATE TABLE admin_action_audit (
+    id                    uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    admin_id              uuid NOT NULL REFERENCES profiles(id)
+                          ON DELETE CASCADE,
+    action_type           text NOT NULL,
+    target_type           text NOT NULL,
+    target_id             uuid,
+    action_details        jsonb,
+    success               boolean DEFAULT true,
+    error_message         text,
+    ip_address            inet,
+    session_id            text,
+    user_agent            text,
+    created_at            timestamptz DEFAULT now()
+  );
+
+  Indexes:
+    CREATE INDEX idx_admin_audit_admin
+      ON admin_action_audit(admin_id, created_at DESC);
+    CREATE INDEX idx_admin_audit_target
+      ON admin_action_audit(target_type, target_id);
+    CREATE INDEX idx_admin_audit_created
+      ON admin_action_audit(created_at DESC);
+
+CMS TABLES:
+
+  calendar_events:
+    CREATE TABLE calendar_events (
+      id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      title               text NOT NULL,
+      description         text,
+      event_type          text CHECK (event_type IN
+                            ('meeting', 'workshop', 'social', 'other')),
+      start_time          timestamptz NOT NULL,
+      end_time            timestamptz,
+      location            text,
+      is_published        boolean DEFAULT false,
+      created_by          uuid REFERENCES profiles(id),
+      created_at          timestamptz DEFAULT now(),
+      updated_at          timestamptz DEFAULT now()
+    );
+
+  community_updates:
+    CREATE TABLE community_updates (
+      id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      title               text NOT NULL,
+      content             text NOT NULL,
+      update_type         text CHECK (update_type IN
+                            ('news', 'announcement', 'alert')),
+      priority            text DEFAULT 'medium' CHECK (priority IN
+                            ('low', 'medium', 'high')),
+      is_published        boolean DEFAULT false,
+      created_by          uuid REFERENCES profiles(id),
+      published_at        timestamptz,
+      created_at          timestamptz DEFAULT now(),
+      updated_at          timestamptz DEFAULT now()
+    );
+
+  site_content:
+    CREATE TABLE site_content (
+      key                 text PRIMARY KEY,
+      title               text NOT NULL,
+      content             text NOT NULL,
+      content_type        text DEFAULT 'html' CHECK (content_type IN
+                            ('html', 'markdown', 'plain')),
+      is_published        boolean DEFAULT false,
+      version             integer DEFAULT 1,
+      updated_by          uuid REFERENCES profiles(id),
+      updated_at          timestamptz DEFAULT now()
+    );
+
+4.2 RLS POLICIES
+--------------------------------------------------
+
+PROFILES:
+
+  -- Public read access
+  CREATE POLICY "Profiles are viewable by everyone"
+    ON profiles FOR SELECT
+    USING (true);
+
+  -- Users can update their own profile
+  CREATE POLICY "Users can update their own profile"
+    ON profiles FOR UPDATE
+    USING (auth.uid() = id);
+
+  -- Admins can update any profile
+  CREATE POLICY "Admins can update any profile"
+    ON profiles FOR UPDATE
+    USING (
+      EXISTS (
+        SELECT 1 FROM profiles
+        WHERE id = auth.uid() AND is_admin = true
+      )
+    );
+
+HELP_REQUESTS:
+
+  -- Public read access
+  CREATE POLICY "Help requests are viewable by everyone"
+    ON help_requests FOR SELECT
+    USING (true);
+
+  -- Users can create help requests
+  CREATE POLICY "Users can create help requests"
+    ON help_requests FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+  -- Users can update their own help requests
+  CREATE POLICY "Users can update their own help requests"
+    ON help_requests FOR UPDATE
+    USING (auth.uid() = user_id);
+
+  -- Users can delete their own help requests
+  CREATE POLICY "Users can delete their own help requests"
+    ON help_requests FOR DELETE
+    USING (auth.uid() = user_id);
+
+  -- Admins can update any help request
+  CREATE POLICY "Admins can manage all help requests"
+    ON help_requests FOR ALL
+    USING (
+      EXISTS (
+        SELECT 1 FROM profiles
+        WHERE id = auth.uid() AND is_admin = true
+      )
+    );
+
+MESSAGES:
+
+  -- Users can view messages they sent or received
+  CREATE POLICY "Users can view their messages"
+    ON messages FOR SELECT
+    USING (
+      auth.uid() = sender_id OR
+      auth.uid() = recipient_id OR
+      EXISTS (
+        SELECT 1 FROM conversation_participants
+        WHERE conversation_id = messages.conversation_id
+        AND user_id = auth.uid()
+        AND left_at IS NULL
+      )
+    );
+
+  -- Users can send messages
+  CREATE POLICY "Users can send messages"
+    ON messages FOR INSERT
+    WITH CHECK (auth.uid() = sender_id);
+
+  -- Users can update their own messages
+  CREATE POLICY "Users can update their own messages"
+    ON messages FOR UPDATE
+    USING (auth.uid() = sender_id);
+
+  -- Admins can view all messages
+  CREATE POLICY "Admins can manage all messages"
+    ON messages FOR ALL
+    USING (
+      EXISTS (
+        SELECT 1 FROM profiles
+        WHERE id = auth.uid() AND is_admin = true
+      )
+    );
+
+CONVERSATIONS:
+
+  -- Users can view conversations they're part of
+  CREATE POLICY "Users can view their conversations"
+    ON conversations FOR SELECT
+    USING (
+      auth.uid() = created_by OR
+      EXISTS (
+        SELECT 1 FROM conversation_participants
+        WHERE conversation_id = conversations.id
+        AND user_id = auth.uid()
+        AND left_at IS NULL
+      )
+    );
+
+  -- Users can create conversations
+  CREATE POLICY "Users can create conversations"
+    ON conversations FOR INSERT
+    WITH CHECK (auth.uid() = created_by);
+
+CONTACT_EXCHANGES:
+
+  -- Users can view contact exchanges they're involved in
+  CREATE POLICY "Users can view their contact exchanges"
+    ON contact_exchanges FOR SELECT
+    USING (
+      auth.uid() = requester_id OR
+      auth.uid() = helper_id
+    );
+
+  -- Users can create contact exchanges
+  CREATE POLICY "Users can initiate contact exchanges"
+    ON contact_exchanges FOR INSERT
+    WITH CHECK (
+      auth.uid() = requester_id AND
+      consent_given = true
+    );
+
+PRIVACY_EVENTS:
+
+  -- Users can view their own privacy events
+  CREATE POLICY "Users can view their privacy events"
+    ON privacy_events FOR SELECT
+    USING (auth.uid() = user_id);
+
+  -- Admins can view all privacy events
+  CREATE POLICY "Admins can view all privacy events"
+    ON privacy_events FOR SELECT
+    USING (
+      EXISTS (
+        SELECT 1 FROM profiles
+        WHERE id = auth.uid() AND is_admin = true
+      )
+    );
+
+MESSAGE_REPORTS:
+
+  -- Users can create reports
+  CREATE POLICY "Users can create message reports"
+    ON message_reports FOR INSERT
+    WITH CHECK (auth.uid() = reported_by);
+
+  -- Admins can view and manage reports
+  CREATE POLICY "Admins can manage message reports"
+    ON message_reports FOR ALL
+    USING (
+      EXISTS (
+        SELECT 1 FROM profiles
+        WHERE id = auth.uid() AND is_admin = true
+      )
+    );
+
+4.3 DATABASE TRIGGERS
+--------------------------------------------------
+
+UPDATE TIMESTAMPS:
+
+  -- Auto-update updated_at column
+  CREATE OR REPLACE FUNCTION update_updated_at_column()
+  RETURNS TRIGGER AS $$
+  BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql;
+
+  -- Apply to tables
+  CREATE TRIGGER update_profiles_updated_at
+    BEFORE UPDATE ON profiles
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+  CREATE TRIGGER update_help_requests_updated_at
+    BEFORE UPDATE ON help_requests
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+  CREATE TRIGGER update_conversations_updated_at
+    BEFORE UPDATE ON conversations
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+UPDATE LAST_MESSAGE_AT:
+
+  -- Update conversation's last_message_at when new message inserted
+  CREATE OR REPLACE FUNCTION update_conversation_last_message()
+  RETURNS TRIGGER AS $$
+  BEGIN
+    UPDATE conversations
+    SET last_message_at = NEW.created_at
+    WHERE id = NEW.conversation_id;
+    RETURN NEW;
+  END;
+  $$ LANGUAGE plpgsql;
+
+  CREATE TRIGGER update_last_message_trigger
+    AFTER INSERT ON messages
+    FOR EACH ROW
+    EXECUTE FUNCTION update_conversation_last_message();
+
+================================================================================
+5. TECHNICAL PATTERNS
+================================================================================
+
+5.1 SUPABASE CLIENT PATTERNS
+--------------------------------------------------
+
+SERVER CLIENT (lib/supabase/server.ts):
+
+  import { createServerClient } from '@supabase/ssr'
+  import { cookies } from 'next/headers'
+
+  export function createClient() {
+    const cookieStore = cookies()
+
+    return createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!.trim(),
+      {
+        auth: {
+          autoRefreshToken: false,  // Prevent cookie parsing issues
+          persistSession: false,
+        },
+        cookies: {
+          getAll() {
+            return cookieStore.getAll().filter(cookie => {
+              // Validate and sanitize cookies
+              return cookie && cookie.name && cookie.value
+            })
+          },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) => {
+                cookieStore.set(name, String(value), {
+                  ...options,
+                  path: '/'
+                })
+              })
+            } catch {
+              // Expected in server components (read-only)
+            }
+          },
+        },
+      }
+    )
+  }
+
+  // Usage in server component
+  const supabase = await createClient()
+  const { data: user } = await supabase.auth.getUser()
+
+BROWSER CLIENT (lib/supabase/client.ts):
+
+  import { createBrowserClient } from '@supabase/ssr'
+
+  export const createClient = () => {
+    return createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!.trim(),
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: false,
+          storage: typeof window !== 'undefined'
+            ? window.localStorage
+            : undefined,
+        },
+      }
+    )
+  }
+
+  // Usage in client component
+  'use client'
+  const supabase = createClient()
+
+SERVICE ROLE CLIENT (lib/supabase/admin.ts):
+
+  import { createClient } from '@supabase/supabase-js'
+
+  export function createAdminClient() {
+    return createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
+      process.env.SUPABASE_SERVICE_ROLE_KEY!.trim(),
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+  }
+
+  // Example: Bypass RLS for admin operations
+  export async function getProfileWithServiceRole(userId: string) {
+    const supabase = createAdminClient()
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+
+    if (error) throw error
+    return data
+  }
+
+5.2 DATA FETCHING PATTERNS
+--------------------------------------------------
+
+SERVER COMPONENT PATTERN:
+
+  // app/requests/page.tsx (Server Component)
+  import { createClient } from '@/lib/supabase/server'
+
+  export default async function RequestsPage() {
+    const supabase = await createClient()
+
+    // Direct database query
+    const { data: requests, error } = await supabase
+      .from('help_requests')
+      .select(`
+        id,
+        title,
+        description,
+        category,
+        urgency,
+        status,
+        created_at,
+        profiles!user_id (name, location)
+      `)
+      .eq('status', 'open')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching requests:', error)
+      return <ErrorDisplay />
+    }
+
+    return <RequestsList requests={requests} />
+  }
+
+API ROUTE PATTERN:
+
+  // app/api/requests/create/route.ts
+  import { createClient } from '@/lib/supabase/server'
+  import { helpRequestSchema } from '@/lib/validations'
+  import { NextResponse } from 'next/server'
+
+  export async function POST(request: Request) {
+    const supabase = await createClient()
+
+    // Auth check
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
+    // Validate request body
+    const body = await request.json()
+    const result = helpRequestSchema.safeParse(body)
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: result.error },
+        { status: 400 }
+      )
+    }
+
+    // Insert into database
+    const { data, error } = await supabase
+      .from('help_requests')
+      .insert({
+        user_id: user.id,
+        ...result.data,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ data }, { status: 201 })
+  }
+
+CLIENT COMPONENT WITH REAL-TIME:
+
+  'use client'
+  import { useEffect, useState } from 'react'
+  import { createClient } from '@/lib/supabase/client'
+
+  export function MessagingDashboard() {
+    const [messages, setMessages] = useState([])
+    const supabase = createClient()
+
+    useEffect(() => {
+      // Initial fetch
+      fetchMessages()
+
+      // Real-time subscription
+      const channel = supabase
+        .channel('messages')
+        .on('postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          (payload) => {
+            setMessages(prev => [...prev, payload.new])
+          }
+        )
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
+    }, [])
+
+    async function fetchMessages() {
+      const { data } = await supabase
+        .from('messages')
+        .select('*')
+        .order('created_at', { ascending: false })
+
+      setMessages(data || [])
+    }
+
+    return <MessageList messages={messages} />
+  }
+
+5.3 FORM HANDLING AND VALIDATION
+--------------------------------------------------
+
+ZOD SCHEMAS (lib/validations.ts):
+
+  import { z } from 'zod'
+  import validator from 'validator'
+
+  // Sanitization helper
+  const sanitizeString = (str: string) => str.trim().slice(0, 1000)
+
+  // Help Request Schema
+  export const helpRequestSchema = z.object({
+    title: z.string()
+      .min(1, 'Title is required')
+      .max(100, 'Title too long')
+      .transform(sanitizeString)
+      .refine(
+        (title) => !validator.contains(title, '<script'),
+        'Invalid characters'
+      ),
+
+    description: z.string()
+      .max(500, 'Description too long')
+      .transform(sanitizeString)
+      .optional(),
+
+    category: z.enum([
+      'health-caregiving',
+      'groceries-meals',
+      'transportation-errands',
+      'household-yard',
+      'technology-administrative',
+      'social-companionship',
+      'other'
+    ]),
+
+    urgency: z.enum(['normal', 'urgent', 'critical']),
+
+    location_privacy: z.enum([
+      'public',
+      'helpers_only',
+      'after_match'
+    ]),
+  })
+
+  // Type inference
+  export type HelpRequestInput = z.infer<typeof helpRequestSchema>
+
+  // Validation utility
+  export const validateAndSanitizeInput = <T>(
+    schema: z.ZodSchema<T>,
+    input: unknown
+  ): { success: true; data: T } | { success: false; error: string } => {
+    try {
+      const validated = schema.parse(input)
+      return { success: true, data: validated }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const messages = error.issues.map(
+          err => `${err.path}: ${err.message}`
+        )
+        return { success: false, error: messages.join(', ') }
+      }
+      return { success: false, error: 'Validation failed' }
+    }
+  }
+
+FORM COMPONENT PATTERN:
+
+  'use client'
+  import { useState } from 'react'
+  import { useRouter } from 'next/navigation'
+  import { helpRequestSchema } from '@/lib/validations'
+  import { Input } from '@/components/ui/input'
+  import { Button } from '@/components/ui/button'
+
+  export function CreateRequestForm() {
+    const [formData, setFormData] = useState({
+      title: '',
+      description: '',
+      category: 'groceries-meals',
+      urgency: 'normal',
+    })
+    const [errors, setErrors] = useState({})
+    const [loading, setLoading] = useState(false)
+    const router = useRouter()
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault()
+      setLoading(true)
+      setErrors({})
+
+      // Client-side validation
+      const result = helpRequestSchema.safeParse(formData)
+      if (!result.success) {
+        const formattedErrors = {}
+        result.error.issues.forEach((issue) => {
+          formattedErrors[issue.path[0]] = issue.message
+        })
+        setErrors(formattedErrors)
+        setLoading(false)
+        return
+      }
+
+      // API call
+      try {
+        const response = await fetch('/api/requests/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(result.data),
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          setErrors({ submit: error.message })
+          return
+        }
+
+        // Success
+        router.push('/requests?success=created')
+      } catch (error) {
+        setErrors({ submit: 'An error occurred. Try again.' })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          label="Title"
+          value={formData.title}
+          onChange={(e) => setFormData({
+            ...formData,
+            title: e.target.value
+          })}
+          error={errors.title}
+          required
+        />
+        {/* More fields... */}
+        <Button type="submit" loading={loading}>
+          Create Request
+        </Button>
+      </form>
+    )
+  }
+
+5.4 ERROR HANDLING PATTERNS
+--------------------------------------------------
+
+ERROR TRACKING (lib/error-tracking.ts):
+
+  export class ErrorTracker {
+    static captureException(
+      error: Error,
+      context?: Record<string, any>
+    ) {
+      console.error('[Error]', error.message, context)
+
+      // Log to external service (e.g., Sentry)
+      if (process.env.NODE_ENV === 'production') {
+        // Send to error tracking service
+      }
+
+      // Store in database for admin review
+      this.logToDatabase(error, context)
+    }
+
+    static logToDatabase(
+      error: Error,
+      context?: Record<string, any>
+    ) {
+      // Insert into error_logs table
+    }
+  }
+
+  // Usage
+  try {
+    await someAsyncOperation()
+  } catch (error) {
+    ErrorTracker.captureException(error, {
+      userId,
+      operation: 'create_request'
+    })
+    throw new Error('Operation failed. Please try again.')
+  }
+
+ERROR BOUNDARIES (React):
+
+  'use client'
+  import { Component, ReactNode } from 'react'
+
+  export class ErrorBoundary extends Component<
+    { children: ReactNode; fallback: ReactNode },
+    { hasError: boolean }
+  > {
+    constructor(props) {
+      super(props)
+      this.state = { hasError: false }
+    }
+
+    static getDerivedStateFromError() {
+      return { hasError: true }
+    }
+
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+      ErrorTracker.captureException(error, { errorInfo })
+    }
+
+    render() {
+      if (this.state.hasError) {
+        return this.props.fallback
+      }
+      return this.props.children
+    }
+  }
+
+  // Usage
+  <ErrorBoundary fallback={<ErrorDisplay />}>
+    <MyComponent />
+  </ErrorBoundary>
+
+API ERROR HANDLING:
+
+  export class APIError extends Error {
+    constructor(
+      message: string,
+      public status: number,
+      public code?: string
+    ) {
+      super(message)
+      this.name = 'APIError'
+    }
+  }
+
+  // In API route
+  if (!user) {
+    throw new APIError('Unauthorized', 401, 'AUTH_REQUIRED')
+  }
+
+  // Error response formatter
+  export function handleAPIError(error: unknown) {
+    if (error instanceof APIError) {
+      return NextResponse.json(
+        { error: error.message, code: error.code },
+        { status: error.status }
+      )
+    }
+
+    console.error('[API Error]', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+
+5.5 REAL-TIME SUBSCRIPTION PATTERNS
+--------------------------------------------------
+
+PRESENCE TRACKING:
+
+  'use client'
+  import { useEffect, useState } from 'react'
+  import { createClient } from '@/lib/supabase/client'
+
+  export function usePresence(conversationId: string) {
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([])
+    const supabase = createClient()
+
+    useEffect(() => {
+      const channel = supabase.channel(`presence:${conversationId}`)
+
+      channel
+        .on('presence', { event: 'sync' }, () => {
+          const state = channel.presenceState()
+          const users = Object.keys(state)
+          setOnlineUsers(users)
+        })
+        .on('presence', { event: 'join' }, ({ key }) => {
+          setOnlineUsers(prev => [...prev, key])
+        })
+        .on('presence', { event: 'leave' }, ({ key }) => {
+          setOnlineUsers(prev => prev.filter(id => id !== key))
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            await channel.track({
+              user_id: userId,
+              online_at: new Date().toISOString()
+            })
+          }
+        })
+
+      return () => {
+        channel.untrack()
+        supabase.removeChannel(channel)
+      }
+    }, [conversationId])
+
+    return { onlineUsers }
+  }
+
+TYPING INDICATORS:
+
+  export function useTypingIndicator(conversationId: string) {
+    const [typingUsers, setTypingUsers] = useState<string[]>([])
+    const supabase = createClient()
+
+    const broadcastTyping = useMemo(
+      () => debounce(() => {
+        supabase.channel(`typing:${conversationId}`).send({
+          type: 'broadcast',
+          event: 'typing',
+          payload: { user_id: userId, timestamp: Date.now() }
+        })
+      }, 300),
+      [conversationId]
+    )
+
+    useEffect(() => {
+      const channel = supabase.channel(`typing:${conversationId}`)
+        .on('broadcast', { event: 'typing' }, ({ payload }) => {
+          setTypingUsers(prev => {
+            const filtered = prev.filter(
+              id => id !== payload.user_id
+            )
+            return [...filtered, payload.user_id]
+          })
+
+          // Remove after 3 seconds
+          setTimeout(() => {
+            setTypingUsers(prev =>
+              prev.filter(id => id !== payload.user_id)
+            )
+          }, 3000)
+        })
+        .subscribe()
+
+      return () => supabase.removeChannel(channel)
+    }, [conversationId])
+
+    return { typingUsers, broadcastTyping }
+  }
+
+================================================================================
+6. DEPLOYMENT & CONFIGURATION
+================================================================================
+
+6.1 DEPLOYMENT WORKFLOW
+--------------------------------------------------
+
+VERCEL AUTOMATIC DEPLOYMENT (CRITICAL):
+
+  Repository Connection:
+    - Connected to Vercel via Git integration
+    - Every push to 'main' branch automatically triggers deployment
+    - Production URL: https://care-collective-preview.vercel.app
+
+  IMPORTANT - DO NOT RUN MANUAL DEPLOYMENTS:
+    ❌ DO NOT: npx vercel --prod
+       (This causes duplicate deployments!)
+
+    ✅ CORRECT WORKFLOW:
+       1. Commit changes with descriptive message
+       2. Push to main branch (git push origin main)
+       3. Vercel automatically detects push and deploys
+       4. Monitor deployment at Vercel dashboard
+       5. Verify after automatic deployment completes
+
+  Correct Deployment Commands:
+    # 1. Commit changes
+    git add .
+    git commit -m "feat: description 🤖 Generated with Claude Code"
+
+    # 2. Push to main (AUTOMATICALLY deploys via Git integration)
+    git push origin main
+
+    # 3. Vercel deployment triggers automatically
+    # Monitor at: https://vercel.com/musickevan1s-projects/care-collective-preview
+
+    # 4. Verify deployment (after automatic build completes)
+    npx vercel inspect <deployment-url> --logs
+
+SERVICE WORKER CACHE BUSTING (AUTOMATED):
+
+  - package.json has "prebuild" script that runs before build
+  - prebuild: node scripts/update-sw-version.js
+  - Automatically updates service worker cache version
+  - Ensures users see latest deployment (not cached versions)
+
+  Cache Strategy:
+    - Network-first for HTML pages (always fresh)
+    - Cache-first for static assets with content hashes
+    - Service worker: public/sw.js
+
+ENVIRONMENT VARIABLES (Vercel):
+
+  Required:
+    NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+    SUPABASE_SERVICE_ROLE_KEY=eyJ...
+    NEXT_PUBLIC_SITE_URL=https://care-collective-preview.vercel.app
+
+  Optional Feature Flags:
+    NEXT_PUBLIC_FEATURE_MESSAGING=true
+    NEXT_PUBLIC_FEATURE_PWA=true
+    NEXT_PUBLIC_MESSAGING_V2_ENABLED=true
+
+6.2 NEXT.JS CONFIGURATION
+--------------------------------------------------
+
+next.config.js:
+
+  module.exports = {
+    // Security headers
+    async headers() {
+      return [
+        {
+          source: '/(.*)',
+          headers: [
+            { key: 'X-Frame-Options', value: 'DENY' },
+            { key: 'X-Content-Type-Options', value: 'nosniff' },
+            {
+              key: 'Referrer-Policy',
+              value: 'strict-origin-when-cross-origin'
+            },
+            {
+              key: 'Permissions-Policy',
+              value: 'camera=(), microphone=(), geolocation=()'
+            }
+          ]
+        },
+        // Static asset caching
+        {
+          source: '/_next/static/(.*)',
+          headers: [{
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }]
+        },
+        // HTML - no cache
+        {
+          source: '/(.*)',
+          headers: [{
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate'
+          }]
+        }
+      ]
+    },
+
+    // Image optimization
+    images: { unoptimized: true },
+
+    // React strict mode
+    reactStrictMode: true,
+
+    // Compression
+    compress: true,
+
+    // Webpack optimization
+    webpack: (config) => {
+      // Bundle splitting for better performance
+      config.optimization.splitChunks = {
+        cacheGroups: {
+          admin: {
+            test: /components\/admin/,
+            name: 'admin-components',
+            chunks: 'all'
+          },
+          messaging: {
+            test: /components\/messaging/,
+            name: 'messaging-components',
+            chunks: 'all'
+          },
+          ui: {
+            test: /components\/ui/,
+            name: 'ui-components',
+            chunks: 'all'
+          },
+          supabase: {
+            test: /@supabase/,
+            name: 'supabase',
+            chunks: 'all'
+          },
+          vendor: {
+            test: /react|react-dom/,
+            name: 'react-vendor',
+            chunks: 'all'
+          }
+        }
+      }
+      return config
+    },
+
+    // Experimental features
+    experimental: {
+      serverComponentsExternalPackages: ['@supabase/supabase-js']
+    }
+  }
+
+6.3 PACKAGE DEPENDENCIES
+--------------------------------------------------
+
+package.json (Core Dependencies):
+
+  {
+    "name": "care-collective-preview",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+      "dev": "next dev",
+      "prebuild": "node scripts/update-sw-version.js",
+      "build": "next build",
+      "start": "next start",
+      "lint": "next lint",
+      "type-check": "tsc --noEmit",
+      "test": "vitest",
+      "test:coverage": "vitest --coverage",
+      "db:start": "supabase start",
+      "db:reset": "supabase db reset",
+      "db:types": "supabase gen types typescript --project-id xxx > lib/database.types.ts"
+    },
+    "dependencies": {
+      "next": "^14.2.32",
+      "react": "^18.3.1",
+      "react-dom": "^18.3.1",
+      "@supabase/supabase-js": "^2.57.2",
+      "@supabase/ssr": "^0.7.0",
+      "zod": "^4.0.17",
+      "class-variance-authority": "^0.7.1",
+      "clsx": "^2.1.1",
+      "tailwind-merge": "^3.3.1",
+      "tailwindcss-animate": "^1.0.7",
+      "date-fns": "^4.1.0",
+      "lucide-react": "^0.539.0",
+      "dompurify": "^3.2.6",
+      "validator": "^13.15.15",
+      "react-window": "^2.2.2",
+      "@radix-ui/react-dialog": "^1.x",
+      "@radix-ui/react-dropdown-menu": "^1.x",
+      "@radix-ui/react-select": "^1.x",
+      "@radix-ui/react-switch": "^1.x",
+      "@radix-ui/react-tabs": "^1.x",
+      "@radix-ui/react-alert-dialog": "^1.x",
+      "@radix-ui/react-checkbox": "^1.x",
+      "@radix-ui/react-label": "^1.x",
+      "@radix-ui/react-scroll-area": "^1.x",
+      "@radix-ui/react-separator": "^1.x",
+      "@radix-ui/react-slot": "^1.x",
+      "@radix-ui/react-avatar": "^1.x",
+      "@radix-ui/react-progress": "^1.x",
+      "@radix-ui/react-slider": "^1.x",
+      "vaul": "^0.9.0"
+    },
+    "devDependencies": {
+      "typescript": "^5",
+      "@types/node": "^20",
+      "@types/react": "^18",
+      "@types/react-dom": "^18",
+      "vitest": "^3.2.4",
+      "@vitest/ui": "^3.2.4",
+      "@testing-library/react": "^16.3.0",
+      "@playwright/test": "^1.56.1",
+      "tailwindcss": "^4",
+      "postcss": "^8",
+      "eslint": "^8.57.1",
+      "eslint-config-next": "14.2.32",
+      "lighthouse": "^12.2.1"
+    }
+  }
+
+6.4 TYPESCRIPT CONFIGURATION
+--------------------------------------------------
+
+tsconfig.json:
+
+  {
+    "compilerOptions": {
+      "target": "ES2017",
+      "lib": ["dom", "dom.iterable", "esnext"],
+      "allowJs": true,
+      "skipLibCheck": true,
+      "strict": true,
+      "noEmit": true,
+      "esModuleInterop": true,
+      "module": "esnext",
+      "moduleResolution": "bundler",
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "jsx": "preserve",
+      "incremental": true,
+      "plugins": [
+        {
+          "name": "next"
+        }
+      ],
+      "paths": {
+        "@/*": ["./*"],
+        "@/lib/*": ["./lib/*"],
+        "@/app/*": ["./app/*"],
+        "@/components/*": ["./components/*"],
+        "@/hooks/*": ["./hooks/*"]
+      }
+    },
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+    "exclude": ["node_modules"]
+  }
+
+================================================================================
+7. ACCESSIBILITY & PERFORMANCE
+================================================================================
+
+7.1 WCAG 2.1 AA COMPLIANCE
+--------------------------------------------------
+
+TOUCH TARGETS (WCAG 2.5.5):
+
+  Minimum 44×44px for all interactive elements:
+
+  CSS Implementation:
+    button, a[role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    .btn {
+      min-height: 44px;
+    }
+
+    @media (max-width: 640px) {
+      button:not(.no-touch-target-enforcement),
+      .messaging-action-button {
+        min-width: 44px !important;
+        min-height: 44px !important;
+      }
+    }
+
+  Button Variants (components/ui/button.tsx):
+    size: {
+      default: "h-11 px-4 py-2 min-h-[44px]",
+      sm: "h-11 rounded-md px-3 min-h-[44px]",
+      lg: "h-12 rounded-md px-8 min-h-[48px]",
+      icon: "h-11 w-11 min-h-[44px] min-w-[44px]"
+    }
+
+COLOR CONTRAST:
+
+  All text meets WCAG AA standards (4.5:1 for normal text):
+    - Sage accessible: #4A6B66 (4.52:1)
+    - Dusty rose accessible: #9A6B61
+    - Navy text: #324158 (8.2:1 on cream)
+    - Brown text: #483129 (9.1:1 on cream)
+
+  High Contrast Mode:
+    @media (prefers-contrast: high) {
+      .hover\:bg-white\/10:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .border-white\/10 {
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+
+KEYBOARD NAVIGATION:
+
+  - All interactive elements focusable
+  - Focus rings always visible (never outline: none)
+  - Logical tab order
+  - Skip links for main content
+
+  Focus Ring Style:
+    --focus-ring: 0 0 0 3px rgba(122, 158, 153, 0.35);
+
+    *:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+
+SCREEN READER SUPPORT:
+
+  Semantic HTML Example:
+    <article aria-labelledby={`title-${request.id}`}>
+      <h3 id={`title-${request.id}`}>{request.title}</h3>
+      <StatusBadge
+        status={request.status}
+        urgency={request.urgency}
+        aria-label={`Status: ${request.status}, urgency: ${request.urgency}`}
+      />
+      <button aria-label={`Offer help for: ${request.title}`}>
+        Offer Help
+      </button>
+    </article>
+
+  ARIA Attributes:
+    - aria-label for context
+    - aria-labelledby for associations
+    - aria-describedby for descriptions
+    - aria-live for dynamic updates
+    - role attributes where needed
+
+REDUCED MOTION:
+
+  @media (prefers-reduced-motion: reduce) {
+    .transition-all,
+    .transition-colors,
+    .animate-pulse {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+
+7.2 MOBILE-FIRST DESIGN
+--------------------------------------------------
+
+RESPONSIVE BREAKPOINTS:
+
+  Tailwind Configuration:
+    - Mobile: < 640px (default, no prefix)
+    - Tablet: 640px - 1024px (sm:)
+    - Desktop: 1024px+ (lg:)
+
+  Mobile Optimizations:
+    @media (max-width: 640px) {
+      h1 { font-size: 1.75rem; }
+      h2 { font-size: 1.5rem; }
+
+      /* Prevent iOS zoom on input focus */
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+
+      /* Better spacing */
+      .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+
+MOBILE VIEWPORT FIX:
+
+  Handle dynamic URL bars on mobile browsers:
+
+  CSS:
+    :root {
+      --vh: 1vh;
+    }
+
+    .messaging-page-container {
+      /* Use dvh (dynamic viewport height) on modern browsers */
+      height: calc(100dvh - 64px);
+
+      /* Fallback for older browsers */
+      height: calc(var(--vh, 1vh) * 100 - 64px);
+    }
+
+  iOS Safe Area Insets:
+    [data-component="MessageInput"] {
+      padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+
+PROGRESSIVE ENHANCEMENT:
+
+  - Core functionality works without JavaScript
+  - Enhanced features load progressively
+  - Offline support via service worker
+  - Graceful degradation for older browsers
+
+7.3 PERFORMANCE OPTIMIZATIONS
+--------------------------------------------------
+
+BUNDLE SPLITTING (next.config.js):
+
+  splitChunks: {
+    cacheGroups: {
+      admin: {
+        test: /components\/admin/,
+        name: 'admin-components',
+        chunks: 'all'
+      },
+      messaging: {
+        test: /components\/messaging/,
+        name: 'messaging-components',
+        chunks: 'all'
+      },
+      ui: {
+        test: /components\/ui/,
+        name: 'ui-components',
+        chunks: 'all'
+      }
+    }
+  }
+
+FONT OPTIMIZATION (lib/fonts.ts):
+
+  import { Overlock } from 'next/font/google'
+
+  export const overlock = Overlock({
+    subsets: ['latin'],
+    display: 'swap',              // Prevent FOIT
+    preload: true,                // Preload primary font
+    fallback: ['system-ui', 'sans-serif'],
+    adjustFontFallback: true,     // Reduce layout shift
+    weight: ['400', '700', '900']
+  })
+
+IMAGE OPTIMIZATION:
+
+  import Image from 'next/image'
+
+  <Image
+    src="/logo.png"
+    alt="CARE Collective Logo"
+    width={48}
+    height={48}
+    priority                      // Preload critical images
+    sizes="(max-width: 640px) 40px, 48px"
+  />
+
+REACT OPTIMIZATION:
+
+  Memoized Components:
+    const Button = React.memo(
+      React.forwardRef<HTMLButtonElement, ButtonProps>(({ ... }) => {
+        const computedClassName = React.useMemo(
+          () => cn(buttonVariants({ variant, size, className })),
+          [variant, size, className]
+        )
+        return <Comp className={computedClassName} {...props} />
+      })
+    )
+
+  Debounced Operations:
+    const debouncedSearch = useMemo(
+      () => debounce((query) => performSearch(query), 300),
+      []
+    )
+
+DATABASE QUERY OPTIMIZATION:
+
+  Efficient Queries with Select Joins:
+    const { data } = await supabase
+      .from('help_requests')
+      .select('id, title, category, urgency, status, created_at, profiles!inner(name, location)')
+      .eq('status', 'open')
+      .order('urgency', { ascending: false })
+      .limit(20)
+
+  Indexed Columns:
+    CREATE INDEX idx_help_requests_status ON help_requests(status);
+    CREATE INDEX idx_help_requests_created_at ON help_requests(created_at DESC);
+
+VIRTUALIZATION FOR LARGE LISTS:
+
+  import { FixedSizeList } from 'react-window'
+
+  <FixedSizeList
+    height={600}
+    itemCount={messages.length}
+    itemSize={80}
+    overscanCount={5}      // Render extra items for smooth scrolling
+  >
+    {({ index, style }) => (
+      <div style={style}>
+        <MessageBubble message={messages[index]} />
+      </div>
+    )}
+  </FixedSizeList>
+
+SERVICE WORKER (public/sw.js):
+
+  // Network-first for HTML, cache-first for assets
+  self.addEventListener('fetch', (event) => {
+    if (event.request.destination === 'document') {
+      // Always fetch fresh HTML
+      event.respondWith(
+        fetch(event.request)
+          .catch(() => caches.match(event.request))
+      )
+    } else {
+      // Cache-first for static assets
+      event.respondWith(
+        caches.match(event.request)
+          .then(response => response || fetch(event.request))
+      )
+    }
+  })
+
+================================================================================
+8. SECURITY & PRIVACY
+================================================================================
+
+8.1 SECURITY MEASURES
+--------------------------------------------------
+
+ENVIRONMENT VARIABLE VALIDATION (lib/security/env-validation.ts):
+
+  import { z } from 'zod'
+
+  export const envSchema = z.object({
+    NEXT_PUBLIC_SUPABASE_URL: z.string()
+      .url()
+      .refine((url) => url.includes('supabase.co')),
+
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string()
+      .refine((key) => key.startsWith('eyJ')),
+
+    SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+
+    NODE_ENV: z.enum(['development', 'production', 'test']),
+  })
+
+INPUT SANITIZATION:
+
+  const sanitizeString = (str: string) => str.trim().slice(0, 1000)
+
+  // XSS prevention - React auto-escapes JSX
+  // No need for validator.escape() for display
+
+  // SQL injection prevention
+  export const validateUUID = (uuid: string): boolean => {
+    return validator.isUUID(uuid)
+  }
+
+  export const sanitizeSearchQuery = (query: string): string => {
+    return validator.escape(query.trim().slice(0, 100))
+  }
+
+SECURITY HEADERS (next.config.js):
+
+  headers: [
+    { key: 'X-Frame-Options', value: 'DENY' },
+    { key: 'X-Content-Type-Options', value: 'nosniff' },
+    { key: 'X-XSS-Protection', value: '1; mode=block' },
+    {
+      key: 'Referrer-Policy',
+      value: 'strict-origin-when-cross-origin'
+    },
+    {
+      key: 'Permissions-Policy',
+      value: 'camera=(), microphone=(), geolocation=()'
+    }
+  ]
+
+CSRF PROTECTION:
+
+  - Cookies with SameSite=Lax (via Supabase Auth)
+  - Anti-CSRF tokens in auth cookies
+  - Middleware validates auth state on every request
+
+8.2 PRIVACY PROTECTION
+--------------------------------------------------
+
+CONTACT EXCHANGE AUDIT (Table: contact_exchange_audit):
+
+  Columns:
+    - action: text ('viewed', 'shared', 'revoked')
+    - requester_id, helper_id, request_id
+    - ip_address, session_id, user_agent
+    - timestamp
+
+PRIVACY EVENTS TRACKING (Table: privacy_events):
+
+  Columns:
+    - event_type: text ('contact_shared', 'data_export',
+                        'deletion_request')
+    - user_id, context_data (jsonb)
+    - violation_detected: boolean
+    - violation_type: text
+
+MESSAGE ENCRYPTION (lib/messaging/encryption.ts):
+
+  export class MessageEncryptionService {
+    async encryptMessage(content: string, ...) {
+      // Analyze sensitivity (PII, contact info)
+      const sensitivityLevel = this.analyzeSensitivity(content)
+
+      if (sensitivityLevel === 'high') {
+        // Encrypt with AES-256
+        return await this.contactEncryption.encryptSensitiveData(
+          content,
+          ...
+        )
+      }
+
+      // Store plain text for normal messages
+      return {
+        encrypted_content: content,
+        encryption_status: 'none'
+      }
+    }
+  }
+
+PRIVACY CONTROLS:
+
+  User Rights:
+    - Export all user data (GDPR compliance)
+    - Request account deletion
+    - Control contact exchange preferences
+    - Location privacy settings (public, helpers_only, after_match)
+    - Block/report functionality
+    - Message history export
+
+  Admin Monitoring:
+    - Privacy violation detection
+    - Contact exchange tracking
+    - Encryption audit logs
+    - Data access request management
+
+8.3 COMPLIANCE & AUDIT
+--------------------------------------------------
+
+ADMIN ACTION AUDIT (Table: admin_action_audit):
+
+  Columns:
+    - admin_id, action_type, target_type, target_id
+    - action_details (json)
+    - success, error_message
+    - ip_address, session_id, user_agent
+    - created_at
+
+MESSAGE AUDIT LOG:
+
+  Tracks:
+    - Message sent/delivered/read/reported/deleted
+    - User ID, metadata (jsonb)
+    - Timestamps
+
+COMPLIANCE FEATURES:
+
+  - Data access logs
+  - Privacy policy acceptance tracking
+  - Terms of service versioning
+  - User consent management
+  - Data retention policies
+  - GDPR-style data export
+
+================================================================================
+END OF DOCUMENT
+================================================================================
+
+This document provides comprehensive technical specifications for recreating
+the CARE Collective platform with a cleaner, more efficient approach.
+
+For questions or clarifications, refer to:
+  - CLAUDE.md (project guidelines)
+  - PROJECT_STATUS.md (current development status)
+  - docs/context-engineering/ (development methodology)
+
+Repository: https://github.com/[username]/care-collective-preview
+Production: https://care-collective-preview.vercel.app
+
+Last Updated: 2025-11-20

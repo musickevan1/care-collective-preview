@@ -1,0 +1,102 @@
+Hi, Evan. I just realized something that I think we need to adjust that is pretty central to the idea of the collective and I can’t believe I didn’t remember it before this! 
+
+My original vision for this collective was that it would go something like this: Person A needs a new lock installed on their door so their dad, who has been wandering, cannot leave the house. Person B is able to fulfill that need. Person A also has a vegetable garden, so when Person B comes to help, Person A gives them some tomatoes from their garden, thereby making it more of an exchange. 
+
+Of course, this is not required, but I would like for it to be an option, so they know is encouraged. Could we add a field in the request form that asks what they are able to exchange? I’d prefer that they be able to free write it so we don’t box them into choices, but then there also needs to be a way for them to feel comfortable saying/selecting “nothing at this time.” 
+
+What do you think?
+
+Maureen Templeman, PhD
+
+Thank you so much, Evan! You’re so awesome. The timeline sounds good to me! No rush on the admin panel, either. I’m excited to learn about what the beta testers say!
+
+Maureen Templeman, PhD
+Assistant Professor, Gerontology
+Department of Sociology, Anthropology, and Gerontology
+https://calendly.com/proftempleman/meet
+
+Get Outlook for iOS
+From: Musick, Evan C <Musick1@live.missouristate.edu>
+Sent: Thursday, November 6, 2025 10:13:16 AM
+To: Templeman, Maureen E <MaureenTempleman@MissouriState.edu>
+Subject: Re: Notes on website
+ 
+Hi Maureen,
+
+Thanks so much for the detailed notes! You've organized everything really clearly, and I think these changes will make the site much more user-friendly and aligned with your vision.
+
+I'm happy to implement all of these updates for you. I'll work through the landing page restructure, the new "Why Join?" section, the form updates, page consolidations, color scheme changes, and all the content revisions you outlined.
+
+About the admin panel:
+
+I'm still working on getting the admin CMS (content management system) built out, but once it's ready, you and your student assistant will be able to make content updates yourselves without needing me for every change. This should be really helpful for keeping things like the About page, community resources, and event announcements up to date. I'll let you know as soon as it's ready to use.
+
+About email notifications:
+
+This is a great idea! Right now, members need to check their Messages in the dashboard to see responses, but adding email notifications is definitely something I can build. This would be part of the notification system I have planned.
+
+Beyond just message notifications, this system would also be useful for:
+  - Account confirmation during signup
+  - Announcements to the community
+  - Application status updates
+  - Background check clearance notifications
+
+It's a bit more involved since it requires setting up email infrastructure, but it's absolutely worth doing and would make the platform much more user-friendly. I'm planning to use a service called Resend which is reliable and will scale well as the community grows. The service offers 3,000 emails per month with a 100-email daily limit for the free tier. I believe this should fit our needs just fine for the time being.
+
+Timeline:
+
+I can start working on these changes this week and will keep you posted on progress. Does this approach work for you? Also, I am reviewing the feedback from beta testers and will be working on fixing any issues they've found along the way. Let me know if you have any questions or if there's anything you'd like me to prioritize first! Thanks again for all the thoughtful feedback.
+
+Best,
+
+Evan Musick
+Web Developer | Software Engineer
+(417) 413-7015
+evanmusick.dev@gmail.com
+em6023@live.missouristate.edu
+From: Templeman, Maureen E <MaureenTempleman@MissouriState.edu>
+Sent: Wednesday, November 5, 2025 5:18 PM
+To: Musick, Evan C <Musick1@live.missouristate.edu>
+Subject: Notes on website
+ 
+Hi, Evan.
+
+I have attached a document with the notes I mentioned, mostly about content and design of the website, but as I said before, I am happy to try to make some of these changes myself using the admin panel whenever it’s ready. I was also able to hire a work study student who is going to help with outreach, and apparently she is really into e-Sports (nothing to do with web design or coding, I know, but it makes me wonder if she’s more tech-savvy than I am), so maybe she can help, too. Anyway, let me know what you think when you have a chance! 
+Thanks so much!
+
+Maureen Templeman, PhD
+
+Assistant Professor
+
+Department of Sociology, Anthropology, and Gerontology
+
+Gerontology Program Coordinator
+CARE Bears Advisor
+
+Sigma Phi Omega Honor Society Advisor
+
+Strong Hall 478
+
+Office Hours:
+T/R 11:00 AM - 12:15 PM (in-person)
+W 12:30 - 3:00 PM (Teams <— Join here)
+Appointments: https://calendly.com/proftempleman/meet
+
+ 
+
+FA25 Courses:
+
+GER 351/PSY 350: Psychology of Adulthood and Aging
+GER 366/PSY 366/CFD 365/SWK 365: Families in Later Life
+GER 200: Aging Identities in Art and Media
+SP26 Courses:
+GER 200: Aging Identities in Art and Media
+GER/SOC 375: Social Forces and Aging
+GER 598/599: Supervised Practicum and Seminar in Gerontology
+ 
+
+Follow the MSU Gerontology program on social media:
+
+https://www.facebook.com/MSUGerontologyProgram
+
+https://www.instagram.com/msu_gerontology/

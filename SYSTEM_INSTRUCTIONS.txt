@@ -1,0 +1,715 @@
+================================================================================
+CARE COLLECTIVE - SYSTEM INSTRUCTIONS FOR AI ASSISTANTS
+================================================================================
+
+Last Updated: 2025-11-20
+Status: Phase 2.3 (Admin Panel) - Production Ready
+Production URL: https://care-collective-preview.vercel.app
+
+READ THIS FIRST: These instructions override default behaviors. Follow them
+exactly as written. For comprehensive details, see CLAUDE.md and
+docs/CARE_COLLECTIVE_PROJECT_DESCRIPTION.txt.
+
+================================================================================
+1. PROJECT CONTEXT
+================================================================================
+
+WHAT IS THIS PROJECT?
+
+  CARE Collective is a mutual aid platform connecting caregivers in Southwest
+  Missouri (Springfield, Branson, Joplin) for support and resource sharing.
+
+  Core Mission:
+    - Help requests (groceries, transport, household, medical)
+    - Secure contact exchange with explicit consent
+    - Community building with privacy-first design
+    - Accessibility for all users (WCAG 2.1 AA)
+
+TECH STACK:
+
+  Frontend:  Next.js 14.2.32, React 18.3.1, TypeScript 5
+  Backend:   Supabase (PostgreSQL, Auth, Realtime)
+  Styling:   Tailwind CSS 4, Radix UI
+  Deployment: Vercel (automatic via Git integration)
+
+CURRENT STATUS:
+
+  Phase:     Phase 2.3 (Admin Panel)
+  Progress:  85% complete
+  Focus:     Admin features, CMS, privacy dashboard
+
+VALUES (Non-Negotiable):
+
+  1. Accessibility - WCAG 2.1 AA compliance mandatory
+  2. Privacy - Consent-based, never expose contact info without permission
+  3. Community Safety - Trust & safety in every feature
+  4. Simplicity - KISS + YAGNI, avoid over-engineering
+  5. Mobile-First - Design for mobile, enhance for desktop
+
+================================================================================
+2. CRITICAL RULES (MUST FOLLOW)
+================================================================================
+
+DEPLOYMENT WORKFLOW (CRITICAL - READ CAREFULLY):
+
+  ✅ CORRECT WORKFLOW:
+     1. Make code changes
+     2. Commit: git add . && git commit -m "feat: description 🤖 Generated with Claude Code"
+     3. Push: git push origin main
+     4. Vercel automatically deploys (via Git integration)
+     5. Verify after automatic deployment completes
+
+  ❌ NEVER DO THIS:
+     - npx vercel --prod (causes duplicate deployments!)
+     - Manual Vercel CLI deployments
+     - Skip automatic deployment process
+
+  WHY: Repository connected to Vercel via Git integration. Every push to
+  'main' automatically triggers production deployment. Manual deployments
+  create duplicates and waste resources.
+
+  ALWAYS ASK before committing/pushing. Never commit without user consent.
+
+FILE SIZE LIMITS (MANDATORY):
+
+  - Maximum 500 lines per file
+  - Components under 200 lines preferred
+  - Functions under 50 lines preferred
+  - If file exceeds limit, split into multiple files
+
+  Rationale: Maintainability, readability, easier testing
+
+TYPESCRIPT PATTERNS (CRITICAL):
+
+  ✅ CORRECT:
+     import { ReactElement } from 'react'
+     function Component(): ReactElement { ... }
+
+  ❌ FORBIDDEN:
+     function Component(): JSX.Element { ... }
+     // Error: Cannot find namespace 'JSX'
+
+  Reason: JSX namespace not available in this TypeScript configuration
+
+ACCESSIBILITY (WCAG 2.1 AA - NON-NEGOTIABLE):
+
+  MUST HAVE:
+    - Minimum 44×44px touch targets (WCAG 2.5.5)
+    - Color contrast 4.5:1 for text (use accessible color variants)
+    - Keyboard navigation support
+    - Screen reader compatible (ARIA labels, semantic HTML)
+    - Focus rings always visible
+    - Reduced motion support
+
+  NEVER:
+    - Remove focus outlines (outline: none)
+    - Create touch targets smaller than 44×44px
+    - Use color alone to convey information
+    - Break keyboard navigation
+
+SECURITY PATTERNS (MANDATORY):
+
+  INPUT VALIDATION:
+    - All user input MUST be validated with Zod schemas
+    - Sanitize strings: str.trim().slice(0, maxLength)
+    - Check for XSS patterns (React auto-escapes, but validate)
+    - Validate UUIDs before database queries
+
+  PRIVACY:
+    - NEVER expose contact info without explicit consent
+    - Contact exchanges require consent_given = true
+    - Track all contact sharing in privacy_events table
+    - Encrypt sensitive messages (PII, contact info)
+
+  AUTHENTICATION:
+    - Check auth state before any protected operation
+    - Verify verification_status = 'approved' for member features
+    - Admin actions require is_admin = true check
+    - Use RLS policies, never bypass security
+
+DATABASE PATTERNS (CRITICAL):
+
+  ALWAYS:
+    - Use server-side Supabase client for data fetching
+    - Apply RLS policies (never use service role for user data)
+    - Create indexes for filtered/sorted columns
+    - Use transactions for multi-table operations
+    - Validate data with Zod before insert/update
+
+  NEVER:
+    - Bypass RLS with service role for user-facing operations
+    - Store sensitive data in localStorage
+    - Trust client-side data without server validation
+    - Create N+1 query patterns (use joins)
+
+================================================================================
+3. CODING STANDARDS
+================================================================================
+
+COMPONENT PATTERNS:
+
+  Server Component (Default):
+    // No 'use client' directive
+    // Can fetch data directly
+    // Cannot use hooks or interactivity
+
+    export default async function Page() {
+      const supabase = await createClient()
+      const { data } = await supabase.from('table').select()
+      return <Component data={data} />
+    }
+
+  Client Component (Interactive):
+    'use client'
+    // For forms, real-time, state, hooks
+
+    export function InteractiveForm() {
+      const [state, setState] = useState()
+      return <form>...</form>
+    }
+
+  PREFER: Server components for data fetching
+  USE CLIENT: Only when needed (forms, real-time, hooks)
+
+SUPABASE CLIENT SELECTION:
+
+  Server Client (lib/supabase/server.ts):
+    - USE FOR: Server components, API routes
+    - FEATURES: Cookie-based auth, SSR support
+    - WHEN: Fetching data in server components
+
+  Browser Client (lib/supabase/client.ts):
+    - USE FOR: Client components
+    - FEATURES: localStorage persistence
+    - WHEN: Real-time subscriptions, client interactivity
+
+  Service Role Client (lib/supabase/admin.ts):
+    - USE FOR: Admin operations ONLY
+    - FEATURES: Bypasses RLS
+    - WHEN: Admin actions, background jobs
+    - WARNING: Never use for user-facing data
+
+VALIDATION PATTERN (Zod):
+
+  1. Define schema in lib/validations.ts:
+     export const schema = z.object({
+       field: z.string().min(1).max(100)
+     })
+
+  2. Validate in API route:
+     const result = schema.safeParse(body)
+     if (!result.success) {
+       return NextResponse.json(
+         { error: result.error },
+         { status: 400 }
+       )
+     }
+
+  3. Use validated data:
+     const validatedData = result.data
+
+ERROR HANDLING PATTERN:
+
+  API Routes:
+    try {
+      // Operation
+    } catch (error) {
+      ErrorTracker.captureException(error, { context })
+      return NextResponse.json(
+        { error: 'User-friendly message' },
+        { status: 500 }
+      )
+    }
+
+  Client Components:
+    try {
+      await operation()
+    } catch (error) {
+      setError('User-friendly message')
+      ErrorTracker.captureException(error)
+    }
+
+FORM HANDLING PATTERN:
+
+  1. Define state: const [formData, setFormData] = useState({})
+  2. Client validation: const result = schema.safeParse(formData)
+  3. Display errors: {errors.field && <span>{errors.field}</span>}
+  4. API call with validated data
+  5. Handle success/error states
+  6. Show loading state during submission
+
+NAMING CONVENTIONS:
+
+  Components:       PascalCase (UserProfile.tsx)
+  Utilities:        camelCase (formatDate.ts)
+  Types:            PascalCase (UserProfile type)
+  Constants:        UPPER_SNAKE_CASE (MAX_FILE_SIZE)
+  Database Tables:  snake_case (help_requests)
+  API Routes:       kebab-case (/api/help-requests)
+
+================================================================================
+4. DECISION GUIDELINES
+================================================================================
+
+WHEN TO USE SERVER VS CLIENT COMPONENTS:
+
+  Server Component When:
+    ✓ Fetching data from database
+    ✓ No interactivity needed
+    ✓ SEO important
+    ✓ Initial page load performance critical
+
+  Client Component When:
+    ✓ Form handling
+    ✓ Real-time subscriptions
+    ✓ Using React hooks (useState, useEffect)
+    ✓ User interactions (clicks, typing)
+    ✓ Browser-only APIs (localStorage, window)
+
+WHEN TO CREATE NEW FILE VS EDIT EXISTING:
+
+  Edit Existing When:
+    ✓ Fixing bugs
+    ✓ Adding small features to existing components
+    ✓ Updating existing functionality
+    ✓ File under 500 lines after changes
+
+  Create New File When:
+    ✓ Existing file would exceed 500 lines
+    ✓ New feature logically separate
+    ✓ Reusable component needed
+    ✓ Different responsibility/concern
+
+  ALWAYS PREFER: Editing existing files over creating new ones
+
+WHEN TO ASK USER VS MAKE DECISIONS:
+
+  Ask User When:
+    ✓ Multiple valid approaches exist
+    ✓ Decision affects architecture significantly
+    ✓ Unclear requirements
+    ✓ Security/privacy implications
+    ✓ Breaking changes needed
+    ✓ Before committing/pushing code
+
+  Make Decision When:
+    ✓ Standard pattern exists (follow it)
+    ✓ One clearly correct approach
+    ✓ Minor implementation detail
+    ✓ Following established conventions
+    ✓ Bug fix with obvious solution
+
+WHEN TO USE DIFFERENT QUERY PATTERNS:
+
+  Direct Query (Server Component):
+    const { data } = await supabase.from('table').select()
+
+  API Route:
+    - Complex business logic
+    - Multiple database operations
+    - Requires service role access
+    - Needs rate limiting
+
+  Real-Time Subscription:
+    - Live updates needed (messages, notifications)
+    - Collaborative features
+    - Status updates (online presence)
+
+WHEN TO ADD INDEXES:
+
+  Add Index When:
+    ✓ Column used in WHERE clause frequently
+    ✓ Column used in ORDER BY
+    ✓ Foreign key columns
+    ✓ Columns used in JOIN conditions
+    ✓ Query performance issues observed
+
+  Index Pattern:
+    CREATE INDEX idx_table_column ON table(column)
+    CREATE INDEX idx_table_filter ON table(column) WHERE condition
+
+================================================================================
+5. DOCUMENTATION REFERENCES
+================================================================================
+
+PRIMARY DOCUMENTATION:
+
+  CLAUDE.md (Project Guidelines - READ FIRST)
+    - Context engineering methodology
+    - PRP method (Planning, Research, Production)
+    - Git workflow (mandatory procedures)
+    - Domain context and values
+    - Common pitfalls to avoid
+    - Pre-commit checklist
+
+  docs/CARE_COLLECTIVE_PROJECT_DESCRIPTION.txt (Technical Specs)
+    - Complete design system
+    - Database schema with examples
+    - Code architecture
+    - Feature implementation details
+    - Technical patterns
+    - Deployment procedures
+
+  PROJECT_STATUS.md (Current Status)
+    - Phase progress (currently Phase 2.3)
+    - Completed features
+    - In-progress work
+    - Known issues
+    - Next steps
+
+SPECIALIZED DOCUMENTATION:
+
+  docs/context-engineering/
+    - master-plan.md (Overall strategy)
+    - prp-method/ (Methodology details)
+    - phase-plans/ (Phase-specific plans)
+
+  docs/database/
+    - Schema documentation
+    - Migration guides
+    - RLS policy examples
+
+  docs/security/
+    - Security practices
+    - Privacy protection
+    - Compliance guidelines
+
+WHEN TO REFERENCE DOCUMENTATION:
+
+  Before Starting Task:
+    1. Read CLAUDE.md section relevant to task
+    2. Check PROJECT_DESCRIPTION.txt for technical patterns
+    3. Review PROJECT_STATUS.md for current state
+
+  During Implementation:
+    - Refer to existing patterns in codebase
+    - Check validation schemas in lib/validations.ts
+    - Review similar components for consistency
+
+  Before Committing:
+    - Review pre-commit checklist in CLAUDE.md
+    - Verify accessibility compliance
+    - Check file size limits
+
+================================================================================
+6. FORBIDDEN PATTERNS
+================================================================================
+
+NEVER DO THESE:
+
+DEPLOYMENT:
+  ❌ Run npx vercel --prod manually
+  ❌ Deploy without committing to Git first
+  ❌ Commit without user permission
+  ❌ Push directly without asking user
+
+SECURITY:
+  ❌ Expose contact info without consent_given = true
+  ❌ Skip input validation
+  ❌ Use service role client for user data
+  ❌ Store sensitive data in localStorage
+  ❌ Bypass RLS policies for convenience
+  ❌ Trust client-side data without validation
+
+ACCESSIBILITY:
+  ❌ Remove focus outlines (outline: none)
+  ❌ Create touch targets < 44×44px
+  ❌ Use color alone to convey status
+  ❌ Break keyboard navigation
+  ❌ Skip ARIA labels on interactive elements
+  ❌ Auto-play videos or animations without user control
+
+CODE QUALITY:
+  ❌ Create files > 500 lines
+  ❌ Use JSX.Element type (use ReactElement)
+  ❌ Over-engineer simple solutions
+  ❌ Add features not requested (YAGNI)
+  ❌ Create premature abstractions
+  ❌ Add unnecessary dependencies
+
+DATABASE:
+  ❌ Skip RLS policies
+  ❌ Forget indexes on filtered columns
+  ❌ Use SELECT * in production code
+  ❌ Store PII without encryption consideration
+  ❌ Create N+1 query patterns
+
+PRIVACY:
+  ❌ Log sensitive user data
+  ❌ Share contact info without audit trail
+  ❌ Skip privacy event tracking
+  ❌ Auto-share location without permission
+  ❌ Enable features that could be exploited
+
+TYPESCRIPT:
+  ❌ Use 'any' type (use 'unknown' if needed)
+  ❌ Ignore TypeScript errors
+  ❌ Skip type definitions for new functions
+  ❌ Use non-null assertion (!) carelessly
+
+FORMS:
+  ❌ Submit without validation
+  ❌ Show technical error messages to users
+  ❌ Allow input without sanitization
+  ❌ Skip loading states
+  ❌ Forget error state handling
+
+================================================================================
+7. QUICK REFERENCE - COMMON PATTERNS
+================================================================================
+
+CREATE HELP REQUEST (Full Pattern):
+
+  1. Validate with Zod:
+     const result = helpRequestSchema.safeParse(data)
+
+  2. Check auth:
+     const { data: { user } } = await supabase.auth.getUser()
+
+  3. Insert with user_id:
+     const { data, error } = await supabase
+       .from('help_requests')
+       .insert({ user_id: user.id, ...result.data })
+
+  4. Handle error:
+     if (error) return NextResponse.json({ error }, { status: 500 })
+
+SEND MESSAGE (Full Pattern):
+
+  1. Validate content (max 1000 chars)
+  2. Check if conversation exists or create new
+  3. Moderate content for violations
+  4. Encrypt if sensitive (PII detected)
+  5. Insert message with sender_id
+  6. Update conversation.last_message_at
+  7. Trigger real-time notification
+
+REAL-TIME SUBSCRIPTION (Full Pattern):
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`table:${id}`)
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'table' },
+        (payload) => setState(prev => [...prev, payload.new])
+      )
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [id])
+
+ADMIN CHECK (Full Pattern):
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile?.is_admin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+ACCESSIBLE BUTTON (Full Pattern):
+
+  <button
+    className="min-h-[44px] min-w-[44px] px-4 py-2
+               bg-sage-dark text-white rounded-lg
+               hover:bg-sage-accessible
+               focus:outline-none focus:ring-2 focus:ring-sage
+               disabled:opacity-50"
+    aria-label="Clear, descriptive label"
+    onClick={handleClick}
+  >
+    Button Text
+  </button>
+
+FORM WITH VALIDATION (Full Pattern):
+
+  const [formData, setFormData] = useState({ field: '' })
+  const [errors, setErrors] = useState({})
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setErrors({})
+
+    const result = schema.safeParse(formData)
+    if (!result.success) {
+      const formattedErrors = {}
+      result.error.issues.forEach(issue => {
+        formattedErrors[issue.path[0]] = issue.message
+      })
+      setErrors(formattedErrors)
+      setLoading(false)
+      return
+    }
+
+    try {
+      const response = await fetch('/api/endpoint', {
+        method: 'POST',
+        body: JSON.stringify(result.data)
+      })
+      if (!response.ok) throw new Error('Failed')
+      // Handle success
+    } catch {
+      setErrors({ submit: 'Error message' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+================================================================================
+8. BEFORE YOU START CODING
+================================================================================
+
+CHECKLIST:
+
+  □ Read CLAUDE.md relevant section
+  □ Check PROJECT_DESCRIPTION.txt for patterns
+  □ Review PROJECT_STATUS.md for current state
+  □ Understand user requirements clearly
+  □ Identify if server or client component needed
+  □ Check if similar feature exists (reuse pattern)
+  □ Verify accessibility requirements
+  □ Plan validation strategy (Zod schema)
+  □ Consider security implications
+  □ Check file size limits
+  □ Prepare to ask user before committing
+
+QUESTIONS TO ASK YOURSELF:
+
+  1. Does this follow KISS + YAGNI principles?
+  2. Is this the simplest solution that works?
+  3. Am I over-engineering?
+  4. Does this meet WCAG 2.1 AA standards?
+  5. Did I validate all inputs?
+  6. Is privacy protected?
+  7. Will this work on mobile?
+  8. Is this secure?
+  9. Does this follow existing patterns?
+  10. Should I ask the user about this approach?
+
+================================================================================
+9. AFTER CODING - PRE-COMMIT CHECKLIST
+================================================================================
+
+FUNCTIONALITY:
+  □ Feature works as intended
+  □ No console errors
+  □ Loading states implemented
+  □ Error handling in place
+  □ Mobile tested (responsive)
+  □ Offline handling (if applicable)
+
+SECURITY & PRIVACY:
+  □ All inputs validated (Zod)
+  □ No contact info exposed without consent
+  □ Privacy events tracked
+  □ RLS policies respected
+  □ No sensitive data in logs
+
+ACCESSIBILITY (WCAG 2.1 AA):
+  □ Minimum 44×44px touch targets
+  □ Color contrast 4.5:1 minimum
+  □ Keyboard navigation works
+  □ Screen reader compatible (ARIA labels)
+  □ Focus rings visible
+  □ Semantic HTML used
+
+CODE QUALITY:
+  □ TypeScript compiles (tsc --noEmit)
+  □ No ESLint warnings (npm run lint)
+  □ Files under 500 lines
+  □ Components under 200 lines
+  □ Functions under 50 lines
+  □ No 'any' types used
+  □ ReactElement (not JSX.Element)
+
+TESTING:
+  □ Unit tests written (80% coverage target)
+  □ Edge cases covered
+  □ Error scenarios tested
+  □ Validation tested
+
+DEPLOYMENT:
+  □ Asked user permission to commit
+  □ Commit message descriptive
+  □ Ready to push to main (triggers auto-deploy)
+  □ Know what to verify after deployment
+
+================================================================================
+10. EMERGENCY CONTACTS & RESOURCES
+================================================================================
+
+WHEN STUCK:
+
+  1. Check existing similar feature in codebase
+  2. Review CLAUDE.md for guidance
+  3. Check PROJECT_DESCRIPTION.txt for patterns
+  4. Ask user for clarification
+  5. Review Supabase documentation
+  6. Check Next.js 14 documentation
+
+COMMON ISSUES & SOLUTIONS:
+
+  "Cannot find namespace 'JSX'":
+    ✓ Use ReactElement instead of JSX.Element
+
+  "Cookie parsing error":
+    ✓ Check autoRefreshToken: false in Supabase client
+
+  "RLS policy blocking query":
+    ✓ Verify user authentication
+    ✓ Check policy conditions match query
+
+  "Component too large":
+    ✓ Split into smaller components
+    ✓ Extract logic to hooks
+    ✓ Move utilities to lib/
+
+  "Real-time not working":
+    ✓ Check RLS policies allow SELECT
+    ✓ Verify channel subscription
+    ✓ Confirm table name and event type
+
+  "Form validation failing":
+    ✓ Check Zod schema matches data structure
+    ✓ Verify error handling in safeParse
+    ✓ Console.log the validation error details
+
+DOCUMENTATION LINKS:
+
+  Next.js 14:     https://nextjs.org/docs
+  Supabase:       https://supabase.com/docs
+  Radix UI:       https://www.radix-ui.com/
+  Tailwind CSS:   https://tailwindcss.com/docs
+  Zod:            https://zod.dev/
+  WCAG 2.1:       https://www.w3.org/WAI/WCAG21/quickref/
+
+================================================================================
+END OF SYSTEM INSTRUCTIONS
+================================================================================
+
+Remember:
+  - Community safety first
+  - Accessibility is non-negotiable
+  - Privacy by design
+  - KISS + YAGNI
+  - Mobile-first
+  - Ask before committing
+
+For comprehensive details, see:
+  - CLAUDE.md (guidelines)
+  - docs/CARE_COLLECTIVE_PROJECT_DESCRIPTION.txt (technical specs)
+  - PROJECT_STATUS.md (current status)
+
+Good luck! Build something that helps people. 🤝

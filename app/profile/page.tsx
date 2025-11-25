@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { RequestsListWithModal } from '@/components/help-requests/RequestsListWithModal'
+import { ProfileAvatarSection } from '@/components/profile/profile-avatar-section'
 import Link from 'next/link'
 import { User, Mail, MapPin, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
@@ -35,6 +36,7 @@ type UserProfile = {
   created_at: string
   verification_status: string
   is_admin: boolean
+  avatar_url: string | null
 }
 
 async function getUser() {
@@ -58,7 +60,8 @@ async function getUser() {
     location: profile?.location || null,
     created_at: profile?.created_at || '',
     verification_status: profile.verification_status,
-    is_admin: profile.is_admin
+    is_admin: profile.is_admin,
+    avatar_url: profile?.avatar_url || null
   }
 }
 
@@ -224,6 +227,13 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                {/* Avatar Section */}
+                <ProfileAvatarSection
+                  userId={user.id}
+                  userName={user.name}
+                  initialAvatarUrl={user.avatar_url}
+                />
+
                 <div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                     <User className="w-4 h-4" />
