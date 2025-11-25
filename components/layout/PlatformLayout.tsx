@@ -98,6 +98,12 @@ export function PlatformLayout({
       badge: messagingData.unreadCount,
       exactMatch: true
     },
+    {
+      href: '/profile',
+      label: 'Profile',
+      icon: User,
+      exactMatch: true
+    },
     // Conditionally add Admin Panel link for admin users
     ...(user?.isAdmin ? [{
       href: '/admin',

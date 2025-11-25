@@ -1,5 +1,33 @@
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="50" cy="50" r="50" fill="#7A9E99"/>
-  <path d="M30 55 Q50 35 70 55 Q50 75 30 55" fill="#FBF2E9" opacity="0.9"/>
-  <circle cx="50" cy="52" r="8" fill="#BC6547"/>
+  <defs>
+    <linearGradient id="ch-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8AB0A9"/>
+      <stop offset="100%" stop-color="#7A9E99"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="50" cy="50" r="50" fill="url(#ch-bg)"/>
+  <!-- Left hand -->
+  <path d="M22 52 C20 48 22 42 28 40 L32 38 C34 37 36 38 36 40 L36 46
+           C36 48 35 50 33 51 L28 54 C25 56 22 55 22 52 Z"
+        fill="#FBF2E9" opacity="0.95"/>
+  <path d="M28 40 L28 35 C28 32 32 31 33 34 L34 38"
+        stroke="#FBF2E9" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M32 38 L32 32 C32 29 36 28 37 31 L38 38"
+        stroke="#FBF2E9" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Right hand -->
+  <path d="M78 52 C80 48 78 42 72 40 L68 38 C66 37 64 38 64 40 L64 46
+           C64 48 65 50 67 51 L72 54 C75 56 78 55 78 52 Z"
+        fill="#FBF2E9" opacity="0.95"/>
+  <path d="M72 40 L72 35 C72 32 68 31 67 34 L66 38"
+        stroke="#FBF2E9" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M68 38 L68 32 C68 29 64 28 63 31 L62 38"
+        stroke="#FBF2E9" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Heart in center -->
+  <path d="M50 68 C38 58 32 50 38 42 C42 37 48 38 50 42
+           C52 38 58 37 62 42 C68 50 62 58 50 68 Z"
+        fill="#BC6547"/>
+  <ellipse cx="43" cy="46" rx="3" ry="2" fill="#FBF2E9" opacity="0.3"/>
+  <!-- Decorative arc -->
+  <path d="M30 62 Q50 72 70 62" stroke="#FBF2E9" stroke-width="1.5" fill="none" opacity="0.6"/>
 </svg>

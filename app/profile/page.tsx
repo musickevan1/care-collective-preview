@@ -13,6 +13,7 @@ import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { RequestsListWithModal } from '@/components/help-requests/RequestsListWithModal'
 import { ProfileAvatarSection } from '@/components/profile/profile-avatar-section'
 import { CaregivingSituationEditor } from '@/components/profile/caregiving-situation-editor'
+import { ProfileFieldEditor } from '@/components/profile/profile-field-editor'
 import Link from 'next/link'
 import { User, Mail, MapPin, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
@@ -237,14 +238,19 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                   initialAvatarUrl={user.avatar_url}
                 />
 
-                <div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                    <User className="w-4 h-4" />
-                    Name
-                  </div>
-                  <p className="text-secondary font-medium">{user.name}</p>
-                </div>
+                {/* Editable Name Field */}
+                <ProfileFieldEditor
+                  userId={user.id}
+                  field="name"
+                  initialValue={user.name}
+                  label="Name"
+                  icon={User}
+                  placeholder="Enter your name"
+                  maxLength={100}
+                  required
+                />
 
+                {/* Email (read-only, managed by auth) */}
                 <div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                     <Mail className="w-4 h-4" />
@@ -253,15 +259,16 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                   <p className="text-secondary font-medium">{user.email}</p>
                 </div>
 
-                {user.location && (
-                  <div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                      <MapPin className="w-4 h-4" />
-                      Location
-                    </div>
-                    <p className="text-secondary font-medium">{user.location}</p>
-                  </div>
-                )}
+                {/* Editable Location Field */}
+                <ProfileFieldEditor
+                  userId={user.id}
+                  field="location"
+                  initialValue={user.location}
+                  label="Location"
+                  icon={MapPin}
+                  placeholder="e.g., Springfield, MO"
+                  maxLength={200}
+                />
 
                 <div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">

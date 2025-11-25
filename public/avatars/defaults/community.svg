@@ -1,8 +1,36 @@
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="50" cy="50" r="50" fill="#324158"/>
-  <circle cx="35" cy="45" r="10" fill="#FBF2E9"/>
-  <circle cx="65" cy="45" r="10" fill="#FBF2E9"/>
-  <circle cx="50" cy="65" r="10" fill="#7A9E99"/>
-  <line x1="35" y1="55" x2="50" y2="55" stroke="#FBF2E9" stroke-width="2"/>
-  <line x1="65" y1="55" x2="50" y2="55" stroke="#FBF2E9" stroke-width="2"/>
+  <defs>
+    <linearGradient id="cm-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3D4E6A"/>
+      <stop offset="100%" stop-color="#324158"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="50" cy="50" r="50" fill="url(#cm-bg)"/>
+  <!-- Connection lines behind people -->
+  <path d="M32 50 Q50 35 68 50" stroke="#7A9E99" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M32 50 Q50 70 68 50" stroke="#7A9E99" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M32 55 L50 70" stroke="#D8A8A0" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M68 55 L50 70" stroke="#D8A8A0" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <!-- Left person -->
+  <circle cx="32" cy="40" r="10" fill="#FBF2E9"/>
+  <ellipse cx="32" cy="58" rx="8" ry="12" fill="#FBF2E9" opacity="0.9"/>
+  <circle cx="29" cy="38" r="1.5" fill="#324158" opacity="0.5"/>
+  <circle cx="35" cy="38" r="1.5" fill="#324158" opacity="0.5"/>
+  <path d="M29 43 Q32 46 35 43" stroke="#324158" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- Right person -->
+  <circle cx="68" cy="40" r="10" fill="#FBF2E9"/>
+  <ellipse cx="68" cy="58" rx="8" ry="12" fill="#FBF2E9" opacity="0.9"/>
+  <circle cx="65" cy="38" r="1.5" fill="#324158" opacity="0.5"/>
+  <circle cx="71" cy="38" r="1.5" fill="#324158" opacity="0.5"/>
+  <path d="M65 43 Q68 46 71 43" stroke="#324158" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- Center person (front, sage colored) -->
+  <circle cx="50" cy="55" r="11" fill="#7A9E99"/>
+  <ellipse cx="50" cy="76" rx="9" ry="13" fill="#7A9E99" opacity="0.9"/>
+  <circle cx="47" cy="53" r="1.5" fill="#FBF2E9" opacity="0.7"/>
+  <circle cx="53" cy="53" r="1.5" fill="#FBF2E9" opacity="0.7"/>
+  <path d="M47 59 Q50 62 53 59" stroke="#FBF2E9" stroke-width="1" fill="none" opacity="0.7"/>
+  <!-- Small heart above -->
+  <path d="M50 25 C47 22 44 20 46 18 C47.5 16 49 17 50 19 C51 17 52.5 16 54 18 C56 20 53 22 50 25 Z"
+        fill="#D8A8A0" opacity="0.7"/>
 </svg>

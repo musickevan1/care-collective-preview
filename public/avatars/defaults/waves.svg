@@ -1,6 +1,62 @@
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="50" cy="50" r="50" fill="#C39778"/>
-  <path d="M15 40 Q30 30 45 40 Q60 50 75 40 Q85 35 90 40" stroke="#FBF2E9" stroke-width="4" fill="none"/>
-  <path d="M15 55 Q30 45 45 55 Q60 65 75 55 Q85 50 90 55" stroke="#FBF2E9" stroke-width="4" fill="none"/>
-  <path d="M15 70 Q30 60 45 70 Q60 80 75 70 Q85 65 90 70" stroke="#FBF2E9" stroke-width="4" fill="none"/>
+  <defs>
+    <linearGradient id="wv-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D0A588"/>
+      <stop offset="100%" stop-color="#C39778"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="50" cy="50" r="50" fill="url(#wv-bg)"/>
+  <!-- Wave 1 (top) -->
+  <path d="M10 32
+           Q20 22 30 32
+           Q40 42 50 32
+           Q60 22 70 32
+           Q80 42 90 32"
+        stroke="#FBF2E9" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M10 32
+           Q20 22 30 32
+           Q40 42 50 32
+           Q60 22 70 32
+           Q80 42 90 32"
+        stroke="#FBF2E9" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"
+        transform="translate(0, -6)"/>
+  <!-- Wave 2 (middle) -->
+  <path d="M10 50
+           Q20 40 30 50
+           Q40 60 50 50
+           Q60 40 70 50
+           Q80 60 90 50"
+        stroke="#FBF2E9" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <path d="M10 50
+           Q20 40 30 50
+           Q40 60 50 50
+           Q60 40 70 50
+           Q80 60 90 50"
+        stroke="#FBF2E9" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"
+        transform="translate(0, -6)"/>
+  <!-- Wave 3 (bottom) -->
+  <path d="M10 68
+           Q20 58 30 68
+           Q40 78 50 68
+           Q60 58 70 68
+           Q80 78 90 68"
+        stroke="#FBF2E9" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <path d="M10 68
+           Q20 58 30 68
+           Q40 78 50 68
+           Q60 58 70 68
+           Q80 78 90 68"
+        stroke="#FBF2E9" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.35"
+        transform="translate(0, -6)"/>
+  <!-- Decorative foam dots -->
+  <g fill="#FBF2E9" opacity="0.5">
+    <circle cx="25" cy="25" r="2"/>
+    <circle cx="50" cy="24" r="1.5"/>
+    <circle cx="75" cy="25" r="2"/>
+    <circle cx="38" cy="43" r="1.5"/>
+    <circle cx="62" cy="43" r="1.5"/>
+    <circle cx="25" cy="61" r="1.5"/>
+    <circle cx="75" cy="61" r="1.5"/>
+  </g>
 </svg>

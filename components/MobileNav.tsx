@@ -21,6 +21,7 @@ const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuth
         { href: '/requests', label: 'Browse Requests' },
         { href: '/requests/new', label: 'New Request' },
         { href: '/messages', label: 'Messages' },
+        { href: '/profile', label: 'Profile' },
         ...(isAdmin ? [{ href: '/admin', label: 'Admin Panel' }] : [])
       ]
     } else {
@@ -45,6 +46,7 @@ const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuth
       { href: '/requests', label: 'Browse Requests' },
       { href: '/requests/new', label: 'New Request' },
       { href: '/messages', label: 'Messages' },
+      { href: '/profile', label: 'Profile' },
     ]
   }
 }
