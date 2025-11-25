@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
 import { RequestsListWithModal } from '@/components/help-requests/RequestsListWithModal'
 import { ProfileAvatarSection } from '@/components/profile/profile-avatar-section'
+import { CaregivingSituationEditor } from '@/components/profile/caregiving-situation-editor'
 import Link from 'next/link'
 import { User, Mail, MapPin, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
@@ -37,6 +38,7 @@ type UserProfile = {
   verification_status: string
   is_admin: boolean
   avatar_url: string | null
+  caregiving_situation: string | null
 }
 
 async function getUser() {
@@ -61,7 +63,8 @@ async function getUser() {
     created_at: profile?.created_at || '',
     verification_status: profile.verification_status,
     is_admin: profile.is_admin,
-    avatar_url: profile?.avatar_url || null
+    avatar_url: profile?.avatar_url || null,
+    caregiving_situation: profile?.caregiving_situation || null
   }
 }
 
@@ -280,6 +283,14 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                   {user.is_admin && (
                     <Badge variant="secondary">Admin</Badge>
                   )}
+                </div>
+
+                {/* Caregiving Situation */}
+                <div className="pt-4 border-t">
+                  <CaregivingSituationEditor
+                    userId={user.id}
+                    initialValue={user.caregiving_situation}
+                  />
                 </div>
               </CardContent>
             </Card>
