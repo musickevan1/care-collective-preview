@@ -9,18 +9,24 @@ import { ReactElement, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Check, Loader2, Pencil, X, LucideIcon } from 'lucide-react';
+import { Check, Loader2, Pencil, X, User, MapPin } from 'lucide-react';
 
 interface ProfileFieldEditorProps {
   userId: string;
   field: 'name' | 'location';
   initialValue: string | null;
   label: string;
-  icon: LucideIcon;
+  iconName: 'user' | 'map-pin';
   placeholder: string;
   maxLength: number;
   required?: boolean;
 }
+
+// Map icon names to components
+const iconMap = {
+  'user': User,
+  'map-pin': MapPin,
+};
 
 // Validation functions matching lib/validations.ts
 const validateName = (value: string): string | null => {
@@ -44,11 +50,12 @@ export function ProfileFieldEditor({
   field,
   initialValue,
   label,
-  icon: Icon,
+  iconName,
   placeholder,
   maxLength,
   required = false
 }: ProfileFieldEditorProps): ReactElement {
+  const Icon = iconMap[iconName];
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(initialValue || '');
   const [savedValue, setSavedValue] = useState(initialValue || '');

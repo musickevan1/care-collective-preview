@@ -15,7 +15,7 @@ import { ProfileAvatarSection } from '@/components/profile/profile-avatar-sectio
 import { CaregivingSituationEditor } from '@/components/profile/caregiving-situation-editor'
 import { ProfileFieldEditor } from '@/components/profile/profile-field-editor'
 import Link from 'next/link'
-import { User, Mail, MapPin, Calendar } from 'lucide-react'
+import { User, Mail, Calendar } from 'lucide-react'
 import { format } from 'date-fns'
 
 // Force dynamic rendering
@@ -244,7 +244,7 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                   field="name"
                   initialValue={user.name}
                   label="Name"
-                  icon={User}
+                  iconName="user"
                   placeholder="Enter your name"
                   maxLength={100}
                   required
@@ -265,7 +265,7 @@ export default async function ProfilePage({ searchParams }: PageProps) {
                   field="location"
                   initialValue={user.location}
                   label="Location"
-                  icon={MapPin}
+                  iconName="map-pin"
                   placeholder="e.g., Springfield, MO"
                   maxLength={200}
                 />
