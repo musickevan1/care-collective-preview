@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
-import { DiagnosticPanel } from '@/components/DiagnosticPanel'
 import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
 import { FormattedDate } from '@/components/FormattedDate'
 import Link from 'next/link'
@@ -35,203 +34,113 @@ interface DashboardPageProps {
 async function getUser() {
   const supabase = await createClient();
 
-  // ENHANCED DEBUG LOGGING - AUTH CHECK START
-  console.log('[Dashboard] AUTH CHECK START:', {
-    timestamp: new Date().toISOString(),
-    message: 'Beginning authentication check'
-  })
-
-  // BUG #4 FIX: Force session refresh to ensure we have the latest auth state
-  // Server client has autoRefreshToken: false, so we must manually refresh
-  console.log('[Dashboard] Refreshing session to ensure fresh auth state...')
-  const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
+  // Force session refresh to ensure we have the latest auth state
+  const { error: refreshError } = await supabase.auth.refreshSession();
 
   if (refreshError) {
-    console.error('[Dashboard] Session refresh failed:', refreshError.message)
     // Continue anyway - refreshSession may fail if no session exists yet
-    // This is expected behavior when session is missing or expired
-  } else if (refreshData?.session) {
-    console.log('[Dashboard] Session refreshed successfully:', {
-      userId: refreshData.session.user.id,
-      userEmail: refreshData.session.user.email,
-      expiresAt: refreshData.session.expires_at,
-      timestamp: new Date().toISOString()
-    })
-  } else {
-    console.log('[Dashboard] No session to refresh (user may not be logged in)')
   }
 
   const { data: { user }, error } = await supabase.auth.getUser();
 
-  console.log('[Dashboard] Auth User Retrieved:', {
-    hasUser: !!user,
-    userId: user?.id,
-    userEmail: user?.email,
-    error: error?.message,
-    timestamp: new Date().toISOString()
-  });
-
   if (error || !user) {
-    console.log('[Dashboard] No user found, returning null');
     return null;
   }
 
-  // ENHANCED DEBUG LOGGING - BEFORE profile fetch
-  console.log('[Dashboard] BEFORE profile fetch:', {
-    queryingUserId: user.id,
-    queryingUserEmail: user.email,
-    timestamp: new Date().toISOString()
-  })
-
-  // Get user profile with verification status
-  // CRITICAL: Use service role to bypass RLS and get guaranteed accurate data
+  // Get user profile with verification status using service role to bypass RLS
   let profile;
   try {
     profile = await getProfileWithServiceRole(user.id);
 
-    // ENHANCED DEBUG LOGGING - AFTER profile fetch
-    console.log('[Dashboard] AFTER profile fetch:', {
-      profileId: profile.id,
-      profileName: profile.name,
-      profileStatus: profile.verification_status,
-      matchesAuthUser: profile.id === user.id,
-      CRITICAL_MISMATCH: profile.name,
-      expectedUserId: user.id,
-      actualProfileId: profile.id,
-      timestamp: new Date().toISOString()
-    });
-
     // CRITICAL SECURITY: Validate profile ID matches authenticated user ID
     if (profile.id !== user.id) {
-      console.error('[Dashboard] SECURITY ALERT: Profile ID mismatch!', {
-        authUserId: user.id,
-        profileId: profile.id,
-        authEmail: user.email,
-        profileName: profile.name,
-        timestamp: new Date().toISOString()
-      });
-      // This should never happen with service role - indicates serious bug
-      // FORCE LOGOUT to clear the corrupted session
       await supabase.auth.signOut();
       redirect('/login?error=session_mismatch');
     }
-  } catch (error) {
-    console.error('[Dashboard] Service role profile query failed:', error);
-    // Sign out on error - secure by default
+  } catch {
     await supabase.auth.signOut();
     redirect('/login?error=verification_failed');
   }
 
-  const userData = {
+  return {
     id: user.id,
     name: profile?.name || user.email?.split('@')[0] || 'Unknown',
     email: user.email || '',
     isAdmin: profile?.is_admin || false,
     verificationStatus: profile?.verification_status,
     profile,
-    // ADD DIAGNOSTIC DATA
-    diagnosticData: {
-      authUserId: user.id,
-      authUserEmail: user.email || '',
-      profileId: profile.id,
-      profileName: profile.name,
-      profileStatus: profile.verification_status,
-      idsMatch: profile.id === user.id,
-      timestamp: new Date().toISOString()
-    }
   };
-
-  // PRODUCTION DEBUG: Final user data
-  console.log('[Dashboard] Returning user data:', {
-    id: userData.id,
-    name: userData.name,
-    verificationStatus: userData.verificationStatus,
-    diagnosticData: userData.diagnosticData,
-    timestamp: new Date().toISOString()
-  });
-
-  return userData;
 }
 
 async function getDashboardData(userId: string) {
   const supabase = await createClient();
-  
+
   try {
-    // Get user's help requests count (excluding cancelled and closed)
-    const { count: userRequestsCount, error: requestsError } = await supabase
-      .from('help_requests')
-      .select('*', { count: 'exact' })
-      .eq('user_id', userId)
-      .neq('status', 'closed')
-      .neq('status', 'cancelled');
+    // Run all queries in parallel for better performance
+    const [
+      userRequestsResult,
+      unreadResult,
+      conversationsResult,
+      helpedResult,
+      recentRequestsResult,
+      userRequestsDataResult
+    ] = await Promise.all([
+      // User's help requests count (excluding cancelled and closed)
+      supabase
+        .from('help_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .neq('status', 'closed')
+        .neq('status', 'cancelled'),
 
-    // Get unread messages count
-    const { count: unreadCount, error: unreadError } = await supabase
-      .from('messages')
-      .select('*', { count: 'exact' })
-      .eq('recipient_id', userId)
-      .is('read_at', null);
+      // Unread messages count
+      supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('recipient_id', userId)
+        .is('read_at', null),
 
-    // Get active conversations count
-    const { data: conversations, error: conversationsError } = await supabase
-      .from('conversations')
-      .select(`
-        id,
-        conversation_participants!inner (
-          user_id
-        )
-      `)
-      .eq('conversation_participants.user_id', userId)
-      .is('conversation_participants.left_at', null);
+      // Active conversations count (using count instead of fetching all data)
+      supabase
+        .from('conversation_participants')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .is('left_at', null),
 
-    // Get number of people helped
-    const { count: helpedCount, error: helpedError } = await supabase
-      .from('help_requests')
-      .select('*', { count: 'exact' })
-      .eq('helper_id', userId)
-      .eq('status', 'completed');
+      // Number of people helped
+      supabase
+        .from('help_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('helper_id', userId)
+        .eq('status', 'completed'),
 
-    // Get recent activity - help requests and conversations (exclude cancelled)
-    const { data: recentRequests } = await supabase
-      .from('help_requests')
-      .select(`
-        id,
-        title,
-        status,
-        urgency,
-        created_at,
-        profiles!user_id (name)
-      `)
-      .neq('status', 'cancelled')
-      .order('created_at', { ascending: false })
-      .limit(5);
+      // Recent community activity (exclude cancelled)
+      supabase
+        .from('help_requests')
+        .select('id, title, status, urgency, created_at, profiles!user_id (name)')
+        .neq('status', 'cancelled')
+        .order('created_at', { ascending: false })
+        .limit(5),
 
-    // Get user's own help requests (exclude cancelled)
-    const { data: userRequests } = await supabase
-      .from('help_requests')
-      .select(`
-        id,
-        title,
-        status,
-        urgency,
-        category,
-        created_at
-      `)
-      .eq('user_id', userId)
-      .neq('status', 'cancelled')
-      .order('created_at', { ascending: false })
-      .limit(5);
+      // User's own help requests (exclude cancelled)
+      supabase
+        .from('help_requests')
+        .select('id, title, status, urgency, category, created_at')
+        .eq('user_id', userId)
+        .neq('status', 'cancelled')
+        .order('created_at', { ascending: false })
+        .limit(5)
+    ]);
 
     return {
-      userRequestsCount: userRequestsCount || 0,
-      unreadCount: unreadCount || 0,
-      activeConversations: conversations?.length || 0,
-      helpedCount: helpedCount || 0,
-      recentRequests: recentRequests || [],
-      userRequests: userRequests || []
+      userRequestsCount: userRequestsResult.count || 0,
+      unreadCount: unreadResult.count || 0,
+      activeConversations: conversationsResult.count || 0,
+      helpedCount: helpedResult.count || 0,
+      recentRequests: recentRequestsResult.data || [],
+      userRequests: userRequestsDataResult.data || []
     };
-  } catch (error) {
-    console.error('Error fetching dashboard data:', error);
+  } catch {
     return {
       userRequestsCount: 0,
       unreadCount: 0,
@@ -250,34 +159,18 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     redirect('/login?redirect=/dashboard');
   }
 
-  // CRITICAL SECURITY: Triple verification with explicit logging
-  console.log('[Dashboard Page] CRITICAL SECURITY CHECK:', {
-    userId: user.id,
-    userName: user.name,
-    verificationStatus: user.verificationStatus,
-    isApproved: user.verificationStatus === 'approved',
-    shouldBlock: user.verificationStatus !== 'approved',
-    timestamp: new Date().toISOString()
-  });
-
-  // CRITICAL SECURITY: Block rejected users (defensive check)
+  // Security: Block rejected users
   if (user.verificationStatus === 'rejected') {
-    console.error('[Dashboard Page] BLOCKING REJECTED USER:', user.id);
     redirect('/access-denied?reason=rejected');
   }
 
   // Redirect pending users to waitlist page
   if (user.verificationStatus === 'pending') {
-    console.log('[Dashboard Page] REDIRECTING PENDING USER:', user.id);
     redirect('/waitlist');
   }
 
-  // CRITICAL SECURITY: Only approved users past this point
+  // Only approved users past this point
   if (user.verificationStatus !== 'approved') {
-    console.error('[Dashboard Page] BLOCKING NON-APPROVED USER:', {
-      userId: user.id,
-      status: user.verificationStatus
-    });
     redirect('/waitlist?message=approval_required');
   }
 
@@ -546,9 +439,6 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </Card>
         </div>
       </div>
-
-      {/* DIAGNOSTIC PANEL - Always visible during debugging */}
-      <DiagnosticPanel data={user.diagnosticData} />
     </PlatformLayout>
   )
 }
