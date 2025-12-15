@@ -91,9 +91,6 @@ export default function HomePage(): ReactElement {
         {/* Enhanced Hero Section */}
         <Hero />
 
-        {/* Terra Cotta Divider */}
-        <div className="h-1 bg-primary w-full" />
-
         {/* How It Works Section */}
         <section id="how-it-works" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
@@ -154,11 +151,8 @@ export default function HomePage(): ReactElement {
           </div>
         </section>
 
-        {/* Terra Cotta Divider */}
-        <div className="h-1 bg-primary w-full" />
-
         {/* Why Join Section */}
-        <section id="why-join" className="py-16 md:py-20 bg-background">
+        <section id="why-join" className="py-16 md:py-20 bg-sage-light/30">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 text-center">
@@ -227,9 +221,6 @@ export default function HomePage(): ReactElement {
           </div>
         </section>
 
-        {/* Terra Cotta Divider */}
-        <div className="h-1 bg-primary w-full" />
-
         {/* About Section */}
         <section id="about" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
@@ -283,11 +274,8 @@ export default function HomePage(): ReactElement {
           </div>
         </section>
 
-        {/* Terra Cotta Divider */}
-        <div className="h-1 bg-primary w-full" />
-
         {/* What's Happening Section */}
-        <section id="whats-happening" className="py-16 md:py-20 bg-background">
+        <section id="whats-happening" className="py-16 md:py-20 bg-sage-light/30">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
@@ -306,9 +294,6 @@ export default function HomePage(): ReactElement {
             </div>
           </div>
         </section>
-
-        {/* Terra Cotta Divider */}
-        <div className="h-1 bg-primary w-full" />
 
         {/* Resources Preview Section */}
         <section id="resources-preview" className="py-16 md:py-20 bg-background">
@@ -371,11 +356,8 @@ export default function HomePage(): ReactElement {
           </div>
         </section>
 
-        {/* Terra Cotta Divider */}
-        <div className="h-1 bg-primary w-full" />
-
         {/* Contact Preview Section */}
-        <section id="contact-preview" className="py-16 md:py-20 bg-background">
+        <section id="contact-preview" className="py-16 md:py-20 bg-sage-light/30">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
