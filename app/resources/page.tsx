@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink, Heart, Home, Users, GraduationCap } from 'lucide-react';
+import { ExternalLink, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -172,18 +172,45 @@ export default function ResourcesPage(): ReactElement {
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
                 <Heart className="w-6 h-6 text-sage flex-shrink-0 mt-1" />
-                <div>
+                <div className="w-full">
                   <h3 className="text-lg font-semibold text-foreground mb-2">Need Immediate Support?</h3>
-                  <p className="text-muted-foreground mb-3">
-                    If you&apos;re experiencing a crisis or need mental health support, we have resources available 24/7.
+                  <p className="text-muted-foreground mb-4">
+                    If you&apos;re experiencing a crisis or need mental health support, resources are available 24/7.
                   </p>
-                  <Link
-                    href="/crisis-resources"
-                    className="inline-flex items-center gap-2 text-sage hover:underline font-medium"
-                  >
-                    View Crisis Resources
-                    <ExternalLink className="w-4 h-4" />
-                  </Link>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-5 h-5 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-foreground">988 Suicide &amp; Crisis Lifeline</p>
+                        <p className="text-muted-foreground">Call or text 988</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <MessageSquare className="w-5 h-5 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-foreground">Crisis Text Line</p>
+                        <p className="text-muted-foreground">Text HOME to 741741</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-5 h-5 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-foreground">Missouri Crisis Line</p>
+                        <p className="text-muted-foreground">1-888-279-8369</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <Shield className="w-5 h-5 text-primary flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-foreground">Veterans Crisis Line</p>
+                        <p className="text-muted-foreground">Call 1-800-273-8255 or text 838255</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>

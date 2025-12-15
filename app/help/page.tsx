@@ -8,19 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { 
-  HelpCircle, 
-  MessageCircle, 
-  Users, 
-  Heart, 
-  Shield, 
-  Phone,
+import {
+  HelpCircle,
+  MessageCircle,
+  Users,
+  Heart,
+  Shield,
   Mail,
-  ExternalLink,
   ChevronRight,
-  Home,
-  Search,
-  Plus
+  Home
 } from 'lucide-react';
 
 export default function HelpPage(): ReactElement {
@@ -37,71 +33,11 @@ export default function HelpPage(): ReactElement {
             <HelpCircle className="w-8 h-8 text-sage" />
           </div>
           <h1 className="text-3xl font-bold text-secondary mb-2">
-            Help & Support
+            Platform Help & Support
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            We&apos;re here to help you connect with your community and provide mutual support safely and effectively.
+            We&apos;re here to help you connect with your community safely and effectively.
           </p>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-sage/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Search className="w-6 h-6 text-sage" />
-                </div>
-                <h3 className="font-semibold text-secondary mb-2">Browse Help Requests</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Find ways to help your community members
-                </p>
-                <Button asChild className="w-full">
-                  <Link href="/requests">
-                    Browse Requests
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-dusty-rose/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Plus className="w-6 h-6 text-dusty-rose" />
-                </div>
-                <h3 className="font-semibold text-secondary mb-2">Request Help</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Ask your community for assistance
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/requests/new">
-                    Create Request
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <MessageCircle className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="font-semibold text-secondary mb-2">Messages</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Connect with community members
-                </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/messages">
-                    View Messages
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Help Categories */}
@@ -231,8 +167,8 @@ export default function HelpPage(): ReactElement {
                 Can&apos;t find what you&apos;re looking for? Our community support team is here to help.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="text-center p-4 border rounded-lg">
+            <div className="flex justify-center">
+              <div className="text-center p-4 border rounded-lg max-w-sm">
                 <Mail className="w-8 h-8 text-sage mx-auto mb-2" />
                 <h3 className="font-medium text-secondary mb-1">Email Support</h3>
                 <p className="text-sm text-muted-foreground mb-3">
@@ -243,40 +179,6 @@ export default function HelpPage(): ReactElement {
                   Email Us
                 </Button>
               </div>
-              <div className="text-center p-4 border rounded-lg">
-                <Phone className="w-8 h-8 text-dusty-rose mx-auto mb-2" />
-                <h3 className="font-medium text-secondary mb-1">Phone Support</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Speak with a team member directly
-                </p>
-                <Button variant="outline" className="w-full">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Us
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Crisis Resources Link */}
-        <Card className="mt-6 bg-sage/5 border-sage/20">
-          <CardContent className="p-6">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-sage/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-6 h-6 text-sage" />
-              </div>
-              <h3 className="text-lg font-semibold text-secondary mb-2">
-                Need Immediate Support?
-              </h3>
-              <p className="text-muted-foreground mb-4">
-                If you&apos;re in crisis or need immediate assistance, we have resources to help.
-              </p>
-              <Button asChild>
-                <Link href="/resources" className="inline-flex items-center">
-                  Crisis Resources
-                  <ExternalLink className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
             </div>
           </CardContent>
         </Card>
@@ -296,6 +198,6 @@ export default function HelpPage(): ReactElement {
 }
 
 export const metadata = {
-  title: 'Help & Support - CARE Collective',
+  title: 'Platform Help & Support - CARE Collective',
   description: 'Get help using the CARE Collective platform and find community support resources'
 };

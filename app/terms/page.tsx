@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, Shield, FileText, Scale } from 'lucide-react';
+import { AlertTriangle, Shield, FileText, Scale, Heart } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata = {
@@ -116,22 +116,52 @@ export default function TermsPage(): ReactElement {
           <h2 className="text-2xl font-bold text-foreground mb-4">4. Community Standards</h2>
           <Card>
             <CardContent className="p-6 space-y-4">
-              <p className="text-foreground">
-                All members of the CARE Collective agree to:
-              </p>
-              <ul className="list-disc list-inside space-y-2 text-foreground ml-4">
-                <li>Treat all caregivers with respect and avoid judgment or discrimination</li>
-                <li>Keep all shared information confidential and use contact details only for CARE Collective exchanges</li>
-                <li>Honor commitments and communicate promptly if plans change</li>
-                <li>Respect each caregiver&apos;s limits around time, energy, and the type of support they can give or receive</li>
-                <li>Use the platform only to give or receive caregiving help</li>
-                <li>Use good judgment about safety when meeting or exchanging with members</li>
-                <li>Avoid harassment or any behavior that undermines the safety or trust of the community</li>
+              <p className="text-foreground">Members of the CARE Collective agree to:</p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
+                  <span className="text-foreground">
+                    Treat all caregivers with respect and avoid judgment or discrimination based on their situations,
+                    choices, or circumstances.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
+                  <span className="text-foreground">
+                    Keep all shared information confidential and use member contact details only for
+                    CARE Collective exchanges.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
+                  <span className="text-foreground">
+                    Honor commitments by communicating promptly if plans change or you&apos;re unable to
+                    follow through on an exchange.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
+                  <span className="text-foreground">
+                    Respect each caregiver&apos;s limits around time, energy, and the type of support they
+                    can give or receive.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
+                  <span className="text-foreground">
+                    Use the platform only to give or receive caregiving help and use good judgment about
+                    safety when meeting or exchanging with members.
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
+                  <span className="text-foreground">
+                    Avoid harassment or any behavior that undermines the safety or trust of the community.
+                  </span>
+                </li>
               </ul>
               <p className="text-foreground mt-4">
                 Violation of these standards may result in account suspension or termination.
-                For complete Community Standards, please see our{' '}
-                <Link href="/about" className="text-primary hover:underline">About page</Link>.
               </p>
             </CardContent>
           </Card>
@@ -225,7 +255,8 @@ export default function TermsPage(): ReactElement {
             <CardContent className="p-6 space-y-4">
               <p className="text-foreground">
                 The CARE Collective platform, including its design, code, content, and branding, is owned by
-                Missouri State University and protected by copyright and other intellectual property laws.
+                CARE Collective. The platform is developed in partnership with Missouri State University.
+                Unauthorized use, reproduction, or distribution of any materials is prohibited.
               </p>
               <p className="text-foreground">
                 You retain ownership of content you post (such as help request descriptions), but grant us a

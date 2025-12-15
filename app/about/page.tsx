@@ -26,23 +26,7 @@ export default function AboutPage(): ReactElement {
             <Heart className="w-12 h-12 text-sage" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">About CARE Collective</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Building stronger communities through caregiver support and mutual assistance
-          </p>
         </div>
-
-        {/* About Us Section */}
-        <section className="mb-12">
-          <Card className="border-sage/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-sage">
-            <CardContent className="p-8">
-              <p className="text-lg text-foreground leading-relaxed">
-                The CARE Collective is a network of family caregivers in Southwest Missouri who support each other
-                through mutual assistance, practical help, and shared resources. Together, we are building a space where
-                caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
-              </p>
-            </CardContent>
-          </Card>
-        </section>
 
         {/* Mission */}
         <section className="mb-12">

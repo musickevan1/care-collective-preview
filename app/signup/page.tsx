@@ -195,7 +195,7 @@ export default function SignUpPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-foreground mb-2">Join CARE Collective</h1>
-            <p className="text-muted-foreground">Create your account to start helping your community</p>
+            <p className="text-base md:text-lg text-muted-foreground">Create your account to start helping your community</p>
           </div>
 
         <Card>
@@ -264,7 +264,7 @@ export default function SignUpPage() {
 
               <div className="space-y-2">
                 <label htmlFor="location" className="text-sm font-medium text-foreground">
-                  Location (Optional)
+                  Location <span className="text-primary">*</span>
                 </label>
                 <Input
                   id="location"
@@ -273,6 +273,7 @@ export default function SignUpPage() {
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="e.g., Springfield, MO"
                   disabled={loading}
+                  required
                 />
                 <p className="text-xs text-muted-foreground">
                   Helps connect you with nearby community members
@@ -281,18 +282,19 @@ export default function SignUpPage() {
 
               <div className="space-y-2">
                 <label htmlFor="applicationReason" className="text-sm font-medium text-foreground">
-                  Why do you want to join CARE Collective? (Optional)
+                  Why do you want to join CARE Collective? <span className="text-primary">*</span>
                 </label>
                 <Textarea
                   id="applicationReason"
                   value={applicationReason}
                   onChange={(e) => setApplicationReason(e.target.value)}
-                  placeholder="Tell us briefly why you're interested in joining our mutual support community..."
+                  placeholder="Tell us briefly why you'd like to join our community"
                   disabled={loading}
                   rows={3}
+                  required
                 />
                 <p className="text-xs text-muted-foreground">
-                  This helps us understand your interest in community mutual support
+                  This helps us understand what brings you here.
                 </p>
               </div>
 

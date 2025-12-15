@@ -208,10 +208,7 @@ export default function PrivacyPolicyPage(): ReactElement {
               <p className="text-foreground mt-4">
                 To exercise these rights, visit your{' '}
                 <Link href="/privacy" className="text-primary hover:underline">Privacy Dashboard</Link>
-                {' '}or contact us at{' '}
-                <a href="mailto:swmocarecollective@gmail.com" className="text-primary hover:underline">
-                  swmocarecollective@gmail.com
-                </a>
+                {' '}or contact the CARE Collective administrator.
               </p>
             </CardContent>
           </Card>
@@ -289,15 +286,8 @@ export default function PrivacyPolicyPage(): ReactElement {
                 <p className="text-muted-foreground">Dr. Maureen Templeman</p>
                 <p className="text-muted-foreground">Missouri State University</p>
                 <p className="text-muted-foreground mt-2">
-                  Email:{' '}
-                  <a href="mailto:swmocarecollective@gmail.com" className="text-primary hover:underline">
-                    swmocarecollective@gmail.com
-                  </a>
-                </p>
-                <p className="text-muted-foreground mt-2">
-                  Visit our{' '}
-                  <Link href="/contact" className="text-primary hover:underline">Contact page</Link>
-                  {' '}for more information
+                  If you have questions about this Privacy Policy, please contact the
+                  CARE Collective administrator.
                 </p>
               </div>
             </CardContent>
