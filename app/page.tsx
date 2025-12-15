@@ -92,7 +92,7 @@ export default function HomePage(): ReactElement {
         <Hero />
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="py-16 md:py-20 bg-background shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.05),0_4px_6px_-1px_rgba(0,0,0,0.03)]">
+        <section id="how-it-works" className="py-16 md:py-20 bg-background border-b border-sage/20">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
@@ -152,7 +152,7 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* Why Join Section */}
-        <section id="why-join" className="py-16 md:py-20 bg-background shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.05),0_4px_6px_-1px_rgba(0,0,0,0.03)]">
+        <section id="why-join" className="py-16 md:py-20 bg-background border-b border-sage/20">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 text-center">
@@ -222,7 +222,7 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* About Section */}
-        <section id="about" className="py-16 md:py-20 bg-background shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.05),0_4px_6px_-1px_rgba(0,0,0,0.03)]">
+        <section id="about" className="py-16 md:py-20 bg-background border-b border-sage/20">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-12">
@@ -275,7 +275,7 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* What's Happening Section */}
-        <section id="whats-happening" className="py-16 md:py-20 bg-background shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.05),0_4px_6px_-1px_rgba(0,0,0,0.03)]">
+        <section id="whats-happening" className="py-16 md:py-20 bg-background border-b border-sage/20">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
@@ -296,7 +296,7 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* Resources Preview Section */}
-        <section id="resources-preview" className="py-16 md:py-20 bg-background shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.05),0_4px_6px_-1px_rgba(0,0,0,0.03)]">
+        <section id="resources-preview" className="py-16 md:py-20 bg-background border-b border-sage/20">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
@@ -357,7 +357,7 @@ export default function HomePage(): ReactElement {
         </section>
 
         {/* Contact Preview Section */}
-        <section id="contact-preview" className="py-16 md:py-20 bg-background shadow-[inset_0_-1px_0_0_rgba(0,0,0,0.05),0_4px_6px_-1px_rgba(0,0,0,0.03)]">
+        <section id="contact-preview" className="py-16 md:py-20 bg-background border-b border-sage/20">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
