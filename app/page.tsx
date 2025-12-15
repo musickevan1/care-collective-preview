@@ -51,7 +51,6 @@ export default function HomePage(): ReactElement {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
               <ul className="flex items-center gap-3 xl:gap-4 list-none">
-                <li><Link href="#home" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Home</Link></li>
                 <li><Link href="#how-it-works" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">How It Works</Link></li>
                 <li><Link href="#why-join" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Why Join?</Link></li>
                 <li><Link href="#about" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">About Us</Link></li>
@@ -103,8 +102,8 @@ export default function HomePage(): ReactElement {
                 How It Works
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">
+                <div className="text-center bg-almond p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
+                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-almond">
                     1
                   </div>
                   <div className="flex justify-center mb-6 mt-4">
@@ -116,8 +115,8 @@ export default function HomePage(): ReactElement {
                   </p>
                 </div>
 
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">
+                <div className="text-center bg-almond p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
+                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-almond">
                     2
                   </div>
                   <div className="flex justify-center mb-6 mt-4">
@@ -129,8 +128,8 @@ export default function HomePage(): ReactElement {
                   </p>
                 </div>
 
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-white">
+                <div className="text-center bg-almond p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
+                  <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-almond">
                     3
                   </div>
                   <div className="flex justify-center mb-6 mt-4">
@@ -158,86 +157,65 @@ export default function HomePage(): ReactElement {
         {/* Terra Cotta Divider */}
         <div className="h-1 bg-primary w-full" />
 
-        {/* Why Join CARE Collective Section */}
+        {/* Why Join Section */}
         <section id="why-join" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
-            <div className="text-center">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
-                Why Join CARE Collective?
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 text-center">
+                Why Join?
               </h2>
-              <p className="text-xl font-medium text-muted-foreground mb-12 max-w-3xl mx-auto">
-                Discover the benefits of being part of our caregiver community
+
+              <p className="text-lg md:text-xl text-muted-foreground mb-8 text-center">
+                The CARE Collective connects you with other caregivers who understand what you&apos;re going through and are ready to help and be helped.
               </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                {/* Community Building */}
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
-                  <div className="flex justify-center mb-4">
-                    <Users className="w-12 h-12 text-sage-dark" aria-label="Community building" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Community Building</h3>
-                  <p className="text-muted-foreground">
-                    Connect with neighbors who understand the unique challenges of caregiving
-                  </p>
-                </div>
+              <h3 className="text-xl md:text-2xl font-semibold text-foreground mb-6">
+                As a member, you&apos;ll have access to:
+              </h3>
 
-                {/* Practical Help */}
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
-                  <div className="flex justify-center mb-4">
-                    <HandHelping className="w-12 h-12 text-primary" aria-label="Practical help" />
+              <ul className="space-y-6 mb-8">
+                <li className="flex gap-4">
+                  <HandHelping className="w-6 h-6 text-sage-dark flex-shrink-0 mt-1" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground">Practical help when you need it</strong>
+                    <span className="text-muted-foreground"> – Get support with respite, errands, paperwork, or just someone to check in.</span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Practical Help</h3>
-                  <p className="text-muted-foreground">
-                    Exchange real support for everyday needs like groceries, transportation, and household tasks
-                  </p>
-                </div>
-
-                {/* Resource Sharing */}
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
-                  <div className="flex justify-center mb-4">
-                    <BookOpen className="w-12 h-12 text-accent" aria-label="Resource sharing" />
+                </li>
+                <li className="flex gap-4">
+                  <Handshake className="w-6 h-6 text-sage-dark flex-shrink-0 mt-1" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground">Mutual exchange of support</strong>
+                    <span className="text-muted-foreground"> – Caregivers helping each other meet real, practical needs. Give what you can, receive what you need. Everyone has something to offer, and everyone needs help sometimes.</span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Resource Sharing</h3>
-                  <p className="text-muted-foreground">
-                    Access community knowledge, local resources, and trusted information
-                  </p>
-                </div>
-
-                {/* Emotional Support */}
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
-                  <div className="flex justify-center mb-4">
-                    <Heart className="w-12 h-12 text-dusty-rose fill-dusty-rose" aria-label="Emotional support" />
+                </li>
+                <li className="flex gap-4">
+                  <Star className="w-6 h-6 text-sage-dark flex-shrink-0 mt-1" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground">Flexibility that works for you</strong>
+                    <span className="text-muted-foreground"> – Participate in ways that fit your schedule and capacity, whether that&apos;s offering a ride once a month or connecting for weekly check-ins.</span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Emotional Support</h3>
-                  <p className="text-muted-foreground">
-                    Find understanding, encouragement, and connection from those who truly get it
-                  </p>
-                </div>
-
-                {/* Local Connections */}
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
-                  <div className="flex justify-center mb-4">
-                    <MapPin className="w-12 h-12 text-sage" aria-label="Local connections" />
+                </li>
+                <li className="flex gap-4">
+                  <GraduationCap className="w-6 h-6 text-sage-dark flex-shrink-0 mt-1" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground">Learning opportunities</strong>
+                    <span className="text-muted-foreground"> – Attend workshops on topics that matter to you, from advance care planning to caregiver self-care.</span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Local Connections</h3>
-                  <p className="text-muted-foreground">
-                    Build relationships with people in your Missouri community who are close by
-                  </p>
-                </div>
-
-                {/* Sustainable Caregiving */}
-                <div className="text-center bg-white p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
-                  <div className="flex justify-center mb-4">
-                    <Sprout className="w-12 h-12 text-sage-dark" aria-label="Sustainable caregiving" />
+                </li>
+                <li className="flex gap-4">
+                  <Heart className="w-6 h-6 text-dusty-rose fill-dusty-rose flex-shrink-0 mt-1" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground">No pressure, just support</strong>
+                    <span className="text-muted-foreground"> – Feeling overwhelmed? Don&apos;t have much free time? Worried you don&apos;t have much to offer? You belong here, and it&apos;s okay to be in a season where you mostly need support.</span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Sustainable Caregiving</h3>
-                  <p className="text-muted-foreground">
-                    Create lasting networks of mutual support that help prevent caregiver burnout
-                  </p>
-                </div>
-              </div>
+                </li>
+              </ul>
 
-              <div className="mt-12">
+              <p className="text-lg text-muted-foreground mb-10 text-center">
+                Joining is simple. We&apos;ll help you get started, and you can participate in whatever ways work for your life right now.
+              </p>
+
+              <div className="text-center">
                 <Link href="/signup" className="inline-flex items-center justify-center bg-sage text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-sage-dark transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sage/20 min-h-[48px] group">
                   <span>Join Our Community</span>
                   <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,44 +234,28 @@ export default function HomePage(): ReactElement {
         <section id="about" className="py-16 md:py-20 bg-background">
           <div className="container mx-auto px-4 max-w-7xl">
             <div className="text-center">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-12">
                 About CARE Collective
               </h2>
-              <p className="text-xl font-medium text-muted-foreground mb-12 max-w-3xl mx-auto">
-                Building stronger communities through caregiver support and mutual assistance
-              </p>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-                {/* Main Content */}
-                <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
-                  <div className="text-center mb-6">
-                    <div className="flex justify-center mb-4">
-                      <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Offering support" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-4">Our Story</h3>
+              <div className="space-y-8 max-w-6xl mx-auto">
+                {/* Who We Are - Full Width */}
+                <div className="bg-almond p-8 rounded-lg shadow-lg">
+                  <div className="flex justify-center mb-4">
+                    <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Who we are" />
                   </div>
-                  <div className="text-left space-y-4">
-                    <p className="text-lg leading-relaxed text-foreground">
-                      The CARE Collective (Caregiver Assistance and Resource Exchange) is a community for
-                      caregivers in Southwest Missouri. The Collective is powered by caregivers themselves -
-                      neighbors supporting neighbors - along with students and volunteers who help maintain
-                      the site and coordinate resources.
-                    </p>
-                    <p className="text-lg leading-relaxed text-foreground font-medium text-sage-dark">
-                      Together, we are building a space where caregivers can find connection, strength,
-                      and the support they deserve.
-                    </p>
-                  </div>
+                  <h3 className="text-2xl font-bold text-foreground mb-4">Who We Are</h3>
+                  <p className="text-lg leading-relaxed text-foreground max-w-4xl mx-auto">
+                    The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources. The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are building a space where caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
+                  </p>
                 </div>
 
                 {/* Academic Partnership */}
                 <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
-                  <div className="text-center mb-6">
-                    <div className="flex justify-center mb-4">
-                      <GraduationCap className="w-12 h-12 text-dusty-rose-accessible" aria-label="Academic partnership" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-dusty-rose-accessible mb-4">Academic Partnership</h3>
+                  <div className="flex justify-center mb-4">
+                    <GraduationCap className="w-12 h-12 text-dusty-rose-accessible" aria-label="Academic partnership" />
                   </div>
+                  <h3 className="text-2xl font-bold text-dusty-rose-accessible mb-4">Academic Partnership</h3>
                   <div className="bg-dusty-rose-light/30 p-6 rounded-lg">
                     <p className="text-foreground leading-relaxed">
                       This project was created by <span className="font-semibold">Dr. Maureen Templeman</span>,
@@ -305,19 +267,17 @@ export default function HomePage(): ReactElement {
                 </div>
               </div>
 
-              {/* Call to Action */}
-              <div className="mt-12 space-y-4">
-                <Link href="/signup" className="bg-sage text-white hover:bg-sage-dark px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 hover:shadow-lg min-h-[48px] inline-flex items-center justify-center">
-                  Join Our Community
+              {/* Learn More - Prominent Box Button */}
+              <div className="mt-12 max-w-md mx-auto">
+                <Link
+                  href="/about"
+                  className="block bg-sage text-white p-6 rounded-lg text-center hover:bg-sage-dark transition-all duration-300 hover:shadow-xl"
+                >
+                  <span className="text-xl font-semibold">Learn More About Us</span>
+                  <span className="block text-sm mt-2 text-white/80">
+                    Discover our mission, vision, and community standards
+                  </span>
                 </Link>
-                <div>
-                  <Link href="/about" className="inline-flex items-center justify-center text-primary hover:text-primary/80 font-medium text-lg group">
-                    <span>Learn More About Us</span>
-                    <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </Link>
-                </div>
               </div>
             </div>
           </div>
@@ -358,7 +318,7 @@ export default function HomePage(): ReactElement {
                 Community Resources
               </h2>
               <p className="text-xl font-medium text-muted-foreground mb-12 max-w-3xl mx-auto">
-                Trusted local and regional organizations offering practical support
+                Connect with trusted local and regional organizations that offer practical support, guidance, and connection.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -469,6 +429,7 @@ export default function HomePage(): ReactElement {
             <div>
               <h4 className="text-sm font-semibold text-sage-light mb-3 uppercase tracking-wide">Contact</h4>
               <div className="space-y-1 text-sm">
+                <p className="text-white/80">Dr. Maureen Templeman</p>
                 <p className="text-white/80">Springfield, MO</p>
                 <a href="mailto:swmocarecollective@gmail.com" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">
                   swmocarecollective@gmail.com
