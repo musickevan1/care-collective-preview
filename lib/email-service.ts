@@ -192,6 +192,39 @@ class EmailService {
   }
 
   /**
+   * Send email notification when someone offers help on a request
+   */
+  async sendHelpOfferEmailNotification(
+    recipientEmail: string,
+    recipientName: string,
+    helperName: string,
+    requestTitle: string,
+    requestId: string
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    const subject = `Someone wants to help with your request!`
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://care-collective-preview.vercel.app'
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #324158;">Good news, ${recipientName}!</h2>
+        <p><strong>${helperName}</strong> has offered to help with your request:</p>
+        <div style="background: #E9DDD4; border-left: 4px solid #BC6547; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <p style="color: #324158; font-weight: bold; margin: 0;">"${requestTitle}"</p>
+        </div>
+        <p>You can now message them directly to coordinate assistance.</p>
+        <a href="${siteUrl}/messages?help_request=${requestId}"
+           style="display: inline-block; background: #7A9E99; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin-top: 10px;">
+          View Messages
+        </a>
+        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
+        <p style="font-size: 12px; color: #999;">CARE Collective - Southwest Missouri's mutual support network</p>
+      </div>
+    `
+
+    return this.sendEmail({ to: recipientEmail, subject, html })
+  }
+
+  /**
    * Send user status change notification to user
    */
   async sendUserStatusNotification(

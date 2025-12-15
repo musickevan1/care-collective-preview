@@ -10,6 +10,7 @@ import { moderationService } from '@/lib/messaging/moderation';
 import { messagingServiceV2 } from '@/lib/messaging/service-v2-server';
 import { helpRequestRateLimiter } from '@/lib/security/rate-limiter';
 import { notifyHelpRequestOffer } from '@/lib/notifications';
+import { emailService } from '@/lib/email-service';
 
 async function getCurrentUser() {
   const supabase = await createClient();
@@ -344,6 +345,23 @@ export async function POST(
       }).catch(error => {
         console.error('[POST /start-conversation] Failed to send notification:', error);
       });
+    }
+
+    // Send email notification to request owner (fire-and-forget)
+    try {
+      const { data: requestOwner } = await supabase.auth.admin.getUserById(helpRequest.user_id);
+      if (requestOwner?.user?.email) {
+        const ownerProfile = helpRequest.owner as { name?: string } | null;
+        emailService.sendHelpOfferEmailNotification(
+          requestOwner.user.email,
+          ownerProfile?.name || 'CARE Member',
+          helperProfile?.name || 'A community member',
+          helpRequest.title,
+          helpRequest.id
+        ).catch(err => console.error('[POST /start-conversation] Failed to send help offer email:', err));
+      }
+    } catch (emailError) {
+      console.warn('[POST /start-conversation] Could not send email notification:', emailError);
     }
 
     console.log(`[start-conversation:${requestId}] Conversation created successfully, returning minimal response`);
