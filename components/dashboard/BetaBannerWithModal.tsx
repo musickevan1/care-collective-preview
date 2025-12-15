@@ -35,8 +35,8 @@ export function BetaBannerWithModal(): ReactElement {
               </Badge>
             </h3>
             <p className="text-secondary/80 text-sm mb-3">
-              Welcome to Care Collective Beta! You&apos;re helping us build something special. Your
-              feedback shapes the future of mutual aid in our community. Report issues or suggestions to
+              Welcome to CARE Collective Beta! You&apos;re helping us build something special. Your
+              feedback shapes the future of mutual support in our community. Report issues or suggestions to
               help us improve.
             </p>
             <Button

@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 
 /**
- * Email Service for Care Collective
+ * Email Service for CARE Collective
  * Handles production email sending via Resend
  */
 
@@ -33,7 +33,7 @@ class EmailService {
       to,
       subject,
       html,
-      from = 'Care Collective <noreply@carecollective.org>',
+      from = 'CARE Collective <noreply@carecollective.org>',
       replyTo = 'support@carecollective.org'
     } = options
 
@@ -89,11 +89,11 @@ class EmailService {
    * Send a welcome/waitlist confirmation email
    */
   async sendWaitlistConfirmation(to: string, name: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const subject = '📋 You\'re on the Care Collective waitlist'
+    const subject = '📋 You\'re on the CARE Collective waitlist'
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #324158;">Welcome to Care Collective, ${name}!</h2>
-        <p>Thank you for your interest in joining our mutual aid community.</p>
+        <h2 style="color: #324158;">Welcome to CARE Collective, ${name}!</h2>
+        <p>Thank you for your interest in joining our mutual support community.</p>
         <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #BC6547; margin-top: 0;">What happens next?</h3>
           <ol style="color: #483129;">
@@ -105,7 +105,7 @@ class EmailService {
         <p style="color: #7A9E99;"><strong>No email confirmation needed yet!</strong></p>
         <p>You can log in immediately to view your waitlist status. Email confirmation will only be required if your application is approved.</p>
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
       </div>
     `
 
@@ -116,11 +116,11 @@ class EmailService {
    * Send approval notification with email confirmation link
    */
   async sendApprovalNotification(to: string, name: string, confirmUrl: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const subject = '✅ Welcome to Care Collective - Please Confirm Your Email'
+    const subject = '✅ Welcome to CARE Collective - Please Confirm Your Email'
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #324158;">Congratulations, ${name}! 🎉</h2>
-        <p>Your application to join Care Collective has been <strong style="color: #5A7D78;">approved</strong>!</p>
+        <p>Your application to join CARE Collective has been <strong style="color: #5A7D78;">approved</strong>!</p>
         <div style="background: #A3C4BF; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
           <h3 style="color: #FFF; margin-top: 0;">One Final Step</h3>
           <p style="color: #FFF;">Please confirm your email to access the full platform:</p>
@@ -134,7 +134,7 @@ class EmailService {
         </ul>
         <p style="font-size: 14px; color: #999; margin-top: 30px;">If the button doesn't work, copy and paste this link into your browser:<br>${confirmUrl}</p>
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective - Southwest Missouri's mutual aid network</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective - Southwest Missouri's mutual support network</p>
       </div>
     `
 
@@ -145,24 +145,24 @@ class EmailService {
    * Send rejection notification
    */
   async sendRejectionNotification(to: string, name: string, reason?: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const subject = 'Update on your Care Collective application'
+    const subject = 'Update on your CARE Collective application'
     const reasonText = reason ? `\n\nReason: ${reason}` : ''
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #324158;">Thank you for your interest, ${name}</h2>
-        <p>We have reviewed your application to join Care Collective.</p>
+        <p>We have reviewed your application to join CARE Collective.</p>
         <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <p style="color: #483129;">Unfortunately, we are unable to approve your application at this time.${reasonText}</p>
         </div>
         <p>You are welcome to reapply in the future. We encourage you to:</p>
         <ul style="color: #483129;">
-          <li>Connect with mutual aid groups in your area</li>
+          <li>Connect with mutual support groups in your area</li>
           <li>Volunteer with local organizations</li>
           <li>Build connections in your community</li>
         </ul>
         <p>Thank you for your understanding.</p>
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective - Southwest Missouri's mutual aid network</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective - Southwest Missouri's mutual support network</p>
       </div>
     `
 
@@ -184,7 +184,7 @@ class EmailService {
         </div>
         <p style="font-size: 12px; color: #999;">You're receiving this because you opted in to help request notifications.</p>
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
       </div>
     `
 
@@ -206,10 +206,10 @@ class EmailService {
 
     switch (newStatus) {
       case 'approved':
-        subject = '✅ Your Care Collective account has been activated'
+        subject = '✅ Your CARE Collective account has been activated'
         html = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #324158;">Welcome to Care Collective, ${name}! 🎉</h2>
+            <h2 style="color: #324158;">Welcome to CARE Collective, ${name}! 🎉</h2>
             <p>Your account has been activated and you now have full access to the platform.</p>
             <div style="background: #A3C4BF; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
               <h3 style="color: #FFF; margin-top: 0;">You can now:</h3>
@@ -221,15 +221,15 @@ class EmailService {
               </ul>
               <a href="${process.env.NEXT_PUBLIC_SITE_URL}/dashboard" style="display: inline-block; background: #BC6547; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Go to Dashboard</a>
             </div>
-            <p>Thank you for being part of our mutual aid community!</p>
+            <p>Thank you for being part of our mutual support community!</p>
             <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-            <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+            <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
           </div>
         `
         break
 
       case 'rejected':
-        subject = 'Update on your Care Collective account'
+        subject = 'Update on your CARE Collective account'
         const reasonText = reason ? `\n\nReason: ${reason}` : ''
         html = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -241,13 +241,13 @@ class EmailService {
             <p>If you believe this is an error or would like to appeal this decision, please contact our support team.</p>
             <p>Thank you for your understanding.</p>
             <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-            <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+            <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
           </div>
         `
         break
 
       case 'suspended':
-        subject = 'Important: Your Care Collective account status'
+        subject = 'Important: Your CARE Collective account status'
         const suspensionReason = reason ? `\n\nReason: ${reason}` : ''
         html = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -259,7 +259,7 @@ class EmailService {
             <p>This action was taken to ensure community safety and adherence to our guidelines.</p>
             <p>If you have questions about this decision or would like to discuss reinstatement, please contact our support team.</p>
             <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-            <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+            <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
           </div>
         `
         break
@@ -323,7 +323,7 @@ class EmailService {
         </div>
         <p><strong>Action Required:</strong> Please review this report and take appropriate moderation action.</p>
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective Admin System - Automated Moderation Alert</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective Admin System - Automated Moderation Alert</p>
       </div>
     `
 
@@ -375,7 +375,7 @@ class EmailService {
         </div>
 
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective Admin System - Bulk Operation Report</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective Admin System - Bulk Operation Report</p>
       </div>
     `
 

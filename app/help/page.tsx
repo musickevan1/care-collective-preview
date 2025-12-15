@@ -1,5 +1,5 @@
 /**
- * @fileoverview Help and support page for Care Collective users
+ * @fileoverview Help and support page for CARE Collective users
  * Provides community support resources, platform help, and contact information
  */
 

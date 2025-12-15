@@ -5,11 +5,11 @@ import { emailService } from '@/lib/email-service'
 // Email templates for different notification types
 const EMAIL_TEMPLATES = {
   waitlist_confirmation: {
-    subject: '📋 You\'re on the Care Collective waitlist',
+    subject: '📋 You\'re on the CARE Collective waitlist',
     html: (name: string) => `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #324158;">Welcome to Care Collective, ${name}!</h2>
-        <p>Thank you for your interest in joining our mutual aid community.</p>
+        <h2 style="color: #324158;">Welcome to CARE Collective, ${name}!</h2>
+        <p>Thank you for your interest in joining our mutual support community.</p>
         <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <h3 style="color: #BC6547; margin-top: 0;">What happens next?</h3>
           <ol style="color: #483129;">
@@ -21,16 +21,16 @@ const EMAIL_TEMPLATES = {
         <p style="color: #7A9E99;"><strong>No email confirmation needed yet!</strong></p>
         <p>You can log in immediately to view your waitlist status. Email confirmation will only be required if your application is approved.</p>
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective - Building stronger communities through mutual aid</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
       </div>
     `
   },
   approval: {
-    subject: '✅ Welcome to Care Collective - Please Confirm Your Email',
+    subject: '✅ Welcome to CARE Collective - Please Confirm Your Email',
     html: (name: string, confirmUrl: string) => `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #324158;">Congratulations, ${name}! 🎉</h2>
-        <p>Your application to join Care Collective has been <strong style="color: #5A7D78;">approved</strong>!</p>
+        <p>Your application to join CARE Collective has been <strong style="color: #5A7D78;">approved</strong>!</p>
         <div style="background: #A3C4BF; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
           <h3 style="color: #FFF; margin-top: 0;">One Final Step</h3>
           <p style="color: #FFF;">Please confirm your email to access the full platform:</p>
@@ -44,16 +44,16 @@ const EMAIL_TEMPLATES = {
         </ul>
         <p style="font-size: 14px; color: #999; margin-top: 30px;">If the button doesn't work, copy and paste this link into your browser:<br>${confirmUrl}</p>
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective - Southwest Missouri's mutual aid network</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective - Southwest Missouri's mutual support network</p>
       </div>
     `
   },
   rejection: {
-    subject: '📝 Care Collective Application Update',
+    subject: '📝 CARE Collective Application Update',
     html: (name: string, reason: string) => `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #324158;">Hello ${name},</h2>
-        <p>Thank you for your interest in joining Care Collective.</p>
+        <p>Thank you for your interest in joining CARE Collective.</p>
         <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <p>After careful review, we're unable to approve your application at this time.</p>
           ${reason ? `
@@ -69,7 +69,7 @@ const EMAIL_TEMPLATES = {
         </div>
         <p>If you have questions, please contact us at <a href="mailto:evanmusick.dev@gmail.com" style="color: #7A9E99;">evanmusick.dev@gmail.com</a></p>
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">Care Collective - Building trust and community together</p>
+        <p style="font-size: 12px; color: #999;">CARE Collective - Building trust and community together</p>
       </div>
     `
   }

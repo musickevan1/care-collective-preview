@@ -9,14 +9,14 @@ import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'),
   title: "CARE Collective - Preview",
-  description: "Southwest Missouri CARE Collective - Building community through mutual aid (Preview Version)",
+  description: "Southwest Missouri CARE Collective - Building community through mutual support (Preview Version)",
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',
   },
   openGraph: {
     title: "CARE Collective - Preview",
-    description: "Southwest Missouri CARE Collective - Building community through mutual aid",
+    description: "Southwest Missouri CARE Collective - Building community through mutual support",
     images: ['/logo.png'],
     type: 'website',
   },

@@ -386,7 +386,7 @@ export default function WaitlistPage(): ReactElement {
               <p>
                 <strong>What happens next?</strong><br/>
                 Our team reviews applications to ensure CARE Collective remains a safe,
-                trusted community for mutual aid in Southwest Missouri.
+                trusted community for mutual support in Southwest Missouri.
               </p>
               <p>
                 <strong>Questions or concerns?</strong><br/>

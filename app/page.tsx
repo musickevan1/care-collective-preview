@@ -462,7 +462,7 @@ export default function HomePage(): ReactElement {
             {/* Column 1: Branding */}
             <div>
               <h3 className="text-lg font-bold text-sage-light mb-3">CARE Collective</h3>
-              <p className="text-sm text-white/80">Community mutual aid for Southwest Missouri</p>
+              <p className="text-sm text-white/80">Community mutual support for Southwest Missouri</p>
             </div>
 
             {/* Column 2: Contact Info */}

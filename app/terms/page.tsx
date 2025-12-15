@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Terms of Service - CARE Collective',
-  description: 'Terms of Service and user agreement for the CARE Collective mutual aid platform.',
+  description: 'Terms of Service and user agreement for the CARE Collective mutual assistance platform.',
 };
 
 export default function TermsPage(): ReactElement {
@@ -64,7 +64,7 @@ export default function TermsPage(): ReactElement {
           <Card>
             <CardContent className="p-6 space-y-4">
               <p className="text-foreground">
-                The CARE Collective is a mutual aid platform that connects family caregivers in Southwest Missouri
+                The CARE Collective is a mutual assistance platform that connects family caregivers in Southwest Missouri
                 for the exchange of practical help, shared resources, and support. Our services include:
               </p>
               <ul className="list-disc list-inside space-y-2 text-foreground ml-4">
@@ -103,7 +103,7 @@ export default function TermsPage(): ReactElement {
               <ul className="list-disc list-inside space-y-2 text-foreground ml-4">
                 <li>Maintain accurate and up-to-date account information</li>
                 <li>Notify us immediately of any unauthorized account access</li>
-                <li>Use the platform only for its intended purpose of mutual aid among caregivers</li>
+                <li>Use the platform only for its intended purpose of mutual assistance among caregivers</li>
                 <li>Follow all applicable laws and regulations</li>
                 <li>Respect the rights and dignity of other members</li>
               </ul>
@@ -149,7 +149,7 @@ export default function TermsPage(): ReactElement {
                 IMPORTANT: Please read this section carefully.
               </p>
               <p className="text-foreground">
-                The CARE Collective provides a platform for community members to connect and coordinate mutual aid.
+                The CARE Collective provides a platform for community members to connect and coordinate mutual assistance.
                 We do not:
               </p>
               <ul className="list-disc list-inside space-y-2 text-foreground ml-4">

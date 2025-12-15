@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Privacy Policy - CARE Collective',
-  description: 'Privacy Policy for the CARE Collective mutual aid platform. Learn how we protect your data and privacy.',
+  description: 'Privacy Policy for the CARE Collective mutual assistance platform. Learn how we protect your data and privacy.',
 };
 
 export default function PrivacyPolicyPage(): ReactElement {
@@ -96,7 +96,7 @@ export default function PrivacyPolicyPage(): ReactElement {
               <p className="text-foreground">We use your information to:</p>
               <ul className="list-disc list-inside space-y-2 text-foreground ml-4">
                 <li>Operate and maintain the CARE Collective platform</li>
-                <li>Connect you with community members for mutual aid</li>
+                <li>Connect you with community members for mutual assistance</li>
                 <li>Facilitate secure messaging between members</li>
                 <li>Send important platform updates and notifications</li>
                 <li>Improve the platform and develop new features</li>

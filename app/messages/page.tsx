@@ -155,5 +155,5 @@ export default async function MessagesPage({ searchParams }: MessagesPageProps):
 
 export const metadata = {
   title: 'Messages - CARE Collective',
-  description: 'Secure community messaging for mutual aid coordination'
+  description: 'Secure community messaging for mutual support coordination'
 };
