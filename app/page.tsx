@@ -97,14 +97,15 @@ export default function HomePage(): ReactElement {
         <LandingSection
           id="how-it-works"
           title="How It Works"
+          animation="slide-up"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
-            <div className="text-center bg-almond p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-almond">
+            <div className="text-center card-standard hover-lift relative group">
+              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
                 1
               </div>
               <div className="flex justify-center mb-6 mt-4">
-                <Users className="w-12 h-12 text-sage-dark" aria-label="Community members" />
+                <Users className="w-12 h-12 text-sage-dark group-hover:scale-110 transition-transform duration-300" aria-label="Community members" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-4">Join the Community</h3>
               <p className="text-muted-foreground">
@@ -112,12 +113,12 @@ export default function HomePage(): ReactElement {
               </p>
             </div>
 
-            <div className="text-center bg-almond p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-almond">
+            <div className="text-center card-standard hover-lift relative group">
+              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
                 2
               </div>
               <div className="flex justify-center mb-6 mt-4">
-                <Hand className="w-12 h-12 text-primary" aria-label="Request or offer help" />
+                <Hand className="w-12 h-12 text-primary group-hover:scale-110 transition-transform duration-300" aria-label="Request or offer help" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-4">Request or Offer Help</h3>
               <p className="text-muted-foreground">
@@ -125,12 +126,12 @@ export default function HomePage(): ReactElement {
               </p>
             </div>
 
-            <div className="text-center bg-almond p-8 rounded-lg shadow-lg hover:transform hover:-translate-y-3 hover:shadow-2xl transition-all relative">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-almond">
+            <div className="text-center card-standard hover-lift relative group">
+              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
                 3
               </div>
               <div className="flex justify-center mb-6 mt-4">
-                <Handshake className="w-12 h-12 text-sage-dark" aria-label="Connect with neighbors" />
+                <Handshake className="w-12 h-12 text-sage-dark group-hover:scale-110 transition-transform duration-300" aria-label="Connect with neighbors" />
               </div>
               <h3 className="text-xl font-bold text-foreground mb-4">Connect with Neighbors</h3>
               <p className="text-muted-foreground">
@@ -155,55 +156,63 @@ export default function HomePage(): ReactElement {
           title="Why Join?"
           subtitle="The CARE Collective connects you with other caregivers who understand what you're going through and are ready to help and be helped."
           variant="alternate"
+          withPattern={true}
+          animation="fade-in"
         >
-          <div className="max-w-4xl mx-auto">
-            <h3 className="text-xl md:text-2xl font-semibold text-foreground mb-6 text-center">
+          <div className="max-w-4xl mx-auto bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-white/40">
+            <h3 className="text-xl md:text-2xl font-semibold text-foreground mb-8 text-center">
               As a member, you&apos;ll have access to:
             </h3>
 
             <ul className="space-y-6 mb-8">
-              <li className="flex gap-4">
-                <HandHelping className="w-6 h-6 text-sage-dark flex-shrink-0 mt-1" aria-hidden="true" />
+              <li className="flex gap-4 items-start">
+                <div className="bg-white p-2 rounded-lg shadow-sm">
+                  <HandHelping className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
+                </div>
                 <div>
-                  <strong className="text-foreground">Practical help when you need it</strong>
-                  <span className="text-muted-foreground"> – Get support with respite, errands, paperwork, or just someone to check in.</span>
+                  <strong className="text-foreground text-lg block mb-1">Practical help when you need it</strong>
+                  <span className="text-muted-foreground leading-relaxed">Get support with respite, errands, paperwork, or just someone to check in.</span>
                 </div>
               </li>
-              <li className="flex gap-4">
-                <Handshake className="w-6 h-6 text-sage-dark flex-shrink-0 mt-1" aria-hidden="true" />
+              <li className="flex gap-4 items-start">
+                <div className="bg-white p-2 rounded-lg shadow-sm">
+                  <Handshake className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
+                </div>
                 <div>
-                  <strong className="text-foreground">Mutual exchange of support</strong>
-                  <span className="text-muted-foreground"> – Caregivers helping each other meet real, practical needs. Give what you can, receive what you need. Everyone has something to offer, and everyone needs help sometimes.</span>
+                  <strong className="text-foreground text-lg block mb-1">Mutual exchange of support</strong>
+                  <span className="text-muted-foreground leading-relaxed">Caregivers helping each other meet real, practical needs. Give what you can, receive what you need. Everyone has something to offer, and everyone needs help sometimes.</span>
                 </div>
               </li>
-              <li className="flex gap-4">
-                <Star className="w-6 h-6 text-sage-dark flex-shrink-0 mt-1" aria-hidden="true" />
+              <li className="flex gap-4 items-start">
+                <div className="bg-white p-2 rounded-lg shadow-sm">
+                  <Star className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
+                </div>
                 <div>
-                  <strong className="text-foreground">Flexibility that works for you</strong>
-                  <span className="text-muted-foreground"> – Participate in ways that fit your schedule and capacity, whether that&apos;s offering a ride once a month or connecting for weekly check-ins.</span>
+                  <strong className="text-foreground text-lg block mb-1">Flexibility that works for you</strong>
+                  <span className="text-muted-foreground leading-relaxed">Participate in ways that fit your schedule and capacity, whether that&apos;s offering a ride once a month or connecting for weekly check-ins.</span>
                 </div>
               </li>
-              <li className="flex gap-4">
-                <GraduationCap className="w-6 h-6 text-sage-dark flex-shrink-0 mt-1" aria-hidden="true" />
+              <li className="flex gap-4 items-start">
+                <div className="bg-white p-2 rounded-lg shadow-sm">
+                  <GraduationCap className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
+                </div>
                 <div>
-                  <strong className="text-foreground">Learning opportunities</strong>
-                  <span className="text-muted-foreground"> – Attend workshops on topics that matter to you, from advance care planning to caregiver self-care.</span>
+                  <strong className="text-foreground text-lg block mb-1">Learning opportunities</strong>
+                  <span className="text-muted-foreground leading-relaxed">Attend workshops on topics that matter to you, from advance care planning to caregiver self-care.</span>
                 </div>
               </li>
-              <li className="flex gap-4">
-                <Heart className="w-6 h-6 text-dusty-rose fill-dusty-rose flex-shrink-0 mt-1" aria-hidden="true" />
+              <li className="flex gap-4 items-start">
+                <div className="bg-white p-2 rounded-lg shadow-sm">
+                  <Heart className="w-6 h-6 text-dusty-rose fill-dusty-rose flex-shrink-0" aria-hidden="true" />
+                </div>
                 <div>
-                  <strong className="text-foreground">No pressure, just support</strong>
-                  <span className="text-muted-foreground"> – Feeling overwhelmed? Don&apos;t have much free time? Worried you don&apos;t have much to offer? You belong here, and it&apos;s okay to be in a season where you mostly need support.</span>
+                  <strong className="text-foreground text-lg block mb-1">No pressure, just support</strong>
+                  <span className="text-muted-foreground leading-relaxed">Feeling overwhelmed? Don&apos;t have much free time? Worried you don&apos;t have much to offer? You belong here, and it&apos;s okay to be in a season where you mostly need support.</span>
                 </div>
               </li>
             </ul>
 
-            <p className="text-lg text-muted-foreground mb-10 text-center">
-              Joining is simple. We&apos;ll help you get started, and you can participate in whatever ways work for your life right now.
-            </p>
-
-            <div className="text-center">
+            <div className="text-center pt-4">
               <Link href="/signup" className="inline-flex items-center justify-center bg-sage text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-sage-dark transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sage/20 min-h-[48px] group">
                 <span>Join Our Community</span>
                 <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -218,12 +227,15 @@ export default function HomePage(): ReactElement {
         <LandingSection
           id="about"
           title="About CARE Collective"
+          animation="slide-up"
         >
           <div className="space-y-8 max-w-6xl mx-auto">
             {/* Who We Are - Full Width */}
-            <div className="bg-almond p-8 rounded-lg shadow-lg">
-              <div className="flex justify-center mb-4">
-                <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Who we are" />
+            <div className="bg-almond p-8 md:p-10 rounded-xl shadow-lg border border-almond/50">
+              <div className="flex justify-center mb-6">
+                <div className="bg-white p-3 rounded-full shadow-md">
+                  <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Who we are" />
+                </div>
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
               <p className="text-lg leading-relaxed text-foreground max-w-4xl mx-auto text-center">
@@ -232,12 +244,14 @@ export default function HomePage(): ReactElement {
             </div>
 
             {/* Academic Partnership */}
-            <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
-              <div className="flex justify-center mb-4">
-                <GraduationCap className="w-12 h-12 text-dusty-rose-accessible" aria-label="Academic partnership" />
+            <div className="bg-white p-8 md:p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
+              <div className="flex justify-center mb-6">
+                <div className="bg-dusty-rose-light/20 p-3 rounded-full">
+                  <GraduationCap className="w-12 h-12 text-dusty-rose-accessible" aria-label="Academic partnership" />
+                </div>
               </div>
               <h3 className="text-2xl font-bold text-dusty-rose-accessible mb-4 font-heading text-center">Academic Partnership</h3>
-              <div className="bg-dusty-rose-light/30 p-6 rounded-lg text-center">
+              <div className="bg-dusty-rose-light/10 p-6 rounded-lg text-center border border-dusty-rose-light/20">
                 <p className="text-foreground leading-relaxed">
                   This project was created by <span className="font-semibold">Dr. Maureen Templeman</span>,
                   Department of Sociology, Anthropology, and Gerontology at Missouri State University,
@@ -252,9 +266,9 @@ export default function HomePage(): ReactElement {
           <div className="mt-12 max-w-md mx-auto">
             <Link
               href="/about"
-              className="block bg-sage text-white p-6 rounded-lg text-center hover:bg-sage-dark transition-all duration-300 hover:shadow-xl"
+              className="block bg-sage text-white p-6 rounded-lg text-center hover:bg-sage-dark transition-all duration-300 hover:shadow-xl group"
             >
-              <span className="text-xl font-semibold">Learn More About Us</span>
+              <span className="text-xl font-semibold group-hover:scale-105 inline-block transition-transform">Learn More About Us</span>
               <span className="block text-sm mt-2 text-white/80">
                 Discover our mission, vision, and community standards
               </span>
@@ -267,6 +281,8 @@ export default function HomePage(): ReactElement {
           id="whats-happening"
           title="What's Happening"
           variant="alternate"
+          withPattern={true}
+          animation="fade-in"
         >
           <div className="text-center">
             <WhatsHappeningSection />
@@ -287,40 +303,49 @@ export default function HomePage(): ReactElement {
           id="resources-preview"
           title="Community Resources"
           subtitle="Connect with trusted local and regional organizations that offer practical support, guidance, and connection."
+          animation="slide-up"
         >
           <div className="text-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
               {/* Essentials */}
-              <div className="text-center bg-white p-6 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
+              <div className="text-center card-standard hover-lift group">
                 <div className="flex justify-center mb-4">
-                  <Home className="w-12 h-12 text-sage-dark" aria-label="Essential needs" />
+                  <div className="bg-sage/10 p-3 rounded-full group-hover:bg-sage/20 transition-colors">
+                    <Home className="w-10 h-10 text-sage-dark" aria-label="Essential needs" />
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Essentials</h3>
                 <p className="text-muted-foreground">Food, housing, and everyday needs</p>
               </div>
 
               {/* Well-Being */}
-              <div className="text-center bg-white p-6 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
+              <div className="text-center card-standard hover-lift group">
                 <div className="flex justify-center mb-4">
-                  <Heart className="w-12 h-12 text-dusty-rose fill-dusty-rose" aria-label="Well-being support" />
+                  <div className="bg-dusty-rose/10 p-3 rounded-full group-hover:bg-dusty-rose/20 transition-colors">
+                    <Heart className="w-10 h-10 text-dusty-rose fill-dusty-rose" aria-label="Well-being support" />
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Well-Being</h3>
                 <p className="text-muted-foreground">Emotional health and caregiving support</p>
               </div>
 
               {/* Community */}
-              <div className="text-center bg-white p-6 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
+              <div className="text-center card-standard hover-lift group">
                 <div className="flex justify-center mb-4">
-                  <Users className="w-12 h-12 text-primary" aria-label="Community programs" />
+                  <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary/20 transition-colors">
+                    <Users className="w-10 h-10 text-primary" aria-label="Community programs" />
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Community</h3>
                 <p className="text-muted-foreground">Local programs and connections</p>
               </div>
 
               {/* Learning */}
-              <div className="text-center bg-white p-6 rounded-lg shadow-lg hover:transform hover:-translate-y-2 hover:shadow-xl transition-all">
+              <div className="text-center card-standard hover-lift group">
                 <div className="flex justify-center mb-4">
-                  <BookOpen className="w-12 h-12 text-accent" aria-label="Educational resources" />
+                  <div className="bg-accent/10 p-3 rounded-full group-hover:bg-accent/20 transition-colors">
+                    <BookOpen className="w-10 h-10 text-accent" aria-label="Educational resources" />
+                  </div>
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Learning</h3>
                 <p className="text-muted-foreground">Training and educational programs</p>
@@ -344,19 +369,23 @@ export default function HomePage(): ReactElement {
           title="Get in Touch"
           subtitle="Have questions or feedback? We're here to help."
           variant="alternate"
+          withPattern={true}
+          animation="fade-in"
         >
           <div className="text-center">
             <div className="max-w-2xl mx-auto">
               {/* Email */}
-              <div className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="bg-white p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="text-center mb-6">
-                  <div className="flex justify-center mb-4">
-                    <Mail className="w-12 h-12 text-sage-dark" aria-label="Email contact" />
+                  <div className="flex justify-center mb-6">
+                    <div className="bg-sage/10 p-4 rounded-full">
+                      <Mail className="w-12 h-12 text-sage-dark" aria-label="Email contact" />
+                    </div>
                   </div>
                   <h3 className="text-2xl font-bold text-foreground mb-4">Email Us</h3>
                 </div>
                 <div className="text-center">
-                  <a href="mailto:swmocarecollective@gmail.com" className="text-lg text-sage hover:underline font-medium break-all">
+                  <a href="mailto:swmocarecollective@gmail.com" className="text-xl text-sage hover:text-sage-dark hover:underline font-bold break-all transition-colors">
                     swmocarecollective@gmail.com
                   </a>
                 </div>

@@ -424,6 +424,7 @@ p {
   animation-delay: 3s;
 }
 
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -433,4 +434,51 @@ p {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ========================================
+   UI/UX ENHANCEMENTS
+   ======================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s ease-out forwards;
+}
+
+/* Hover Lift Effect */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Standard Card Styling */
+.card-standard {
+  @apply bg-white rounded-lg shadow-md p-6 border-l-4 border-transparent transition-all duration-300;
+}
+
+.card-standard:hover {
+  @apply shadow-xl border-sage-light;
 }
