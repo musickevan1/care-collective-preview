@@ -1,0 +1,2 @@
+[main f4d4aed] Align site with client requirements: Update Hero text, Landing page footer, and About page background check info
+ 3 files changed, 21 insertions(+), 8 deletions(-)
