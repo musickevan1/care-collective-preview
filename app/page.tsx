@@ -31,7 +31,7 @@ export default function HomePage(): ReactElement {
   const handleSmoothScroll = useSmoothScroll()
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header/Navigation */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-navy text-white shadow-lg">
         <nav className="container mx-auto max-w-7xl">
@@ -89,7 +89,7 @@ export default function HomePage(): ReactElement {
         </nav>
       </header>
 
-      <main id="main-content" tabIndex={-1}>
+      <main id="main-content" tabIndex={-1} className="flex-1">
         {/* Enhanced Hero Section */}
         <Hero />
 
@@ -156,7 +156,6 @@ export default function HomePage(): ReactElement {
           title="Why Join?"
           subtitle="The CARE Collective connects you with other caregivers who understand what you're going through and are ready to help and be helped."
           variant="alternate"
-          withPattern={true}
           animation="fade-in"
         >
           <div className="max-w-4xl mx-auto bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-white/40">
@@ -281,7 +280,6 @@ export default function HomePage(): ReactElement {
           id="whats-happening"
           title="What's Happening"
           variant="alternate"
-          withPattern={true}
           animation="fade-in"
         >
           <div className="text-center">
@@ -369,7 +367,6 @@ export default function HomePage(): ReactElement {
           title="Get in Touch"
           subtitle="Have questions or feedback? We're here to help."
           variant="alternate"
-          withPattern={true}
           animation="fade-in"
         >
           <div className="text-center">
