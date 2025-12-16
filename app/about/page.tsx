@@ -211,6 +211,17 @@ export default function AboutPage(): ReactElement {
             </CardContent>
           </Card>
 
+          <Card className="mb-6 border-sage/20 bg-sage/5">
+            <CardHeader>
+              <CardTitle>Background Checks</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-foreground">
+                To help ensure the safety of our community, we use <strong>Sterling Volunteers</strong> for background checks (approximately $19). This secure service helps us maintain a trusted environment for all members.
+              </p>
+            </CardContent>
+          </Card>
+
           <Card className="border-sage/20 bg-sage/5">
             <CardHeader>
               <CardTitle>Privacy & Safety</CardTitle>
