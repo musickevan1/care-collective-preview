@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { approvalTemplate, helpRequestTemplate, moderationAlertTemplate } from './email/templates'
 
 /**
  * Email Service for CARE Collective
@@ -9,6 +10,7 @@ interface EmailOptions {
   to: string
   subject: string
   html: string
+  text?: string  // Plain text fallback for accessibility
   from?: string
   replyTo?: string
 }
@@ -36,6 +38,7 @@ class EmailService {
       to,
       subject,
       html,
+      text,
       from = `CARE Collective <${fromEmail}>`,
       replyTo = adminEmail
     } = options
@@ -48,15 +51,15 @@ class EmailService {
       console.log(`Subject: ${subject}`)
       console.log(`Reply-To: ${replyTo}`)
       console.log('HTML Length:', html.length, 'characters')
+      console.log('Plain Text:', text ? 'Included' : 'Not included')
       console.log('=====================================\n')
-      
+
       // In development, also show a preview
       if (process.env.NODE_ENV === 'development') {
-        const textPreview = html
+        const textPreview = text || html
           .replace(/<[^>]*>/g, '') // Strip HTML tags
           .replace(/\s+/g, ' ') // Normalize whitespace
-          .substring(0, 200) + '...'
-        console.log('Text Preview:', textPreview)
+        console.log('Text Preview:', textPreview.substring(0, 200) + '...')
       }
 
       return { success: true, messageId: `dev-${Date.now()}` }
@@ -69,6 +72,7 @@ class EmailService {
         to,
         subject,
         html,
+        text, // Include plain text fallback
         replyTo
       })
 
@@ -81,9 +85,9 @@ class EmailService {
       return { success: true, messageId: result.data?.id }
     } catch (error) {
       console.error('[Email Service] Send error:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
       }
     }
   }
@@ -119,29 +123,8 @@ class EmailService {
    * Send approval notification with email confirmation link
    */
   async sendApprovalNotification(to: string, name: string, confirmUrl: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const subject = '✅ Welcome to CARE Collective - Please Confirm Your Email'
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #324158;">Congratulations, ${name}! 🎉</h2>
-        <p>Your application to join CARE Collective has been <strong style="color: #5A7D78;">approved</strong>!</p>
-        <div style="background: #A3C4BF; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-          <h3 style="color: #FFF; margin-top: 0;">One Final Step</h3>
-          <p style="color: #FFF;">Please confirm your email to access the full platform:</p>
-          <a href="${confirmUrl}" style="display: inline-block; background: #BC6547; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Confirm Email & Get Started</a>
-        </div>
-        <p>After confirming your email, you'll be able to:</p>
-        <ul style="color: #483129;">
-          <li>Create and respond to help requests</li>
-          <li>Connect with community members</li>
-          <li>Share resources and support</li>
-        </ul>
-        <p style="font-size: 14px; color: #999; margin-top: 30px;">If the button doesn't work, copy and paste this link into your browser:<br>${confirmUrl}</p>
-        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">CARE Collective - Southwest Missouri's mutual support network</p>
-      </div>
-    `
-
-    return this.sendEmail({ to, subject, html })
+    const { html, text, subject } = approvalTemplate(name, confirmUrl)
+    return this.sendEmail({ to, subject, html, text })
   }
 
   /**
@@ -176,22 +159,16 @@ class EmailService {
    * Send help request notification to potential helpers
    */
   async sendHelpRequestNotification(to: string, helperName: string, requestTitle: string, requestUrl: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const subject = `New Help Request: ${requestTitle}`
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #324158;">Hi ${helperName}!</h2>
-        <p>A new help request has been posted that might interest you:</p>
-        <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #BC6547; margin-top: 0;">${requestTitle}</h3>
-          <a href="${requestUrl}" style="display: inline-block; background: #7A9E99; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">View Request</a>
-        </div>
-        <p style="font-size: 12px; color: #999;">You're receiving this because you opted in to help request notifications.</p>
-        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
-      </div>
-    `
-
-    return this.sendEmail({ to, subject, html })
+    // Default to 'general' category and 'normal' urgency for now
+    // These parameters can be added to the method signature in future updates
+    const { html, text, subject } = helpRequestTemplate(
+      helperName,
+      requestTitle,
+      requestUrl,
+      'general',
+      'normal'
+    )
+    return this.sendEmail({ to, subject, html, text })
   }
 
   /**
@@ -334,36 +311,20 @@ class EmailService {
     severity: 'low' | 'medium' | 'high' = 'medium'
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@carecollective.org'
-    const urgencyIcon = severity === 'high' ? '🚨' : severity === 'medium' ? '⚠️' : 'ℹ️'
-    const urgencyColor = severity === 'high' ? '#DC3545' : severity === 'medium' ? '#FFC107' : '#6C757D'
+    const reviewUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/admin/moderation/reports/${reportId}`
 
-    const subject = `${urgencyIcon} Moderation Alert: ${reportReason} report`
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: ${urgencyColor};">${urgencyIcon} Content Moderation Alert</h2>
-        <div style="background: #F8F9FA; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid ${urgencyColor};">
-          <h3 style="margin-top: 0; color: #324158;">Report Details</h3>
-          <p><strong>Report ID:</strong> ${reportId}</p>
-          <p><strong>Message ID:</strong> ${messageId}</p>
-          <p><strong>Reason:</strong> ${reportReason}</p>
-          <p><strong>Severity:</strong> ${severity.toUpperCase()}</p>
-          <p><strong>Reported by:</strong> ${reporterEmail}</p>
-          <p><strong>Message sender:</strong> ${messageSender}</p>
-        </div>
-        <div style="background: #FBF2E9; padding: 15px; border-radius: 8px; margin: 20px 0;">
-          <h4 style="margin-top: 0; color: #BC6547;">Message Preview</h4>
-          <p style="color: #483129; font-style: italic;">"${messagePreview}..."</p>
-        </div>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.NEXT_PUBLIC_SITE_URL}/admin/messaging/moderation" style="display: inline-block; background: #BC6547; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">Review Report</a>
-        </div>
-        <p><strong>Action Required:</strong> Please review this report and take appropriate moderation action.</p>
-        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">CARE Collective Admin System - Automated Moderation Alert</p>
-      </div>
-    `
+    const { html, text, subject } = moderationAlertTemplate(
+      reportId,
+      messageId,
+      reportReason,
+      reporterEmail,
+      messageSender,
+      messagePreview,
+      severity,
+      reviewUrl
+    )
 
-    return this.sendEmail({ to: adminEmail, subject, html })
+    return this.sendEmail({ to: adminEmail, subject, html, text })
   }
 
   /**

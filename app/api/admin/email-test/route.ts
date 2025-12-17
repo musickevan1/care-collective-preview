@@ -76,8 +76,7 @@ export async function POST(request: NextRequest) {
           testName,
           'Test Helper',
           'Test Help Request - Transportation',
-          'I can help with this!',
-          `${siteUrl}/messages/test-conversation-123`
+          'test-request-123'
         )
         break
 
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
         result = await emailService.sendUserStatusNotification(
           email,
           testName,
-          'activated',
+          'approved',
           'Your account has been activated and you can now use the platform.'
         )
         break
@@ -103,11 +102,11 @@ export async function POST(request: NextRequest) {
         result = await emailService.sendModerationAlert(
           'test-report-123',
           'test-message-456',
-          'Test Reporter',
-          'This is test inappropriate content for moderation review.',
           'harassment',
-          'high',
-          `${siteUrl}/admin/moderation/reports/test-report-123`
+          'reporter@example.com',
+          'sender@example.com',
+          'This is test inappropriate content for moderation review. It contains policy violations that need immediate attention.',
+          'high'
         )
         break
 
@@ -119,8 +118,7 @@ export async function POST(request: NextRequest) {
           5,
           4,
           1,
-          ['user1@example.com: Successfully approved', 'user2@example.com: Error - already approved'],
-          new Date().toISOString()
+          ['user1@example.com: Successfully approved', 'user2@example.com: Error - already approved']
         )
         break
 
