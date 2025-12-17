@@ -1,5 +1,15 @@
 import { Resend } from 'resend'
-import { approvalTemplate, helpRequestTemplate, moderationAlertTemplate } from './email/templates'
+import {
+  approvalTemplate,
+  helpRequestTemplate,
+  moderationAlertTemplate,
+  waitlistTemplate,
+  rejectionTemplate,
+  helpOfferTemplate,
+  userActivatedTemplate,
+  userSuspendedTemplate,
+  bulkOperationSummaryTemplate
+} from './email/templates'
 
 /**
  * Email Service for CARE Collective
@@ -96,27 +106,8 @@ class EmailService {
    * Send a welcome/waitlist confirmation email
    */
   async sendWaitlistConfirmation(to: string, name: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const subject = '📋 You\'re on the CARE Collective waitlist'
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #324158;">Welcome to CARE Collective, ${name}!</h2>
-        <p>Thank you for your interest in joining our mutual support community.</p>
-        <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #BC6547; margin-top: 0;">What happens next?</h3>
-          <ol style="color: #483129;">
-            <li>Our team will review your application</li>
-            <li>You'll receive an email once a decision is made</li>
-            <li>You can check your application status anytime by logging in</li>
-          </ol>
-        </div>
-        <p style="color: #7A9E99;"><strong>No email confirmation needed yet!</strong></p>
-        <p>You can log in immediately to view your waitlist status. Email confirmation will only be required if your application is approved.</p>
-        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
-      </div>
-    `
-
-    return this.sendEmail({ to, subject, html })
+    const { html, text, subject } = waitlistTemplate(name)
+    return this.sendEmail({ to, subject, html, text })
   }
 
   /**
@@ -131,28 +122,8 @@ class EmailService {
    * Send rejection notification
    */
   async sendRejectionNotification(to: string, name: string, reason?: string): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const subject = 'Update on your CARE Collective application'
-    const reasonText = reason ? `\n\nReason: ${reason}` : ''
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #324158;">Thank you for your interest, ${name}</h2>
-        <p>We have reviewed your application to join CARE Collective.</p>
-        <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p style="color: #483129;">Unfortunately, we are unable to approve your application at this time.${reasonText}</p>
-        </div>
-        <p>You are welcome to reapply in the future. We encourage you to:</p>
-        <ul style="color: #483129;">
-          <li>Connect with mutual support groups in your area</li>
-          <li>Volunteer with local organizations</li>
-          <li>Build connections in your community</li>
-        </ul>
-        <p>Thank you for your understanding.</p>
-        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">CARE Collective - Southwest Missouri's mutual support network</p>
-      </div>
-    `
-
-    return this.sendEmail({ to, subject, html })
+    const { html, text, subject } = rejectionTemplate(name, reason)
+    return this.sendEmail({ to, subject, html, text })
   }
 
   /**
@@ -181,27 +152,8 @@ class EmailService {
     requestTitle: string,
     requestId: string
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const subject = `Someone wants to help with your request!`
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://swmocarecollective.com'
-
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #324158;">Good news, ${recipientName}!</h2>
-        <p><strong>${helperName}</strong> has offered to help with your request:</p>
-        <div style="background: #E9DDD4; border-left: 4px solid #BC6547; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <p style="color: #324158; font-weight: bold; margin: 0;">"${requestTitle}"</p>
-        </div>
-        <p>You can now message them directly to coordinate assistance.</p>
-        <a href="${siteUrl}/messages?help_request=${requestId}"
-           style="display: inline-block; background: #7A9E99; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; margin-top: 10px;">
-          View Messages
-        </a>
-        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">CARE Collective - Southwest Missouri's mutual support network</p>
-      </div>
-    `
-
-    return this.sendEmail({ to: recipientEmail, subject, html })
+    const { html, text, subject } = helpOfferTemplate(recipientName, helperName, requestTitle, requestId)
+    return this.sendEmail({ to: recipientEmail, subject, html, text })
   }
 
   /**
@@ -214,71 +166,20 @@ class EmailService {
     reason?: string,
     adminName?: string
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    let subject: string
-    let html: string
-
     switch (newStatus) {
-      case 'approved':
-        subject = '✅ Your CARE Collective account has been activated'
-        html = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #324158;">Welcome to CARE Collective, ${name}! 🎉</h2>
-            <p>Your account has been activated and you now have full access to the platform.</p>
-            <div style="background: #A3C4BF; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-              <h3 style="color: #FFF; margin-top: 0;">You can now:</h3>
-              <ul style="color: #FFF; text-align: left; margin: 10px 0;">
-                <li>Create and respond to help requests</li>
-                <li>Connect with community members</li>
-                <li>Share resources and support</li>
-                <li>Access all platform features</li>
-              </ul>
-              <a href="${siteUrl}/dashboard" style="display: inline-block; background: #BC6547; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Go to Dashboard</a>
-            </div>
-            <p>Thank you for being part of our mutual support community!</p>
-            <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-            <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
-          </div>
-        `
-        break
+      case 'approved': {
+        const { html, text, subject } = userActivatedTemplate(name)
+        return this.sendEmail({ to, subject, html, text })
+      }
 
       case 'rejected':
-        subject = 'Update on your CARE Collective account'
-        const reasonText = reason ? `\n\nReason: ${reason}` : ''
-        html = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #324158;">Account Status Update</h2>
-            <p>Hello ${name},</p>
-            <div style="background: #FBF2E9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p style="color: #483129;">Your account access has been suspended.${reasonText}</p>
-            </div>
-            <p>If you believe this is an error or would like to appeal this decision, please contact our support team.</p>
-            <p>Thank you for your understanding.</p>
-            <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-            <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
-          </div>
-        `
-        break
+        return this.sendRejectionNotification(to, name, reason)
 
-      case 'suspended':
-        subject = 'Important: Your CARE Collective account status'
-        const suspensionReason = reason ? `\n\nReason: ${reason}` : ''
-        html = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #324158;">Account Suspension Notice</h2>
-            <p>Hello ${name},</p>
-            <div style="background: #FFF3CD; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FFC107;">
-              <p style="color: #856404;">Your account has been temporarily suspended.${suspensionReason}</p>
-            </div>
-            <p>This action was taken to ensure community safety and adherence to our guidelines.</p>
-            <p>If you have questions about this decision or would like to discuss reinstatement, please contact our support team.</p>
-            <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-            <p style="font-size: 12px; color: #999;">CARE Collective - Building stronger communities through mutual support</p>
-          </div>
-        `
-        break
+      case 'suspended': {
+        const { html, text, subject } = userSuspendedTemplate(name, reason)
+        return this.sendEmail({ to, subject, html, text })
+      }
     }
-
-    return this.sendEmail({ to, subject, html })
   }
 
   /**
@@ -341,45 +242,15 @@ class EmailService {
     failureCount: number,
     details?: string[]
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://swmocarecollective.com'
-    const successRate = totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0
-    const statusColor = successRate >= 90 ? '#28A745' : successRate >= 70 ? '#FFC107' : '#DC3545'
-
-    const subject = `Bulk Operation Complete: ${operationType} (${successCount}/${totalCount} successful)`
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #324158;">Bulk Operation Summary</h2>
-        <p>Hello ${adminName},</p>
-        <p>Your bulk operation has been completed. Here's the summary:</p>
-
-        <div style="background: #F8F9FA; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="margin-top: 0; color: #324158;">Operation Details</h3>
-          <p><strong>Operation:</strong> ${operationType}</p>
-          <p><strong>Total Items:</strong> ${totalCount}</p>
-          <p><strong>Successful:</strong> <span style="color: #28A745;">${successCount}</span></p>
-          <p><strong>Failed:</strong> <span style="color: #DC3545;">${failureCount}</span></p>
-          <p><strong>Success Rate:</strong> <span style="color: ${statusColor}; font-weight: bold;">${successRate}%</span></p>
-        </div>
-
-        ${details && details.length > 0 ? `
-        <div style="background: #FBF2E9; padding: 15px; border-radius: 8px; margin: 20px 0;">
-          <h4 style="margin-top: 0; color: #BC6547;">Operation Details</h4>
-          <ul style="color: #483129;">
-            ${details.map(detail => `<li>${detail}</li>`).join('')}
-          </ul>
-        </div>
-        ` : ''}
-
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${siteUrl}/admin" style="display: inline-block; background: #7A9E99; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">View Admin Dashboard</a>
-        </div>
-
-        <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
-        <p style="font-size: 12px; color: #999;">CARE Collective Admin System - Bulk Operation Report</p>
-      </div>
-    `
-
-    return this.sendEmail({ to: adminEmail, subject, html })
+    const { html, text, subject } = bulkOperationSummaryTemplate(
+      adminName,
+      operationType,
+      totalCount,
+      successCount,
+      failureCount,
+      details
+    )
+    return this.sendEmail({ to: adminEmail, subject, html, text })
   }
 
   /**
