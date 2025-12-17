@@ -82,7 +82,7 @@ export function emailHeader(logoText: string = 'CARE Collective'): string {
  * Contact info, privacy policy, copyright
  */
 export function emailFooter(): string {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://swmocarecollective.org'
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://swmocarecollective.com'
 
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -122,23 +122,18 @@ export function primaryButton(text: string, url: string, ariaLabel?: string): st
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td align="center" style="padding: 20px 0;">
-          <a href="${url}"
-             aria-label="${label}"
-             style="display: inline-block;
-                    background-color: ${BRAND_COLORS.terracotta};
-                    color: #FFFFFF;
-                    font-family: ${FONT_FAMILY};
-                    font-size: 16px;
-                    font-weight: 600;
-                    text-decoration: none;
-                    padding: 16px 32px;
-                    border-radius: 6px;
-                    min-height: 44px;
-                    line-height: 1.5;
-                    text-align: center;">
-            ${text}
-          </a>
+        <td align="center" style="padding: 20px 30px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center" style="background-color: ${BRAND_COLORS.terracotta}; border-radius: 6px;">
+                <a href="${url}"
+                   aria-label="${label}"
+                   style="display: inline-block; background-color: ${BRAND_COLORS.terracotta}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 6px; line-height: 1.5; text-align: center;">
+                  ${text}
+                </a>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>
@@ -155,23 +150,18 @@ export function secondaryButton(text: string, url: string, ariaLabel?: string): 
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td align="center" style="padding: 20px 0;">
-          <a href="${url}"
-             aria-label="${label}"
-             style="display: inline-block;
-                    background-color: ${BRAND_COLORS.sage};
-                    color: #FFFFFF;
-                    font-family: ${FONT_FAMILY};
-                    font-size: 16px;
-                    font-weight: 600;
-                    text-decoration: none;
-                    padding: 16px 32px;
-                    border-radius: 6px;
-                    min-height: 44px;
-                    line-height: 1.5;
-                    text-align: center;">
-            ${text}
-          </a>
+        <td align="center" style="padding: 20px 30px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center" style="background-color: ${BRAND_COLORS.sage}; border-radius: 6px;">
+                <a href="${url}"
+                   aria-label="${label}"
+                   style="display: inline-block; background-color: ${BRAND_COLORS.sage}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 6px; line-height: 1.5; text-align: center;">
+                  ${text}
+                </a>
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>

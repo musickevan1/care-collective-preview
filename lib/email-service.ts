@@ -182,7 +182,7 @@ class EmailService {
     requestId: string
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     const subject = `Someone wants to help with your request!`
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://care-collective-preview.vercel.app'
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://swmocarecollective.com'
 
     const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -232,7 +232,7 @@ class EmailService {
                 <li>Share resources and support</li>
                 <li>Access all platform features</li>
               </ul>
-              <a href="${process.env.NEXT_PUBLIC_SITE_URL}/dashboard" style="display: inline-block; background: #BC6547; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Go to Dashboard</a>
+              <a href="${siteUrl}/dashboard" style="display: inline-block; background: #BC6547; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Go to Dashboard</a>
             </div>
             <p>Thank you for being part of our mutual support community!</p>
             <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
@@ -291,8 +291,10 @@ class EmailService {
     notes?: string,
     reviewerName?: string
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://swmocarecollective.com'
+
     if (decision === 'approved') {
-      return this.sendApprovalNotification(to, name, `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`)
+      return this.sendApprovalNotification(to, name, `${siteUrl}/dashboard`)
     } else {
       return this.sendRejectionNotification(to, name, notes)
     }
@@ -339,6 +341,7 @@ class EmailService {
     failureCount: number,
     details?: string[]
   ): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://swmocarecollective.com'
     const successRate = totalCount > 0 ? Math.round((successCount / totalCount) * 100) : 0
     const statusColor = successRate >= 90 ? '#28A745' : successRate >= 70 ? '#FFC107' : '#DC3545'
 
@@ -368,7 +371,7 @@ class EmailService {
         ` : ''}
 
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${process.env.NEXT_PUBLIC_SITE_URL}/admin" style="display: inline-block; background: #7A9E99; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">View Admin Dashboard</a>
+          <a href="${siteUrl}/admin" style="display: inline-block; background: #7A9E99; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px;">View Admin Dashboard</a>
         </div>
 
         <hr style="border: none; border-top: 1px solid #E5C6C1; margin: 30px 0;">
