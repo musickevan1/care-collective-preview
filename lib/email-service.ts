@@ -29,12 +29,15 @@ class EmailService {
    * Send an email using Resend in production, or log to console in development
    */
   async sendEmail(options: EmailOptions): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    const fromEmail = process.env.FROM_EMAIL || 'onboarding@resend.dev'
+    const adminEmail = process.env.ADMIN_EMAIL || 'onboarding@resend.dev'
+
     const {
       to,
       subject,
       html,
-      from = 'CARE Collective <noreply@carecollective.org>',
-      replyTo = 'support@carecollective.org'
+      from = `CARE Collective <${fromEmail}>`,
+      replyTo = adminEmail
     } = options
 
     // In development or if no API key, log to console
