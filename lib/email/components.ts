@@ -299,6 +299,7 @@ export function warningBox(content: string, title?: string): string {
     : ''
 
   return `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
         <td style="padding: 20px 30px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
