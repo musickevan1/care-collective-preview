@@ -14,7 +14,10 @@ import {
   successBox,
   alertBox,
   section,
+  divider,
   BRAND_COLORS,
+  FONT_SIZES,
+  FONT_FAMILY,
 } from './components'
 import { generatePlainText } from './utils'
 
@@ -32,7 +35,7 @@ export interface EmailTemplate {
  * Sent when user application is approved with email confirmation link
  */
 export function approvalTemplate(name: string, confirmUrl: string): EmailTemplate {
-  const subject = '✅ Welcome to CARE Collective - Please Confirm Your Email'
+  const subject = 'Welcome to CARE Collective - Please Confirm Your Email'
 
   const preheader = 'Your application has been approved! Confirm your email to get started.'
 
@@ -40,10 +43,10 @@ export function approvalTemplate(name: string, confirmUrl: string): EmailTemplat
     ${emailHeader()}
 
     ${section(`
-      <h2 style="color: ${BRAND_COLORS.navy}; font-size: 24px; font-weight: 700; margin: 0 0 16px 0; line-height: 1.3;">
-        Congratulations, ${name}! 🎉
+        <h2 style="color: ${BRAND_COLORS.navy}; font-size: ${FONT_SIZES.xl}; font-weight: 800; margin: 0 0 16px 0; line-height: 1.3;">
+        Congratulations, ${name}!
       </h2>
-      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
+      <p style="margin: 0 0 20px 0; font-size: ${FONT_SIZES.base}; line-height: 1.6;">
         Your application to join <strong>CARE Collective</strong> has been approved!
       </p>
     `)}
@@ -73,6 +76,7 @@ export function approvalTemplate(name: string, confirmUrl: string): EmailTemplat
       </p>
     `)}
 
+    ${divider()}
     ${emailFooter()}
   `
 
@@ -94,7 +98,7 @@ export function helpRequestTemplate(
   urgency: 'normal' | 'urgent' | 'critical'
 ): EmailTemplate {
   // Subject line with urgency indicator
-  const urgencyPrefix = urgency === 'critical' ? '🚨 URGENT' : urgency === 'urgent' ? '⚠️ Time-Sensitive' : ''
+  const urgencyPrefix = urgency === 'critical' ? 'URGENT' : urgency === 'urgent' ? 'Time-Sensitive' : ''
   const subject = urgencyPrefix
     ? `${urgencyPrefix}: ${requestTitle}`
     : `New Help Request: ${requestTitle}`
@@ -103,14 +107,14 @@ export function helpRequestTemplate(
 
   // Urgency styling
   const urgencyColors = {
-    critical: '#DC3545',
-    urgent: '#FF8C00',
+    critical: BRAND_COLORS.terracotta,
+    urgent: BRAND_COLORS.tan,
     normal: BRAND_COLORS.sage,
   }
 
   const urgencyLabels = {
-    critical: '🚨 CRITICAL - Immediate assistance needed',
-    urgent: '⚠️ URGENT - Time-sensitive request',
+    critical: 'CRITICAL - Immediate assistance needed',
+    urgent: 'URGENT - Time-sensitive request',
     normal: 'Help request from your community',
   }
 
@@ -124,10 +128,10 @@ export function helpRequestTemplate(
     ${emailHeader()}
 
     ${section(`
-      <h2 style="color: ${BRAND_COLORS.navy}; font-size: 22px; font-weight: 700; margin: 0 0 12px 0; line-height: 1.3;">
-        Hi ${helperName}! 👋
+      <h2 style="color: ${BRAND_COLORS.navy}; font-size: ${FONT_SIZES.xl}; font-weight: 800; margin: 0 0 12px 0; line-height: 1.3;">
+        Hi ${helperName}!
       </h2>
-      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
+      <p style="margin: 0 0 20px 0; font-size: ${FONT_SIZES.base}; line-height: 1.6;">
         A new help request has been posted that matches your interests:
       </p>
     `)}
@@ -145,13 +149,13 @@ export function helpRequestTemplate(
     ` : ''}
 
     ${infoBox(`
-      <h3 style="color: ${BRAND_COLORS.navy}; font-size: 20px; font-weight: 700; margin: 0 0 12px 0; line-height: 1.3;">
+      <h3 style="color: ${BRAND_COLORS.navy}; font-size: ${FONT_SIZES.lg}; font-weight: 800; margin: 0 0 12px 0; line-height: 1.3;">
         ${requestTitle}
       </h3>
-      <p style="margin: 0 0 15px 0; display: inline-block; background-color: ${BRAND_COLORS.tan}; color: #FFFFFF; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: 600;">
+      <p style="margin: 0 0 15px 0; display: inline-block; background-color: ${BRAND_COLORS.tan}; color: #FFFFFF; padding: 6px 12px; border-radius: 4px; font-size: ${FONT_SIZES.xs}; font-weight: 700;">
         ${categoryDisplay}
       </p>
-      <p style="margin: 15px 0 0 0; font-size: 14px; color: ${BRAND_COLORS.brown};">
+      <p style="margin: 15px 0 0 0; font-size: ${FONT_SIZES.sm}; color: ${BRAND_COLORS.brown};">
         ${urgency !== 'normal' ? `<strong>Priority Level:</strong> ${urgencyLabel}<br>` : ''}
         <strong>Category:</strong> ${categoryDisplay}
       </p>
@@ -165,6 +169,7 @@ export function helpRequestTemplate(
       </p>
     `)}
 
+    ${divider()}
     ${emailFooter()}
   `
 
@@ -189,13 +194,13 @@ export function moderationAlertTemplate(
   reviewUrl: string
 ): EmailTemplate {
   const severityIcons = {
-    high: '🚨',
-    medium: '⚠️',
-    low: 'ℹ️',
+    high: '',
+    medium: '',
+    low: '',
   }
 
   const icon = severityIcons[severity]
-  const subject = `${icon} Moderation Alert: ${reportReason} (${severity.toUpperCase()} priority)`
+  const subject = `Moderation Alert: ${reportReason} (${severity.toUpperCase()} priority)`
 
   const preheader = `${severity.toUpperCase()} priority content report requires review`
 
@@ -208,45 +213,45 @@ export function moderationAlertTemplate(
     ${emailHeader()}
 
     ${section(`
-      <h2 style="color: ${BRAND_COLORS.navy}; font-size: 22px; font-weight: 700; margin: 0 0 12px 0; line-height: 1.3;">
-        ${icon} Content Moderation Alert
+      <h2 style="color: ${BRAND_COLORS.navy}; font-size: ${FONT_SIZES.xl}; font-weight: 800; margin: 0 0 12px 0; line-height: 1.3;">
+        Content Moderation Alert
       </h2>
-      <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6;">
+      <p style="margin: 0 0 20px 0; font-size: ${FONT_SIZES.base}; line-height: 1.6;">
         A ${severity} priority content report requires your immediate attention.
       </p>
     `)}
 
     ${alertBox(`
-      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="font-size: 15px; color: ${BRAND_COLORS.brown};">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="font-size: ${FONT_SIZES.sm}; color: ${BRAND_COLORS.brown};">
         <tr>
-          <td style="padding: 8px 0; font-weight: 600; width: 140px;">Report ID:</td>
+          <td style="padding: 8px 0; font-weight: 700; width: 140px;">Report ID:</td>
           <td style="padding: 8px 0;">${reportId}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 600;">Message ID:</td>
+          <td style="padding: 8px 0; font-weight: 700;">Message ID:</td>
           <td style="padding: 8px 0;">${messageId}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 600;">Violation Type:</td>
+          <td style="padding: 8px 0; font-weight: 700;">Violation Type:</td>
           <td style="padding: 8px 0;">${reportReason}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 600;">Severity:</td>
+          <td style="padding: 8px 0; font-weight: 700;">Severity:</td>
           <td style="padding: 8px 0;"><strong style="text-transform: uppercase;">${severity}</strong></td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 600;">Reported By:</td>
+          <td style="padding: 8px 0; font-weight: 700;">Reported By:</td>
           <td style="padding: 8px 0;">${reporterEmail}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 600;">Message Sender:</td>
+          <td style="padding: 8px 0; font-weight: 700;">Message Sender:</td>
           <td style="padding: 8px 0;">${messageSender}</td>
         </tr>
       </table>
     `, severity, 'Report Details')}
 
     ${infoBox(`
-      <h4 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 600; color: ${BRAND_COLORS.terracotta};">
+      <h4 style="margin: 0 0 10px 0; font-size: ${FONT_SIZES.sm}; font-weight: 700; color: ${BRAND_COLORS.terracotta};">
         Flagged Message Preview
       </h4>
       <p style="margin: 0; font-style: italic; color: ${BRAND_COLORS.brown}; padding: 12px; background-color: #FFFFFF; border-radius: 4px; border-left: 3px solid ${BRAND_COLORS.terracotta};">
@@ -262,6 +267,7 @@ export function moderationAlertTemplate(
       </p>
     `)}
 
+    ${divider()}
     ${emailFooter()}
   `
 

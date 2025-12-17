@@ -6,17 +6,29 @@
 
 // Brand Colors (WCAG 2.1 AA verified)
 export const BRAND_COLORS = {
-  sage: '#7A9E99',           // Primary actions - White contrast: 4.51:1 ✓
+  sage: '#5A7E79',           // Primary actions - WCAG AA compliant
+  sageLight: '#A3C4BF',      // Accents in Navy footer
   dustyRose: '#D8A8A0',      // Secondary accent
-  terracotta: '#BC6547',     // CTAs - White contrast: 4.65:1 ✓
-  navy: '#324158',           // Headings - Cream contrast: 8.4:1 ✓
-  tan: '#C39778',            // Borders
-  cream: '#FBF2E9',          // Background
-  brown: '#483129',          // Body text - Cream contrast: 10.1:1 ✓
+  terracotta: '#BC6547',     // Critical Alerts
+  navy: '#324158',           // Headings & Footer
+  tan: '#C39778',            // Warnings
+  cream: '#FBF2E9',          // Email Background
+  brown: '#483129',          // Body text
 } as const
 
-// Font stack with web-safe fallbacks
-const FONT_FAMILY = "'Overlock', Arial, Helvetica, sans-serif"
+// Font stack matching website (Overlock) with safe fallbacks
+export const FONT_FAMILY = "'Overlock', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+
+// Font Sizes (Refined for readability)
+export const FONT_SIZES = {
+  xs: '14px',
+  sm: '16px',
+  base: '18px',     // Increased from 16px
+  lg: '20px',
+  xl: '24px',
+  xxl: '30px',
+  display: '36px',
+} as const
 
 /**
  * Email wrapper component
@@ -31,12 +43,27 @@ export function emailWrapper(content: string, preheader?: string): string {
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8">
+      <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <title>CARE Collective</title>
+      <!-- Load Website Font -->
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Overlock:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+      <style>
+        /* Reset styles */
+        body {
+          margin: 0;
+          padding: 0;
+          width: 100% !important;
+          -webkit-text-size-adjust: 100%;
+          -ms-text-size-adjust: 100%;
+          font-family: ${FONT_FAMILY};
+        }
+      </style>
     </head>
-    <body style="margin: 0; padding: 0; font-family: ${FONT_FAMILY}; background-color: ${BRAND_COLORS.cream};">
+    <body style="margin: 0; padding: 0; background-color: ${BRAND_COLORS.cream};">
       ${preheaderHTML}
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: ${BRAND_COLORS.cream};">
         <tr>
@@ -64,11 +91,11 @@ export function emailHeader(logoText: string = 'CARE Collective'): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="background-color: ${BRAND_COLORS.sage}; padding: 24px 30px; text-align: center;">
-          <h1 style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 28px; font-weight: 700; color: #FFFFFF; line-height: 1.2;">
+        <td style="background-color: ${BRAND_COLORS.sage}; padding: 30px 30px; text-align: center; border-bottom: 4px solid ${BRAND_COLORS.dustyRose};">
+          <h1 style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xxl}; font-weight: 900; color: #FFFFFF; line-height: 1.2; letter-spacing: 0.5px;">
             ${logoText}
           </h1>
-          <p style="margin: 8px 0 0 0; font-family: ${FONT_FAMILY}; font-size: 14px; color: #FFFFFF; opacity: 0.9;">
+          <p style="margin: 8px 0 0 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; color: #FFFFFF; opacity: 0.95; font-weight: 600;">
             Community Aid & Resource Exchange
           </p>
         </td>
@@ -87,21 +114,57 @@ export function emailFooter(): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 30px;">
-          ${divider()}
+        <td style="padding: 40px 30px; background-color: ${BRAND_COLORS.navy}; color: #FFFFFF;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+            <!-- Top Section: 2 Columns on Mobile, 4 on Desktop (Simulation via nested tables for email support) -->
             <tr>
-              <td style="padding: 20px 0; text-align: center;">
-                <p style="margin: 0 0 10px 0; font-family: ${FONT_FAMILY}; font-size: 14px; color: ${BRAND_COLORS.brown}; line-height: 1.5;">
-                  <strong>CARE Collective</strong><br>
-                  Southwest Missouri's Mutual Support Network
-                </p>
-                <p style="margin: 10px 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: #999999; line-height: 1.5;">
-                  <a href="${siteUrl}/privacy" style="color: ${BRAND_COLORS.sage}; text-decoration: none;">Privacy Policy</a> •
-                  <a href="mailto:support@swmocarecollective.org" style="color: ${BRAND_COLORS.sage}; text-decoration: none;">Contact Us</a>
-                </p>
-                <p style="margin: 10px 0 0 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: #999999; line-height: 1.5;">
-                  © ${new Date().getFullYear()} CARE Collective. All rights reserved.
+              <td style="vertical-align: top; padding-bottom: 24px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                  <tr>
+                    <!-- Column 1: Brand -->
+                    <td style="vertical-align: top; padding-bottom: 24px; padding-right: 16px; width: 50%;">
+                      <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">CARE Collective</h3>
+                      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xs}; color: #FFFFFF; opacity: 0.8; line-height: 1.5;">
+                        Community mutual support for Southwest Missouri
+                      </p>
+                    </td>
+                    <!-- Column 2: Contact -->
+                    <td style="vertical-align: top; padding-bottom: 24px; width: 50%;">
+                      <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Contact</h3>
+                      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xs}; color: #FFFFFF; opacity: 0.8; line-height: 1.6;">
+                        Dr. Maureen Templeman<br>
+                        Springfield, MO<br>
+                        <a href="mailto:swmocarecollective@gmail.com" style="color: #FFFFFF; text-decoration: none; opacity: 0.8;">swmocarecollective@gmail.com</a>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <!-- Column 3: Get Started -->
+                    <td style="vertical-align: top; padding-bottom: 24px; padding-right: 16px; width: 50%;">
+                      <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Get Started</h3>
+                      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xs}; line-height: 1.6;">
+                        <a href="${siteUrl}/signup" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 4px;">Join Community</a>
+                        <a href="${siteUrl}/login" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block;">Member Login</a>
+                      </p>
+                    </td>
+                    <!-- Column 4: Resources -->
+                    <td style="vertical-align: top; padding-bottom: 24px; width: 50%;">
+                      <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Resources</h3>
+                      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xs}; line-height: 1.6;">
+                        <a href="${siteUrl}/help" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 4px;">Help & Support</a>
+                        <a href="${siteUrl}/terms" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 4px;">Terms of Service</a>
+                        <a href="${siteUrl}/privacy-policy" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block;">Privacy Policy</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Copyright -->
+            <tr>
+              <td style="padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2); text-align: center;">
+                <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: #FFFFFF; opacity: 0.6;">
+                  © ${new Date().getFullYear()} CARE Collective - Southwest Missouri. All rights reserved.
                 </p>
               </td>
             </tr>
@@ -125,10 +188,10 @@ export function primaryButton(text: string, url: string, ariaLabel?: string): st
         <td align="center" style="padding: 20px 30px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0">
             <tr>
-              <td align="center" style="background-color: ${BRAND_COLORS.terracotta}; border-radius: 6px;">
+              <td align="center" style="background-color: ${BRAND_COLORS.terracotta}; border-radius: 8px; box-shadow: 0 4px 6px rgba(188, 101, 71, 0.25);">
                 <a href="${url}"
                    aria-label="${label}"
-                   style="display: inline-block; background-color: ${BRAND_COLORS.terracotta}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 6px; line-height: 1.5; text-align: center;">
+                   style="display: inline-block; background-color: ${BRAND_COLORS.terracotta}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; font-weight: 800; text-decoration: none; padding: 16px 42px; border-radius: 8px; line-height: 1.5; text-align: center; letter-spacing: 0.5px;">
                   ${text}
                 </a>
               </td>
@@ -153,10 +216,10 @@ export function secondaryButton(text: string, url: string, ariaLabel?: string): 
         <td align="center" style="padding: 20px 30px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0">
             <tr>
-              <td align="center" style="background-color: ${BRAND_COLORS.sage}; border-radius: 6px;">
+              <td align="center" style="background-color: ${BRAND_COLORS.sage}; border-radius: 8px; box-shadow: 0 4px 6px rgba(122, 158, 153, 0.25);">
                 <a href="${url}"
                    aria-label="${label}"
-                   style="display: inline-block; background-color: ${BRAND_COLORS.sage}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 6px; line-height: 1.5; text-align: center;">
+                   style="display: inline-block; background-color: ${BRAND_COLORS.sage}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; font-weight: 800; text-decoration: none; padding: 16px 42px; border-radius: 8px; line-height: 1.5; text-align: center; letter-spacing: 0.5px;">
                   ${text}
                 </a>
               </td>
@@ -174,7 +237,7 @@ export function secondaryButton(text: string, url: string, ariaLabel?: string): 
  */
 export function infoBox(content: string, title?: string): string {
   const titleHTML = title
-    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: 18px; font-weight: 600; color: ${BRAND_COLORS.navy}; line-height: 1.3;">${title}</h3>`
+    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: ${BRAND_COLORS.navy}; line-height: 1.3;">${title}</h3>`
     : ''
 
   return `
@@ -183,9 +246,9 @@ export function infoBox(content: string, title?: string): string {
         <td style="padding: 20px 30px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td style="background-color: ${BRAND_COLORS.cream}; padding: 20px; border-radius: 8px;">
+              <td style="background-color: #FFFFFF; padding: 24px; border-radius: 8px; border-left: 5px solid ${BRAND_COLORS.navy}; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #F0F0F0;">
                 ${titleHTML}
-                <div style="font-family: ${FONT_FAMILY}; font-size: 16px; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
+                <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
                   ${content}
                 </div>
               </td>
@@ -203,7 +266,7 @@ export function infoBox(content: string, title?: string): string {
  */
 export function successBox(content: string, title?: string): string {
   const titleHTML = title
-    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: 18px; font-weight: 600; color: #FFFFFF; line-height: 1.3;">${title}</h3>`
+    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: #FFFFFF; line-height: 1.3;">${title}</h3>`
     : ''
 
   return `
@@ -212,9 +275,9 @@ export function successBox(content: string, title?: string): string {
         <td style="padding: 20px 30px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td style="background-color: ${BRAND_COLORS.sage}; padding: 24px; border-radius: 8px; text-align: center;">
+              <td style="background-color: ${BRAND_COLORS.sage}; padding: 30px 24px; border-radius: 8px; text-align: center; box-shadow: 0 4px 8px rgba(122, 158, 153, 0.3);">
                 ${titleHTML}
-                <div style="font-family: ${FONT_FAMILY}; font-size: 16px; color: #FFFFFF; line-height: 1.6;">
+                <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: #FFFFFF; line-height: 1.6;">
                   ${content}
                 </div>
               </td>
@@ -232,18 +295,17 @@ export function successBox(content: string, title?: string): string {
  */
 export function warningBox(content: string, title?: string): string {
   const titleHTML = title
-    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: 18px; font-weight: 600; color: #856404; line-height: 1.3;">${title}</h3>`
+    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: ${BRAND_COLORS.brown}; line-height: 1.3;">${title}</h3>`
     : ''
 
   return `
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
         <td style="padding: 20px 30px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; border-left: 4px solid #FFC107;">
+              <td style="background-color: #FFFFFF; padding: 20px; border-radius: 8px; border-left: 4px solid ${BRAND_COLORS.tan}; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #F0F0F0;">
                 ${titleHTML}
-                <div style="font-family: ${FONT_FAMILY}; font-size: 16px; color: #856404; line-height: 1.6;">
+                <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
                   ${content}
                 </div>
               </td>
@@ -265,9 +327,9 @@ export function alertBox(
   title?: string
 ): string {
   const severityColors = {
-    high: '#DC3545',
-    medium: '#FFC107',
-    low: '#6C757D',
+    high: BRAND_COLORS.terracotta,
+    medium: BRAND_COLORS.tan,
+    low: BRAND_COLORS.sage,
   }
 
   const severityIcons = {
@@ -286,11 +348,11 @@ export function alertBox(
         <td style="padding: 20px 30px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td style="background-color: #F8F9FA; padding: 20px; border-radius: 8px; border-left: 4px solid ${borderColor};">
+              <td style="background-color: #FFFFFF; padding: 20px; border-radius: 8px; border-left: 4px solid ${borderColor}; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #F0F0F0;">
                 <h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: 18px; font-weight: 600; color: ${BRAND_COLORS.navy}; line-height: 1.3;">
                   ${titleText}
                 </h3>
-                <div style="font-family: ${FONT_FAMILY}; font-size: 16px; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
+                <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
                   ${content}
                 </div>
               </td>
@@ -311,7 +373,7 @@ export function section(content: string): string {
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
         <td style="padding: 10px 30px;">
-          <div style="font-family: ${FONT_FAMILY}; font-size: 16px; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
+          <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
             ${content}
           </div>
         </td>
@@ -329,7 +391,7 @@ export function divider(): string {
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
         <td style="padding: 0;">
-          <hr style="border: none; border-top: 1px solid ${BRAND_COLORS.dustyRose}; margin: 30px 0; opacity: 0.5;">
+          <hr style="border: none; border-top: 1px solid #DEE5E4; margin: 30px 0;">
         </td>
       </tr>
     </table>
