@@ -1,19 +1,35 @@
 /* Design System Tokens */
 :root {
   /* Primary Brand Colors */
-  --color-cream: #FBF2E9; /* Primary background */
-  --color-tan: #C39778;   /* Section backgrounds */
-  --color-terracotta: #BC6547; /* Accent sections */
-  --color-brown: #483129; /* Dark sections, text color */
-  
-  --color-teal: #3D4F52; /* Primary buttons */
-  --color-rose: #D8A8A0; /* Secondary accents */
-  
+  --color-cream: #FBF2E9;
+  /* Primary background */
+  --color-tan: #C39778;
+  /* Section backgrounds */
+  --color-terracotta: #BC6547;
+  /* Accent sections */
+  --color-brown: #483129;
+  /* Dark sections, text color */
+
+  --color-teal: #3D4F52;
+  /* Primary buttons */
+  --color-rose: #D8A8A0;
+  /* Secondary accents */
+
+  /* Legacy Colors */
+  --color-navy: #0F172A;
+  --color-sage: #94A3B8;
+  /* Adjust if needed to match original */
+  --color-sage-light: #CBD5E1;
+  --color-sage-dark: #475569;
+  --color-seafoam: #D6E2DF;
+
   /* Mapping legacy/semantic users to new palette */
-  --color-sage: #5A7E79; /* Keeping as legacy or mapped if needed, but client specified palette above */
+  --color-sage: #5A7E79;
+  /* Keeping as legacy or mapped if needed, but client specified palette above */
   --color-sage-light: #A3C4BF;
-  --color-sage-dark: #3D4F52; /* Mapping sage-dark to teal for consistency in existing comps if they use it */
-  
+  --color-sage-dark: #3D4F52;
+  /* Mapping sage-dark to teal for consistency in existing comps if they use it */
+
   /* Surface and Background Colors */
   --color-surface: var(--color-cream);
   --color-background: var(--color-cream);
@@ -25,23 +41,27 @@
   /* Interactive Elements */
   --color-primary: var(--color-teal);
   --color-primary-foreground: #FFFFFF;
-  --color-primary-hover: #2C3B3D; /* Darker teal */
-  
+  --color-primary-hover: #2C3B3D;
+  /* Darker teal */
+
   --color-secondary: var(--color-rose);
   --color-secondary-foreground: var(--color-brown);
-  
+
   /* Font sizes - Increased for accessibility */
   --font-size-xs: 14px;
   --font-size-sm: 16px;
-  --font-size-base: 18px; /* Base body text increased */
+  --font-size-base: 18px;
+  /* Base body text increased */
   --font-size-lg: 20px;
   --font-size-xl: 24px;
   --font-size-2xl: 30px;
-  --font-size-3xl: 36px; /* Section titles start here */
+  --font-size-3xl: 36px;
+  /* Section titles start here */
   --font-size-4xl: 48px;
   --font-size-5xl: 60px;
-  --font-size-6xl: 72px; /* Hero title */
-  
+  --font-size-6xl: 72px;
+  /* Hero title */
+
   /* Spacing */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
@@ -55,34 +75,44 @@
 .readable-mode {
   /* Enhanced typography for better readability */
   --font-family-base: var(--font-family-readable);
-  
+
   /* Increase all font sizes for better readability */
-  --font-size-xs: 14px;   /* +1px */
-  --font-size-sm: 16px;   /* +1px */
-  --font-size-base: 18px; /* +2px */
-  --font-size-lg: 20px;   /* +2px */
-  --font-size-xl: 22px;   /* +2px */
-  --font-size-2xl: 26px;  /* +2px */
-  --font-size-3xl: 32px;  /* +2px */
-  --font-size-4xl: 38px;  /* +2px */
-  --font-size-5xl: 50px;  /* +2px */
-  --font-size-6xl: 62px;  /* +2px */
-  
+  --font-size-xs: 14px;
+  /* +1px */
+  --font-size-sm: 16px;
+  /* +1px */
+  --font-size-base: 18px;
+  /* +2px */
+  --font-size-lg: 20px;
+  /* +2px */
+  --font-size-xl: 22px;
+  /* +2px */
+  --font-size-2xl: 26px;
+  /* +2px */
+  --font-size-3xl: 32px;
+  /* +2px */
+  --font-size-4xl: 38px;
+  /* +2px */
+  --font-size-5xl: 50px;
+  /* +2px */
+  --font-size-6xl: 62px;
+  /* +2px */
+
   /* Increase font weights for better visibility */
   --font-weight-normal: 500;
   --font-weight-medium: 600;
   --font-weight-semibold: 700;
   --font-weight-bold: 800;
   --font-weight-black: 900;
-  
+
   /* More relaxed line height */
   --line-height-normal: 1.6;
   --line-height-relaxed: 1.8;
-  
+
   /* Slightly wider letter spacing */
   --letter-spacing-normal: 0.01em;
   --letter-spacing-wide: 0.03em;
-  
+
   /* Increase spacing for better visual separation */
   --spacing-xs: 6px;
   --spacing-sm: 10px;
@@ -138,20 +168,25 @@ h6 {
   line-height: var(--line-height-normal);
 }
 
-p, li {
+p,
+li {
   font-size: var(--font-size-base);
   line-height: var(--line-height-relaxed);
 }
 
 /* Form elements */
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
 }
 
 /* Small text */
-small, .text-sm {
+small,
+.text-sm {
   font-size: var(--font-size-sm);
 }
 

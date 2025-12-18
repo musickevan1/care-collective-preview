@@ -36,6 +36,8 @@ const config: Config = {
         sage: "var(--color-sage)",
         "sage-light": "var(--color-sage-light)",
         "sage-dark": "var(--color-sage-dark)",
+        navy: "var(--color-navy)",
+        seafoam: "var(--color-seafoam)",
 
         border: "var(--color-tan)",
         input: "var(--color-cream)",
