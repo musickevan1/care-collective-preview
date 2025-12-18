@@ -211,34 +211,34 @@ export default function HomePage(): ReactElement {
           title="About CARE Collective"
           animation="slide-up"
         >
-          <div className="space-y-8 max-w-6xl mx-auto">
-            {/* Who We Are - Full Width */}
-            <div className="bg-almond p-8 md:p-10 rounded-xl shadow-lg border border-almond/50">
-              <div className="flex justify-center mb-6">
-                <div className="bg-white p-3 rounded-full shadow-md">
-                  <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Who we are" />
-                </div>
+          <div className="max-w-6xl mx-auto">
+            {/* Who We Are - Asymmetrical layout with founder photo */}
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+              {/* Text content - left side (60%) */}
+              <div className="lg:w-3/5">
+                <h3 className="text-2xl font-bold text-foreground mb-6">Who We Are</h3>
+                <p className="text-lg leading-relaxed text-foreground mb-6">
+                  The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                </p>
+                <p className="text-lg leading-relaxed text-foreground">
+                  The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are building a space where caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
+                </p>
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
-              <p className="text-lg leading-relaxed text-foreground max-w-4xl mx-auto text-center">
-                The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources. The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are building a space where caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
-              </p>
-            </div>
 
-            {/* Academic Partnership */}
-            <div className="bg-white p-8 md:p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
-              <div className="flex justify-center mb-6">
-                <div className="bg-dusty-rose-light/20 p-3 rounded-full">
-                  <GraduationCap className="w-12 h-12 text-dusty-rose-accessible" aria-label="Academic partnership" />
+              {/* Founder photo - right side (40%) */}
+              <div className="lg:w-2/5 flex flex-col items-center">
+                <div className="relative">
+                  <Image
+                    src="/images/maureen-portrait.png"
+                    alt="Dr. Maureen Templeman, Founder of CARE Collective"
+                    width={320}
+                    height={400}
+                    className="rounded-xl shadow-lg object-cover"
+                    priority={false}
+                  />
                 </div>
-              </div>
-              <h3 className="text-2xl font-bold text-dusty-rose-accessible mb-4 font-heading text-center">Academic Partnership</h3>
-              <div className="bg-dusty-rose-light/10 p-6 rounded-lg text-center border border-dusty-rose-light/20">
-                <p className="text-foreground leading-relaxed">
-                  This project was created by <span className="font-semibold">Dr. Maureen Templeman</span>,
-                  Department of Sociology, Anthropology, and Gerontology at Missouri State University,
-                  with support from community partners and funding from the
-                  <span className="font-semibold"> Southern Gerontological Society Innovative Projects Grant</span>.
+                <p className="text-sm text-muted-foreground mt-4 text-center font-medium">
+                  Dr. Maureen Templeman, Founder
                 </p>
               </div>
             </div>
@@ -248,7 +248,7 @@ export default function HomePage(): ReactElement {
           <div className="mt-12 max-w-md mx-auto">
             <Link
               href="/about"
-              className="block bg-sage text-white p-6 rounded-lg text-center hover:bg-sage-dark transition-all duration-300 hover:shadow-xl group"
+              className="block bg-teal text-white p-6 rounded-lg text-center hover:bg-teal-dark transition-all duration-300 hover:shadow-xl group"
             >
               <span className="text-xl font-semibold group-hover:scale-105 inline-block transition-transform">Learn More About Us</span>
               <span className="block text-sm mt-2 text-white/80">
