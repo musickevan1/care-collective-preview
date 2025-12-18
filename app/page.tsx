@@ -15,7 +15,8 @@ import {
   Home,
   BookOpen,
   Mail,
-  MapPin
+  MapPin,
+  Facebook
 } from 'lucide-react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
@@ -389,10 +390,24 @@ export default function HomePage(): ReactElement {
       <footer id="contact" className="bg-navy text-white py-8">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            {/* Column 1: Branding */}
+            {/* Column 1: Branding & Funding */}
             <div>
               <h3 className="text-lg font-bold text-sage-light mb-3">CARE Collective</h3>
-              <p className="text-sm text-white/80">Community mutual support for Southwest Missouri</p>
+              <p className="text-sm text-white/80 leading-relaxed">
+                Funded by the Southern Gerontological Society and the Department of Sociology, Anthropology, and Gerontology at Missouri State University.
+              </p>
+              {/* Social Links */}
+              <div className="mt-4 flex items-center gap-3">
+                <a
+                  href="https://www.facebook.com/profile.php?id=61582852599484"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Follow us on Facebook"
+                  className="bg-white/20 p-2.5 rounded-full hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy"
+                >
+                  <Facebook className="w-5 h-5 text-white" />
+                </a>
+              </div>
             </div>
 
             {/* Column 2: Contact Info */}
