@@ -205,10 +205,11 @@ export default function HomePage(): ReactElement {
           </div>
         </LandingSection>
 
-        {/* About Section */}
+        {/* About Section - Tan background */}
         <LandingSection
           id="about"
           title="About CARE Collective"
+          variant="tan"
           animation="slide-up"
         >
           <div className="max-w-6xl mx-auto">
@@ -258,18 +259,18 @@ export default function HomePage(): ReactElement {
           </div>
         </LandingSection>
 
-        {/* What's Happening Section */}
+        {/* What's Happening Section - Brown background */}
         <LandingSection
           id="whats-happening"
           title="What's Happening"
-          variant="alternate"
+          variant="brown"
           animation="fade-in"
         >
           <div className="text-center">
             <WhatsHappeningSection />
 
             <div className="mt-12">
-              <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
+              <Link href="/dashboard" className="inline-flex items-center justify-center bg-white text-brown px-8 py-4 text-lg font-semibold rounded-lg hover:bg-cream transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-white/30 min-h-[48px] group">
                 <span>View All in Member Portal</span>
                 <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -344,25 +345,25 @@ export default function HomePage(): ReactElement {
           </div>
         </LandingSection>
 
-        {/* Contact Preview Section */}
+        {/* Contact Preview Section - Terracotta background */}
         <LandingSection
           id="contact-preview"
           title="Get in Touch"
           subtitle="Have questions or feedback? We're here to help."
-          variant="alternate"
+          variant="terracotta"
           animation="fade-in"
         >
           <div className="text-center">
             <div className="max-w-2xl mx-auto">
               {/* Email */}
-              <div className="bg-white p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-white/95 p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="text-center mb-6">
                   <div className="flex justify-center mb-6">
-                    <div className="bg-sage/10 p-4 rounded-full">
-                      <Mail className="w-12 h-12 text-sage-dark" aria-label="Email contact" />
+                    <div className="bg-terracotta/10 p-4 rounded-full">
+                      <Mail className="w-12 h-12 text-terracotta" aria-label="Email contact" />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-4">Email Us</h3>
+                  <h3 className="text-2xl font-bold text-brown mb-4">Email Us</h3>
                 </div>
                 <div className="text-center">
                   <a href="mailto:swmocarecollective@gmail.com" className="text-xl text-sage hover:text-sage-dark hover:underline font-bold break-all transition-colors">
@@ -373,7 +374,7 @@ export default function HomePage(): ReactElement {
             </div>
 
             <div className="mt-12">
-              <Link href="/contact" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[48px] group">
+              <Link href="/contact" className="inline-flex items-center justify-center bg-white text-terracotta px-8 py-4 text-lg font-semibold rounded-lg hover:bg-cream transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-white/30 min-h-[48px] group">
                 <span>Visit Full Contact Page</span>
                 <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
