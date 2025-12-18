@@ -78,29 +78,16 @@ export default function Hero(): ReactElement {
             </p>
           </div>
 
-          {/* Enhanced CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up delay-500">
-            <Link 
-              href="/signup" 
-              className="group relative inline-flex items-center justify-center bg-gradient-to-r from-sage to-sage-dark text-white px-10 py-5 text-lg font-bold rounded-xl hover:scale-[1.02] transition-all duration-200 transform hover:shadow-lg min-h-[56px] overflow-hidden"
+          {/* Primary CTA Button - Teal for home page */}
+          <div className="flex justify-center items-center animate-fade-in-up delay-500">
+            <Link
+              href="/signup"
+              className="group relative inline-flex items-center justify-center bg-gradient-to-r from-teal to-teal-dark text-white px-10 py-5 text-lg font-bold rounded-xl hover:scale-[1.02] transition-all duration-200 transform hover:shadow-lg min-h-[56px] overflow-hidden"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-sage-dark to-sage opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+              <span className="absolute inset-0 bg-gradient-to-r from-teal-dark to-teal opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
               <span className="relative flex items-center gap-3">
                 <span>Join Our Community</span>
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </span>
-            </Link>
-
-            <Link
-              href="#how-it-works"
-              onClick={handleSmoothScroll}
-              className="group relative inline-flex items-center justify-center bg-white/90 backdrop-blur-sm text-sage-dark px-10 py-5 text-lg font-bold rounded-xl hover:bg-white hover:scale-[1.02] transition-all duration-200 transform hover:shadow-lg border-2 border-sage/20 hover:border-sage/40 min-h-[56px]"
-            >
-              <span className="flex items-center gap-3">
-                <span>Learn How It Works</span>
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </span>
@@ -112,10 +99,10 @@ export default function Hero(): ReactElement {
           {/* Scroll Indicator */}
           <div className="mt-12 animate-pulse">
             <Link
-              href="#how-it-works"
+              href="#what-is-care"
               onClick={handleSmoothScroll}
-              className="inline-block text-sage-dark hover:text-sage transition-all duration-300 hover:scale-110"
-              aria-label="Scroll to learn how it works"
+              className="inline-block text-teal hover:text-teal-dark transition-all duration-300 hover:scale-110"
+              aria-label="Scroll to learn about CARE Collective"
             >
               <svg className="w-6 h-6 mx-auto opacity-60 hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />

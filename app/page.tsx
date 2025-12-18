@@ -15,7 +15,8 @@ import {
   Home,
   BookOpen,
   Mail,
-  MapPin
+  MapPin,
+  Facebook
 } from 'lucide-react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
@@ -53,8 +54,7 @@ export default function HomePage(): ReactElement {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
               <ul className="flex items-center gap-3 xl:gap-4 list-none">
-                <li><Link href="#how-it-works" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">How It Works</Link></li>
-                <li><Link href="#why-join" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Why Join?</Link></li>
+                <li><Link href="#what-is-care" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What is CARE?</Link></li>
                 <li><Link href="#about" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">About Us</Link></li>
                 <li><Link href="#whats-happening" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What&apos;s Happening</Link></li>
                 <li><Link href="#resources-preview" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Resources</Link></li>
@@ -93,56 +93,112 @@ export default function HomePage(): ReactElement {
         {/* Enhanced Hero Section */}
         <Hero />
 
-        {/* How It Works Section */}
+        {/* What is CARE Collective? Section - 3-box layout */}
         <LandingSection
-          id="how-it-works"
-          title="How It Works"
+          id="what-is-care"
+          title="What is CARE Collective?"
           animation="slide-up"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
-            <div className="text-center card-standard hover-lift relative group">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
-                1
-              </div>
-              <div className="flex justify-center mb-6 mt-4">
-                <Users className="w-12 h-12 text-sage-dark group-hover:scale-110 transition-transform duration-300" aria-label="Community members" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Join the Community</h3>
-              <p className="text-muted-foreground">
-                Sign up with your basic information to become part of our trusted community network.
-              </p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {/* Box 1: How It Works */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border-t-4 border-teal">
+              <h3 className="text-2xl font-bold text-foreground mb-6 text-center">How It Works</h3>
+              <ol className="space-y-4">
+                <li className="flex gap-4 items-start">
+                  <div className="w-8 h-8 bg-teal text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
+                  <div>
+                    <strong className="text-foreground block">Create an Account</strong>
+                    <span className="text-muted-foreground text-sm">Sign up with your basic information to join our trusted community.</span>
+                  </div>
+                </li>
+                <li className="flex gap-4 items-start">
+                  <div className="w-8 h-8 bg-teal text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
+                  <div>
+                    <strong className="text-foreground block">Request or Offer Help</strong>
+                    <span className="text-muted-foreground text-sm">Post what you need help with, or browse requests to see how you can assist others.</span>
+                  </div>
+                </li>
+                <li className="flex gap-4 items-start">
+                  <div className="w-8 h-8 bg-teal text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
+                  <div>
+                    <strong className="text-foreground block">Build Community</strong>
+                    <span className="text-muted-foreground text-sm">Connect with neighbors and build meaningful relationships through mutual support.</span>
+                  </div>
+                </li>
+              </ol>
             </div>
 
-            <div className="text-center card-standard hover-lift relative group">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
-                2
-              </div>
-              <div className="flex justify-center mb-6 mt-4">
-                <Hand className="w-12 h-12 text-primary group-hover:scale-110 transition-transform duration-300" aria-label="Request or offer help" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Request or Offer Help</h3>
-              <p className="text-muted-foreground">
-                Post what you need help with, or browse requests to see how you can assist others.
-              </p>
+            {/* Box 2: Why Join? */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border-t-4 border-dusty-rose">
+              <h3 className="text-2xl font-bold text-foreground mb-2 text-center">Why Join?</h3>
+              <p className="text-dusty-rose-accessible text-center mb-6 font-medium">Are you caring for an aging loved one?</p>
+              <ul className="space-y-4">
+                <li className="flex gap-3 items-start">
+                  <Handshake className="w-5 h-5 text-dusty-rose-accessible flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground block text-sm">Mutual exchange</strong>
+                    <span className="text-muted-foreground text-sm">Give what you can, receive what you need.</span>
+                  </div>
+                </li>
+                <li className="flex gap-3 items-start">
+                  <Star className="w-5 h-5 text-dusty-rose-accessible flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground block text-sm">Flexibility</strong>
+                    <span className="text-muted-foreground text-sm">Engage when and how you can.</span>
+                  </div>
+                </li>
+                <li className="flex gap-3 items-start">
+                  <GraduationCap className="w-5 h-5 text-dusty-rose-accessible flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground block text-sm">Learning opportunities</strong>
+                    <span className="text-muted-foreground text-sm">Workshops on topics chosen by members.</span>
+                  </div>
+                </li>
+                <li className="flex gap-3 items-start">
+                  <Heart className="w-5 h-5 text-dusty-rose fill-dusty-rose flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <div>
+                    <strong className="text-foreground block text-sm">No pressure</strong>
+                    <span className="text-muted-foreground text-sm">It&apos;s okay to be in a season where you mostly need support.</span>
+                  </div>
+                </li>
+              </ul>
             </div>
 
-            <div className="text-center card-standard hover-lift relative group">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
-                3
-              </div>
-              <div className="flex justify-center mb-6 mt-4">
-                <Handshake className="w-12 h-12 text-sage-dark group-hover:scale-110 transition-transform duration-300" aria-label="Connect with neighbors" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Connect with Neighbors</h3>
-              <p className="text-muted-foreground">
-                Build meaningful relationships while giving and receiving support in your community.
-              </p>
+            {/* Box 3: Kinds of Help */}
+            <div className="bg-white p-8 rounded-xl shadow-lg border-t-4 border-sage">
+              <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Kinds of Help</h3>
+              <ul className="space-y-3">
+                <li className="flex gap-3 items-center">
+                  <div className="w-2 h-2 bg-sage rounded-full flex-shrink-0"></div>
+                  <span className="text-foreground">Health & Caregiving</span>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="w-2 h-2 bg-sage rounded-full flex-shrink-0"></div>
+                  <span className="text-foreground">Groceries & Meals</span>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="w-2 h-2 bg-sage rounded-full flex-shrink-0"></div>
+                  <span className="text-foreground">Transportation & Errands</span>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="w-2 h-2 bg-sage rounded-full flex-shrink-0"></div>
+                  <span className="text-foreground">Household & Yard</span>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="w-2 h-2 bg-sage rounded-full flex-shrink-0"></div>
+                  <span className="text-foreground">Technology & Administrative</span>
+                </li>
+                <li className="flex gap-3 items-center">
+                  <div className="w-2 h-2 bg-sage rounded-full flex-shrink-0"></div>
+                  <span className="text-foreground">Social & Companionship</span>
+                </li>
+              </ul>
             </div>
           </div>
 
           <div className="mt-12 text-center">
-            <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[48px] group">
-              <span>Get Started Today</span>
+            <Link href="/signup" className="inline-flex items-center justify-center bg-teal text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-teal-dark transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-teal/20 min-h-[48px] group">
+              <span>Join Our Community</span>
               <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -150,112 +206,41 @@ export default function HomePage(): ReactElement {
           </div>
         </LandingSection>
 
-        {/* Why Join Section */}
-        <LandingSection
-          id="why-join"
-          title="Why Join?"
-          subtitle="The CARE Collective connects you with other caregivers who understand what you're going through and are ready to help and be helped."
-          variant="alternate"
-          animation="fade-in"
-        >
-          <div className="max-w-4xl mx-auto bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-white/40">
-            <h3 className="text-xl md:text-2xl font-semibold text-foreground mb-8 text-center">
-              As a member, you&apos;ll have access to:
-            </h3>
-
-            <ul className="space-y-6 mb-8">
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <HandHelping className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">Practical help when you need it</strong>
-                  <span className="text-muted-foreground leading-relaxed">Get support with respite, errands, paperwork, or just someone to check in.</span>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <Handshake className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">Mutual exchange of support</strong>
-                  <span className="text-muted-foreground leading-relaxed">Caregivers helping each other meet real, practical needs. Give what you can, receive what you need. Everyone has something to offer, and everyone needs help sometimes.</span>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <Star className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">Flexibility that works for you</strong>
-                  <span className="text-muted-foreground leading-relaxed">Participate in ways that fit your schedule and capacity, whether that&apos;s offering a ride once a month or connecting for weekly check-ins.</span>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <GraduationCap className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">Learning opportunities</strong>
-                  <span className="text-muted-foreground leading-relaxed">Attend workshops on topics that matter to you, from advance care planning to caregiver self-care.</span>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <Heart className="w-6 h-6 text-dusty-rose fill-dusty-rose flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">No pressure, just support</strong>
-                  <span className="text-muted-foreground leading-relaxed">Feeling overwhelmed? Don&apos;t have much free time? Worried you don&apos;t have much to offer? You belong here, and it&apos;s okay to be in a season where you mostly need support.</span>
-                </div>
-              </li>
-            </ul>
-
-            <div className="text-center pt-4">
-              <Link href="/signup" className="inline-flex items-center justify-center bg-sage text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-sage-dark transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sage/20 min-h-[48px] group">
-                <span>Join Our Community</span>
-                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </LandingSection>
-
-        {/* About Section */}
+        {/* About Section - Tan background */}
         <LandingSection
           id="about"
           title="About CARE Collective"
+          variant="tan"
           animation="slide-up"
         >
-          <div className="space-y-8 max-w-6xl mx-auto">
-            {/* Who We Are - Full Width */}
-            <div className="bg-almond p-8 md:p-10 rounded-xl shadow-lg border border-almond/50">
-              <div className="flex justify-center mb-6">
-                <div className="bg-white p-3 rounded-full shadow-md">
-                  <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Who we are" />
-                </div>
+          <div className="max-w-6xl mx-auto">
+            {/* Who We Are - Asymmetrical layout with founder photo */}
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+              {/* Text content - left side (60%) */}
+              <div className="lg:w-3/5">
+                <h3 className="text-2xl font-bold text-foreground mb-6">Who We Are</h3>
+                <p className="text-lg leading-relaxed text-foreground mb-6">
+                  The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                </p>
+                <p className="text-lg leading-relaxed text-foreground">
+                  The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are building a space where caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
+                </p>
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
-              <p className="text-lg leading-relaxed text-foreground max-w-4xl mx-auto text-center">
-                The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources. The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are building a space where caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
-              </p>
-            </div>
 
-            {/* Academic Partnership */}
-            <div className="bg-white p-8 md:p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
-              <div className="flex justify-center mb-6">
-                <div className="bg-dusty-rose-light/20 p-3 rounded-full">
-                  <GraduationCap className="w-12 h-12 text-dusty-rose-accessible" aria-label="Academic partnership" />
+              {/* Founder photo - right side (40%) */}
+              <div className="lg:w-2/5 flex flex-col items-center">
+                <div className="relative">
+                  <Image
+                    src="/images/maureen-portrait.png"
+                    alt="Dr. Maureen Templeman, Founder of CARE Collective"
+                    width={320}
+                    height={400}
+                    className="rounded-xl shadow-lg object-cover"
+                    priority={false}
+                  />
                 </div>
-              </div>
-              <h3 className="text-2xl font-bold text-dusty-rose-accessible mb-4 font-heading text-center">Academic Partnership</h3>
-              <div className="bg-dusty-rose-light/10 p-6 rounded-lg text-center border border-dusty-rose-light/20">
-                <p className="text-foreground leading-relaxed">
-                  This project was created by <span className="font-semibold">Dr. Maureen Templeman</span>,
-                  Department of Sociology, Anthropology, and Gerontology at Missouri State University,
-                  with support from community partners and funding from the
-                  <span className="font-semibold"> Southern Gerontological Society Innovative Projects Grant</span>.
+                <p className="text-sm text-muted-foreground mt-4 text-center font-medium">
+                  Dr. Maureen Templeman, Founder
                 </p>
               </div>
             </div>
@@ -265,7 +250,7 @@ export default function HomePage(): ReactElement {
           <div className="mt-12 max-w-md mx-auto">
             <Link
               href="/about"
-              className="block bg-sage text-white p-6 rounded-lg text-center hover:bg-sage-dark transition-all duration-300 hover:shadow-xl group"
+              className="block bg-teal text-white p-6 rounded-lg text-center hover:bg-teal-dark transition-all duration-300 hover:shadow-xl group"
             >
               <span className="text-xl font-semibold group-hover:scale-105 inline-block transition-transform">Learn More About Us</span>
               <span className="block text-sm mt-2 text-white/80">
@@ -275,18 +260,18 @@ export default function HomePage(): ReactElement {
           </div>
         </LandingSection>
 
-        {/* What's Happening Section */}
+        {/* What's Happening Section - Brown background */}
         <LandingSection
           id="whats-happening"
           title="What's Happening"
-          variant="alternate"
+          variant="brown"
           animation="fade-in"
         >
           <div className="text-center">
             <WhatsHappeningSection />
 
             <div className="mt-12">
-              <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
+              <Link href="/dashboard" className="inline-flex items-center justify-center bg-white text-brown px-8 py-4 text-lg font-semibold rounded-lg hover:bg-cream transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-white/30 min-h-[48px] group">
                 <span>View All in Member Portal</span>
                 <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -361,25 +346,25 @@ export default function HomePage(): ReactElement {
           </div>
         </LandingSection>
 
-        {/* Contact Preview Section */}
+        {/* Contact Preview Section - Terracotta background */}
         <LandingSection
           id="contact-preview"
           title="Get in Touch"
           subtitle="Have questions or feedback? We're here to help."
-          variant="alternate"
+          variant="terracotta"
           animation="fade-in"
         >
           <div className="text-center">
             <div className="max-w-2xl mx-auto">
               {/* Email */}
-              <div className="bg-white p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-white/95 p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="text-center mb-6">
                   <div className="flex justify-center mb-6">
-                    <div className="bg-sage/10 p-4 rounded-full">
-                      <Mail className="w-12 h-12 text-sage-dark" aria-label="Email contact" />
+                    <div className="bg-terracotta/10 p-4 rounded-full">
+                      <Mail className="w-12 h-12 text-terracotta" aria-label="Email contact" />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-4">Email Us</h3>
+                  <h3 className="text-2xl font-bold text-brown mb-4">Email Us</h3>
                 </div>
                 <div className="text-center">
                   <a href="mailto:swmocarecollective@gmail.com" className="text-xl text-sage hover:text-sage-dark hover:underline font-bold break-all transition-colors">
@@ -390,7 +375,7 @@ export default function HomePage(): ReactElement {
             </div>
 
             <div className="mt-12">
-              <Link href="/contact" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[48px] group">
+              <Link href="/contact" className="inline-flex items-center justify-center bg-white text-terracotta px-8 py-4 text-lg font-semibold rounded-lg hover:bg-cream transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-white/30 min-h-[48px] group">
                 <span>Visit Full Contact Page</span>
                 <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -405,10 +390,24 @@ export default function HomePage(): ReactElement {
       <footer id="contact" className="bg-navy text-white py-8">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            {/* Column 1: Branding */}
+            {/* Column 1: Branding & Funding */}
             <div>
               <h3 className="text-lg font-bold text-sage-light mb-3">CARE Collective</h3>
-              <p className="text-sm text-white/80">Community mutual support for Southwest Missouri</p>
+              <p className="text-sm text-white/80 leading-relaxed">
+                Funded by the Southern Gerontological Society and the Department of Sociology, Anthropology, and Gerontology at Missouri State University.
+              </p>
+              {/* Social Links */}
+              <div className="mt-4 flex items-center gap-3">
+                <a
+                  href="https://www.facebook.com/profile.php?id=61582852599484"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Follow us on Facebook"
+                  className="bg-white/20 p-2.5 rounded-full hover:bg-white/30 transition-colors focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy"
+                >
+                  <Facebook className="w-5 h-5 text-white" />
+                </a>
+              </div>
             </div>
 
             {/* Column 2: Contact Info */}
