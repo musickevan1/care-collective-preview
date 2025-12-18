@@ -62,7 +62,8 @@
       "Bash(npm view:*)",
       "Bash(while read file)",
       "Bash(do wc -l \"$file\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(sort:*)"
     ],
     "deny": [],
     "ask": []

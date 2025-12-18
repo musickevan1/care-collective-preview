@@ -108,8 +108,14 @@ care-collective-preview/
 ├── lib/                   # Core utilities
 │   ├── supabase/, messaging/, privacy/, security/
 │   ├── database.types.ts, features.ts, utils.ts
-├── docs/                  # Documentation
-│   ├── context-engineering/, development/, database/, security/
+├── docs/                  # Documentation (see docs/README.md)
+│   ├── guides/            # How-to guides
+│   ├── development/       # Active development docs
+│   ├── context-engineering/ # AI context and phase plans
+│   ├── client/            # Client documentation
+│   ├── database/          # Database documentation
+│   ├── security/          # Security documentation
+│   └── archive/           # Historical docs (date-based: YYYY-MM/)
 ├── PROJECT_STATUS.md      # Current status
 └── supabase/              # Database schema
 ```
@@ -487,6 +493,44 @@ function HelpRequestCard({ request }: { request: HelpRequest }): ReactElement {
 - Domain-specific naming
 - Separate UI, logic, data access
 
+## 📚 Documentation Guidelines
+
+### Directory Structure
+- **docs/guides/** - How-to guides for developers
+- **docs/development/** - Active development documentation
+- **docs/context-engineering/** - AI assistant context (master plans, PRP)
+- **docs/client/** - Client meeting notes and feedback
+- **docs/database/** - Database documentation
+- **docs/security/** - Security documentation
+- **docs/testing/** - Testing documentation
+- **docs/deployment/** - Deployment procedures
+- **docs/archive/YYYY-MM/** - Historical documentation (date-based)
+
+### Documentation Rules (MANDATORY)
+1. **Never create .md files in project root** - Use docs/ subdirectories
+2. **Allowed root exceptions**: CLAUDE.md, PROJECT_STATUS.md, README.md
+3. **Session prompts expire** - Archive after 30 days if not updated
+4. **Phase summaries go to archive** - Once phase is complete
+5. **Use descriptive file names** - kebab-case, indicate purpose
+6. **Update docs/README.md** - When adding new major documents
+
+### File Naming Convention
+- Guides: `topic-name.md` (e.g., `testing.md`)
+- Session work: `YYYY-MM-DD-topic.md` (e.g., `2025-12-15-auth-fix.md`)
+- Phase docs: `phase-X-Y-description.md`
+- ADRs: `NNNN-decision-title.md` (e.g., `0001-use-supabase.md`)
+
+### Archive Organization (Date-Based)
+- Archive path: `docs/archive/YYYY-MM/filename.md`
+- Example: `docs/archive/2025-10/phase-2-completion.md`
+- Use `docs/archive/legacy/` for undated historical content
+
+### When to Archive
+- Phase/sprint work completed more than 30 days ago
+- Session prompts not updated in 30 days
+- Debugging sessions once issue is resolved
+- Implementation plans once implemented
+
 ## 📋 Pre-commit Checklist
 
 **Functionality**: Help requests work, contact exchange requires consent, status updates reliable, mobile smooth, offline works
@@ -508,4 +552,4 @@ function HelpRequestCard({ request }: { request: HelpRequest }): ReactElement {
 
 ---
 
-*Care Collective mutual aid platform - Next.js 14.2.32, Supabase, TypeScript. Focus: community safety, accessibility, trust. Updated: January 2025*
+*Care Collective mutual aid platform - Next.js 14.2.32, Supabase, TypeScript. Focus: community safety, accessibility, trust. Updated: December 2025*

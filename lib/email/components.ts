@@ -61,13 +61,27 @@ export function emailWrapper(content: string, preheader?: string): string {
           -ms-text-size-adjust: 100%;
           font-family: ${FONT_FAMILY};
         }
+
+        /* Progressive enhancement for modern email clients */
+        @media only screen and (max-width: 600px) {
+          .mobile-padding {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+          }
+          .mobile-hide {
+            display: none !important;
+          }
+          .mobile-text-center {
+            text-align: center !important;
+          }
+        }
       </style>
     </head>
     <body style="margin: 0; padding: 0; background-color: ${BRAND_COLORS.cream};">
       ${preheaderHTML}
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: ${BRAND_COLORS.cream};">
         <tr>
-          <td align="center" style="padding: 20px 10px;">
+          <td align="center" style="padding: 15px 10px;" class="mobile-padding">
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 600px; background-color: #FFFFFF;">
               <tr>
                 <td style="padding: 0;">
@@ -84,29 +98,34 @@ export function emailWrapper(content: string, preheader?: string): string {
 }
 
 /**
- * Email header component
+ * Email header component (Mobile-optimized)
  * Text-based "CARE Collective" branding
  */
 export function emailHeader(logoText: string = 'CARE Collective'): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="background-color: ${BRAND_COLORS.sage}; padding: 30px 30px; text-align: center; border-bottom: 4px solid ${BRAND_COLORS.dustyRose};">
-          <h1 style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xxl}; font-weight: 900; color: #FFFFFF; line-height: 1.2; letter-spacing: 0.5px;">
+        <td style="background-color: ${BRAND_COLORS.sage}; padding: 24px 20px; text-align: center; border-bottom: 4px solid ${BRAND_COLORS.dustyRose};">
+          <h1 style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 26px; font-weight: 900; color: #FFFFFF; line-height: 1.2; letter-spacing: 0.5px;">
             ${logoText}
           </h1>
-          <p style="margin: 8px 0 0 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; color: #FFFFFF; opacity: 0.95; font-weight: 600;">
+          <p style="margin: 6px 0 0 0; font-family: ${FONT_FAMILY}; font-size: 14px; color: #FFFFFF; opacity: 0.95; font-weight: 600; line-height: 1.3;">
             Community Aid & Resource Exchange
           </p>
         </td>
+      </tr>
+      <!-- Spacer below header -->
+      <tr>
+        <td style="padding: 0; height: 20px; line-height: 20px; font-size: 1px;">&nbsp;</td>
       </tr>
     </table>
   `
 }
 
 /**
- * Email footer component
+ * Email footer component (Mobile-optimized)
  * Contact info, privacy policy, copyright
+ * Uses hybrid fluid layout for responsive stacking
  */
 export function emailFooter(): string {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://swmocarecollective.com'
@@ -114,56 +133,49 @@ export function emailFooter(): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 40px 30px; background-color: ${BRAND_COLORS.navy}; color: #FFFFFF;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-            <!-- Top Section: 2 Columns on Mobile, 4 on Desktop (Simulation via nested tables for email support) -->
+        <td style="padding: 40px 20px; background-color: ${BRAND_COLORS.navy}; color: #FFFFFF;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 560px; margin: 0 auto;">
+            <!-- Row 1: Brand + Contact -->
             <tr>
-              <td style="vertical-align: top; padding-bottom: 24px;">
-                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                  <tr>
-                    <!-- Column 1: Brand -->
-                    <td style="vertical-align: top; padding-bottom: 24px; padding-right: 16px; width: 50%;">
-                      <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">CARE Collective</h3>
-                      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xs}; color: #FFFFFF; opacity: 0.8; line-height: 1.5;">
-                        Community mutual support for Southwest Missouri
-                      </p>
-                    </td>
-                    <!-- Column 2: Contact -->
-                    <td style="vertical-align: top; padding-bottom: 24px; width: 50%;">
-                      <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Contact</h3>
-                      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xs}; color: #FFFFFF; opacity: 0.8; line-height: 1.6;">
-                        Dr. Maureen Templeman<br>
-                        Springfield, MO<br>
-                        <a href="mailto:swmocarecollective@gmail.com" style="color: #FFFFFF; text-decoration: none; opacity: 0.8;">swmocarecollective@gmail.com</a>
-                      </p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <!-- Column 3: Get Started -->
-                    <td style="vertical-align: top; padding-bottom: 24px; padding-right: 16px; width: 50%;">
-                      <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Get Started</h3>
-                      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xs}; line-height: 1.6;">
-                        <a href="${siteUrl}/signup" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 4px;">Join Community</a>
-                        <a href="${siteUrl}/login" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block;">Member Login</a>
-                      </p>
-                    </td>
-                    <!-- Column 4: Resources -->
-                    <td style="vertical-align: top; padding-bottom: 24px; width: 50%;">
-                      <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.sm}; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Resources</h3>
-                      <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.xs}; line-height: 1.6;">
-                        <a href="${siteUrl}/help" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 4px;">Help & Support</a>
-                        <a href="${siteUrl}/terms" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 4px;">Terms of Service</a>
-                        <a href="${siteUrl}/privacy-policy" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block;">Privacy Policy</a>
-                      </p>
-                    </td>
-                  </tr>
-                </table>
+              <td width="50%" style="vertical-align: top; padding: 0 12px 24px 0;">
+                <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: 14px; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">CARE Collective</h3>
+                <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 13px; color: #FFFFFF; opacity: 0.8; line-height: 1.5;">
+                  Community mutual support for Southwest Missouri
+                </p>
+              </td>
+              <td width="50%" style="vertical-align: top; padding: 0 0 24px 12px;">
+                <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: 14px; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Contact</h3>
+                <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 13px; color: #FFFFFF; opacity: 0.8; line-height: 1.6;">
+                  Dr. Maureen Templeman<br>
+                  Springfield, MO<br>
+                  <a href="mailto:swmocarecollective@gmail.com" style="color: #FFFFFF; text-decoration: underline; opacity: 0.8;">Email Us</a>
+                </p>
               </td>
             </tr>
+
+            <!-- Row 2: Get Started + Resources -->
+            <tr>
+              <td width="50%" style="vertical-align: top; padding: 0 12px 24px 0;">
+                <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: 14px; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Get Started</h3>
+                <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 13px; line-height: 1.6;">
+                  <a href="${siteUrl}/signup" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 6px;">Join Community</a>
+                  <a href="${siteUrl}/login" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block;">Member Login</a>
+                </p>
+              </td>
+              <td width="50%" style="vertical-align: top; padding: 0 0 24px 12px;">
+                <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: 14px; font-weight: 800; color: ${BRAND_COLORS.sageLight}; text-transform: uppercase; letter-spacing: 0.5px;">Resources</h3>
+                <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 13px; line-height: 1.6;">
+                  <a href="${siteUrl}/help" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 6px;">Help & Support</a>
+                  <a href="${siteUrl}/terms" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block; margin-bottom: 6px;">Terms</a>
+                  <a href="${siteUrl}/privacy-policy" style="color: #FFFFFF; text-decoration: none; opacity: 0.8; display: block;">Privacy</a>
+                </p>
+              </td>
+            </tr>
+
             <!-- Copyright -->
             <tr>
-              <td style="padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.2); text-align: center;">
-                <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: #FFFFFF; opacity: 0.6;">
+              <td colspan="2" style="padding-top: 16px; border-top: 1px solid ${BRAND_COLORS.dustyRose}; text-align: center;">
+                <p style="margin: 0; font-family: ${FONT_FAMILY}; font-size: 12px; color: #FFFFFF; opacity: 0.6; line-height: 1.4;">
                   © ${new Date().getFullYear()} CARE Collective - Southwest Missouri. All rights reserved.
                 </p>
               </td>
@@ -176,7 +188,7 @@ export function emailFooter(): string {
 }
 
 /**
- * Primary button component (Terracotta)
+ * Primary button component (Terracotta, Mobile-optimized)
  * 44px minimum height for accessibility
  */
 export function primaryButton(text: string, url: string, ariaLabel?: string): string {
@@ -185,13 +197,13 @@ export function primaryButton(text: string, url: string, ariaLabel?: string): st
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td align="center" style="padding: 20px 30px;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <td align="center" style="padding: 20px 15px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 280px;">
             <tr>
               <td align="center" style="background-color: ${BRAND_COLORS.terracotta}; border-radius: 8px; box-shadow: 0 4px 6px rgba(188, 101, 71, 0.25);">
                 <a href="${url}"
                    aria-label="${label}"
-                   style="display: inline-block; background-color: ${BRAND_COLORS.terracotta}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; font-weight: 800; text-decoration: none; padding: 16px 42px; border-radius: 8px; line-height: 1.5; text-align: center; letter-spacing: 0.5px;">
+                   style="display: block; background-color: ${BRAND_COLORS.terracotta}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; font-weight: 800; text-decoration: none; padding: 16px 24px; border-radius: 8px; line-height: 1.5; text-align: center; letter-spacing: 0.5px;">
                   ${text}
                 </a>
               </td>
@@ -204,7 +216,7 @@ export function primaryButton(text: string, url: string, ariaLabel?: string): st
 }
 
 /**
- * Secondary button component (Sage)
+ * Secondary button component (Sage, Mobile-optimized)
  * 44px minimum height for accessibility
  */
 export function secondaryButton(text: string, url: string, ariaLabel?: string): string {
@@ -213,13 +225,13 @@ export function secondaryButton(text: string, url: string, ariaLabel?: string): 
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td align="center" style="padding: 20px 30px;">
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+        <td align="center" style="padding: 20px 15px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 280px;">
             <tr>
               <td align="center" style="background-color: ${BRAND_COLORS.sage}; border-radius: 8px; box-shadow: 0 4px 6px rgba(122, 158, 153, 0.25);">
                 <a href="${url}"
                    aria-label="${label}"
-                   style="display: inline-block; background-color: ${BRAND_COLORS.sage}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; font-weight: 800; text-decoration: none; padding: 16px 42px; border-radius: 8px; line-height: 1.5; text-align: center; letter-spacing: 0.5px;">
+                   style="display: block; background-color: ${BRAND_COLORS.sage}; color: #FFFFFF; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; font-weight: 800; text-decoration: none; padding: 16px 24px; border-radius: 8px; line-height: 1.5; text-align: center; letter-spacing: 0.5px;">
                   ${text}
                 </a>
               </td>
@@ -232,21 +244,21 @@ export function secondaryButton(text: string, url: string, ariaLabel?: string): 
 }
 
 /**
- * Info box component (Cream background)
+ * Info box component (Cream background, Mobile-optimized)
  * For neutral informational content
  */
 export function infoBox(content: string, title?: string): string {
   const titleHTML = title
-    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: ${BRAND_COLORS.navy}; line-height: 1.3;">${title}</h3>`
+    ? `<h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: ${BRAND_COLORS.navy}; line-height: 1.3;">${title}</h3>`
     : ''
 
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 20px 30px;">
+        <td style="padding: 16px 15px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td style="background-color: #FFFFFF; padding: 24px; border-radius: 8px; border-left: 5px solid ${BRAND_COLORS.navy}; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #F0F0F0;">
+              <td style="background-color: #FFFFFF; padding: 20px; border-radius: 8px; border-left: 5px solid ${BRAND_COLORS.navy}; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #F0F0F0;">
                 ${titleHTML}
                 <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
                   ${content}
@@ -261,21 +273,21 @@ export function infoBox(content: string, title?: string): string {
 }
 
 /**
- * Success box component (Sage background, white text)
+ * Success box component (Sage background, white text, Mobile-optimized)
  * For positive/congratulatory messages
  */
 export function successBox(content: string, title?: string): string {
   const titleHTML = title
-    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: #FFFFFF; line-height: 1.3;">${title}</h3>`
+    ? `<h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: #FFFFFF; line-height: 1.3;">${title}</h3>`
     : ''
 
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 20px 30px;">
+        <td style="padding: 16px 15px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td style="background-color: ${BRAND_COLORS.sage}; padding: 30px 24px; border-radius: 8px; text-align: center; box-shadow: 0 4px 8px rgba(122, 158, 153, 0.3);">
+              <td style="background-color: ${BRAND_COLORS.sage}; padding: 24px 20px; border-radius: 8px; text-align: center; box-shadow: 0 4px 8px rgba(122, 158, 153, 0.3);">
                 ${titleHTML}
                 <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: #FFFFFF; line-height: 1.6;">
                   ${content}
@@ -290,18 +302,18 @@ export function successBox(content: string, title?: string): string {
 }
 
 /**
- * Warning box component (Yellow background with border)
+ * Warning box component (Yellow background with border, Mobile-optimized)
  * For warnings and suspension notices
  */
 export function warningBox(content: string, title?: string): string {
   const titleHTML = title
-    ? `<h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: ${BRAND_COLORS.brown}; line-height: 1.3;">${title}</h3>`
+    ? `<h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.lg}; font-weight: 800; color: ${BRAND_COLORS.brown}; line-height: 1.3;">${title}</h3>`
     : ''
 
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 20px 30px;">
+        <td style="padding: 16px 15px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
               <td style="background-color: #FFFFFF; padding: 20px; border-radius: 8px; border-left: 4px solid ${BRAND_COLORS.tan}; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #F0F0F0;">
@@ -319,7 +331,7 @@ export function warningBox(content: string, title?: string): string {
 }
 
 /**
- * Alert box component (severity-based styling)
+ * Alert box component (severity-based styling, Mobile-optimized)
  * For moderation alerts and admin notifications
  */
 export function alertBox(
@@ -346,11 +358,11 @@ export function alertBox(
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 20px 30px;">
+        <td style="padding: 16px 15px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
               <td style="background-color: #FFFFFF; padding: 20px; border-radius: 8px; border-left: 4px solid ${borderColor}; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #F0F0F0;">
-                <h3 style="margin: 0 0 15px 0; font-family: ${FONT_FAMILY}; font-size: 18px; font-weight: 600; color: ${BRAND_COLORS.navy}; line-height: 1.3;">
+                <h3 style="margin: 0 0 12px 0; font-family: ${FONT_FAMILY}; font-size: 17px; font-weight: 600; color: ${BRAND_COLORS.navy}; line-height: 1.3;">
                   ${titleText}
                 </h3>
                 <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
@@ -366,14 +378,14 @@ export function alertBox(
 }
 
 /**
- * Section component
+ * Section component (Mobile-optimized)
  * Generic content wrapper with consistent padding
  */
 export function section(content: string): string {
   return `
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
-        <td style="padding: 10px 30px;">
+        <td style="padding: 10px 20px;">
           <div style="font-family: ${FONT_FAMILY}; font-size: ${FONT_SIZES.base}; color: ${BRAND_COLORS.brown}; line-height: 1.6;">
             ${content}
           </div>

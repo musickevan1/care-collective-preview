@@ -224,28 +224,28 @@ export function moderationAlertTemplate(
     ${alertBox(`
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="font-size: ${FONT_SIZES.sm}; color: ${BRAND_COLORS.brown};">
         <tr>
-          <td style="padding: 8px 0; font-weight: 700; width: 140px;">Report ID:</td>
-          <td style="padding: 8px 0;">${reportId}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Report ID:</td>
+          <td style="padding: 8px 0; width: 60%; word-break: break-word;">${reportId}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Message ID:</td>
-          <td style="padding: 8px 0;">${messageId}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Message ID:</td>
+          <td style="padding: 8px 0; width: 60%; word-break: break-word;">${messageId}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Violation Type:</td>
-          <td style="padding: 8px 0;">${reportReason}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Violation Type:</td>
+          <td style="padding: 8px 0; width: 60%; word-break: break-word;">${reportReason}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Severity:</td>
-          <td style="padding: 8px 0;"><strong style="text-transform: uppercase;">${severity}</strong></td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Severity:</td>
+          <td style="padding: 8px 0; width: 60%;"><strong style="text-transform: uppercase;">${severity}</strong></td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Reported By:</td>
-          <td style="padding: 8px 0;">${reporterEmail}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Reported By:</td>
+          <td style="padding: 8px 0; width: 60%; word-break: break-word;">${reporterEmail}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Message Sender:</td>
-          <td style="padding: 8px 0;">${messageSender}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Message Sender:</td>
+          <td style="padding: 8px 0; width: 60%; word-break: break-word;">${messageSender}</td>
         </tr>
       </table>
     `, severity, 'Report Details')}
@@ -576,24 +576,24 @@ export function bulkOperationSummaryTemplate(
     ${alertBox(`
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="font-size: ${FONT_SIZES.sm}; color: ${BRAND_COLORS.brown};">
         <tr>
-          <td style="padding: 8px 0; font-weight: 700; width: 140px;">Operation:</td>
-          <td style="padding: 8px 0;">${operationType}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Operation:</td>
+          <td style="padding: 8px 0; width: 60%; word-break: break-word;">${operationType}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Total Items:</td>
-          <td style="padding: 8px 0;">${totalCount}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Total Items:</td>
+          <td style="padding: 8px 0; width: 60%;">${totalCount}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Successful:</td>
-          <td style="padding: 8px 0; color: ${BRAND_COLORS.sage}; font-weight: 700;">${successCount}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Successful:</td>
+          <td style="padding: 8px 0; width: 60%; color: ${BRAND_COLORS.sage}; font-weight: 700;">${successCount}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Failed:</td>
-          <td style="padding: 8px 0; color: ${BRAND_COLORS.terracotta}; font-weight: 700;">${failureCount}</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Failed:</td>
+          <td style="padding: 8px 0; width: 60%; color: ${BRAND_COLORS.terracotta}; font-weight: 700;">${failureCount}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; font-weight: 700;">Success Rate:</td>
-          <td style="padding: 8px 0; color: ${successRate >= 90 ? BRAND_COLORS.sage : successRate >= 70 ? BRAND_COLORS.tan : BRAND_COLORS.terracotta}; font-weight: 800; font-size: ${FONT_SIZES.lg};">${successRate}%</td>
+          <td style="padding: 8px 8px 8px 0; font-weight: 700; width: 40%;">Success Rate:</td>
+          <td style="padding: 8px 0; width: 60%; color: ${successRate >= 90 ? BRAND_COLORS.sage : successRate >= 70 ? BRAND_COLORS.tan : BRAND_COLORS.terracotta}; font-weight: 800; font-size: ${FONT_SIZES.lg};">${successRate}%</td>
         </tr>
       </table>
     `, severity, 'Operation Results')}

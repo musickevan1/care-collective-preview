@@ -53,3 +53,13 @@ BETA_LAUNCH_READY.md
 *_PASSWORDS_*.md
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# Temporary/generated files (root cleanup prevention)
+*_log.txt
+*.log.txt
+.~lock.*
+*.eml
+
+# Office temp files
+~$*.docx
+~$*.xlsx

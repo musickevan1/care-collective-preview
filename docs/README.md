@@ -1,158 +1,137 @@
 # Care Collective Documentation
 
-Welcome to the Care Collective documentation hub. This is your guide to understanding the project structure, architecture, and how to contribute.
+Welcome to the Care Collective documentation hub. This guide helps you navigate the project structure and find what you need.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 **New to the project?**
-- Start here: [`docs/guides/getting-started.md`](./guides/getting-started.md)
-- Then read: [`docs/reference/CLAUDE.md`](./reference/CLAUDE.md) - Full project guidelines
+- Start with: [Getting Started Guide](./guides/getting-started.md)
+- Then read: [CLAUDE.md](/CLAUDE.md) - Full project guidelines
 
-**Want to continue development?**
-- Check: [`docs/project/STATUS.md`](./project/STATUS.md) - Current project status
-- Then read: [`docs/project/NEXT_STEPS.md`](./project/NEXT_STEPS.md) - What to work on next
+**Continuing development?**
+- Check: [PROJECT_STATUS.md](/PROJECT_STATUS.md) - Current project status
+- Reference: [Context Engineering](./context-engineering/) - Master plans and methodology
 
 **Looking for technical details?**
-- See: [`docs/reference/`](./reference/) - Architecture, patterns, API reference
+- See: [Development Docs](./development/) - Setup guides and patterns
+- Check: [Database Docs](./database/) - Schema and migrations
 
 ---
 
-## 📚 Documentation Structure
+## Documentation Structure
 
-### [`docs/project/`](./project/) - Active Project Management
-- **`STATUS.md`** - Current project status, completed work, blockers
-- **`NEXT_STEPS.md`** - Continuation guide for next session
-- **`PHASE_PLANS.md`** - Overview of all phases and their status
+### [guides/](./guides/) - How-To Guides
+Essential developer guides with step-by-step instructions.
 
-### [`docs/guides/`](./guides/) - How-To Guides
-- **`getting-started.md`** - Developer onboarding
-- **`testing.md`** - Testing strategies and best practices
-- **`debugging.md`** - Debugging common issues
-- **`adding-features.md`** - How to add new features
-- **`deployment.md`** - Deployment procedures
+| Guide | Purpose |
+|-------|---------|
+| [getting-started.md](./guides/getting-started.md) | Project setup and first contribution |
+| [testing.md](./guides/testing.md) | Testing patterns and commands |
+| [debugging.md](./guides/debugging.md) | Common issues and solutions |
+| [adding-features.md](./guides/adding-features.md) | Feature development workflow |
+| [deployment.md](./guides/deployment.md) | Deployment procedures |
 
-### [`docs/reference/`](./reference/) - Technical Reference
-- **`CLAUDE.md`** - Core project guidelines, architecture, patterns
-- **`api-endpoints.md`** - API route documentation
-- **`database-schema.md`** - Database structure and relationships
-- **`security-patterns.md`** - Security best practices
-- **`component-patterns.md`** - React component patterns
-- **`FILE_SIZE_VIOLATIONS.md`** - Files exceeding size limits (for future refactoring)
+### [development/](./development/) - Active Development Docs
+Technical guides and current development documentation.
 
-### [`docs/archive/`](./archive/) - Historical Documentation
+| Key Files | Purpose |
+|-----------|---------|
+| ENVIRONMENT_SETUP_GUIDE.md | Development environment setup |
+| ERROR_HANDLING_GUIDE.md | Error handling patterns |
+| FEATURE_FLAGS.md | Feature flag configuration |
+| MOBILE_OPTIMIZATION.md | Mobile-first development |
+| DATABASE_PERFORMANCE_OPTIMIZATIONS.md | Query optimization |
 
-**Important**: Archive contains historical context for reference, not active work
+### [context-engineering/](./context-engineering/) - AI Context
+Master plans and methodology for AI-assisted development.
 
-- **`debugging-sessions/`** - Historical debugging notes and session summaries
-- **`session-handoffs/`** - Old handoff notes between sessions
-- **`database-scripts/`** - Database migration and backup scripts
-- **`prp-methodology/`** - PRP (Planning, Research, Production) methodology docs
-- **`2025-*/`** - Historical archives by month
+- **master-plan.md** - Overall project roadmap
+- **phase-plans/** - Individual phase planning
+- **prp-method/** - Planning, Research, Production methodology
 
-### [`docs/beta-testing/`](./beta-testing/) - Beta Testing
-- Beta test reports and feedback
-- Known issues and workarounds
-- Beta-specific documentation
+### [client/](./client/) - Client Documentation
+Client meeting notes, feedback, and alignment documents.
 
-### [`docs/deployment/`](./deployment/) - Deployment Documentation
-- Deployment procedures and history
-- Vercel configuration
-- Environment setup
+### [database/](./database/) - Database Documentation
+Schema documentation, migration guides, and database patterns.
 
----
+### [security/](./security/) - Security Documentation
+Security patterns, privacy implementation, and compliance.
 
-## 🔄 How to Use This Documentation
+### [testing/](./testing/) - Testing Documentation
+Testing playbooks, scenarios, and test infrastructure.
 
-**When starting a development session:**
-1. Read [`docs/project/STATUS.md`](./project/STATUS.md) - Understand current state
-2. Check [`docs/project/NEXT_STEPS.md`](./project/NEXT_STEPS.md) - See what to work on
-3. Consult [`docs/reference/CLAUDE.md`](./reference/CLAUDE.md) - Review guidelines
-4. Follow relevant guide from [`docs/guides/`](./guides/)
+### [deployment/](./deployment/) - Deployment Documentation
+Deployment procedures, environment configuration, and history.
 
-**When fixing a bug:**
-1. Check [`docs/archive/debugging-sessions/`](./archive/debugging-sessions/) - See if similar issue was fixed before
-2. Review [`docs/guides/debugging.md`](./guides/debugging.md) - Get debugging strategies
-3. Update [`docs/project/STATUS.md`](./project/STATUS.md) - Document your fix
+### [launch-2026/](./launch-2026/) - Future Planning
+Planning and preparation for 2026 launch milestones.
 
-**When adding a feature:**
-1. Read [`docs/guides/adding-features.md`](./guides/adding-features.md)
-2. Review [`docs/reference/component-patterns.md`](./reference/component-patterns.md)
-3. Update [`docs/project/STATUS.md`](./project/STATUS.md) - Document progress
-4. Add tests per [`docs/guides/testing.md`](./guides/testing.md)
+### [archive/](./archive/) - Historical Documentation
+Date-based archive of completed work and historical context.
 
-**When deploying:**
-1. Follow [`docs/guides/deployment.md`](./guides/deployment.md)
-2. Check [`docs/deployment/`](./deployment/) for history
-3. Update [`docs/project/STATUS.md`](./project/STATUS.md) - Mark as deployed
+```
+archive/
+├── 2025-07/    # July 2025 (project start)
+├── 2025-08/    # August 2025
+├── 2025-09/    # September 2025
+├── 2025-10/    # October 2025
+├── 2025-11/    # November 2025
+├── 2025-12/    # December 2025
+└── legacy/     # Undated/mislabeled content
+```
 
 ---
 
-## 📋 Root-Level Files
+## Root-Level Files
 
-**`/CLAUDE.md`**
-- Essential project guidelines, kept in root for quick access
-- Also available at: `docs/reference/CLAUDE.md`
+These files are kept in the project root for quick access:
 
-**`/PROJECT_STATUS.md`**
-- Current project status, kept in root for quick access
-- Also available at: `docs/project/STATUS.md`
-
-**`/README.md`**
-- Project overview and setup (in root)
+| File | Purpose |
+|------|---------|
+| `/CLAUDE.md` | Core project guidelines and AI assistant context |
+| `/PROJECT_STATUS.md` | Current project status dashboard |
+| `/README.md` | Project overview and setup instructions |
 
 ---
 
-## 🗺️ Navigation Tips
+## Navigation Quick Reference
 
-**I need to...**
-| Task | Location |
-|------|----------|
-| Start working | [`docs/project/NEXT_STEPS.md`](./project/NEXT_STEPS.md) |
-| Understand the project | [`docs/reference/CLAUDE.md`](./reference/CLAUDE.md) |
-| Add a new feature | [`docs/guides/adding-features.md`](./guides/adding-features.md) |
-| Write tests | [`docs/guides/testing.md`](./guides/testing.md) |
-| Fix a bug | [`docs/guides/debugging.md`](./guides/debugging.md) |
-| Deploy changes | [`docs/guides/deployment.md`](./guides/deployment.md) |
-| Find historical context | [`docs/archive/`](./archive/) |
-| Understand a pattern | [`docs/reference/component-patterns.md`](./reference/component-patterns.md) |
-| Check API endpoints | [`docs/reference/api-endpoints.md`](./reference/api-endpoints.md) |
-
----
-
-## 🎯 Key Files at a Glance
-
-| File | Purpose | Access |
-|------|---------|--------|
-| `docs/project/STATUS.md` | What's done, current status | Check first |
-| `docs/project/NEXT_STEPS.md` | What to work on next | Before starting |
-| `docs/reference/CLAUDE.md` | Project guidelines & rules | Reference |
-| `docs/guides/testing.md` | How to test changes | When testing |
-| `docs/guides/debugging.md` | Debugging strategies | When stuck |
+| I need to... | Go to... |
+|--------------|----------|
+| Start working on the project | [Getting Started](./guides/getting-started.md) |
+| Understand project guidelines | [CLAUDE.md](/CLAUDE.md) |
+| Add a new feature | [Adding Features Guide](./guides/adding-features.md) |
+| Write or run tests | [Testing Guide](./guides/testing.md) |
+| Debug an issue | [Debugging Guide](./guides/debugging.md) |
+| Deploy changes | [Deployment Guide](./guides/deployment.md) |
+| Find historical context | [Archive](./archive/) |
+| Check current status | [PROJECT_STATUS.md](/PROJECT_STATUS.md) |
+| Review phase plans | [Context Engineering](./context-engineering/) |
 
 ---
 
-## 📞 Need Help?
+## Documentation Guidelines
 
-- **Not sure where to start?** → Read [`docs/guides/getting-started.md`](./guides/getting-started.md)
-- **Debugging an issue?** → Check [`docs/guides/debugging.md`](./guides/debugging.md) and `docs/archive/debugging-sessions/`
-- **Looking for old info?** → Check [`docs/archive/`](./archive/)
-- **Want to know the rules?** → Read [`docs/reference/CLAUDE.md`](./reference/CLAUDE.md)
-- **Ready to code?** → Read [`docs/guides/adding-features.md`](./guides/adding-features.md)
+**Where to create new docs:**
+- **Guides** (how-to) → `docs/guides/`
+- **Technical reference** → `docs/development/`
+- **Client work** → `docs/client/`
+- **Session/phase work** → Archive after 30 days
+
+**Naming conventions:**
+- Guides: `topic-name.md` (lowercase, kebab-case)
+- Session work: `YYYY-MM-DD-topic.md`
+- Phase docs: `phase-X-Y-description.md`
+
+**When to archive:**
+- Completed phase summaries
+- Session prompts older than 30 days
+- Debugging sessions once resolved
+- Implementation plans once implemented
 
 ---
 
-## 📝 Legend
-
-- 🚀 - Getting started
-- 📚 - Reference material
-- 🔧 - How-to guides
-- 📋 - Project management
-- 🗂️ - Archive (historical context)
-
----
-
-**Last Updated**: November 15, 2025
-**Documentation Reorganization**: Phase 1 Complete
-**Next**: Create getting-started and other guides
+**Last Updated**: December 2025
