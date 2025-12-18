@@ -35,6 +35,8 @@ const config: Config = {
           foreground: "#FFFFFF",
         },
         terracotta: "#BC6547",
+        teal: "#3D4F52",
+        "teal-dark": "#2D3B3E",
         navy: "#324158",
         tan: "#C39778",
         cream: "#FBF2E9",

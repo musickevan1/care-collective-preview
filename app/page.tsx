@@ -4,82 +4,69 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ReactElement } from 'react'
 import {
-  Users,
-  Hand,
-  Handshake,
+  Info,
   Heart,
-  Star,
-  Sprout,
-  HandHelping,
-  GraduationCap,
-  Home,
-  BookOpen,
+  Users,
+  ShieldCheck,
+  ChevronRight,
+  Calendar,
   Mail,
-  MapPin
+  ArrowRight,
+  Facebook
 } from 'lucide-react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
-import { Button } from '@/components/ui/button'
 import { useAuthNavigation } from '@/hooks/useAuthNavigation'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 import WhatsHappeningSection from '@/components/WhatsHappeningSection'
-
+import FeatureCard from '@/components/FeatureCard'
 import LandingSection from '@/components/LandingSection'
 
 export default function HomePage(): ReactElement {
-  const { isAuthenticated, displayName, isLoading } = useAuthNavigation()
+  const { isAuthenticated, isLoading } = useAuthNavigation()
   const handleSmoothScroll = useSmoothScroll()
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header/Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-navy text-white shadow-lg">
+      {/* Header/Navigation - Keeping cream background as per mockup */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-cream border-b border-brown/10 shadow-sm">
         <nav className="container mx-auto max-w-7xl">
           <div className="flex items-center justify-between h-16 px-4 sm:px-6">
             {/* Brand */}
             <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-              <Image
-                src="/logo-textless.png"
-                alt="CARE Collective Logo"
-                width={48}
-                height={48}
-                className="rounded w-10 h-10 sm:w-12 sm:h-12"
-                priority
-                sizes="(max-width: 640px) 40px, 48px"
-              />
-              <span className="text-lg sm:text-xl font-bold truncate">CARE Collective</span>
+              <div className="w-10 h-10 bg-terracotta rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                C
+              </div>
+              <span className="text-brown text-lg sm:text-xl font-extrabold tracking-tight">CARE Collective</span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-4 xl:gap-6 flex-1 justify-center">
-              <ul className="flex items-center gap-3 xl:gap-4 list-none">
-                <li><Link href="#how-it-works" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">How It Works</Link></li>
-                <li><Link href="#why-join" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Why Join?</Link></li>
-                <li><Link href="#about" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">About Us</Link></li>
-                <li><Link href="#whats-happening" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What&apos;s Happening</Link></li>
-                <li><Link href="#resources-preview" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Resources</Link></li>
-                <li><Link href="#contact-preview" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Contact Us</Link></li>
+            <div className="hidden lg:flex items-center gap-6 xl:gap-8">
+              <ul className="flex items-center gap-4 xl:gap-6 list-none text-brown font-semibold text-sm tracking-wide">
+                <li><Link href="/" className="hover:text-terracotta transition-colors">Home</Link></li>
+                <li><Link href="#what-is-care" onClick={handleSmoothScroll} className="hover:text-terracotta transition-colors">How It Works</Link></li>
+                <li><Link href="#about" onClick={handleSmoothScroll} className="hover:text-terracotta transition-colors">About</Link></li>
+                <li><Link href="#resources" onClick={handleSmoothScroll} className="hover:text-terracotta transition-colors">Resources</Link></li>
               </ul>
             </div>
 
-            {/* Desktop Auth Buttons */}
-            <div className="hidden lg:flex items-center gap-2 xl:gap-3 flex-shrink-0">
+            {/* Desktop Auth Button */}
+            <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
               {isLoading ? (
-                <div className="bg-sage/50 text-white px-3 xl:px-4 py-2 rounded-lg font-semibold min-h-[44px] flex items-center animate-pulse text-sm xl:text-base">Loading...</div>
+                <div className="bg-sage/50 text-white px-6 py-2.5 rounded-lg font-bold min-h-[44px] flex items-center animate-pulse">Loading...</div>
               ) : isAuthenticated ? (
                 <>
-                  <Link href="/dashboard" className="bg-secondary text-secondary-foreground px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-secondary/90 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary/50 min-h-[44px] flex items-center text-sm xl:text-base">Dashboard</Link>
+                  <Link href="/dashboard" className="bg-sage text-white px-6 py-2.5 rounded-lg font-bold hover:bg-sage-dark transition-colors shadow-sm min-h-[44px] flex items-center">Dashboard</Link>
                   <form action="/api/auth/logout" method="post" className="inline">
-                    <button type="submit" className="px-3 xl:px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 min-h-[44px] flex items-center text-sm xl:text-base text-white focus:ring-[#D8837C]/50" style={{ backgroundColor: '#D8837C' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#C7726C'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#D8837C'}>
+                    <button type="submit" className="px-4 py-2.5 rounded-lg font-bold transition-colors min-h-[44px] flex items-center text-brown hover:text-terracotta">
                       Sign Out
                     </button>
                   </form>
                 </>
               ) : (
-                <>
-                  <Link href="/signup" className="bg-sage text-white px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Join Community</Link>
-                  <Link href="/login" className="border-2 border-white text-white px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-white/10 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-navy min-h-[44px] flex items-center text-sm xl:text-base whitespace-nowrap">Member Login</Link>
-                </>
+                <Link href="/signup" className="bg-sage text-white px-6 py-2.5 rounded-lg font-bold hover:bg-sage-dark transition-colors shadow-sm min-h-[44px] flex items-center">
+                  Join Now
+                </Link>
               )}
             </div>
 
@@ -90,362 +77,295 @@ export default function HomePage(): ReactElement {
       </header>
 
       <main id="main-content" tabIndex={-1} className="flex-1">
-        {/* Enhanced Hero Section */}
+        {/* Hero Section */}
         <Hero />
 
-        {/* How It Works Section */}
+        {/* What is CARE Collective? Section - 3 Equal Cards */}
         <LandingSection
-          id="how-it-works"
-          title="How It Works"
+          id="what-is-care"
+          title="What is CARE Collective?"
+          variant="sage-light"
           animation="slide-up"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-5xl mx-auto">
-            <div className="text-center card-standard hover-lift relative group">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
-                1
-              </div>
-              <div className="flex justify-center mb-6 mt-4">
-                <Users className="w-12 h-12 text-sage-dark group-hover:scale-110 transition-transform duration-300" aria-label="Community members" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Join the Community</h3>
-              <p className="text-muted-foreground">
-                Sign up with your basic information to become part of our trusted community network.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-7xl mx-auto">
+            {/* Card 1: How It Works */}
+            <FeatureCard title="How It Works" icon={Info} iconColor="#3D4F52">
+              <ul className="space-y-4">
+                <li className="flex flex-col gap-1">
+                  <span className="text-sm font-extrabold text-terracotta uppercase tracking-wider">Step 01</span>
+                  <span className="font-bold text-brown">Create an Account</span>
+                  <span className="text-sm">Sign up with your basic info to join our trusted community.</span>
+                </li>
+                <li className="flex flex-col gap-1">
+                  <span className="text-sm font-extrabold text-terracotta uppercase tracking-wider">Step 02</span>
+                  <span className="font-bold text-brown">Request or Offer Help</span>
+                  <span className="text-sm">Post what you need or browse requests from others.</span>
+                </li>
+                <li className="flex flex-col gap-1">
+                  <span className="text-sm font-extrabold text-terracotta uppercase tracking-wider">Step 03</span>
+                  <span className="font-bold text-brown">Build Community</span>
+                  <span className="text-sm">Become part of a network making caregiving sustainable.</span>
+                </li>
+              </ul>
+            </FeatureCard>
 
-            <div className="text-center card-standard hover-lift relative group">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
-                2
-              </div>
-              <div className="flex justify-center mb-6 mt-4">
-                <Hand className="w-12 h-12 text-primary group-hover:scale-110 transition-transform duration-300" aria-label="Request or offer help" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Request or Offer Help</h3>
-              <p className="text-muted-foreground">
-                Post what you need help with, or browse requests to see how you can assist others.
-              </p>
-            </div>
+            {/* Card 2: Why Join? */}
+            <FeatureCard title="Why Join?" icon={Heart} iconColor="#D8A8A0">
+              <p className="mb-6 font-bold text-teal">Are you caring for an aging loved one?</p>
+              <ul className="space-y-4">
+                {[
+                  { title: "Mutual exchange", desc: "Give what you can, receive what you need." },
+                  { title: "Flexibility", desc: "Engage when and how you can." },
+                  { title: "Learning", desc: "Workshops on topics chosen by members." },
+                  { title: "No pressure", desc: "It's okay to mostly need support." }
+                ].map((item, i) => (
+                  <li key={i} className="flex gap-3 items-start">
+                    <ShieldCheck className="mt-1 text-sage shrink-0" size={18} />
+                    <div>
+                      <span className="font-bold block text-brown">{item.title}</span>
+                      <span className="text-sm">{item.desc}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
 
-            <div className="text-center card-standard hover-lift relative group">
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg ring-4 ring-background">
-                3
+            {/* Card 3: Kinds of Help */}
+            <FeatureCard title="Kinds of Help" icon={Users} iconColor="#BC6547">
+              <p className="mb-6 font-medium">Members help each other with:</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Health & Caregiving",
+                  "Groceries & Meals",
+                  "Transportation & Errands",
+                  "Household & Yard",
+                  "Technology & Admin",
+                  "Social & Companionship"
+                ].map(item => (
+                  <span key={item} className="bg-cream px-4 py-2 rounded-lg text-sm font-bold text-brown border border-terracotta/20">
+                    {item}
+                  </span>
+                ))}
               </div>
-              <div className="flex justify-center mb-6 mt-4">
-                <Handshake className="w-12 h-12 text-sage-dark group-hover:scale-110 transition-transform duration-300" aria-label="Connect with neighbors" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground mb-4">Connect with Neighbors</h3>
-              <p className="text-muted-foreground">
-                Build meaningful relationships while giving and receiving support in your community.
-              </p>
-            </div>
+            </FeatureCard>
           </div>
 
           <div className="mt-12 text-center">
-            <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[48px] group">
-              <span>Get Started Today</span>
-              <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
+            <Link
+              href="/signup"
+              className="inline-flex items-center justify-center bg-brown text-white text-lg px-10 py-4 rounded-xl font-bold hover:shadow-lg transition-all hover:-translate-y-1 min-h-[56px]"
+            >
+              Get Started Today
             </Link>
           </div>
         </LandingSection>
 
-        {/* Why Join Section */}
-        <LandingSection
-          id="why-join"
-          title="Why Join?"
-          subtitle="The CARE Collective connects you with other caregivers who understand what you're going through and are ready to help and be helped."
-          variant="alternate"
-          animation="fade-in"
-        >
-          <div className="max-w-4xl mx-auto bg-white/50 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-white/40">
-            <h3 className="text-xl md:text-2xl font-semibold text-foreground mb-8 text-center">
-              As a member, you&apos;ll have access to:
-            </h3>
-
-            <ul className="space-y-6 mb-8">
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <HandHelping className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">Practical help when you need it</strong>
-                  <span className="text-muted-foreground leading-relaxed">Get support with respite, errands, paperwork, or just someone to check in.</span>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <Handshake className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">Mutual exchange of support</strong>
-                  <span className="text-muted-foreground leading-relaxed">Caregivers helping each other meet real, practical needs. Give what you can, receive what you need. Everyone has something to offer, and everyone needs help sometimes.</span>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <Star className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">Flexibility that works for you</strong>
-                  <span className="text-muted-foreground leading-relaxed">Participate in ways that fit your schedule and capacity, whether that&apos;s offering a ride once a month or connecting for weekly check-ins.</span>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <GraduationCap className="w-6 h-6 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">Learning opportunities</strong>
-                  <span className="text-muted-foreground leading-relaxed">Attend workshops on topics that matter to you, from advance care planning to caregiver self-care.</span>
-                </div>
-              </li>
-              <li className="flex gap-4 items-start">
-                <div className="bg-white p-2 rounded-lg shadow-sm">
-                  <Heart className="w-6 h-6 text-dusty-rose fill-dusty-rose flex-shrink-0" aria-hidden="true" />
-                </div>
-                <div>
-                  <strong className="text-foreground text-lg block mb-1">No pressure, just support</strong>
-                  <span className="text-muted-foreground leading-relaxed">Feeling overwhelmed? Don&apos;t have much free time? Worried you don&apos;t have much to offer? You belong here, and it&apos;s okay to be in a season where you mostly need support.</span>
-                </div>
-              </li>
-            </ul>
-
-            <div className="text-center pt-4">
-              <Link href="/signup" className="inline-flex items-center justify-center bg-sage text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-sage-dark transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sage/20 min-h-[48px] group">
-                <span>Join Our Community</span>
-                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </LandingSection>
-
-        {/* About Section */}
+        {/* About Section - Text Left, Photo Right with Decorative Frame */}
         <LandingSection
           id="about"
-          title="About CARE Collective"
-          animation="slide-up"
+          variant="cream"
+          centeredHeader={false}
+          className="py-24"
         >
-          <div className="space-y-8 max-w-6xl mx-auto">
-            {/* Who We Are - Full Width */}
-            <div className="bg-almond p-8 md:p-10 rounded-xl shadow-lg border border-almond/50">
-              <div className="flex justify-center mb-6">
-                <div className="bg-white p-3 rounded-full shadow-md">
-                  <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Who we are" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
-              <p className="text-lg leading-relaxed text-foreground max-w-4xl mx-auto text-center">
-                The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources. The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are building a space where caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
-              </p>
-            </div>
-
-            {/* Academic Partnership */}
-            <div className="bg-white p-8 md:p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border-t-4 border-dusty-rose">
-              <div className="flex justify-center mb-6">
-                <div className="bg-dusty-rose-light/20 p-3 rounded-full">
-                  <GraduationCap className="w-12 h-12 text-dusty-rose-accessible" aria-label="Academic partnership" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-dusty-rose-accessible mb-4 font-heading text-center">Academic Partnership</h3>
-              <div className="bg-dusty-rose-light/10 p-6 rounded-lg text-center border border-dusty-rose-light/20">
-                <p className="text-foreground leading-relaxed">
-                  This project was created by <span className="font-semibold">Dr. Maureen Templeman</span>,
-                  Department of Sociology, Anthropology, and Gerontology at Missouri State University,
-                  with support from community partners and funding from the
-                  <span className="font-semibold"> Southern Gerontological Society Innovative Projects Grant</span>.
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-12 md:gap-20">
+            {/* Content - Left Side */}
+            <div className="md:w-1/2">
+              <h2 className="text-brown text-4xl md:text-5xl font-black mb-8">About CARE Collective</h2>
+              <div className="space-y-6 text-brown text-lg md:text-xl leading-relaxed font-medium">
+                <h3 className="text-2xl font-bold text-teal">Who We Are</h3>
+                <p>
+                  The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                </p>
+                <p>
+                  The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are building a space where caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
                 </p>
               </div>
+              <Link
+                href="/about"
+                className="mt-8 text-terracotta font-bold text-lg flex items-center gap-2 hover:gap-3 transition-all group"
+              >
+                Learn More About Us <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
-          </div>
 
-          {/* Learn More - Prominent Box Button */}
-          <div className="mt-12 max-w-md mx-auto">
-            <Link
-              href="/about"
-              className="block bg-sage text-white p-6 rounded-lg text-center hover:bg-sage-dark transition-all duration-300 hover:shadow-xl group"
-            >
-              <span className="text-xl font-semibold group-hover:scale-105 inline-block transition-transform">Learn More About Us</span>
-              <span className="block text-sm mt-2 text-white/80">
-                Discover our mission, vision, and community standards
-              </span>
-            </Link>
+            {/* Photo - Right Side with Decorative Frame */}
+            <div className="md:w-1/2 w-full mt-8 md:mt-0">
+              <div className="relative pb-8">
+                {/* Decorative offset frame */}
+                <div className="absolute inset-0 bg-tan translate-x-4 translate-y-4 rounded-2xl"></div>
+
+                {/* Photo Container */}
+                <div className="relative bg-white p-2 rounded-2xl border border-brown/10 shadow-xl overflow-hidden">
+                  <Image
+                    src="/images/maureen-portrait.png"
+                    alt="Dr. Maureen Templeman, Founder of CARE Collective"
+                    width={600}
+                    height={500}
+                    className="w-full h-auto rounded-xl object-cover"
+                    priority
+                  />
+                </div>
+
+                {/* Caption Box */}
+                <div className="absolute -bottom-6 left-6 right-6 bg-white p-6 rounded-xl shadow-lg border-l-4 border-terracotta">
+                  <p className="text-brown font-black text-lg">Dr. Maureen Templeman</p>
+                  <p className="text-terracotta font-bold text-sm uppercase tracking-wider">Founder</p>
+                </div>
+              </div>
+            </div>
           </div>
         </LandingSection>
 
-        {/* What's Happening Section */}
+        {/* Combined What's Happening + Resources Section */}
         <LandingSection
           id="whats-happening"
-          title="What's Happening"
-          variant="alternate"
-          animation="fade-in"
+          variant="teal-dark"
+          centeredHeader={false}
+          className="py-24"
         >
-          <div className="text-center">
-            <WhatsHappeningSection />
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+            {/* Events Column - Left */}
+            <div className="flex flex-col h-full">
+              <h2 className="text-3xl md:text-4xl font-black mb-10 text-white flex items-center gap-3">
+                What&apos;s Happening <Calendar className="text-dusty-rose" strokeWidth={2.5} />
+              </h2>
+              <div className="flex-grow">
+                <WhatsHappeningSection variant="dark" />
+              </div>
+              <Link
+                href="/dashboard"
+                className="mt-8 w-full py-4 bg-dusty-rose text-teal text-center font-bold rounded-xl hover:bg-dusty-rose-light transition-colors min-h-[56px] flex items-center justify-center"
+              >
+                View All in Member Portal
+              </Link>
+            </div>
 
-            <div className="mt-12">
-              <Link href="/dashboard" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
-                <span>View All in Member Portal</span>
-                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+            {/* Resources Column - Right */}
+            <div className="flex flex-col h-full" id="resources">
+              <h2 className="text-3xl md:text-4xl font-black mb-6 text-white">Community Resources</h2>
+              <p className="text-lg text-white/80 mb-10 font-medium">
+                Connect with trusted local and regional organizations that offer practical support, guidance, and connection.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow">
+                {[
+                  { name: "Essentials", sub: "Food, housing, everyday needs" },
+                  { name: "Well-Being", sub: "Emotional health & support" },
+                  { name: "Community", sub: "Local programs & connections" },
+                  { name: "Learning", sub: "Training & education" }
+                ].map((item) => (
+                  <Link
+                    key={item.name}
+                    href="/resources"
+                    className="bg-white text-brown p-6 rounded-xl hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between h-full min-h-[140px]"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-extrabold text-xl">{item.name}</h4>
+                      <ChevronRight size={20} className="text-sage-light group-hover:text-terracotta transition-colors" />
+                    </div>
+                    <p className="text-sm text-brown/70 font-medium">{item.sub}</p>
+                  </Link>
+                ))}
+              </div>
+              <Link
+                href="/resources"
+                className="mt-8 w-full py-4 border-2 border-white/20 text-white text-center font-bold rounded-xl hover:bg-white hover:text-teal transition-colors min-h-[56px] flex items-center justify-center"
+              >
+                View All Resources
               </Link>
             </div>
           </div>
         </LandingSection>
 
-        {/* Resources Preview Section */}
-        <LandingSection
-          id="resources-preview"
-          title="Community Resources"
-          subtitle="Connect with trusted local and regional organizations that offer practical support, guidance, and connection."
-          animation="slide-up"
-        >
-          <div className="text-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {/* Essentials */}
-              <div className="text-center card-standard hover-lift group">
-                <div className="flex justify-center mb-4">
-                  <div className="bg-sage/10 p-3 rounded-full group-hover:bg-sage/20 transition-colors">
-                    <Home className="w-10 h-10 text-sage-dark" aria-label="Essential needs" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Essentials</h3>
-                <p className="text-muted-foreground">Food, housing, and everyday needs</p>
-              </div>
-
-              {/* Well-Being */}
-              <div className="text-center card-standard hover-lift group">
-                <div className="flex justify-center mb-4">
-                  <div className="bg-dusty-rose/10 p-3 rounded-full group-hover:bg-dusty-rose/20 transition-colors">
-                    <Heart className="w-10 h-10 text-dusty-rose fill-dusty-rose" aria-label="Well-being support" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Well-Being</h3>
-                <p className="text-muted-foreground">Emotional health and caregiving support</p>
-              </div>
-
-              {/* Community */}
-              <div className="text-center card-standard hover-lift group">
-                <div className="flex justify-center mb-4">
-                  <div className="bg-primary/10 p-3 rounded-full group-hover:bg-primary/20 transition-colors">
-                    <Users className="w-10 h-10 text-primary" aria-label="Community programs" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Community</h3>
-                <p className="text-muted-foreground">Local programs and connections</p>
-              </div>
-
-              {/* Learning */}
-              <div className="text-center card-standard hover-lift group">
-                <div className="flex justify-center mb-4">
-                  <div className="bg-accent/10 p-3 rounded-full group-hover:bg-accent/20 transition-colors">
-                    <BookOpen className="w-10 h-10 text-accent" aria-label="Educational resources" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Learning</h3>
-                <p className="text-muted-foreground">Training and educational programs</p>
-              </div>
-            </div>
-
-            <div className="mt-12">
-              <Link href="/resources" className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-secondary/90 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-secondary/20 min-h-[48px] group">
-                <span>View All Resources</span>
-                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </LandingSection>
-
-        {/* Contact Preview Section */}
+        {/* Contact Strip Section */}
         <LandingSection
           id="contact-preview"
-          title="Get in Touch"
-          subtitle="Have questions or feedback? We're here to help."
-          variant="alternate"
-          animation="fade-in"
+          variant="cream"
+          className="py-20"
         >
-          <div className="text-center">
-            <div className="max-w-2xl mx-auto">
-              {/* Email */}
-              <div className="bg-white p-10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                <div className="text-center mb-6">
-                  <div className="flex justify-center mb-6">
-                    <div className="bg-sage/10 p-4 rounded-full">
-                      <Mail className="w-12 h-12 text-sage-dark" aria-label="Email contact" />
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-4">Email Us</h3>
-                </div>
-                <div className="text-center">
-                  <a href="mailto:swmocarecollective@gmail.com" className="text-xl text-sage hover:text-sage-dark hover:underline font-bold break-all transition-colors">
-                    swmocarecollective@gmail.com
-                  </a>
-                </div>
-              </div>
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl p-8 md:p-12 shadow-lg border border-brown/5 text-center">
+            <h2 className="text-3xl font-black text-brown mb-3">Get in Touch</h2>
+            <p className="text-brown/70 text-lg mb-8 font-medium">Have questions or feedback? We&apos;re here to help.</p>
+
+            <div className="bg-cream inline-flex items-center gap-3 px-6 py-3 rounded-lg mb-8">
+              <Mail className="text-terracotta" size={20} />
+              <a href="mailto:swmocarecollective@gmail.com" className="font-bold text-brown hover:text-terracotta transition-colors">
+                swmocarecollective@gmail.com
+              </a>
             </div>
 
-            <div className="mt-12">
-              <Link href="/contact" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg hover:bg-primary-contrast transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[48px] group">
-                <span>Visit Full Contact Page</span>
-                <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+            <div className="block">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center bg-terracotta text-white px-8 py-3 rounded-lg font-bold hover:bg-terracotta/90 transition-colors min-h-[48px]"
+              >
+                Visit Full Contact Page
               </Link>
             </div>
           </div>
         </LandingSection>
       </main>
 
-      {/* Footer */}
-      <footer id="contact" className="bg-navy text-white py-8">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      {/* Footer - Matching Mockup */}
+      <footer className="bg-navy py-16 px-6 text-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             {/* Column 1: Branding */}
-            <div>
-              <h3 className="text-lg font-bold text-sage-light mb-3">CARE Collective</h3>
-              <p className="text-sm text-white/80">Community mutual support for Southwest Missouri</p>
+            <div className="space-y-6">
+              <h2 className="text-sage-light text-xl font-black tracking-wide">CARE Collective</h2>
+              <p className="text-sm text-white/70 leading-relaxed font-medium">
+                This project was created by Dr. Maureen Templeman, Department of Sociology, Anthropology, and Gerontology at Missouri State University, with support from community partners and funding from the Southern Gerontological Society Innovative Projects Grant.
+              </p>
+              <div className="flex gap-4">
+                <a
+                  href="https://www.facebook.com/profile.php?id=61582852599484"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-teal transition-colors"
+                  aria-label="Visit our Facebook page"
+                >
+                  <Facebook size={18} />
+                </a>
+              </div>
             </div>
 
-            {/* Column 2: Contact Info */}
+            {/* Column 2: Contact */}
             <div>
-              <h4 className="text-sm font-semibold text-sage-light mb-3 uppercase tracking-wide">Contact</h4>
-              <div className="space-y-1 text-sm">
-                <p className="text-white/80">Dr. Maureen Templeman</p>
-                <p className="text-white/80">Springfield, MO</p>
-                <a href="mailto:swmocarecollective@gmail.com" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">
+              <h3 className="text-xs font-bold tracking-widest uppercase mb-6 text-sage-light">Contact</h3>
+              <div className="space-y-3 text-white/80 font-medium text-sm">
+                <p className="text-white font-bold text-base">Dr. Maureen Templeman</p>
+                <p>Springfield, MO</p>
+                <a
+                  href="mailto:swmocarecollective@gmail.com"
+                  className="block hover:text-sage-light transition-colors mt-2"
+                >
                   swmocarecollective@gmail.com
                 </a>
               </div>
             </div>
 
-            {/* Column 3: Quick Actions */}
+            {/* Column 3: Get Started */}
             <div>
-              <h4 className="text-sm font-semibold text-sage-light mb-3 uppercase tracking-wide">Get Started</h4>
-              <ul className="space-y-1 list-none text-sm">
-                <li><Link href="/signup" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Join Community</Link></li>
-                <li><Link href="/login" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Member Login</Link></li>
+              <h3 className="text-xs font-bold tracking-widest uppercase mb-6 text-sage-light">Get Started</h3>
+              <ul className="space-y-3 text-white/80 font-medium text-sm list-none">
+                <li><Link href="/signup" className="hover:text-white transition-colors">Join Community</Link></li>
+                <li><Link href="/login" className="hover:text-white transition-colors">Member Login</Link></li>
               </ul>
             </div>
 
-            {/* Column 4: Legal & Resources */}
+            {/* Column 4: Resources */}
             <div>
-              <h4 className="text-sm font-semibold text-sage-light mb-3 uppercase tracking-wide">Resources</h4>
-              <ul className="space-y-1 list-none text-sm">
-                <li><Link href="/help" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Help & Support</Link></li>
-                <li><Link href="/terms" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Terms of Service</Link></li>
-                <li><Link href="/privacy-policy" className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded">Privacy Policy</Link></li>
+              <h3 className="text-xs font-bold tracking-widest uppercase mb-6 text-sage-light">Resources</h3>
+              <ul className="space-y-3 text-white/80 font-medium text-sm list-none">
+                <li><Link href="/help" className="hover:text-white transition-colors">Help & Support</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
 
-          {/* Copyright */}
-          <div className="border-t border-white/20 pt-4 mt-2 text-center">
-            <p className="text-sm text-white/60">&copy; 2025 CARE Collective - Southwest Missouri. All rights reserved.</p>
+          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-white/40">
+            <p>&copy; 2025 CARE Collective - Southwest Missouri. All rights reserved.</p>
+            <p>Community mutual support for Southwest Missouri</p>
           </div>
         </div>
       </footer>

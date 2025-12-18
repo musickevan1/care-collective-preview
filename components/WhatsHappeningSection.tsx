@@ -21,11 +21,17 @@ interface CommunityUpdate {
   icon: string | null
 }
 
-export default function WhatsHappeningSection(): ReactElement {
+interface WhatsHappeningSectionProps {
+  variant?: 'default' | 'dark'
+}
+
+export default function WhatsHappeningSection({ variant = 'default' }: WhatsHappeningSectionProps): ReactElement {
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [updates, setUpdates] = useState<CommunityUpdate[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const isDark = variant === 'dark'
 
   useEffect(() => {
     async function fetchCMSContent() {
@@ -79,8 +85,8 @@ export default function WhatsHappeningSection(): ReactElement {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-sage" />
-        <span className="ml-3 text-muted-foreground">Loading community updates...</span>
+        <Loader2 className={`w-8 h-8 animate-spin ${isDark ? 'text-dusty-rose' : 'text-sage'}`} />
+        <span className={`ml-3 ${isDark ? 'text-white/70' : 'text-muted-foreground'}`}>Loading community updates...</span>
       </div>
     )
   }
@@ -88,11 +94,67 @@ export default function WhatsHappeningSection(): ReactElement {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">{error}</p>
+        <p className={isDark ? 'text-white/70' : 'text-muted-foreground'}>{error}</p>
       </div>
     )
   }
 
+  // Dark variant - simplified two-box layout for combined section
+  if (isDark) {
+    return (
+      <div className="space-y-6">
+        {/* Upcoming Events Box */}
+        <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+          <h3 className="text-xl font-bold mb-2 text-dusty-rose">Upcoming Events</h3>
+          {events.length > 0 ? (
+            <div className="space-y-3">
+              {events.map((event) => (
+                <div key={event.id} className="flex gap-3 items-start">
+                  <span className="bg-dusty-rose text-teal px-2 py-1 rounded text-xs font-bold min-w-[50px] text-center">
+                    {formatEventDate(event.start_date)}
+                  </span>
+                  <div>
+                    <p className="text-white font-semibold">{event.title}</p>
+                    {event.description && (
+                      <p className="text-white/60 text-sm">{event.description}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-white/70 font-medium">Events Coming Soon</p>
+          )}
+        </div>
+
+        {/* Community Updates Box */}
+        <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+          <h3 className="text-xl font-bold mb-2 text-dusty-rose">Community Updates</h3>
+          {updates.length > 0 ? (
+            <div className="space-y-3">
+              {updates.map((update) => (
+                <div key={update.id}>
+                  <p className="text-white font-semibold">
+                    {update.title}
+                    {update.highlight_value && (
+                      <span className="ml-2 text-dusty-rose">{update.highlight_value}</span>
+                    )}
+                  </p>
+                  {update.description && (
+                    <p className="text-white/60 text-sm">{update.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-white/70 font-medium">Stay Tuned</p>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // Default variant - original two-column layout
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto text-left">
       {/* Events Section */}

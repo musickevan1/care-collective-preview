@@ -6,7 +6,7 @@ interface LandingSectionProps {
     subtitle?: string
     children: ReactNode
     className?: string
-    variant?: 'default' | 'alternate' | 'sage'
+    variant?: 'default' | 'alternate' | 'sage' | 'sage-light' | 'teal-dark' | 'cream'
     centeredHeader?: boolean
     animation?: 'fade-in' | 'slide-up' | 'none'
 }
@@ -28,6 +28,12 @@ export default function LandingSection({
                 return 'bg-secondary/5' // Using a subtle version of the secondary color
             case 'sage':
                 return 'bg-sage/10'
+            case 'sage-light':
+                return 'bg-sage-light' // #A3C4BF - for feature cards section
+            case 'teal-dark':
+                return 'bg-teal text-white' // #3D4F52 - for combined updates/resources
+            case 'cream':
+                return 'bg-cream' // #FBF2E9 - for about section
             case 'default':
             default:
                 return 'bg-background'

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARE Collective - Southwest Missouri</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+        .font-ultra {
+            font-weight: 900;
+        }
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // --- Icon Components (Replacing Lucide-React imports for standalone usage) ---
+        const Icons = {
+            Facebook: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>,
+            Mail: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>,
+            Calendar: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>,
+            Info: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>,
+            Heart: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>,
+            Users: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+            ShieldCheck: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>,
+            ChevronRight: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
+            Menu: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
+            X: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
+            ArrowRight: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        };
+
+        const { Facebook, Mail, Calendar, Info, Heart, Users, ShieldCheck, ChevronRight, Menu, X, ArrowRight } = Icons;
+
+        // --- Main Application Code ---
+
+        const Navbar = () => {
+          const [isOpen, setIsOpen] = useState(false);
+
+          return (
+            <nav className="sticky top-0 z-50 bg-[#FBF2E9] border-b border-[#483129]/10 px-6 py-4">
+              <div className="max-w-7xl mx-auto flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#BC6547] rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-sm">C</div>
+                  <span className="text-[#483129] font-extrabold text-xl tracking-tight">CARE Collective</span>
+                </div>
+                
+                {/* Desktop Nav */}
+                <div className="hidden md:flex items-center gap-8 text-[#483129] font-semibold text-sm tracking-wide">
+                  <a href="#" className="hover:text-[#BC6547] transition-colors">Home</a>
+                  <a href="#" className="hover:text-[#BC6547] transition-colors">How It Works</a>
+                  <a href="#" className="hover:text-[#BC6547] transition-colors">About</a>
+                  <a href="#" className="hover:text-[#BC6547] transition-colors">Resources</a>
+                  <button className="bg-[#5A7E79] text-white px-6 py-2.5 rounded-lg font-bold hover:bg-[#4A6B66] transition-colors shadow-sm">
+                    Join Now
+                  </button>
+                </div>
+
+                {/* Mobile Toggle */}
+                <button className="md:hidden text-[#483129]" onClick={() => setIsOpen(!isOpen)}>
+                  {isOpen ? <X size={28} /> : <Menu size={28} />}
+                </button>
+              </div>
+
+              {/* Mobile Menu */}
+              {isOpen && (
+                <div className="md:hidden absolute top-full left-0 w-full bg-[#FBF2E9] shadow-xl p-6 flex flex-col gap-4 border-t border-[#483129]/10">
+                  <a href="#" className="text-lg font-bold text-[#483129]">Home</a>
+                  <a href="#" className="text-lg font-bold text-[#483129]">How It Works</a>
+                  <a href="#" className="text-lg font-bold text-[#483129]">About</a>
+                  <a href="#" className="text-lg font-bold text-[#483129]">Resources</a>
+                  <button className="bg-[#5A7E79] text-white w-full py-3 rounded-lg font-bold">Join Now</button>
+                </div>
+              )}
+            </nav>
+          );
+        };
+
+        const Hero = () => (
+          <section className="bg-[#FBF2E9] pt-16 pb-24 px-6 md:pt-24 md:pb-32">
+            <div className="max-w-7xl mx-auto text-center md:text-left">
+              <div className="max-w-4xl">
+                <h1 className="text-[#483129] text-5xl md:text-[96px] leading-[1.05] font-ultra mb-6 tracking-tight">
+                  Southwest Missouri <br />
+                  <span className="text-[#BC6547]">CARE Collective</span>
+                </h1>
+                
+                <p className="text-[#3D4F52] text-xl md:text-2xl font-bold mb-8 tracking-wide">
+                  <span className="text-[#BC6547]">C</span>aregiver <span className="text-[#BC6547]">A</span>ssistance and <span className="text-[#BC6547]">R</span>esource <span className="text-[#BC6547]">E</span>xchange
+                </p>
+                
+                <p className="text-[#483129] text-lg md:text-2xl max-w-2xl mb-10 leading-relaxed font-medium">
+                  The CARE Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                </p>
+                
+                <div className="flex flex-col md:flex-row gap-4">
+                  <button className="bg-[#5A7E79] text-white text-lg px-8 py-4 rounded-xl font-bold hover:bg-[#4A6B66] hover:translate-y-[-2px] transition-all shadow-md">
+                    Join Our Community
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+
+        const FeatureCard = ({ title, children, icon: Icon, color }) => (
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#483129]/5 flex flex-col gap-5 h-full hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-4 mb-2">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white shadow-sm`} style={{ backgroundColor: color }}>
+                <Icon size={24} strokeWidth={2.5} />
+              </div>
+              <h3 className="text-[#483129] text-2xl font-bold leading-tight">{title}</h3>
+            </div>
+            <div className="text-[#483129]/80 text-lg leading-relaxed font-medium">{children}</div>
+          </div>
+        );
+
+        const WhatIsSection = () => (
+          <section className="bg-[#A3C4BF] py-20 px-6">
+            <div className="max-w-7xl mx-auto">
+              <h2 className="text-[#483129] text-4xl md:text-6xl font-ultra mb-16 text-center">What is CARE Collective?</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                {/* Box 1: How It Works */}
+                <FeatureCard title="How It Works" icon={Info} color="#3D4F52">
+                  <ul className="space-y-4">
+                    <li className="flex flex-col gap-1">
+                      <span className="text-sm font-extrabold text-[#BC6547] uppercase tracking-wider">Step 01</span>
+                      <span className="font-bold text-[#483129]">Create an Account</span>
+                      <span className="text-sm">Sign up with your basic info to join our trusted community.</span>
+                    </li>
+                    <li className="flex flex-col gap-1">
+                      <span className="text-sm font-extrabold text-[#BC6547] uppercase tracking-wider">Step 02</span>
+                      <span className="font-bold text-[#483129]">Request or Offer Help</span>
+                      <span className="text-sm">Post what you need or browse requests from others.</span>
+                    </li>
+                    <li className="flex flex-col gap-1">
+                      <span className="text-sm font-extrabold text-[#BC6547] uppercase tracking-wider">Step 03</span>
+                      <span className="font-bold text-[#483129]">Build Community</span>
+                      <span className="text-sm">Become part of a network making caregiving sustainable.</span>
+                    </li>
+                  </ul>
+                </FeatureCard>
+
+                {/* Box 2: Why Join */}
+                <FeatureCard title="Why Join?" icon={Heart} color="#D8A8A0">
+                  <p className="mb-6 font-bold text-[#3D4F52]">Are you caring for an aging loved one?</p>
+                  <ul className="space-y-4">
+                    {[
+                      { title: "Mutual exchange", desc: "Give what you can, receive what you need." },
+                      { title: "Flexibility", desc: "Engage when and how you can." },
+                      { title: "Learning", desc: "Workshops on topics chosen by members." },
+                      { title: "No pressure", desc: "It's okay to mostly need support." }
+                    ].map((item, i) => (
+                      <li key={i} className="flex gap-3 items-start">
+                        <ShieldCheck className="mt-1 text-[#5A7E79] shrink-0" size={18} />
+                        <div>
+                          <span className="font-bold block text-[#483129]">{item.title}</span>
+                          <span className="text-sm">{item.desc}</span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </FeatureCard>
+
+                {/* Box 3: Kinds of Help */}
+                <FeatureCard title="Kinds of Help" icon={Users} color="#BC6547">
+                  <p className="mb-6 font-medium">Members help each other with:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Health & Caregiving",
+                      "Groceries & Meals",
+                      "Transportation & Errands",
+                      "Household & Yard",
+                      "Technology & Admin",
+                      "Social & Companionship"
+                    ].map(item => (
+                      <span key={item} className="bg-[#FBF2E9] px-4 py-2 rounded-lg text-sm font-bold text-[#483129] border border-[#BC6547]/20">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </FeatureCard>
+              </div>
+
+              <div className="mt-12 text-center">
+                <button className="bg-[#483129] text-white text-lg px-10 py-4 rounded-xl font-bold hover:shadow-lg transition-all hover:-translate-y-1">
+                  Get Started Today
+                </button>
+              </div>
+            </div>
+          </section>
+        );
+
+        const AboutSection = () => (
+          <section className="bg-[#FBF2E9] py-24 px-6">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-12 md:gap-20">
+              <div className="md:w-1/2">
+                <h2 className="text-[#483129] text-4xl md:text-5xl font-ultra mb-8">About CARE Collective</h2>
+                <div className="space-y-6 text-[#483129] text-lg md:text-xl leading-relaxed font-medium">
+                  <h3 className="text-2xl font-bold text-[#3D4F52]">Who We Are</h3>
+                  <p>
+                    The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                  </p>
+                  <p>
+                    The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are building a space where caregivers find connection, practical help, and the mutual support that makes caregiving sustainable.
+                  </p>
+                </div>
+                <button className="mt-8 text-[#BC6547] font-bold text-lg flex items-center gap-2 hover:gap-3 transition-all">
+                  Learn More About Us <ArrowRight size={20} />
+                </button>
+              </div>
+              
+              <div className="md:w-1/2 w-full mt-8 md:mt-0">
+                <div className="relative">
+                  {/* Decorative frame background */}
+                  <div className="absolute inset-0 bg-[#C39778] translate-x-4 translate-y-4 rounded-2xl"></div>
+                  
+                  {/* Photo Container */}
+                  <div className="relative bg-white p-2 rounded-2xl border border-[#483129]/10 shadow-xl overflow-hidden aspect-[4/3] md:aspect-auto">
+                     <div className="w-full h-full min-h-[400px] bg-[#F3F4F6] flex flex-col items-center justify-center text-[#483129]/40 rounded-xl">
+                       <Users size={64} className="mb-4" />
+                       <span className="font-bold text-lg">Dr. Maureen Templeman's Photo</span>
+                     </div>
+                  </div>
+                  
+                  {/* Caption Box */}
+                  <div className="absolute -bottom-6 left-6 right-6 bg-white p-6 rounded-xl shadow-lg border-l-4 border-[#BC6547] flex items-center gap-4">
+                     <div>
+                       <p className="text-[#483129] font-black text-lg">Dr. Maureen Templeman</p>
+                       <p className="text-[#BC6547] font-bold text-sm uppercase tracking-wider">Founder</p>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+
+        const UpdatesAndResources = () => (
+          <section className="bg-[#3D4F52] py-24 px-6 text-white">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+                {/* Events Column */}
+                <div className="flex flex-col h-full">
+                  <h2 className="text-3xl md:text-4xl font-ultra mb-10 text-white flex items-center gap-3">
+                    What's Happening <Calendar className="text-[#D8A8A0]" strokeWidth={2.5} />
+                  </h2>
+                  <div className="flex-grow space-y-6">
+                    <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                      <h3 className="text-xl font-bold mb-2 text-[#D8A8A0]">Upcoming Events</h3>
+                      <p className="text-white/70 font-medium">Events Coming Soon</p>
+                    </div>
+                    <div className="bg-white/5 p-8 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                      <h3 className="text-xl font-bold mb-2 text-[#D8A8A0]">Community Updates</h3>
+                      <p className="text-white/70 font-medium">Stay Tuned</p>
+                    </div>
+                  </div>
+                  <button className="mt-8 w-full py-4 bg-[#D8A8A0] text-[#3D4F52] font-bold rounded-xl hover:bg-[#E5Bcb5] transition-colors">
+                    View All in Member Portal
+                  </button>
+                </div>
+
+                {/* Resources Column */}
+                <div className="flex flex-col h-full">
+                  <h2 className="text-3xl md:text-4xl font-ultra mb-6 text-white">Community Resources</h2>
+                  <p className="text-lg text-white/80 mb-10 font-medium">
+                    Connect with trusted local and regional organizations that offer practical support, guidance, and connection.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-grow">
+                    {[
+                      { name: "Essentials", sub: "Food, housing, everyday needs" },
+                      { name: "Well-Being", sub: "Emotional health & support" },
+                      { name: "Community", sub: "Local programs & connections" },
+                      { name: "Learning", sub: "Training & education" }
+                    ].map((item) => (
+                      <div key={item.name} className="bg-white text-[#483129] p-6 rounded-xl hover:shadow-xl transition-all cursor-pointer group flex flex-col justify-between h-full min-h-[140px]">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-extrabold text-xl">{item.name}</h4>
+                          <ChevronRight size={20} className="text-[#A3C4BF] group-hover:text-[#BC6547] transition-colors" />
+                        </div>
+                        <p className="text-sm text-[#483129]/70 font-medium">{item.sub}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <button className="mt-8 w-full py-4 border-2 border-white/20 text-white font-bold rounded-xl hover:bg-white hover:text-[#3D4F52] transition-colors">
+                    View All Resources
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+
+        const ContactStrip = () => (
+          <section className="bg-[#FBF2E9] py-20 px-6">
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl p-8 md:p-12 shadow-lg border border-[#483129]/5 text-center">
+              <h2 className="text-3xl font-ultra text-[#483129] mb-3">Get in Touch</h2>
+              <p className="text-[#483129]/70 text-lg mb-8 font-medium">Have questions or feedback? We're here to help.</p>
+              
+              <div className="bg-[#FBF2E9] inline-flex items-center gap-3 px-6 py-3 rounded-lg mb-8">
+                <Mail className="text-[#BC6547]" size={20} />
+                <span className="font-bold text-[#483129]">swmocarecollective@gmail.com</span>
+              </div>
+              
+              <div>
+                <button className="bg-[#BC6547] text-white px-8 py-3 rounded-lg font-bold hover:bg-[#A35538] transition-colors">
+                  Visit Full Contact Page
+                </button>
+              </div>
+            </div>
+          </section>
+        );
+
+        const Footer = () => (
+          <footer className="bg-[#324158] py-16 px-6 text-white">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                {/* Column 1: Branding */}
+                <div className="space-y-6">
+                  <h2 className="text-[#A3C4BF] text-xl font-ultra tracking-wide">CARE Collective</h2>
+                  <p className="text-sm text-white/70 leading-relaxed font-medium">
+                    This project was created by Dr. Maureen Templeman, Department of Sociology, Anthropology, and Gerontology at Missouri State University, with support from community partners and funding from the Southern Gerontological Society Innovative Projects Grant.
+                  </p>
+                  <div className="flex gap-4">
+                    <a href="https://www.facebook.com/profile.php?id=61582852599484" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#3D4F52] transition-colors">
+                      <Facebook size={18} />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Column 2: Contact */}
+                <div>
+                  <h3 className="text-xs font-bold tracking-widest uppercase mb-6 text-[#A3C4BF]">Contact</h3>
+                  <div className="space-y-3 text-white/80 font-medium text-sm">
+                    <p className="text-white font-bold text-base">Dr. Maureen Templeman</p>
+                    <p>Springfield, MO</p>
+                    <a href="mailto:swmocarecollective@gmail.com" className="block hover:text-[#A3C4BF] transition-colors mt-2">
+                      swmocarecollective@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                {/* Column 3: Get Started */}
+                <div>
+                  <h3 className="text-xs font-bold tracking-widest uppercase mb-6 text-[#A3C4BF]">Get Started</h3>
+                  <ul className="space-y-3 text-white/80 font-medium text-sm">
+                    <li><a href="#" className="hover:text-white transition-colors">Join Community</a></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Member Login</a></li>
+                  </ul>
+                </div>
+
+                {/* Column 4: Resources */}
+                <div>
+                  <h3 className="text-xs font-bold tracking-widest uppercase mb-6 text-[#A3C4BF]">Resources</h3>
+                  <ul className="space-y-3 text-white/80 font-medium text-sm">
+                    <li><a href="#" className="hover:text-white transition-colors">Help & Support</a></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+                    <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-white/40">
+                <p>© 2025 CARE Collective - Southwest Missouri. All rights reserved.</p>
+                <p>Community mutual support for Southwest Missouri</p>
+              </div>
+            </div>
+          </footer>
+        );
+
+        function App() {
+          return (
+            <div className="min-h-screen bg-[#FBF2E9]">
+              <Navbar />
+              <main>
+                <Hero />
+                <WhatIsSection />
+                <AboutSection />
+                <UpdatesAndResources />
+                <ContactStrip />
+              </main>
+              <Footer />
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
