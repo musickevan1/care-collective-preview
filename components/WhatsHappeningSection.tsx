@@ -21,7 +21,11 @@ interface CommunityUpdate {
   icon: string | null
 }
 
-export default function WhatsHappeningSection(): ReactElement {
+interface WhatsHappeningSectionProps {
+  variant?: 'light' | 'dark'
+}
+
+export default function WhatsHappeningSection({ variant = 'light' }: WhatsHappeningSectionProps): ReactElement {
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [updates, setUpdates] = useState<CommunityUpdate[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -76,11 +80,14 @@ export default function WhatsHappeningSection(): ReactElement {
     return format(date, 'MMM d')
   }
 
+  const headerClass = variant === 'dark' ? 'text-white border-white/20' : 'text-foreground border-sage-light'
+  const textClass = variant === 'dark' ? 'text-white/80' : 'text-muted-foreground' // For empty state text if needed, though cards are white
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-sage" />
-        <span className="ml-3 text-muted-foreground">Loading community updates...</span>
+        <Loader2 className={`w-8 h-8 animate-spin ${variant === 'dark' ? 'text-white' : 'text-sage'}`} />
+        <span className={`ml-3 ${textClass}`}>Loading community updates...</span>
       </div>
     )
   }
@@ -88,16 +95,16 @@ export default function WhatsHappeningSection(): ReactElement {
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground">{error}</p>
+        <p className={textClass}>{error}</p>
       </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto text-left">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto text-left">
       {/* Events Section */}
       <div>
-        <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
+        <h3 className={`text-2xl font-bold mb-6 pb-2 border-b-2 ${headerClass}`}>
           Upcoming Events
         </h3>
         <div className="space-y-4">
@@ -105,28 +112,28 @@ export default function WhatsHappeningSection(): ReactElement {
             events.map((event) => (
               <div
                 key={event.id}
-                className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm hover:shadow-md transition-shadow"
+                className="flex gap-4 p-4 bg-white rounded-lg border-l-4 border-rose shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="bg-sage-dark text-white px-3 py-2 rounded-lg text-sm font-bold text-center min-w-[60px] flex-shrink-0 shadow-md">
+                <div className="bg-teal text-white px-3 py-2 rounded-lg text-sm font-bold text-center min-w-[60px] flex-shrink-0 shadow-md">
                   {formatEventDate(event.start_date)}
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-foreground mb-1">
+                  <h4 className="text-lg font-semibold text-brown mb-1">
                     {event.title}
                   </h4>
-                  <p className="text-muted-foreground">
+                  <p className="text-brown/70 text-sm">
                     {event.description || event.location || 'Details coming soon'}
                   </p>
                 </div>
               </div>
             ))
           ) : (
-            <div className="p-6 bg-white rounded-lg border-l-4 border-sage shadow-sm text-center">
-              <Calendar className="w-10 h-10 text-sage mx-auto mb-3" />
-              <h4 className="text-lg font-semibold text-foreground mb-2">
+            <div className={`p-6 bg-white/10 rounded-lg border-l-4 border-sage shadow-sm text-center ${variant === 'dark' ? 'bg-white/5 backdrop-blur-sm' : 'bg-white'}`}>
+              <Calendar className={`w-10 h-10 mx-auto mb-3 ${variant === 'dark' ? 'text-white/60' : 'text-sage'}`} />
+              <h4 className={`text-lg font-semibold mb-2 ${variant === 'dark' ? 'text-white' : 'text-foreground'}`}>
                 Events Coming Soon
               </h4>
-              <p className="text-muted-foreground">
+              <p className={variant === 'dark' ? 'text-white/70' : 'text-muted-foreground'}>
                 We&apos;re planning exciting community gatherings. Check back soon!
               </p>
             </div>
@@ -136,7 +143,7 @@ export default function WhatsHappeningSection(): ReactElement {
 
       {/* Community Updates Section */}
       <div>
-        <h3 className="text-2xl font-bold text-foreground mb-6 pb-2 border-b-2 border-sage-light">
+        <h3 className={`text-2xl font-bold mb-6 pb-2 border-b-2 ${headerClass}`}>
           Community Updates
         </h3>
         <div className="space-y-4">
@@ -144,28 +151,28 @@ export default function WhatsHappeningSection(): ReactElement {
             updates.map((update) => (
               <div
                 key={update.id}
-                className="p-4 bg-white rounded-lg border-l-4 border-dusty-rose shadow-sm hover:shadow-md transition-shadow"
+                className="p-4 bg-white rounded-lg border-l-4 border-rose shadow-sm hover:shadow-md transition-shadow"
               >
-                <h4 className="text-lg font-semibold text-foreground mb-1">
+                <h4 className="text-lg font-semibold text-brown mb-1">
                   {update.title}
                   {update.highlight_value && (
-                    <span className="ml-2 text-sage-dark font-bold">
+                    <span className="ml-2 text-teal font-bold">
                       {update.highlight_value}
                     </span>
                   )}
                 </h4>
                 {update.description && (
-                  <p className="text-muted-foreground">{update.description}</p>
+                  <p className="text-brown/70 text-sm">{update.description}</p>
                 )}
               </div>
             ))
           ) : (
-            <div className="p-6 bg-white rounded-lg border-l-4 border-sage shadow-sm text-center">
-              <Bell className="w-10 h-10 text-sage mx-auto mb-3" />
-              <h4 className="text-lg font-semibold text-foreground mb-2">
+            <div className={`p-6 rounded-lg border-l-4 border-sage shadow-sm text-center ${variant === 'dark' ? 'bg-white/5 backdrop-blur-sm border-white/20' : 'bg-white'}`}>
+              <Bell className={`w-10 h-10 mx-auto mb-3 ${variant === 'dark' ? 'text-white/60' : 'text-sage'}`} />
+              <h4 className={`text-lg font-semibold mb-2 ${variant === 'dark' ? 'text-white' : 'text-foreground'}`}>
                 Stay Tuned
               </h4>
-              <p className="text-muted-foreground">
+              <p className={variant === 'dark' ? 'text-white/70' : 'text-muted-foreground'}>
                 Community updates will appear here as our collective grows.
               </p>
             </div>
