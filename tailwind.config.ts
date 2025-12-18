@@ -37,6 +37,8 @@ const config: Config = {
         terracotta: "#BC6547",
         navy: "#324158",
         tan: "#C39778",
+        teal: "#3D4F52",        // Home page buttons/accents (Dec 2025)
+        "teal-dark": "#2D3B3E", // Teal hover states
         cream: "#FBF2E9",
         brown: "#483129",
         sage: "#7A9E99",

@@ -73,17 +73,17 @@
   --font-family-base: 'Overlock', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   --font-family-readable: "Atkinson Hyperlegible", "Inter", "Noto Sans", Arial, sans-serif;
   
-  /* Font sizes - Comprehensive scale for better readability */
-  --font-size-xs: 13px;  /* Small text, captions */
-  --font-size-sm: 15px;  /* Secondary text */
-  --font-size-base: 16px; /* Body text */
-  --font-size-lg: 18px;   /* Larger body text */
-  --font-size-xl: 20px;   /* Small headings */
-  --font-size-2xl: 24px;  /* Medium headings */
-  --font-size-3xl: 30px;  /* Large headings */
-  --font-size-4xl: 36px;  /* Page titles */
-  --font-size-5xl: 48px;  /* Hero text */
-  --font-size-6xl: 60px;  /* Display text */
+  /* Font sizes - Comprehensive scale for better readability (Dec 2025 update) */
+  --font-size-xs: 14px;  /* Small text, captions */
+  --font-size-sm: 16px;  /* Secondary text */
+  --font-size-base: 17px; /* Body text */
+  --font-size-lg: 20px;   /* Larger body text */
+  --font-size-xl: 22px;   /* Small headings */
+  --font-size-2xl: 26px;  /* Medium headings */
+  --font-size-3xl: 36px;  /* Large headings */
+  --font-size-4xl: 48px;  /* Page titles */
+  --font-size-5xl: 72px;  /* Hero text */
+  --font-size-6xl: 108px;  /* Display text */
   
   /* Font weights */
   --font-weight-normal: 400;
@@ -116,17 +116,17 @@
   /* Enhanced typography for better readability */
   --font-family-base: var(--font-family-readable);
   
-  /* Increase all font sizes for better readability */
-  --font-size-xs: 14px;   /* +1px */
-  --font-size-sm: 16px;   /* +1px */
-  --font-size-base: 18px; /* +2px */
-  --font-size-lg: 20px;   /* +2px */
-  --font-size-xl: 22px;   /* +2px */
-  --font-size-2xl: 26px;  /* +2px */
-  --font-size-3xl: 32px;  /* +2px */
-  --font-size-4xl: 38px;  /* +2px */
-  --font-size-5xl: 50px;  /* +2px */
-  --font-size-6xl: 62px;  /* +2px */
+  /* Increase all font sizes for better readability (Dec 2025 update) */
+  --font-size-xs: 15px;   /* +1px from base */
+  --font-size-sm: 17px;   /* +1px from base */
+  --font-size-base: 19px; /* +2px from base */
+  --font-size-lg: 22px;   /* +2px from base */
+  --font-size-xl: 24px;   /* +2px from base */
+  --font-size-2xl: 28px;  /* +2px from base */
+  --font-size-3xl: 38px;  /* +2px from base */
+  --font-size-4xl: 50px;  /* +2px from base */
+  --font-size-5xl: 74px;  /* +2px from base */
+  --font-size-6xl: 110px; /* +2px from base */
   
   /* Increase font weights for better visibility */
   --font-weight-normal: 500;
