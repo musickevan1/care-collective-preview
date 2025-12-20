@@ -93,18 +93,7 @@ export default function Hero(): ReactElement {
               </span>
             </Link>
 
-            <Link
-              href="#how-it-works"
-              onClick={handleSmoothScroll}
-              className="group relative inline-flex items-center justify-center bg-white/90 backdrop-blur-sm text-sage-dark px-10 py-5 text-lg font-bold rounded-xl hover:bg-white hover:scale-[1.02] transition-all duration-200 transform hover:shadow-lg border-2 border-sage/20 hover:border-sage/40 min-h-[56px]"
-            >
-              <span className="flex items-center gap-3">
-                <span>Learn How It Works</span>
-                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </span>
-            </Link>
+
           </div>
 
           {/* Community stats removed - will be added when real data is available */}
