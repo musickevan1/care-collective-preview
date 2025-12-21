@@ -12,13 +12,14 @@ import { useSmoothScroll } from '@/hooks/useSmoothScroll'
  */
 function HeroBackground(): ReactElement {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+    <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
       {/* Base cream background */}
       <div className="absolute inset-0 bg-background" />
       
-      {/* Large sage blob - top left, extends off screen */}
+      {/* Large sage blob - top left, extends off screen and into next section
+          Using bottom positioning to allow natural overflow into the next section */}
       <div 
-        className="absolute -top-[10%] -left-[10%] w-[55%] h-[70%] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-sage opacity-[0.18]"
+        className="absolute -top-[10%] -left-[10%] w-[55%] h-[85%] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-sage opacity-[0.18]"
         style={{ transform: 'rotate(-10deg)' }}
       />
       
@@ -56,8 +57,8 @@ export default function Hero(): ReactElement {
   const handleSmoothScroll = useSmoothScroll()
 
   return (
-    <section id="home" className="relative pt-24 pb-16 md:pt-28 md:pb-20 bg-background overflow-hidden min-h-[85vh] flex items-center">
-      {/* Organic Blob Background */}
+    <section id="home" className="relative pt-24 pb-16 md:pt-28 md:pb-20 bg-background min-h-[85vh] flex items-center">
+      {/* Organic Blob Background - overflow visible to blend into next section */}
       <HeroBackground />
 
       <div className="container mx-auto px-4 relative z-10">

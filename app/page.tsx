@@ -153,9 +153,9 @@ export default function HomePage(): ReactElement {
         <Hero />
 
         {/* What is CARE Collective? - Three Box Layout */}
-        <section id="what-is-care" className="relative overflow-hidden">
-          {/* Section Title on cream background */}
-          <div className="bg-background py-16 md:py-20">
+        <section id="what-is-care" className="relative">
+          {/* Section Title - transparent to allow Hero blob to show through */}
+          <div className="py-16 md:py-20 relative z-10">
             <div className="container mx-auto px-4">
               <h2 className="text-4xl sm:text-5xl md:text-[48px] font-bold text-brown text-center uppercase tracking-wide">
                 What is CARE Collective?
