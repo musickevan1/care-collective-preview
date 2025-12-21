@@ -262,7 +262,7 @@ export default function HomePage(): ReactElement {
                 <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
                   
                   {/* Left: Photo with caption */}
-                  <div className="flex-shrink-0 text-center lg:text-left">
+                  <div className="flex-shrink-0 text-center">
                     {/* Circular photo with border */}
                     <div className="relative inline-block">
                       <div className="w-52 h-52 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full border-4 border-dusty-rose/70 p-1.5 bg-sage-dark">
@@ -277,15 +277,15 @@ export default function HomePage(): ReactElement {
                               alt="Dr. Maureen Templeman, CARE Collective Project Creator"
                               width={300}
                               height={300}
-                              className="w-full h-full object-cover object-[center_20%]"
+                              className="w-full h-full object-cover object-[center_10%]"
                               onError={() => setImageError(true)}
                             />
                           )}
                         </div>
                       </div>
                     </div>
-                    {/* Caption */}
-                    <p className="mt-5 text-base italic text-white/90">
+                    {/* Caption - centered under photo */}
+                    <p className="mt-5 text-base italic text-white/90 text-center">
                       Dr. Maureen Templeman
                     </p>
                   </div>
@@ -307,42 +307,29 @@ export default function HomePage(): ReactElement {
                       The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources. The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement.
                     </p>
                     
-                    {/* Highlighted statement */}
-                    <p className="mt-6 text-xl md:text-2xl lg:text-3xl font-semibold text-white">
-                      Together, we are making caregiving sustainable.
-                    </p>
+                    {/* Highlighted statement + CTA button */}
+                    <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
+                      <p className="text-xl md:text-2xl lg:text-3xl font-semibold text-white">
+                        Together, we are making caregiving sustainable.
+                      </p>
+                      <Link
+                        href="/about"
+                        className="flex-shrink-0 inline-flex items-center gap-2 bg-background hover:bg-white text-foreground py-3 px-6 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg"
+                      >
+                        Learn More About Us
+                        <svg 
+                          className="w-5 h-5" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Learn More CTA - on cream background */}
-          <div className="bg-background py-10 md:py-14">
-            <div className="container mx-auto px-4">
-              <div className="max-w-lg mx-auto">
-                <Link
-                  href="/about"
-                  className="group flex items-center justify-between bg-sage hover:bg-sage-dark text-white py-5 px-8 rounded-xl transition-all duration-300 hover:shadow-xl"
-                >
-                  <div>
-                    <span className="block text-lg md:text-xl font-semibold">
-                      Learn More About Us
-                    </span>
-                    <span className="block text-sm mt-1 text-white/80">
-                      Discover our mission, vision, and community standards
-                    </span>
-                  </div>
-                  <svg 
-                    className="w-6 h-6 flex-shrink-0 ml-4 group-hover:translate-x-1 transition-transform duration-300" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
               </div>
             </div>
           </div>
