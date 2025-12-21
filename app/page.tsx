@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 import {
   Users,
   Hand,
@@ -21,7 +21,9 @@ import {
   Car,
   Wrench,
   Laptop,
-  Coffee
+  Coffee,
+  User,
+  type LucideIcon
 } from 'lucide-react'
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
@@ -32,9 +34,60 @@ import WhatsHappeningSection from '@/components/WhatsHappeningSection'
 
 import LandingSection from '@/components/LandingSection'
 
+// Help categories data for maintainability
+const HELP_CATEGORIES = [
+  { icon: Stethoscope, label: 'Health & Caregiving' },
+  { icon: ShoppingCart, label: 'Groceries & Meals' },
+  { icon: Car, label: 'Transportation & Errands' },
+  { icon: Wrench, label: 'Household & Yard' },
+  { icon: Laptop, label: 'Technology & Administrative' },
+  { icon: Coffee, label: 'Social & Companionship' },
+] as const
+
+// Steps data for How It Works section
+const HOW_IT_WORKS_STEPS = [
+  {
+    number: 1,
+    title: 'Create an Account',
+    description: 'Sign up with your basic information to become part of our trusted community network.',
+  },
+  {
+    number: 2,
+    title: 'Request or Offer Help',
+    description: 'Post what you need help with and browse requests from others who need help.',
+  },
+  {
+    number: 3,
+    title: 'Build Community',
+    description: 'Become a valuable part of our community that is making caregiving sustainable.',
+  },
+] as const
+
+// Step component for How It Works section
+interface StepProps {
+  number: number
+  title: string
+  description: string
+}
+
+function Step({ number, title, description }: StepProps): ReactElement {
+  return (
+    <div className="flex items-start gap-4">
+      <div className="w-8 h-8 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+        {number}
+      </div>
+      <div>
+        <strong className="text-foreground block mb-1">{title}</strong>
+        <p className="text-muted-foreground text-sm">{description}</p>
+      </div>
+    </div>
+  )
+}
+
 export default function HomePage(): ReactElement {
   const { isAuthenticated, displayName, isLoading } = useAuthNavigation()
   const handleSmoothScroll = useSmoothScroll()
+  const [imageError, setImageError] = useState(false)
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -107,30 +160,17 @@ export default function HomePage(): ReactElement {
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {/* Box 1: How It Works */}
-            <div id="how-it-works" className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-              <h3 className="text-2xl font-bold text-foreground mb-6 text-center">How It Works</h3>
+            <div
+              id="how-it-works"
+              className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow"
+              role="region"
+              aria-labelledby="how-it-works-heading"
+            >
+              <h3 id="how-it-works-heading" className="text-2xl font-bold text-foreground mb-6 text-center">How It Works</h3>
               <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
-                  <div>
-                    <strong className="text-foreground block mb-1">Create an Account</strong>
-                    <p className="text-muted-foreground text-sm">Sign up with your basic information to become part of our trusted community network.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
-                  <div>
-                    <strong className="text-foreground block mb-1">Request or Offer Help</strong>
-                    <p className="text-muted-foreground text-sm">Post what you need help with and browse requests from others who need help.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-sage-dark text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
-                  <div>
-                    <strong className="text-foreground block mb-1">Build Community</strong>
-                    <p className="text-muted-foreground text-sm">Become a valuable part of our community that is making caregiving sustainable.</p>
-                  </div>
-                </div>
+                {HOW_IT_WORKS_STEPS.map((step) => (
+                  <Step key={step.number} {...step} />
+                ))}
               </div>
               <div className="mt-8 text-center">
                 <Link href="/signup" className="inline-flex items-center justify-center bg-primary text-primary-foreground px-6 py-3 text-base font-semibold rounded-lg hover:bg-primary-contrast transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-primary/20 min-h-[44px]">
@@ -140,8 +180,13 @@ export default function HomePage(): ReactElement {
             </div>
 
             {/* Box 2: Why Join? */}
-            <div id="why-join" className="bg-sage-light/10 rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow border border-sage-light/30">
-              <h3 className="text-2xl font-bold text-foreground mb-4 text-center">Why Join?</h3>
+            <div
+              id="why-join"
+              className="bg-sage-light/10 rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow border border-sage-light/30"
+              role="region"
+              aria-labelledby="why-join-heading"
+            >
+              <h3 id="why-join-heading" className="text-2xl font-bold text-foreground mb-4 text-center">Why Join?</h3>
               <p className="text-muted-foreground text-center mb-6 text-sm">
                 Are you caring for an aging loved one? Connect with other caregivers who understand caregiving.
               </p>
@@ -176,34 +221,21 @@ export default function HomePage(): ReactElement {
             </div>
 
             {/* Box 3: Kinds of Help */}
-            <div id="kinds-of-help" className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
-              <h3 className="text-2xl font-bold text-foreground mb-4 text-center">Kinds of Help</h3>
+            <div
+              id="kinds-of-help"
+              className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow"
+              role="region"
+              aria-labelledby="kinds-of-help-heading"
+            >
+              <h3 id="kinds-of-help-heading" className="text-2xl font-bold text-foreground mb-4 text-center">Kinds of Help</h3>
               <p className="text-muted-foreground text-center mb-6 text-sm">Members help each other with:</p>
               <ul className="space-y-3">
-                <li className="flex items-center gap-3 p-2 rounded-lg hover:bg-sage-light/10 transition-colors">
-                  <Stethoscope className="w-5 h-5 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                  <span className="text-foreground font-medium text-sm">Health & Caregiving</span>
-                </li>
-                <li className="flex items-center gap-3 p-2 rounded-lg hover:bg-sage-light/10 transition-colors">
-                  <ShoppingCart className="w-5 h-5 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                  <span className="text-foreground font-medium text-sm">Groceries & Meals</span>
-                </li>
-                <li className="flex items-center gap-3 p-2 rounded-lg hover:bg-sage-light/10 transition-colors">
-                  <Car className="w-5 h-5 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                  <span className="text-foreground font-medium text-sm">Transportation & Errands</span>
-                </li>
-                <li className="flex items-center gap-3 p-2 rounded-lg hover:bg-sage-light/10 transition-colors">
-                  <Wrench className="w-5 h-5 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                  <span className="text-foreground font-medium text-sm">Household & Yard</span>
-                </li>
-                <li className="flex items-center gap-3 p-2 rounded-lg hover:bg-sage-light/10 transition-colors">
-                  <Laptop className="w-5 h-5 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                  <span className="text-foreground font-medium text-sm">Technology & Administrative</span>
-                </li>
-                <li className="flex items-center gap-3 p-2 rounded-lg hover:bg-sage-light/10 transition-colors">
-                  <Coffee className="w-5 h-5 text-sage-dark flex-shrink-0" aria-hidden="true" />
-                  <span className="text-foreground font-medium text-sm">Social & Companionship</span>
-                </li>
+                {HELP_CATEGORIES.map(({ icon: Icon, label }) => (
+                  <li key={label} className="flex items-center gap-3 p-2 rounded-lg hover:bg-sage-light/10 transition-colors">
+                    <Icon className="w-5 h-5 text-sage-dark flex-shrink-0" aria-hidden="true" />
+                    <span className="text-foreground font-medium text-sm">{label}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -225,24 +257,20 @@ export default function HomePage(): ReactElement {
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
               <div className="flex flex-col md:flex-row gap-8 items-center max-w-4xl mx-auto">
-                {/* TODO: Replace placeholder with Dr. Templeman's actual photo */}
                 <div className="flex-shrink-0">
                   <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-sage-light/30 border-4 border-sage/20 flex items-center justify-center overflow-hidden">
-                    <Image
-                      src="/avatars/placeholder-photo.jpg"
-                      alt="Dr. Maureen Templeman"
-                      width={160}
-                      height={160}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback to icon if image not found
-                        e.currentTarget.style.display = 'none';
-                        const parent = e.currentTarget.parentElement;
-                        if (parent) {
-                          parent.innerHTML = '<svg class="w-16 h-16 text-sage-dark/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>';
-                        }
-                      }}
-                    />
+                    {imageError ? (
+                      <User className="w-16 h-16 text-sage-dark/50" aria-hidden="true" />
+                    ) : (
+                      <Image
+                        src="/maureen-portrait.jpg"
+                        alt="Dr. Maureen Templeman, CARE Collective Project Creator"
+                        width={160}
+                        height={160}
+                        className="w-full h-full object-cover"
+                        onError={() => setImageError(true)}
+                      />
+                    )}
                   </div>
                   <p className="text-center mt-2 text-sm font-medium text-foreground">Dr. Maureen Templeman</p>
                 </div>

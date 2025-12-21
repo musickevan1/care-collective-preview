@@ -92,8 +92,6 @@ export default function Hero(): ReactElement {
                 </svg>
               </span>
             </Link>
-
-
           </div>
 
           {/* Community stats removed - will be added when real data is available */}
