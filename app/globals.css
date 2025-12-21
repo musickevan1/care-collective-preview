@@ -361,6 +361,55 @@ p {
   }
 }
 
+/* ========================================
+   HERO SECTION - ORGANIC BLOB ANIMATIONS
+   Gentle floating animation for blob shapes
+   ======================================== */
+
+@keyframes blob-float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(10px, -15px) scale(1.02);
+  }
+  66% {
+    transform: translate(-8px, 8px) scale(0.98);
+  }
+}
+
+@keyframes blob-float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(5px, -10px) scale(1.01);
+  }
+}
+
+.hero-blob-float {
+  animation: blob-float 20s ease-in-out infinite;
+}
+
+.hero-blob-float-delayed {
+  animation: blob-float 25s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+.hero-blob-float-slow {
+  animation: blob-float-slow 30s ease-in-out infinite;
+  animation-delay: -10s;
+}
+
+/* Reduce motion: static blobs */
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob-float,
+  .hero-blob-float-delayed,
+  .hero-blob-float-slow {
+    animation: none !important;
+  }
+}
+
 /* Hero Section Animations */
 @keyframes fade-in-up {
   from {
@@ -481,4 +530,144 @@ p {
 
 .card-standard:hover {
   @apply shadow-xl border-sage-light;
+}
+
+/* ========================================
+   SECTION DIVIDER & BACKGROUND UTILITIES
+   Homepage redesign - Wave dividers
+   ======================================== */
+
+/* Section background color utilities using CSS custom properties */
+.section-bg-cream {
+  background-color: var(--color-background);
+}
+
+.section-bg-sage {
+  background-color: var(--color-sage);
+}
+
+.section-bg-sage-light {
+  background-color: var(--color-sage-light);
+}
+
+.section-bg-sage-dark {
+  background-color: var(--color-sage-dark);
+}
+
+.section-bg-dusty-rose {
+  background-color: var(--color-dusty-rose);
+}
+
+.section-bg-navy {
+  background-color: var(--color-navy);
+}
+
+/* Subtle background overlays */
+.section-bg-sage-subtle {
+  background-color: rgba(90, 126, 121, 0.15);
+}
+
+.section-bg-dusty-rose-subtle {
+  background-color: rgba(216, 168, 160, 0.20);
+}
+
+/* Gradient backgrounds */
+.section-gradient-hero {
+  background: linear-gradient(
+    180deg,
+    var(--color-background) 0%,
+    rgba(163, 196, 191, 0.15) 100%
+  );
+}
+
+.section-gradient-sage {
+  background: linear-gradient(
+    180deg,
+    var(--color-sage-dark) 0%,
+    rgba(74, 107, 102, 0.95) 100%
+  );
+}
+
+.section-gradient-navy {
+  background: linear-gradient(
+    180deg,
+    var(--color-navy) 0%,
+    rgba(50, 65, 88, 0.95) 100%
+  );
+}
+
+/* Divider positioning utilities */
+.divider-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.divider-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* Divider height variants */
+.divider-sm {
+  height: 24px;
+}
+
+.divider-md {
+  height: 48px;
+}
+
+.divider-lg {
+  height: 80px;
+}
+
+/* Responsive divider adjustments */
+@media (max-width: 640px) {
+  .divider-sm {
+    height: 16px;
+  }
+  
+  .divider-md {
+    height: 32px;
+  }
+  
+  .divider-lg {
+    height: 56px;
+  }
+}
+
+/* Section container with divider padding */
+.section-with-top-divider {
+  padding-top: 48px;
+}
+
+.section-with-bottom-divider {
+  padding-bottom: 48px;
+}
+
+@media (max-width: 640px) {
+  .section-with-top-divider {
+    padding-top: 32px;
+  }
+  
+  .section-with-bottom-divider {
+    padding-bottom: 32px;
+  }
+}
+
+/* Reduce motion: disable any divider animations */
+@media (prefers-reduced-motion: reduce) {
+  .section-divider svg {
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support for dividers */
+@media (forced-colors: active) {
+  .section-divider svg path {
+    fill: CanvasText;
+  }
 }
