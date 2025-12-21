@@ -63,3 +63,4 @@ BETA_LAUNCH_READY.md
 # Office temp files
 ~$*.docx
 ~$*.xlsx
+.env*.local
