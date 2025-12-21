@@ -25,15 +25,24 @@ function HeroWireframe(): ReactElement {
     <section className="relative min-h-[85vh] bg-[#FBF2E9]">
       {/* Background Blobs - NO overflow-hidden so blobs can flow into next section */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Large sage blob - top left */}
+        {/* Large sage blob - top left
+            Mobile: smaller, more contained
+            Desktop: larger, extends off-screen */}
         <div 
-          className="absolute -top-[10%] -left-[10%] w-[55%] h-[70%] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#7A9E99] opacity-20"
+          className="absolute bg-[#7A9E99] opacity-20 rounded-[40%_60%_70%_30%/40%_50%_60%_50%]
+            -top-[5%] -left-[15%] w-[70%] h-[50%]
+            sm:-top-[8%] sm:-left-[12%] sm:w-[60%] sm:h-[60%]
+            md:-top-[10%] md:-left-[10%] md:w-[55%] md:h-[70%]"
           style={{ transform: 'rotate(-10deg)' }}
         />
         
-        {/* Small tan accent - right side middle */}
+        {/* Small tan accent - right side middle
+            Hidden on mobile, visible on tablet+ */}
         <div 
-          className="absolute top-[30%] right-[5%] w-[15%] h-[20%] rounded-[50%_50%_50%_50%/60%_60%_40%_40%] bg-[#C39778] opacity-20"
+          className="absolute bg-[#C39778] opacity-20 rounded-[50%_50%_50%_50%/60%_60%_40%_40%]
+            hidden sm:block
+            sm:top-[35%] sm:right-[3%] sm:w-[18%] sm:h-[15%]
+            md:top-[30%] md:right-[5%] md:w-[15%] md:h-[20%]"
           style={{ transform: 'rotate(-5deg)' }}
         />
       </div>
@@ -66,13 +75,17 @@ function HeroWireframe(): ReactElement {
 // ============================================
 function FloatingDustyRoseBlob(): ReactElement {
   return (
-    <div 
-      className="absolute right-[-10%] w-[45%] h-[600px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-[#D8A8A0] opacity-25 pointer-events-none z-0"
-      style={{ 
-        transform: 'rotate(15deg)',
-        top: '60vh', // Positioned to span across hero bottom and into next section
-      }}
-    />
+    <>
+      {/* Mobile: smaller blob, positioned differently */}
+      <div 
+        className="absolute bg-[#D8A8A0] opacity-20 pointer-events-none z-0 rounded-[60%_40%_30%_70%/60%_30%_70%_40%]
+          right-[-20%] w-[60%] h-[300px] top-[50vh]
+          sm:right-[-15%] sm:w-[50%] sm:h-[400px] sm:top-[55vh] sm:opacity-25
+          md:right-[-10%] md:w-[45%] md:h-[500px] md:top-[58vh]
+          lg:h-[600px] lg:top-[60vh]"
+        style={{ transform: 'rotate(15deg)' }}
+      />
+    </>
   )
 }
 
