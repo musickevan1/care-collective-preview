@@ -73,6 +73,7 @@ const config: Config = {
       },
       fontFamily: {
         overlock: ["Overlock", "system-ui", "sans-serif"],
+        display: ["var(--font-playfair)", "Georgia", "Times New Roman", "serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

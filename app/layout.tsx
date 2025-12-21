@@ -3,7 +3,7 @@ import "@/lib/global-polyfills.js";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
-import { overlock, fontClasses, atkinsonHyperlegible } from "@/lib/fonts";
+import { overlock, fontClasses, atkinsonHyperlegible, playfairDisplay } from "@/lib/fonts";
 import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
 
 export const metadata: Metadata = {
@@ -47,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fontClasses.primary} ${fontClasses.accessible}`}>
+    <html lang="en" className={`${fontClasses.primary} ${fontClasses.accessible} ${fontClasses.display}`}>
       <head>
         {/* Critical font preload */}
         <link rel="preload" href="/logo.png" as="image" />

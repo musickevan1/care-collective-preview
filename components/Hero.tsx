@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ReactElement } from 'react'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
@@ -39,16 +40,20 @@ function HeroBackground(): ReactElement {
 }
 
 /**
- * Circular text badge matching wireframe - NOT the logo image
- * Shows "CARE" and "Collective" inside a circular outline
+ * Logo image displayed above the main title
+ * Uses the actual CARE Collective logo instead of text circle
  */
-function CareBadge(): ReactElement {
+function HeroLogo(): ReactElement {
   return (
-    <div className="flex items-center justify-center mb-8">
-      <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full border-2 border-sage-dark flex flex-col items-center justify-center">
-        <span className="text-sage-dark text-2xl sm:text-3xl md:text-4xl font-bold leading-none">CARE</span>
-        <span className="text-sage-dark text-sm sm:text-base md:text-lg font-normal leading-tight">Collective</span>
-      </div>
+    <div className="flex items-center justify-center mb-10">
+      <Image
+        src="/logo-textless.png"
+        alt="CARE Collective Logo"
+        width={160}
+        height={160}
+        className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 lg:w-44 lg:h-44 rounded-2xl shadow-lg"
+        priority
+      />
     </div>
   )
 }
@@ -62,15 +67,15 @@ export default function Hero(): ReactElement {
       <HeroBackground />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-3xl mx-auto text-center">
-          {/* Circular CARE Badge - text only, not logo */}
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Logo Image */}
           <div className="animate-fade-in-up">
-            <CareBadge />
+            <HeroLogo />
           </div>
 
-          {/* Main Headline */}
-          <div className="mb-4 animate-fade-in-up delay-200">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
+          {/* Main Headline - Using Display Font, Larger & Bolder */}
+          <div className="mb-6 animate-fade-in-up delay-200">
+            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight">
               <span className="text-brown block">
                 Southwest Missouri
               </span>
@@ -80,29 +85,29 @@ export default function Hero(): ReactElement {
             </h1>
           </div>
 
-          {/* CARE Acronym - single line */}
-          <div className="mb-6 animate-fade-in-up delay-300">
-            <p className="text-base sm:text-lg md:text-xl text-brown font-medium">
-              <span className="font-bold">CARE</span>giver Assistance and Resource Exchange
+          {/* CARE Acronym - Larger & Bolder */}
+          <div className="mb-8 animate-fade-in-up delay-300">
+            <p className="text-lg sm:text-xl md:text-2xl text-brown font-bold">
+              <span className="font-extrabold">CARE</span>giver Assistance and Resource Exchange
             </p>
           </div>
 
-          {/* Description */}
-          <div className="mb-8 animate-fade-in-up delay-400">
-            <p className="text-sm sm:text-base md:text-lg text-foreground/80 max-w-2xl mx-auto leading-relaxed">
+          {/* Description - Larger & Medium Weight */}
+          <div className="mb-10 animate-fade-in-up delay-400">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-medium">
               The CARE Collective is a network of family caregivers in Southwest Missouri
               who support each other through practical help and shared resources.
             </p>
           </div>
 
-          {/* CTA Button */}
+          {/* CTA Button - Larger */}
           <div className="animate-fade-in-up delay-500">
             <Link 
               href="/signup" 
-              className="group inline-flex items-center justify-center bg-sage text-white px-8 py-4 text-base md:text-lg font-semibold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-lg min-h-[52px]"
+              className="group inline-flex items-center justify-center bg-sage text-white px-10 py-5 text-lg md:text-xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl min-h-[60px]"
             >
               <span>Join Our Community</span>
-              <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
