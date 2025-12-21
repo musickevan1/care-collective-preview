@@ -257,22 +257,22 @@ export default function HomePage(): ReactElement {
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
               <div className="flex flex-col md:flex-row gap-8 items-center max-w-4xl mx-auto">
-                <div className="flex-shrink-0">
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-sage-light/30 border-4 border-sage/20 flex items-center justify-center overflow-hidden">
+                <div className="flex-shrink-0 text-center">
+                  <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-sage-light/30 border-4 border-sage/20 flex items-center justify-center overflow-hidden mx-auto shadow-md">
                     {imageError ? (
                       <User className="w-16 h-16 text-sage-dark/50" aria-hidden="true" />
                     ) : (
                       <Image
                         src="/maureen-portrait.jpg"
                         alt="Dr. Maureen Templeman, CARE Collective Project Creator"
-                        width={160}
-                        height={160}
-                        className="w-full h-full object-cover"
+                        width={200}
+                        height={200}
+                        className="w-[120%] h-[120%] object-cover object-top scale-90"
                         onError={() => setImageError(true)}
                       />
                     )}
                   </div>
-                  <p className="text-center mt-2 text-sm font-medium text-foreground">Dr. Maureen Templeman</p>
+                  <p className="mt-3 text-sm font-medium text-foreground">Dr. Maureen Templeman</p>
                 </div>
                 <p className="text-lg leading-relaxed text-foreground text-center md:text-left">
                   The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources. The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are making caregiving sustainable.
