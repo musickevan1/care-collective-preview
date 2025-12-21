@@ -318,7 +318,7 @@ export default function HomePage(): ReactElement {
                               alt="Dr. Maureen Templeman, CARE Collective Project Creator"
                               width={280}
                               height={280}
-                              className="w-full h-full object-cover object-[center_50%]"
+                              className="w-full h-full object-cover object-[center_58%]"
                               onError={() => setImageError(true)}
                             />
                           )}
