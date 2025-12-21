@@ -67,7 +67,7 @@ export default function Hero(): ReactElement {
       <HeroBackground />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center">
           {/* Logo Image */}
           <div className="animate-fade-in-up">
             <HeroLogo />
@@ -75,7 +75,7 @@ export default function Hero(): ReactElement {
 
           {/* Main Headline - Using Display Font, Larger & Bolder */}
           <div className="mb-6 animate-fade-in-up delay-200">
-            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.05] tracking-tight">
+            <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold leading-[1.05] tracking-tight">
               <span className="text-brown block">
                 Southwest Missouri
               </span>
@@ -85,16 +85,16 @@ export default function Hero(): ReactElement {
             </h1>
           </div>
 
-          {/* CARE Acronym - Larger & Bolder */}
+          {/* CARE Acronym - Larger & Bolder, first letters bold */}
           <div className="mb-8 animate-fade-in-up delay-300">
-            <p className="text-lg sm:text-xl md:text-2xl text-brown font-bold">
-              <span className="font-extrabold">CARE</span>giver Assistance and Resource Exchange
+            <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-brown font-bold">
+              <span className="font-extrabold">C</span>aregiver <span className="font-extrabold">A</span>ssistance and <span className="font-extrabold">R</span>esource <span className="font-extrabold">E</span>xchange
             </p>
           </div>
 
           {/* Description - Larger & Medium Weight */}
           <div className="mb-10 animate-fade-in-up delay-400">
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-medium">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-foreground/90 max-w-3xl mx-auto leading-relaxed font-medium">
               The CARE Collective is a network of family caregivers in Southwest Missouri
               who support each other through practical help and shared resources.
             </p>
@@ -104,7 +104,7 @@ export default function Hero(): ReactElement {
           <div className="animate-fade-in-up delay-500">
             <Link 
               href="/signup" 
-              className="group inline-flex items-center justify-center bg-sage text-white px-10 py-5 text-lg md:text-xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl min-h-[60px]"
+              className="group inline-flex items-center justify-center bg-sage text-white px-12 py-6 text-xl md:text-2xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl min-h-[68px]"
             >
               <span>Join Our Community</span>
               <svg className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
