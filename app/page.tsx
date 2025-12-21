@@ -241,61 +241,112 @@ export default function HomePage(): ReactElement {
           </div>
         </LandingSection>
 
-        {/* About Section */}
-        <LandingSection
-          id="about"
-          title="About CARE Collective"
-          animation="slide-up"
-        >
-          <div className="space-y-8 max-w-6xl mx-auto">
-            {/* Who We Are - Full Width */}
-            <div className="bg-almond p-8 md:p-10 rounded-xl shadow-lg border border-almond/50">
-              <div className="flex justify-center mb-6">
-                <div className="bg-white p-3 rounded-full shadow-md">
-                  <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Who we are" />
-                </div>
-              </div>
-              <h3 className="text-[22px] md:text-2xl lg:text-[26px] font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
-              <div className="flex flex-col md:flex-row gap-8 items-center max-w-4xl mx-auto">
-                <div className="flex-shrink-0 text-center">
-                  <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-sage-light/30 border-4 border-sage/20 flex items-center justify-center overflow-hidden mx-auto shadow-md">
-                    {imageError ? (
-                      <User className="w-16 h-16 text-sage-dark/50" aria-hidden="true" />
-                    ) : (
-                      <Image
-                        src="/maureen-portrait.jpg"
-                        alt="Dr. Maureen Templeman, CARE Collective Project Creator"
-                        width={250}
-                        height={250}
-                        className="w-[140%] h-[140%] object-cover object-[center_15%] scale-75"
-                        onError={() => setImageError(true)}
-                      />
-                    )}
+        {/* About Section - Inspired by Kinder Ground */}
+        <section id="about" className="relative overflow-hidden">
+          {/* Section Title on cream background */}
+          <div className="bg-background py-12 md:py-16">
+            <div className="container mx-auto px-4">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground text-center">
+                About CARE Collective
+              </h2>
+            </div>
+          </div>
+
+          {/* Main Content Area with sage background */}
+          <div className="bg-sage-dark relative">
+            {/* Decorative curved top edge */}
+            <div className="absolute top-0 left-0 right-0 h-16 md:h-24 bg-background" style={{ borderRadius: '0 0 50% 50%' }} />
+            
+            <div className="container mx-auto px-4 pt-20 md:pt-28 pb-16 md:pb-20">
+              <div className="max-w-6xl mx-auto">
+                <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+                  
+                  {/* Left: Photo with caption */}
+                  <div className="flex-shrink-0 text-center lg:text-left">
+                    {/* Circular photo with border */}
+                    <div className="relative inline-block">
+                      <div className="w-52 h-52 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-full border-4 border-dusty-rose/70 p-1.5 bg-sage-dark">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-sage-light/30">
+                          {imageError ? (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <User className="w-20 h-20 text-white/40" aria-hidden="true" />
+                            </div>
+                          ) : (
+                            <Image
+                              src="/maureen-portrait.jpg"
+                              alt="Dr. Maureen Templeman, CARE Collective Project Creator"
+                              width={300}
+                              height={300}
+                              className="w-full h-full object-cover object-[center_20%]"
+                              onError={() => setImageError(true)}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Caption */}
+                    <p className="mt-5 text-base italic text-white/90">
+                      Dr. Maureen Templeman
+                    </p>
                   </div>
-                  <p className="mt-3 text-sm font-medium text-foreground">Dr. Maureen Templeman</p>
+
+                  {/* Right: Content */}
+                  <div className="flex-1 text-center lg:text-left">
+                    {/* Icon + Who We Are heading */}
+                    <div className="flex items-center justify-center lg:justify-start gap-3 mb-6">
+                      <div className="bg-white/10 p-2.5 rounded-full">
+                        <Handshake className="w-7 h-7 text-white" aria-hidden="true" />
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-white">
+                        Who We Are
+                      </h3>
+                    </div>
+                    
+                    {/* Main text - larger, more impactful */}
+                    <p className="text-lg md:text-xl lg:text-2xl text-white/95 leading-relaxed font-light">
+                      The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources. The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement.
+                    </p>
+                    
+                    {/* Highlighted statement */}
+                    <p className="mt-6 text-xl md:text-2xl lg:text-3xl font-semibold text-white">
+                      Together, we are making caregiving sustainable.
+                    </p>
+                  </div>
                 </div>
-                <p className="text-lg leading-relaxed text-foreground text-center md:text-left">
-                  The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources. The Collective is powered by caregivers themselves, along with students and volunteers who help maintain the site and coordinate outreach and engagement. Together, we are making caregiving sustainable.
-                </p>
               </div>
             </div>
-
-
           </div>
 
-          {/* Learn More - Prominent Box Button */}
-          <div className="mt-12 max-w-md mx-auto">
-            <Link
-              href="/about"
-              className="block bg-sage text-white p-6 rounded-lg text-center hover:bg-sage-dark transition-all duration-300 hover:shadow-xl group"
-            >
-              <span className="text-xl font-semibold group-hover:scale-105 inline-block transition-transform">Learn More About Us</span>
-              <span className="block text-sm mt-2 text-white/80">
-                Discover our mission, vision, and community standards
-              </span>
-            </Link>
+          {/* Learn More CTA - on cream background */}
+          <div className="bg-background py-10 md:py-14">
+            <div className="container mx-auto px-4">
+              <div className="max-w-lg mx-auto">
+                <Link
+                  href="/about"
+                  className="group flex items-center justify-between bg-sage hover:bg-sage-dark text-white py-5 px-8 rounded-xl transition-all duration-300 hover:shadow-xl"
+                >
+                  <div>
+                    <span className="block text-lg md:text-xl font-semibold">
+                      Learn More About Us
+                    </span>
+                    <span className="block text-sm mt-1 text-white/80">
+                      Discover our mission, vision, and community standards
+                    </span>
+                  </div>
+                  <svg 
+                    className="w-6 h-6 flex-shrink-0 ml-4 group-hover:translate-x-1 transition-transform duration-300" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </Link>
+              </div>
+            </div>
           </div>
-        </LandingSection>
+        </section>
 
         {/* What's Happening Section */}
         <LandingSection
