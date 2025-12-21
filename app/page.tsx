@@ -28,6 +28,7 @@ import {
 import Hero from '@/components/Hero'
 import { MobileNav } from '@/components/MobileNav'
 import { Button } from '@/components/ui/button'
+import { SectionDivider } from '@/components/ui/SectionDivider'
 import { useAuthNavigation } from '@/hooks/useAuthNavigation'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 import WhatsHappeningSection from '@/components/WhatsHappeningSection'
@@ -164,8 +165,13 @@ export default function HomePage(): ReactElement {
 
           {/* Cards on dusty rose background */}
           <div className="bg-dusty-rose/20 relative py-16 md:py-20">
-            {/* Curved top */}
-            <div className="absolute top-0 left-0 right-0 h-12 md:h-20 bg-background" style={{ borderRadius: '0 0 50% 50%' }} />
+            {/* Wave divider at top */}
+            <SectionDivider
+              variant="curve"
+              position="top"
+              fillColor="var(--color-background)"
+              height="md"
+            />
             
             <div className="container mx-auto px-4 pt-8 md:pt-12">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -254,8 +260,13 @@ export default function HomePage(): ReactElement {
               </div>
             </div>
             
-            {/* Curved bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-12 md:h-20 bg-background" style={{ borderRadius: '50% 50% 0 0' }} />
+            {/* Wave divider at bottom */}
+            <SectionDivider
+              variant="curve"
+              position="bottom"
+              fillColor="var(--color-background)"
+              height="md"
+            />
           </div>
         </section>
 
@@ -272,8 +283,13 @@ export default function HomePage(): ReactElement {
 
           {/* Main Content Area with sage background */}
           <div className="bg-sage-dark relative">
-            {/* Decorative curved top edge */}
-            <div className="absolute top-0 left-0 right-0 h-16 md:h-24 bg-background" style={{ borderRadius: '0 0 50% 50%' }} />
+            {/* Organic wave divider at top for visual interest */}
+            <SectionDivider
+              variant="organic"
+              position="top"
+              fillColor="var(--color-background)"
+              height="lg"
+            />
             
             <div className="container mx-auto px-4 pt-20 md:pt-28 pb-16 md:pb-20">
               <div className="max-w-6xl mx-auto">
@@ -366,8 +382,13 @@ export default function HomePage(): ReactElement {
 
           {/* Content on sage background */}
           <div className="bg-sage/15 relative py-16 md:py-20">
-            {/* Curved top */}
-            <div className="absolute top-0 left-0 right-0 h-12 md:h-20 bg-background" style={{ borderRadius: '0 0 50% 50%' }} />
+            {/* Wave divider at top */}
+            <SectionDivider
+              variant="wave"
+              position="top"
+              fillColor="var(--color-background)"
+              height="md"
+            />
             
             <div className="container mx-auto px-4 pt-8 md:pt-12">
               <div className="text-center">
@@ -384,8 +405,13 @@ export default function HomePage(): ReactElement {
               </div>
             </div>
             
-            {/* Curved bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-12 md:h-20 bg-background" style={{ borderRadius: '50% 50% 0 0' }} />
+            {/* Wave divider at bottom */}
+            <SectionDivider
+              variant="wave"
+              position="bottom"
+              fillColor="var(--color-background)"
+              height="md"
+            />
           </div>
         </section>
 
@@ -465,8 +491,13 @@ export default function HomePage(): ReactElement {
         <section id="contact-preview" className="relative overflow-hidden">
           {/* Section on navy background */}
           <div className="bg-navy relative py-20 md:py-28">
-            {/* Curved top */}
-            <div className="absolute top-0 left-0 right-0 h-12 md:h-20 bg-background" style={{ borderRadius: '0 0 50% 50%' }} />
+            {/* Wave divider at top */}
+            <SectionDivider
+              variant="wave"
+              position="top"
+              fillColor="var(--color-background)"
+              height="md"
+            />
             
             <div className="container mx-auto px-4 pt-8 md:pt-12">
               <div className="text-center">
