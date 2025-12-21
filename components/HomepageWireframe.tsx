@@ -197,8 +197,8 @@ function AboutWireframe(): ReactElement {
         </div>
       </div>
 
-      {/* Content - Sage background with organic divider */}
-      <div className="bg-[#5A7E79] relative py-24">
+      {/* Content - Sage background with organic dividers (ribbon effect) */}
+      <div className="bg-[#5A7E79] relative py-24 pb-32">
         {/* Organic Top Divider */}
         <div className="absolute top-0 left-0 right-0 h-20">
           <svg 
@@ -245,6 +245,20 @@ function AboutWireframe(): ReactElement {
               <div className="w-48 h-12 bg-[#FBF2E9] rounded-xl mx-auto lg:mx-0" />
             </div>
           </div>
+        </div>
+
+        {/* Organic Bottom Divider - creates ribbon effect */}
+        <div className="absolute bottom-0 left-0 right-0 h-20">
+          <svg 
+            className="w-full h-full" 
+            viewBox="0 0 1440 80" 
+            preserveAspectRatio="none"
+          >
+            <path 
+              d="M0,50 C180,70 360,20 540,45 C720,70 900,30 1080,55 C1260,80 1380,40 1440,50 L1440,80 L0,80 Z" 
+              fill="#FBF2E9"
+            />
+          </svg>
         </div>
       </div>
     </section>

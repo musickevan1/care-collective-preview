@@ -287,7 +287,7 @@ export default function HomePage(): ReactElement {
             </div>
           </div>
 
-          {/* Main Content Area with sage-dark background */}
+          {/* Main Content Area with sage-dark background - ribbon effect with curved top and bottom */}
           <div className="bg-sage-dark relative">
             {/* Organic wave divider at top */}
             <SectionDivider
@@ -297,7 +297,7 @@ export default function HomePage(): ReactElement {
               height="lg"
             />
             
-            <div className="container mx-auto px-4 pt-24 md:pt-32 pb-20 md:pb-28">
+            <div className="container mx-auto px-4 pt-24 md:pt-32 pb-28 md:pb-36">
               <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                   
@@ -373,6 +373,14 @@ export default function HomePage(): ReactElement {
                 </div>
               </div>
             </div>
+            
+            {/* Organic wave divider at bottom - creates ribbon effect */}
+            <SectionDivider
+              variant="organic"
+              position="bottom"
+              fillColor="var(--color-background)"
+              height="lg"
+            />
           </div>
         </section>
 
