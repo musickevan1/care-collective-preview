@@ -265,9 +265,9 @@ export default function HomePage(): ReactElement {
                       <Image
                         src="/maureen-portrait.jpg"
                         alt="Dr. Maureen Templeman, CARE Collective Project Creator"
-                        width={200}
-                        height={200}
-                        className="w-[120%] h-[120%] object-cover object-top scale-90"
+                        width={250}
+                        height={250}
+                        className="w-[140%] h-[140%] object-cover object-[center_15%] scale-75"
                         onError={() => setImageError(true)}
                       />
                     )}
