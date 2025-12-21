@@ -6,66 +6,86 @@ import { ReactElement } from 'react'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
 /**
- * Organic blob SVG shapes for hero background
- * Matches the wireframe design with large, soft-edged shapes
+ * Hero background with organic blob shapes matching the wireframe
+ * - Large sage blob extending from top-left corner
+ * - Large dusty-rose blob extending from bottom-right corner
+ * - Layered for watercolor depth effect
  */
-function HeroBlobs(): ReactElement {
+function HeroBackground(): ReactElement {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      {/* Large sage blob - top left area */}
-      <svg
-        className="absolute -top-20 -left-20 w-[600px] h-[600px] md:w-[800px] md:h-[800px] lg:w-[1000px] lg:h-[1000px] hero-blob-float"
-        viewBox="0 0 600 600"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M450,200 Q550,100 500,250 Q600,350 500,400 Q550,500 400,480 Q300,550 200,450 Q100,400 150,300 Q50,200 200,150 Q300,50 400,150 Q450,100 450,200 Z"
-          fill="#7A9E99"
-          fillOpacity="0.08"
-        />
-      </svg>
+      {/* Base cream background */}
+      <div className="absolute inset-0 bg-background" />
       
-      {/* Large dusty rose blob - bottom right area */}
+      {/* SVG blob container - covers full hero area */}
       <svg
-        className="absolute -bottom-32 -right-20 w-[500px] h-[500px] md:w-[700px] md:h-[700px] lg:w-[900px] lg:h-[900px] hero-blob-float-delayed"
-        viewBox="0 0 600 600"
+        viewBox="0 0 1440 900"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        className="absolute inset-0 w-full h-full"
+        preserveAspectRatio="xMidYMid slice"
       >
-        <path
-          d="M300,100 Q450,50 500,200 Q580,300 500,400 Q450,520 300,500 Q150,520 100,400 Q20,300 100,200 Q150,50 300,100 Z"
-          fill="#D8A8A0"
-          fillOpacity="0.07"
-        />
-      </svg>
+        {/* Sage blob - Top Left - extends off screen */}
+        <g className="sage-blob">
+          {/* Primary shape - more visible */}
+          <path
+            d="M-200 -100
+               C -100 100, 50 200, 200 280
+               C 350 360, 480 420, 550 520
+               C 620 620, 580 720, 450 700
+               C 320 680, 200 600, 100 480
+               C 0 360, -80 220, -120 100
+               C -160 -20, -180 -80, -200 -100
+               Z"
+            fill="#7A9E99"
+            fillOpacity="0.35"
+          />
+          {/* Secondary layer for depth/watercolor effect */}
+          <path
+            d="M-150 -50
+               C -50 80, 80 160, 180 240
+               C 280 320, 380 380, 440 460
+               C 500 540, 480 620, 380 620
+               C 280 620, 180 560, 100 460
+               C 20 360, -40 240, -80 140
+               C -120 40, -140 -20, -150 -50
+               Z"
+            fill="#7A9E99"
+            fillOpacity="0.2"
+          />
+        </g>
 
-      {/* Small terracotta accent blob - middle right */}
-      <svg
-        className="absolute top-1/3 right-10 w-[150px] h-[150px] md:w-[200px] md:h-[200px] hero-blob-float-slow"
-        viewBox="0 0 200 200"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M100,30 Q150,20 170,80 Q190,130 150,160 Q100,190 60,150 Q20,110 50,70 Q70,30 100,30 Z"
-          fill="#BC6547"
-          fillOpacity="0.05"
-        />
-      </svg>
-
-      {/* Small sage accent blob - bottom left */}
-      <svg
-        className="absolute bottom-20 left-1/4 w-[120px] h-[120px] md:w-[180px] md:h-[180px] hero-blob-float-delayed"
-        viewBox="0 0 200 200"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M100,40 Q140,30 160,80 Q180,120 140,160 Q100,180 60,140 Q30,100 60,60 Q80,40 100,40 Z"
-          fill="#7A9E99"
-          fillOpacity="0.06"
-        />
+        {/* Dusty Rose blob - Bottom Right - extends off screen */}
+        <g className="rose-blob">
+          {/* Primary shape - more visible */}
+          <path
+            d="M1640 1000
+               C 1540 880, 1420 780, 1280 700
+               C 1140 620, 980 580, 860 520
+               C 740 460, 680 380, 720 300
+               C 760 220, 880 200, 1020 240
+               C 1160 280, 1300 360, 1420 460
+               C 1540 560, 1600 680, 1640 820
+               C 1680 960, 1660 1000, 1640 1000
+               Z"
+            fill="#D8A8A0"
+            fillOpacity="0.4"
+          />
+          {/* Secondary layer for depth */}
+          <path
+            d="M1620 980
+               C 1540 860, 1440 780, 1320 720
+               C 1200 660, 1060 620, 960 560
+               C 860 500, 820 420, 860 360
+               C 900 300, 1000 300, 1120 340
+               C 1240 380, 1360 440, 1460 520
+               C 1560 600, 1600 700, 1620 820
+               C 1640 940, 1620 980, 1620 980
+               Z"
+            fill="#D8A8A0"
+            fillOpacity="0.25"
+          />
+        </g>
       </svg>
     </div>
   )
@@ -77,7 +97,7 @@ export default function Hero(): ReactElement {
   return (
     <section id="home" className="relative pt-24 pb-20 md:pt-28 md:pb-24 bg-background overflow-hidden min-h-[90vh] flex items-center">
       {/* Organic Blob Background */}
-      <HeroBlobs />
+      <HeroBackground />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
