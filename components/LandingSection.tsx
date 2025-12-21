@@ -55,7 +55,7 @@ export default function LandingSection({
                 {(title || subtitle) && (
                     <div className={`mb-12 md:mb-16 ${centeredHeader ? 'text-center' : ''}`}>
                         {title && (
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+                            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
                                 {title}
                             </h2>
                         )}

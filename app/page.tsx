@@ -116,7 +116,7 @@ export default function HomePage(): ReactElement {
                 <li><Link href="#why-join" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Why Join?</Link></li>
                 <li><Link href="#about" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">About Us</Link></li>
                 <li><Link href="#whats-happening" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">What&apos;s Happening</Link></li>
-                <li><Link href="#resources-preview" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base">Resources</Link></li>
+                <li><Link href="#resources-preview" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Resources</Link></li>
                 <li><Link href="#contact-preview" onClick={handleSmoothScroll} className="hover:text-sage-light transition-colors py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap">Contact Us</Link></li>
               </ul>
             </div>
@@ -129,7 +129,7 @@ export default function HomePage(): ReactElement {
                 <>
                   <Link href="/dashboard" className="bg-secondary text-secondary-foreground px-3 xl:px-4 py-2 rounded-lg font-semibold hover:bg-secondary/90 transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-secondary/50 min-h-[44px] flex items-center text-sm xl:text-base">Dashboard</Link>
                   <form action="/api/auth/logout" method="post" className="inline">
-                    <button type="submit" className="px-3 xl:px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 min-h-[44px] flex items-center text-sm xl:text-base text-white focus:ring-[#D8837C]/50" style={{ backgroundColor: '#D8837C' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#C7726C'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#D8837C'}>
+                    <button type="submit" className="px-3 xl:px-4 py-2 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 min-h-[44px] flex items-center text-sm xl:text-base text-white bg-[#D8837C] hover:bg-[#C7726C] focus:ring-[#D8837C]/50">
                       Sign Out
                     </button>
                   </form>
@@ -166,7 +166,7 @@ export default function HomePage(): ReactElement {
               role="region"
               aria-labelledby="how-it-works-heading"
             >
-              <h3 id="how-it-works-heading" className="text-2xl font-bold text-foreground mb-6 text-center">How It Works</h3>
+              <h3 id="how-it-works-heading" className="text-[22px] md:text-2xl lg:text-[26px] font-bold text-foreground mb-6 text-center">How It Works</h3>
               <div className="space-y-6">
                 {HOW_IT_WORKS_STEPS.map((step) => (
                   <Step key={step.number} {...step} />
@@ -186,10 +186,11 @@ export default function HomePage(): ReactElement {
               role="region"
               aria-labelledby="why-join-heading"
             >
-              <h3 id="why-join-heading" className="text-2xl font-bold text-foreground mb-4 text-center">Why Join?</h3>
+              <h3 id="why-join-heading" className="text-[22px] md:text-2xl lg:text-[26px] font-bold text-foreground mb-4 text-center">Why Join?</h3>
               <p className="text-muted-foreground text-center mb-6 text-sm">
-                Are you caring for an aging loved one? Connect with other caregivers who understand caregiving.
+                Are you caring for an aging loved one? By joining the CARE Collective, you can connect with other caregivers who understand caregiving and are ready to help and be helped.
               </p>
+              <p className="text-muted-foreground text-sm font-semibold mb-4">As a member, you&apos;ll have access to:</p>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <Handshake className="w-5 h-5 text-sage-dark flex-shrink-0 mt-0.5" aria-hidden="true" />
@@ -209,7 +210,7 @@ export default function HomePage(): ReactElement {
                   <GraduationCap className="w-5 h-5 text-sage-dark flex-shrink-0 mt-0.5" aria-hidden="true" />
                   <div>
                     <strong className="text-foreground text-sm">Learning opportunities</strong>
-                    <span className="text-muted-foreground text-sm block">Workshops on topics chosen by members.</span>
+                    <span className="text-muted-foreground text-sm block">The Collective offers workshops on topics chosen by members.</span>
                   </div>
                 </li>
               </ul>
@@ -227,7 +228,7 @@ export default function HomePage(): ReactElement {
               role="region"
               aria-labelledby="kinds-of-help-heading"
             >
-              <h3 id="kinds-of-help-heading" className="text-2xl font-bold text-foreground mb-4 text-center">Kinds of Help</h3>
+              <h3 id="kinds-of-help-heading" className="text-[22px] md:text-2xl lg:text-[26px] font-bold text-foreground mb-4 text-center">Kinds of Help</h3>
               <p className="text-muted-foreground text-center mb-6 text-sm">Members help each other with:</p>
               <ul className="space-y-3">
                 {HELP_CATEGORIES.map(({ icon: Icon, label }) => (
@@ -255,7 +256,7 @@ export default function HomePage(): ReactElement {
                   <HandHelping className="w-12 h-12 text-sage-dark" aria-label="Who we are" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
+              <h3 className="text-[22px] md:text-2xl lg:text-[26px] font-bold text-foreground mb-4 font-heading text-center">Who We Are</h3>
               <div className="flex flex-col md:flex-row gap-8 items-center max-w-4xl mx-auto">
                 <div className="flex-shrink-0 text-center">
                   <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-sage-light/30 border-4 border-sage/20 flex items-center justify-center overflow-hidden mx-auto shadow-md">

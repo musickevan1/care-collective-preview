@@ -48,7 +48,7 @@ export default function Hero(): ReactElement {
 
           {/* Main Headline with Gradient Effect */}
           <div className="mb-6 animate-fade-in-up delay-200">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black leading-tight">
+            <h1 className="text-5xl md:text-7xl lg:text-[108px] font-black leading-tight">
               <span className="bg-gradient-to-r from-sage via-dusty-rose-dark to-terracotta bg-clip-text text-transparent animate-gradient-x">
                 Southwest Missouri
               </span>
@@ -61,7 +61,7 @@ export default function Hero(): ReactElement {
 
           {/* Subtitle - CARE Acronym */}
           <div className="mb-8 animate-fade-in-up delay-300">
-            <p className="text-lg md:text-xl lg:text-2xl text-sage-dark mb-4 font-medium tracking-wide">
+            <p className="text-xl md:text-2xl text-sage-dark mb-4 font-semibold tracking-wide">
               <span className="font-bold">C</span>aregiver{' '}
               <span className="font-bold">A</span>ssistance and{' '}
               <span className="font-bold">R</span>esource{' '}
