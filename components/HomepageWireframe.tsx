@@ -22,17 +22,17 @@ import { ReactElement } from 'react'
 // ============================================
 function HeroWireframe(): ReactElement {
   return (
-    <section className="relative min-h-[85vh] bg-[#FBF2E9] overflow-hidden">
-      {/* Background Blobs - contained within hero */}
+    <section className="relative min-h-[85vh] bg-[#FBF2E9]">
+      {/* Background Blobs - overflow visible to blend into next section */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Large sage blob - top left
+        {/* Large sage blob - top left, extends into next section
             Mobile: smaller, more contained
-            Desktop: larger, extends off-screen */}
+            Desktop: larger, extends off-screen and into next section */}
         <div 
           className="absolute bg-[#7A9E99] opacity-20 rounded-[40%_60%_70%_30%/40%_50%_60%_50%]
-            -top-[5%] -left-[15%] w-[70%] h-[50%]
-            sm:-top-[8%] sm:-left-[12%] sm:w-[60%] sm:h-[60%]
-            md:-top-[10%] md:-left-[10%] md:w-[55%] md:h-[70%]"
+            -top-[5%] -left-[15%] w-[70%] h-[65%]
+            sm:-top-[8%] sm:-left-[12%] sm:w-[60%] sm:h-[75%]
+            md:-top-[10%] md:-left-[10%] md:w-[55%] md:h-[85%]"
           style={{ transform: 'rotate(-10deg)' }}
         />
         
@@ -87,8 +87,8 @@ function HeroWireframe(): ReactElement {
 function WhatIsCareWireframe(): ReactElement {
   return (
     <section className="relative">
-      {/* Section Title Area - Cream background */}
-      <div className="bg-[#FBF2E9] py-16">
+      {/* Section Title Area - transparent to allow Hero blob to show through */}
+      <div className="py-16 relative z-10">
         <div className="flex justify-center">
           <div className="w-80 h-10 bg-gray-300 rounded" />
         </div>
