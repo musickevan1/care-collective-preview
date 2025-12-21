@@ -22,8 +22,8 @@ import { ReactElement } from 'react'
 // ============================================
 function HeroWireframe(): ReactElement {
   return (
-    <section className="relative min-h-[85vh] bg-[#FBF2E9]">
-      {/* Background Blobs - NO overflow-hidden so blobs can flow into next section */}
+    <section className="relative min-h-[85vh] bg-[#FBF2E9] overflow-hidden">
+      {/* Background Blobs - contained within hero */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Large sage blob - top left
             Mobile: smaller, more contained
@@ -36,13 +36,24 @@ function HeroWireframe(): ReactElement {
           style={{ transform: 'rotate(-10deg)' }}
         />
         
+        {/* Dusty rose blob - bottom right corner
+            Mobile: subtle corner accent
+            Desktop: larger, more prominent */}
+        <div 
+          className="absolute bg-[#D8A8A0] rounded-[60%_40%_30%_70%/50%_60%_40%_50%]
+            bottom-[-5%] right-[-10%] w-[50%] h-[35%] opacity-15
+            sm:bottom-[-8%] sm:right-[-8%] sm:w-[45%] sm:h-[40%] sm:opacity-20
+            md:bottom-[-10%] md:right-[-5%] md:w-[40%] md:h-[45%] md:opacity-25"
+          style={{ transform: 'rotate(10deg)' }}
+        />
+        
         {/* Small tan accent - right side middle
             Hidden on mobile, visible on tablet+ */}
         <div 
-          className="absolute bg-[#C39778] opacity-20 rounded-[50%_50%_50%_50%/60%_60%_40%_40%]
-            hidden sm:block
-            sm:top-[35%] sm:right-[3%] sm:w-[18%] sm:h-[15%]
-            md:top-[30%] md:right-[5%] md:w-[15%] md:h-[20%]"
+          className="absolute bg-[#C39778] opacity-15 rounded-[50%_50%_50%_50%/60%_60%_40%_40%]
+            hidden md:block
+            md:top-[25%] md:right-[8%] md:w-[12%] md:h-[15%]
+            lg:top-[30%] lg:right-[5%] lg:w-[15%] lg:h-[20%] lg:opacity-20"
           style={{ transform: 'rotate(-5deg)' }}
         />
       </div>
@@ -67,25 +78,6 @@ function HeroWireframe(): ReactElement {
         <div className="w-44 h-12 bg-gray-300 rounded-full" />
       </div>
     </section>
-  )
-}
-
-// ============================================
-// FLOATING DUSTY ROSE BLOB (spans Hero + What is CARE sections)
-// ============================================
-function FloatingDustyRoseBlob(): ReactElement {
-  return (
-    <>
-      {/* Mobile: smaller blob, positioned differently */}
-      <div 
-        className="absolute bg-[#D8A8A0] opacity-20 pointer-events-none z-0 rounded-[60%_40%_30%_70%/60%_30%_70%_40%]
-          right-[-20%] w-[60%] h-[300px] top-[50vh]
-          sm:right-[-15%] sm:w-[50%] sm:h-[400px] sm:top-[55vh] sm:opacity-25
-          md:right-[-10%] md:w-[45%] md:h-[500px] md:top-[58vh]
-          lg:h-[600px] lg:top-[60vh]"
-        style={{ transform: 'rotate(15deg)' }}
-      />
-    </>
   )
 }
 
@@ -510,13 +502,10 @@ function HeaderWireframe(): ReactElement {
 // ============================================
 export default function HomepageWireframe(): ReactElement {
   return (
-    <div className="min-h-screen bg-[#FBF2E9] relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#FBF2E9]">
       <HeaderWireframe />
       
-      {/* Floating Dusty Rose Blob - spans Hero and What is CARE sections */}
-      <FloatingDustyRoseBlob />
-      
-      <main className="pt-0 relative"> {/* No pt needed, Hero handles its own spacing */}
+      <main className="pt-0"> {/* No pt needed, Hero handles its own spacing */}
         <HeroWireframe />
         <WhatIsCareWireframe />
         <AboutWireframe />
