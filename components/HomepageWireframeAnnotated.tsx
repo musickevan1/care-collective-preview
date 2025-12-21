@@ -56,12 +56,32 @@ function ShapeLabel({
 }
 
 // ============================================
+// FLOATING DUSTY ROSE BLOB (annotated)
+// ============================================
+function FloatingDustyRoseBlobAnnotated(): ReactElement {
+  return (
+    <div className="relative">
+      <div 
+        className="absolute right-[-10%] w-[45%] h-[600px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-[#D8A8A0] opacity-25 pointer-events-none z-0"
+        style={{ 
+          transform: 'rotate(15deg)',
+          top: '60vh',
+        }}
+      />
+      <ShapeLabel className="top-[65vh] right-[15%]">
+        DUSTY ROSE BLOB (floating): #D8A8A0 @ 25%, top: 60vh, spans sections
+      </ShapeLabel>
+    </div>
+  )
+}
+
+// ============================================
 // HERO SECTION WITH ANNOTATIONS
 // ============================================
 function HeroWireframeAnnotated(): ReactElement {
   return (
-    <section className="relative min-h-[85vh] bg-[#FBF2E9] overflow-hidden">
-      <Annotation>HERO - bg: #FBF2E9 (cream)</Annotation>
+    <section className="relative min-h-[85vh] bg-[#FBF2E9]">
+      <Annotation>HERO - bg: #FBF2E9 (cream), NO overflow-hidden</Annotation>
       
       {/* Background Blobs with annotations */}
       <div className="absolute inset-0 pointer-events-none">
@@ -73,17 +93,6 @@ function HeroWireframeAnnotated(): ReactElement {
           />
           <ShapeLabel className="top-20 left-20">
             SAGE BLOB: #7A9E99 @ 20% opacity, rotate(-10deg)
-          </ShapeLabel>
-        </div>
-        
-        {/* Dusty rose blob - bottom right */}
-        <div className="relative">
-          <div 
-            className="absolute -bottom-[15%] -right-[10%] w-[40%] h-[50%] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-[#D8A8A0] opacity-25"
-            style={{ transform: 'rotate(15deg)' }}
-          />
-          <ShapeLabel className="bottom-40 right-20">
-            DUSTY ROSE: #D8A8A0 @ 25% opacity, rotate(15deg)
           </ShapeLabel>
         </div>
         
@@ -448,10 +457,13 @@ function HeaderWireframeAnnotated(): ReactElement {
 // ============================================
 export default function HomepageWireframeAnnotated(): ReactElement {
   return (
-    <div className="min-h-screen bg-[#FBF2E9]">
+    <div className="min-h-screen bg-[#FBF2E9] relative overflow-x-hidden">
       <HeaderWireframeAnnotated />
       
-      <main>
+      {/* Floating Dusty Rose Blob - spans Hero and What is CARE sections */}
+      <FloatingDustyRoseBlobAnnotated />
+      
+      <main className="relative">
         <HeroWireframeAnnotated />
         <WhatIsCareWireframeAnnotated />
         <AboutWireframeAnnotated />

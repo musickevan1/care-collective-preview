@@ -22,19 +22,13 @@ import { ReactElement } from 'react'
 // ============================================
 function HeroWireframe(): ReactElement {
   return (
-    <section className="relative min-h-[85vh] bg-[#FBF2E9] overflow-hidden">
-      {/* Background Blobs */}
+    <section className="relative min-h-[85vh] bg-[#FBF2E9]">
+      {/* Background Blobs - NO overflow-hidden so blobs can flow into next section */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Large sage blob - top left */}
         <div 
           className="absolute -top-[10%] -left-[10%] w-[55%] h-[70%] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-[#7A9E99] opacity-20"
           style={{ transform: 'rotate(-10deg)' }}
-        />
-        
-        {/* Dusty rose blob - bottom right */}
-        <div 
-          className="absolute -bottom-[15%] -right-[10%] w-[40%] h-[50%] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-[#D8A8A0] opacity-25"
-          style={{ transform: 'rotate(15deg)' }}
         />
         
         {/* Small tan accent - right side middle */}
@@ -64,6 +58,21 @@ function HeroWireframe(): ReactElement {
         <div className="w-44 h-12 bg-gray-300 rounded-full" />
       </div>
     </section>
+  )
+}
+
+// ============================================
+// FLOATING DUSTY ROSE BLOB (spans Hero + What is CARE sections)
+// ============================================
+function FloatingDustyRoseBlob(): ReactElement {
+  return (
+    <div 
+      className="absolute right-[-10%] w-[45%] h-[600px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-[#D8A8A0] opacity-25 pointer-events-none z-0"
+      style={{ 
+        transform: 'rotate(15deg)',
+        top: '60vh', // Positioned to span across hero bottom and into next section
+      }}
+    />
   )
 }
 
@@ -488,10 +497,13 @@ function HeaderWireframe(): ReactElement {
 // ============================================
 export default function HomepageWireframe(): ReactElement {
   return (
-    <div className="min-h-screen bg-[#FBF2E9]">
+    <div className="min-h-screen bg-[#FBF2E9] relative overflow-x-hidden">
       <HeaderWireframe />
       
-      <main className="pt-0"> {/* No pt needed, Hero handles its own spacing */}
+      {/* Floating Dusty Rose Blob - spans Hero and What is CARE sections */}
+      <FloatingDustyRoseBlob />
+      
+      <main className="pt-0 relative"> {/* No pt needed, Hero handles its own spacing */}
         <HeroWireframe />
         <WhatIsCareWireframe />
         <AboutWireframe />
