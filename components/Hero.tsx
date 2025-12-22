@@ -21,9 +21,9 @@ function HeroBackground(): ReactElement {
         style={{ transform: 'rotate(-10deg)' }}
       />
       
-      {/* Dusty rose blob - bottom right - positioned to stay visible and rounded */}
+      {/* Dusty rose blob - bottom right - positioned higher to stay fully visible and rounded */}
       <div 
-        className="absolute bottom-[5%] right-[3%] w-[40%] h-[45%] rounded-[50%_50%_50%_50%/50%_50%_50%_50%] bg-dusty-rose opacity-[0.20]"
+        className="absolute bottom-[15%] right-[5%] w-[35%] h-[40%] rounded-[50%_50%_50%_50%/50%_50%_50%_50%] bg-dusty-rose opacity-[0.20]"
         style={{ transform: 'rotate(10deg)' }}
       />
       
@@ -101,20 +101,38 @@ export default function Hero(): ReactElement {
             
             {/* Left: Text Content */}
             <div className="flex-1 text-center lg:text-left">
-              {/* Main Headline - EXTRA LARGE & BOLD */}
-              <div className="mb-3 md:mb-4 animate-fade-in-up">
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[100px] xl:text-[140px] 2xl:text-[180px] font-black leading-[0.95] tracking-tighter">
+              {/* Main Headline - DRAMATICALLY LARGE & BOLD */}
+              <div className="mb-4 md:mb-6 animate-fade-in-up">
+                <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[120px] xl:text-[160px] 2xl:text-[200px] font-black leading-[0.9] tracking-tighter">
                   <span className="text-brown block">
                     Southwest Missouri
                   </span>
-                  <span className="text-sage-dark block mt-1">
+                  <span className="text-sage-dark block mt-1 lg:mt-2">
                     CARE Collective
                   </span>
                 </h1>
               </div>
 
-              {/* CTA Button - Moved up for visual priority */}
-              <div className="mb-5 md:mb-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+              {/* CARE Acronym */}
+              <div className="mb-4 md:mb-5 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                <p className="text-xl sm:text-2xl md:text-3xl lg:text-[28px] xl:text-[32px] text-brown/90 font-semibold tracking-wide">
+                  <span className="font-bold text-sage-dark">C</span>aregiver{' '}
+                  <span className="font-bold text-sage-dark">A</span>ssistance and{' '}
+                  <span className="font-bold text-sage-dark">R</span>esource{' '}
+                  <span className="font-bold text-sage-dark">E</span>xchange
+                </p>
+              </div>
+
+              {/* Description */}
+              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-[22px] xl:text-2xl text-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                  A network of family caregivers in Southwest Missouri who support 
+                  each other through practical help and shared resources.
+                </p>
+              </div>
+
+              {/* CTA Button - At the bottom for clear call to action */}
+              <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
                 <Link 
                   href="/signup" 
                   className="group w-full sm:w-auto inline-flex items-center justify-center bg-sage text-white px-12 py-6 md:px-16 md:py-7 text-2xl md:text-3xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 min-h-[72px] md:min-h-[80px]"
@@ -130,24 +148,6 @@ export default function Hero(): ReactElement {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </Link>
-              </div>
-
-              {/* CARE Acronym */}
-              <div className="mb-4 md:mb-5 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                <p className="text-xl sm:text-2xl md:text-3xl lg:text-[28px] xl:text-[32px] text-brown/90 font-semibold tracking-wide">
-                  <span className="font-bold text-sage-dark">C</span>aregiver{' '}
-                  <span className="font-bold text-sage-dark">A</span>ssistance and{' '}
-                  <span className="font-bold text-sage-dark">R</span>esource{' '}
-                  <span className="font-bold text-sage-dark">E</span>xchange
-                </p>
-              </div>
-
-              {/* Description */}
-              <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-[22px] xl:text-2xl text-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                  A network of family caregivers in Southwest Missouri who support 
-                  each other through practical help and shared resources.
-                </p>
               </div>
             </div>
             
