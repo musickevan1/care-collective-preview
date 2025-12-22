@@ -49,7 +49,7 @@ function HeroImage(): ReactElement {
   return (
     <div className="relative flex-shrink-0">
       {/* Outer decorative ring - dusty rose gradient */}
-      <div className="w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-[340px] xl:h-[340px] rounded-full p-2.5 md:p-3 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30 shadow-2xl">
+      <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[360px] lg:h-[360px] xl:w-[400px] xl:h-[400px] rounded-full p-2.5 md:p-3 lg:p-4 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30 shadow-2xl">
         {/* Inner image container */}
         <div className="w-full h-full rounded-full overflow-hidden bg-cream shadow-inner">
           {imageError ? (
@@ -88,7 +88,7 @@ export default function Hero(): ReactElement {
   return (
     <section 
       id="home" 
-      className="relative pt-20 pb-12 md:pt-24 md:pb-16 lg:pt-28 lg:pb-20 bg-background min-h-[90vh] flex items-center"
+      className="relative pt-20 pb-8 md:pt-24 md:pb-12 lg:pt-28 lg:pb-16 bg-background min-h-[80vh] lg:min-h-[85vh] flex items-center"
     >
       {/* Organic Blob Background */}
       <HeroBackground />
@@ -96,25 +96,25 @@ export default function Hero(): ReactElement {
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Split Layout: Text Left, Image Right */}
-          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16 xl:gap-20">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 xl:gap-16">
             
             {/* Left: Text Content */}
             <div className="flex-1 text-center lg:text-left">
-              {/* Main Headline */}
-              <div className="mb-5 md:mb-6 animate-fade-in-up">
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[64px] xl:text-7xl font-bold leading-[1.1] tracking-tight">
+              {/* Main Headline - LARGER */}
+              <div className="mb-4 md:mb-5 animate-fade-in-up">
+                <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl font-bold leading-[1.05] tracking-tight">
                   <span className="text-brown block">
                     Southwest Missouri
                   </span>
-                  <span className="text-sage-dark block mt-1">
+                  <span className="text-sage-dark block mt-1 md:mt-2">
                     CARE Collective
                   </span>
                 </h1>
               </div>
 
-              {/* CARE Acronym */}
-              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                <p className="text-lg sm:text-xl md:text-2xl text-brown/90 font-semibold tracking-wide">
+              {/* CARE Acronym - LARGER */}
+              <div className="mb-5 md:mb-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                <p className="text-xl sm:text-2xl md:text-3xl lg:text-3xl text-brown/90 font-semibold tracking-wide">
                   <span className="font-bold text-sage-dark">C</span>aregiver{' '}
                   <span className="font-bold text-sage-dark">A</span>ssistance and{' '}
                   <span className="font-bold text-sage-dark">R</span>esource{' '}
@@ -122,23 +122,23 @@ export default function Hero(): ReactElement {
                 </p>
               </div>
 
-              {/* Description */}
-              <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                <p className="text-base sm:text-lg md:text-xl text-foreground/80 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              {/* Description - LARGER */}
+              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl text-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                   A network of family caregivers in Southwest Missouri who support 
                   each other through practical help and shared resources.
                 </p>
               </div>
 
-              {/* CTA Button */}
+              {/* CTA Button - LARGER */}
               <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
                 <Link 
                   href="/signup" 
-                  className="group inline-flex items-center justify-center bg-sage text-white px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 min-h-[56px] md:min-h-[64px]"
+                  className="group inline-flex items-center justify-center bg-sage text-white px-10 py-5 md:px-12 md:py-6 text-xl md:text-2xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 min-h-[60px] md:min-h-[72px]"
                 >
                   <span>Join Our Community</span>
                   <svg 
-                    className="w-5 h-5 md:w-6 md:h-6 ml-2.5 group-hover:translate-x-1 transition-transform duration-300" 
+                    className="w-6 h-6 md:w-7 md:h-7 ml-3 group-hover:translate-x-1 transition-transform duration-300" 
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -151,7 +151,7 @@ export default function Hero(): ReactElement {
             </div>
             
             {/* Right: Circular Image */}
-            <div className="animate-fade-in-up lg:animate-fade-in-right" style={{ animationDelay: '150ms' }}>
+            <div className="animate-fade-in-up lg:animate-fade-in-right flex-shrink-0" style={{ animationDelay: '150ms' }}>
               <HeroImage />
             </div>
           </div>
