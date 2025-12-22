@@ -101,15 +101,15 @@ export default function Hero(): ReactElement {
             
             {/* Left: Text Content */}
             <div className="flex-1 text-center lg:text-left">
-              {/* Main Headline - DRAMATICALLY LARGE & BOLD */}
+              {/* Main Headline - Two-part with different styling */}
               <div className="mb-4 md:mb-6 animate-fade-in-up">
-                <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[120px] xl:text-[160px] 2xl:text-[200px] font-black leading-[0.9] tracking-tighter">
-                  <span className="text-brown block">
-                    Southwest Missouri
-                  </span>
-                  <span className="text-sage-dark block mt-1 lg:mt-2">
-                    CARE Collective
-                  </span>
+                {/* "Southwest Missouri" - smaller, lighter weight */}
+                <p className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-brown font-medium tracking-tight mb-1 lg:mb-2">
+                  Southwest Missouri
+                </p>
+                {/* "CARE Collective" - MASSIVE, ultra bold, sans-serif for impact */}
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[140px] xl:text-[180px] 2xl:text-[220px] font-black leading-[0.85] tracking-tighter text-sage-dark uppercase">
+                  CARE Collective
                 </h1>
               </div>
 
@@ -131,15 +131,15 @@ export default function Hero(): ReactElement {
                 </p>
               </div>
 
-              {/* CTA Button - At the bottom for clear call to action */}
+              {/* CTA Button - Smaller, refined sizing */}
               <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
                 <Link 
                   href="/signup" 
-                  className="group w-full sm:w-auto inline-flex items-center justify-center bg-sage text-white px-12 py-6 md:px-16 md:py-7 text-2xl md:text-3xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 min-h-[72px] md:min-h-[80px]"
+                  className="group w-full sm:w-auto inline-flex items-center justify-center bg-sage text-white px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 min-h-[56px] md:min-h-[60px]"
                 >
                   <span>Join Our Community</span>
                   <svg 
-                    className="w-7 h-7 md:w-8 md:h-8 ml-3 group-hover:translate-x-1 transition-transform duration-300" 
+                    className="w-5 h-5 md:w-6 md:h-6 ml-2 group-hover:translate-x-1 transition-transform duration-300" 
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
