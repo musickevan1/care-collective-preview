@@ -49,7 +49,8 @@ function HeroImage(): ReactElement {
   return (
     <div className="relative flex-shrink-0">
       {/* Outer decorative ring - dusty rose gradient */}
-      <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[360px] lg:h-[360px] xl:w-[400px] xl:h-[400px] rounded-full p-2.5 md:p-3 lg:p-4 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30 shadow-2xl">
+      {/* Mobile-first sizing: smaller on mobile, larger on desktop */}
+      <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-[320px] lg:h-[320px] xl:w-[360px] xl:h-[360px] 2xl:w-[400px] 2xl:h-[400px] rounded-full p-2 sm:p-2.5 md:p-3 lg:p-4 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30 shadow-2xl">
         {/* Inner image container */}
         <div className="w-full h-full rounded-full overflow-hidden bg-cream shadow-inner">
           {imageError ? (
@@ -88,21 +89,21 @@ export default function Hero(): ReactElement {
   return (
     <section 
       id="home" 
-      className="relative pt-20 pb-4 md:pt-24 md:pb-6 lg:pt-28 lg:pb-8 bg-background min-h-[75vh] lg:min-h-[80vh] flex items-center overflow-hidden"
+      className="relative py-12 md:py-8 lg:pt-28 lg:pb-8 bg-background min-h-[auto] lg:min-h-[80vh] flex items-center overflow-hidden"
     >
       {/* Organic Blob Background */}
       <HeroBackground />
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
-          {/* Split Layout: Text Left, Image Right */}
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 xl:gap-16">
+          {/* Split Layout: Image first on mobile (flex-col-reverse), Text Left on desktop */}
+          <div className="flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-12 xl:gap-16">
             
             {/* Left: Text Content */}
             <div className="flex-1 text-center lg:text-left">
               {/* Main Headline - EXTRA LARGE & BOLD */}
               <div className="mb-3 md:mb-4 animate-fade-in-up">
-                <h1 className="font-display text-6xl sm:text-7xl md:text-8xl lg:text-[90px] xl:text-[110px] 2xl:text-[120px] font-extrabold leading-[0.95] tracking-tight">
+                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[100px] xl:text-[140px] 2xl:text-[180px] font-black leading-[0.95] tracking-tighter">
                   <span className="text-brown block">
                     Southwest Missouri
                   </span>
@@ -112,33 +113,15 @@ export default function Hero(): ReactElement {
                 </h1>
               </div>
 
-              {/* CARE Acronym */}
-              <div className="mb-4 md:mb-5 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                <p className="text-xl sm:text-2xl md:text-3xl lg:text-[28px] xl:text-[32px] text-brown/90 font-semibold tracking-wide">
-                  <span className="font-bold text-sage-dark">C</span>aregiver{' '}
-                  <span className="font-bold text-sage-dark">A</span>ssistance and{' '}
-                  <span className="font-bold text-sage-dark">R</span>esource{' '}
-                  <span className="font-bold text-sage-dark">E</span>xchange
-                </p>
-              </div>
-
-              {/* Description */}
-              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-[22px] xl:text-2xl text-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                  A network of family caregivers in Southwest Missouri who support 
-                  each other through practical help and shared resources.
-                </p>
-              </div>
-
-              {/* CTA Button */}
-              <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+              {/* CTA Button - Moved up for visual priority */}
+              <div className="mb-5 md:mb-6 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
                 <Link 
                   href="/signup" 
-                  className="group inline-flex items-center justify-center bg-sage text-white px-10 py-5 md:px-12 md:py-6 text-xl md:text-2xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 min-h-[60px] md:min-h-[72px]"
+                  className="group w-full sm:w-auto inline-flex items-center justify-center bg-sage text-white px-12 py-6 md:px-16 md:py-7 text-2xl md:text-3xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 min-h-[72px] md:min-h-[80px]"
                 >
                   <span>Join Our Community</span>
                   <svg 
-                    className="w-6 h-6 md:w-7 md:h-7 ml-3 group-hover:translate-x-1 transition-transform duration-300" 
+                    className="w-7 h-7 md:w-8 md:h-8 ml-3 group-hover:translate-x-1 transition-transform duration-300" 
                     fill="none" 
                     stroke="currentColor" 
                     viewBox="0 0 24 24"
@@ -148,9 +131,27 @@ export default function Hero(): ReactElement {
                   </svg>
                 </Link>
               </div>
+
+              {/* CARE Acronym */}
+              <div className="mb-4 md:mb-5 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                <p className="text-xl sm:text-2xl md:text-3xl lg:text-[28px] xl:text-[32px] text-brown/90 font-semibold tracking-wide">
+                  <span className="font-bold text-sage-dark">C</span>aregiver{' '}
+                  <span className="font-bold text-sage-dark">A</span>ssistance and{' '}
+                  <span className="font-bold text-sage-dark">R</span>esource{' '}
+                  <span className="font-bold text-sage-dark">E</span>xchange
+                </p>
+              </div>
+
+              {/* Description */}
+              <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-[22px] xl:text-2xl text-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                  A network of family caregivers in Southwest Missouri who support 
+                  each other through practical help and shared resources.
+                </p>
+              </div>
             </div>
             
-            {/* Right: Circular Image */}
+            {/* Right: Circular Image - appears first on mobile due to flex-col-reverse */}
             <div className="animate-fade-in-up lg:animate-fade-in-right flex-shrink-0" style={{ animationDelay: '150ms' }}>
               <HeroImage />
             </div>
