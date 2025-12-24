@@ -116,12 +116,22 @@ export default function Hero(): ReactElement {
                 <p className="text-lg sm:text-xl md:text-2xl text-brown/70 font-medium tracking-wide mb-2 md:mb-3">
                   Southwest Missouri
                 </p>
-                {/* "CARE Collective" - Two-tone split colors */}
+                {/* "CARE Collective" - Gradient CARE, light COLLECTIVE */}
                 <AnimatedGradientText />
               </div>
 
+              {/* CARE Acronym - bolded letters */}
+              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                <p className="text-base sm:text-lg md:text-xl text-brown/80 font-normal tracking-wide">
+                  <span className="font-bold text-sage">C</span>aregiver{' '}
+                  <span className="font-bold text-sage">A</span>ssistance and{' '}
+                  <span className="font-bold text-sage">R</span>esource{' '}
+                  <span className="font-bold text-sage">E</span>xchange
+                </p>
+              </div>
+
               {/* Description - plain text, no card */}
-              <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+              <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                 <p className="text-base sm:text-lg md:text-xl text-brown/70 max-w-xl mx-auto leading-relaxed">
                   A network of family caregivers in Southwest Missouri who support
                   each other through practical help and shared resources.
