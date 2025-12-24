@@ -686,3 +686,19 @@ p {
     fill: CanvasText;
   }
 }
+
+/* ========================================
+   SCROLL PROGRESS BAR
+   Homepage - visual indicator of scroll position
+   ======================================== */
+
+.scroll-progress-bar {
+  transition: width 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* Hide in reduced motion mode */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress-bar {
+    display: none;
+  }
+}

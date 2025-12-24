@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useState, useEffect } from 'react'
 import {
   Users,
   Hand,
@@ -89,6 +89,20 @@ export default function HomePage(): ReactElement {
   const { isAuthenticated, displayName, isLoading } = useAuthNavigation()
   const handleSmoothScroll = useSmoothScroll()
   const [imageError, setImageError] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
+
+  // Track scroll progress for progress bar
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      const progress = (scrollTop / docHeight) * 100
+      setScrollProgress(Math.min(progress, 100))
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -97,7 +111,15 @@ export default function HomePage(): ReactElement {
         <nav className="container mx-auto max-w-7xl">
           <div className="flex items-center justify-between h-16 px-4 sm:px-6">
             {/* Brand */}
-            <Link href="/" className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <Link
+              href="#home"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 sm:gap-3 flex-shrink-0"
+              aria-label="Return to top"
+            >
               <Image
                 src="/logo-textless.png"
                 alt="CARE Collective Logo"
@@ -149,6 +171,16 @@ export default function HomePage(): ReactElement {
       </header>
 
       <main id="main-content" tabIndex={-1} className="flex-1">
+        {/* Scroll Progress Bar */}
+        <div
+          className="fixed top-16 left-0 right-0 h-1 bg-gradient-to-r from-sage via-dusty-rose to-sage z-[40] transition-all duration-300"
+          style={{
+            width: `${scrollProgress}%`,
+            opacity: scrollProgress > 5 ? 1 : 0,
+          }}
+          aria-hidden="true"
+          role="presentation"
+        />
         {/* Enhanced Hero Section */}
         <Hero />
 
@@ -157,7 +189,7 @@ export default function HomePage(): ReactElement {
           {/* Section Title - transparent to allow Hero blob to show through */}
           <div className="py-16 md:py-20 relative z-10">
             <div className="container mx-auto px-4">
-              <h2 className="text-4xl sm:text-5xl md:text-[48px] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
                 What is CARE Collective?
               </h2>
             </div>
@@ -167,10 +199,10 @@ export default function HomePage(): ReactElement {
           <div className="bg-dusty-rose/20 relative py-16 md:py-24">
             {/* Wave divider at top */}
             <SectionDivider
-              variant="curve"
+              variant="wave"
               position="top"
               fillColor="var(--color-background)"
-              height="md"
+              height="lg"
             />
             
             <div className="container mx-auto px-4 pt-8 md:pt-12">
@@ -178,7 +210,7 @@ export default function HomePage(): ReactElement {
                 {/* Box 1: How It Works */}
                 <div
                   id="how-it-works"
-                  className="bg-white rounded-3xl shadow-lg p-8 md:p-10 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                  className="bg-white rounded-3xl shadow-lg p-8 md:p-10 hover:shadow-2xl hover:-translate-y-2 hover:bg-sage/2 transition-all duration-300"
                   role="region"
                   aria-labelledby="how-it-works-heading"
                 >
@@ -198,7 +230,7 @@ export default function HomePage(): ReactElement {
                 {/* Box 2: Why Join? */}
                 <div
                   id="why-join"
-                  className="bg-white rounded-3xl shadow-lg p-8 md:p-10 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 ring-2 ring-sage/20"
+                  className="bg-white rounded-3xl shadow-lg p-8 md:p-10 hover:shadow-2xl hover:-translate-y-2 hover:bg-sage/2 transition-all duration-300 ring-2 ring-sage/20"
                   role="region"
                   aria-labelledby="why-join-heading"
                 >
@@ -246,7 +278,7 @@ export default function HomePage(): ReactElement {
                 {/* Box 3: Kinds of Help */}
                 <div
                   id="kinds-of-help"
-                  className="bg-white rounded-3xl shadow-lg p-8 md:p-10 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+                  className="bg-white rounded-3xl shadow-lg p-8 md:p-10 hover:shadow-2xl hover:-translate-y-2 hover:bg-sage/2 transition-all duration-300"
                   role="region"
                   aria-labelledby="kinds-of-help-heading"
                 >
@@ -271,7 +303,7 @@ export default function HomePage(): ReactElement {
               variant="curve"
               position="bottom"
               fillColor="var(--color-background)"
-              height="md"
+              height="lg"
             />
           </div>
         </section>
@@ -279,9 +311,9 @@ export default function HomePage(): ReactElement {
         {/* About Section - Inspired by Wireframe */}
         <section id="about" className="relative overflow-hidden">
           {/* Section Title on cream background */}
-          <div className="bg-background py-16 md:py-20">
+          <div className="bg-background py-16 md:py-20 relative z-10">
             <div className="container mx-auto px-4">
-              <h2 className="text-4xl sm:text-5xl md:text-[48px] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
                 About CARE Collective
               </h2>
             </div>
@@ -389,7 +421,7 @@ export default function HomePage(): ReactElement {
           {/* Section Title on cream background */}
           <div className="bg-background py-16 md:py-20">
             <div className="container mx-auto px-4">
-              <h2 className="text-4xl sm:text-5xl md:text-[48px] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
                 What&apos;s Happening
               </h2>
             </div>
@@ -425,7 +457,7 @@ export default function HomePage(): ReactElement {
               variant="wave"
               position="bottom"
               fillColor="var(--color-background)"
-              height="md"
+              height="lg"
             />
           </div>
         </section>
@@ -435,7 +467,7 @@ export default function HomePage(): ReactElement {
           <div className="container mx-auto px-4">
             {/* Section Header */}
             <div className="text-center mb-16">
-              <h2 className="text-4xl sm:text-5xl md:text-[48px] font-bold text-brown mb-6 uppercase tracking-wide">
+              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown mb-6 uppercase tracking-wide">
                 Community Resources
               </h2>
               <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
@@ -446,7 +478,7 @@ export default function HomePage(): ReactElement {
             {/* Resource Cards - 2x2 Grid on medium, 4 across on large */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
               {/* Essentials */}
-              <div className="text-center bg-white rounded-3xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
+              <div className="text-center bg-white rounded-3xl shadow-lg p-8 hover:shadow-2xl hover:-translate-y-2 hover:bg-sage/2 transition-all duration-300 group">
                 <div className="flex justify-center mb-6">
                   <div className="bg-sage/10 p-5 rounded-2xl group-hover:bg-sage/20 transition-colors duration-300">
                     <Home className="w-10 h-10 md:w-12 md:h-12 text-sage-dark" aria-label="Essential needs" />
@@ -457,7 +489,7 @@ export default function HomePage(): ReactElement {
               </div>
 
               {/* Well-Being */}
-              <div className="text-center bg-white rounded-3xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
+              <div className="text-center bg-white rounded-3xl shadow-lg p-8 hover:shadow-2xl hover:-translate-y-2 hover:bg-dusty-rose/2 transition-all duration-300 group">
                 <div className="flex justify-center mb-6">
                   <div className="bg-dusty-rose/10 p-5 rounded-2xl group-hover:bg-dusty-rose/20 transition-colors duration-300">
                     <Heart className="w-10 h-10 md:w-12 md:h-12 text-dusty-rose-dark" aria-label="Well-being support" />
@@ -468,7 +500,7 @@ export default function HomePage(): ReactElement {
               </div>
 
               {/* Community */}
-              <div className="text-center bg-white rounded-3xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
+              <div className="text-center bg-white rounded-3xl shadow-lg p-8 hover:shadow-2xl hover:-translate-y-2 hover:bg-sage/2 transition-all duration-300 group">
                 <div className="flex justify-center mb-6">
                   <div className="bg-sage/10 p-5 rounded-2xl group-hover:bg-sage/20 transition-colors duration-300">
                     <Users className="w-10 h-10 md:w-12 md:h-12 text-sage-dark" aria-label="Community programs" />
@@ -479,7 +511,7 @@ export default function HomePage(): ReactElement {
               </div>
 
               {/* Learning */}
-              <div className="text-center bg-white rounded-3xl shadow-lg p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group">
+              <div className="text-center bg-white rounded-3xl shadow-lg p-8 hover:shadow-2xl hover:-translate-y-2 hover:bg-dusty-rose/2 transition-all duration-300 group">
                 <div className="flex justify-center mb-6">
                   <div className="bg-dusty-rose/10 p-5 rounded-2xl group-hover:bg-dusty-rose/20 transition-colors duration-300">
                     <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-dusty-rose-dark" aria-label="Educational resources" />
@@ -517,7 +549,7 @@ export default function HomePage(): ReactElement {
             <div className="container mx-auto px-4 pt-12 md:pt-16">
               <div className="text-center">
                 {/* Section Header */}
-                <h2 className="text-4xl sm:text-5xl md:text-[48px] font-bold text-white mb-4 uppercase tracking-wide">
+                <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-4 uppercase tracking-wide">
                   Get in Touch
                 </h2>
                 <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">

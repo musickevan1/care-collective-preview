@@ -14,22 +14,22 @@ function HeroBackground(): ReactElement {
     <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
       {/* Base cream background */}
       <div className="absolute inset-0 bg-background" />
-      
+
       {/* Large sage blob - top left */}
-      <div 
-        className="absolute -top-[10%] -left-[15%] w-[60%] h-[90%] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-sage opacity-[0.15]"
+      <div
+        className="absolute -top-[10%] -left-[15%] w-[60%] h-[90%] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-sage opacity-[0.15] hero-blob-float"
         style={{ transform: 'rotate(-10deg)' }}
       />
-      
-      {/* Dusty rose blob - bottom right - positioned higher to stay fully visible and rounded */}
-      <div 
-        className="absolute bottom-[15%] right-[5%] w-[35%] h-[40%] rounded-[50%_50%_50%_50%/50%_50%_50%_50%] bg-dusty-rose opacity-[0.20]"
+
+      {/* Dusty rose blob - bottom right */}
+      <div
+        className="absolute bottom-[15%] right-[5%] w-[35%] h-[40%] rounded-[50%_50%_50%_50%/50%_50%_50%_50%] bg-dusty-rose opacity-[0.20] hero-blob-float-delayed"
         style={{ transform: 'rotate(10deg)' }}
       />
-      
+
       {/* Small tan accent - right side */}
-      <div 
-        className="absolute top-[25%] right-[8%] w-[12%] h-[18%] rounded-[50%_50%_50%_50%/60%_60%_40%_40%] bg-tan opacity-[0.12]"
+      <div
+        className="absolute top-[25%] right-[8%] w-[12%] h-[18%] rounded-[50%_50%_50%_50%/60%_60%_40%_40%] bg-tan opacity-[0.12] hero-blob-float-slow"
         style={{ transform: 'rotate(-5deg)' }}
       />
     </div>
@@ -42,10 +42,10 @@ function HeroBackground(): ReactElement {
  */
 function HeroImage(): ReactElement {
   const [imageError, setImageError] = useState(false)
-  
-  // Stock image #6: Supportive hand hold with warm lighting
-  const heroImageUrl = 'https://media.istockphoto.com/id/863549736/photo/youre-in-my-hands-now.jpg?s=612x612&w=0&k=20&c=lZagU37KsLt3hEOKt5v1cAXCvRe-y1eMugsLtxZ_3Lk='
-  
+
+  // Use local hero image
+  const heroImageUrl = '/hero-image.jpg'
+
   return (
     <div className="relative flex-shrink-0">
       {/* Outer decorative ring - dusty rose gradient */}
@@ -87,9 +87,9 @@ function HeroImage(): ReactElement {
 
 export default function Hero(): ReactElement {
   return (
-    <section 
-      id="home" 
-      className="relative py-12 md:py-8 lg:pt-28 lg:pb-8 bg-background min-h-[auto] lg:min-h-[80vh] flex items-center overflow-hidden"
+    <section
+      id="home"
+      className="relative py-16 md:py-20 lg:py-24 bg-background min-h-[70vh] lg:min-h-[75vh] flex items-center overflow-hidden"
     >
       {/* Organic Blob Background */}
       <HeroBackground />
@@ -104,18 +104,18 @@ export default function Hero(): ReactElement {
               {/* Main Headline - Two-part with different styling */}
               <div className="mb-4 md:mb-6 animate-fade-in-up">
                 {/* "Southwest Missouri" - smaller, lighter weight */}
-                <p className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-brown font-medium tracking-tight mb-1 lg:mb-2">
+                <p className="font-display text-[clamp(24px,4vw,48px)] text-brown font-medium tracking-tight mb-1 lg:mb-2">
                   Southwest Missouri
                 </p>
                 {/* "CARE Collective" - MASSIVE, ultra bold, sans-serif for impact */}
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[140px] xl:text-[180px] 2xl:text-[220px] font-black leading-[0.85] tracking-tighter text-sage-dark uppercase">
+                <h1 className="text-[clamp(48px,12vw,140px)] font-black leading-[0.85] tracking-tighter text-sage-dark uppercase">
                   CARE Collective
                 </h1>
               </div>
 
               {/* CARE Acronym */}
               <div className="mb-4 md:mb-5 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                <p className="text-xl sm:text-2xl md:text-3xl lg:text-[28px] xl:text-[32px] text-brown/90 font-semibold tracking-wide">
+                <p className="text-[clamp(18px,2.5vw,32px)] text-brown/90 font-semibold tracking-wide">
                   <span className="font-bold text-sage-dark">C</span>aregiver{' '}
                   <span className="font-bold text-sage-dark">A</span>ssistance and{' '}
                   <span className="font-bold text-sage-dark">R</span>esource{' '}
@@ -125,8 +125,8 @@ export default function Hero(): ReactElement {
 
               {/* Description */}
               <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-[22px] xl:text-2xl text-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                  A network of family caregivers in Southwest Missouri who support 
+                <p className="text-[clamp(16px,2vw,22px)] text-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                  A network of family caregivers in Southwest Missouri who support
                   each other through practical help and shared resources.
                 </p>
               </div>

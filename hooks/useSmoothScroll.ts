@@ -2,7 +2,8 @@ import React, { useCallback } from 'react';
 
 /**
  * Custom hook for smooth scrolling to anchor links with fixed header offset
- * Provides consistent smooth scrolling behavior across the application
+ * Dynamically detects header height for responsive accuracy
+ * Provides consistent smooth scrolling behavior across application
  */
 export function useSmoothScroll() {
   const handleSmoothScroll = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -14,9 +15,15 @@ export function useSmoothScroll() {
       const targetElement = document.getElementById(targetId);
 
       if (targetElement) {
-        const headerHeight = 64; // h-16 in pixels (fixed header height)
-        const buffer = 16; // extra buffer space for comfortable viewing
-        const targetPosition = targetElement.offsetTop - headerHeight - buffer;
+        // DYNAMIC header height detection
+        const header = document.querySelector('header.fixed');
+        const headerHeight = header ? header.offsetHeight : 64;
+        const buffer = 16;
+
+        // Ensure minimum offset matches CSS scroll-padding-top (80px)
+        const scrollOffset = Math.max(headerHeight + buffer, 80);
+
+        const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - scrollOffset;
 
         window.scrollTo({
           top: targetPosition,
