@@ -111,31 +111,33 @@ export default function Hero(): ReactElement {
             {/* Text Content - appears second on mobile, left on desktop */}
             <div className="flex-1 text-center lg:order-1 min-w-0">
               {/* Main Headline - Two-part with different styling */}
-              <div className="mb-8 md:mb-10 animate-fade-in-up">
-                {/* "Southwest Missouri" - smaller, lighter weight */}
-                <p className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-brown font-medium tracking-tight mb-2 lg:mb-4">
+              <div className="mb-10 md:mb-12 animate-fade-in-up">
+                {/* "Southwest Missouri" - larger for hierarchy */}
+                <p className="font-display text-4xl sm:text-5xl md:text-6xl text-brown font-semibold tracking-tight mb-3 lg:mb-4">
                   Southwest Missouri
                 </p>
-                {/* "CARE Collective" - MASSIVE, ultra bold, with shimmer gradient */}
+                {/* "CARE Collective" - Two-tone split colors */}
                 <AnimatedGradientText />
               </div>
 
               {/* CARE Acronym */}
-              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                <p className="text-[clamp(20px,3vw,36px)] text-brown/90 font-semibold tracking-wide">
-                  <span className="font-bold text-sage-dark">C</span>aregiver{' '}
-                  <span className="font-bold text-sage-dark">A</span>ssistance and{' '}
-                  <span className="font-bold text-sage-dark">R</span>esource{' '}
-                  <span className="font-bold text-sage-dark">E</span>xchange
+              <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                <p className="text-2xl sm:text-3xl md:text-4xl text-sage font-medium tracking-wide">
+                  <span className="font-bold">C</span>aregiver{' '}
+                  <span className="font-bold">A</span>ssistance and{' '}
+                  <span className="font-bold">R</span>esource{' '}
+                  <span className="font-bold">E</span>xchange
                 </p>
               </div>
 
               {/* Description */}
-              <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                <p className="text-[clamp(18px,2.2vw,24px)] text-foreground/80 max-w-2xl mx-auto leading-relaxed">
-                  A network of family caregivers in Southwest Missouri who support
-                  each other through practical help and shared resources.
-                </p>
+              <div className="mb-10 md:mb-12 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                <div className="bg-white/70 backdrop-blur-sm rounded-2xl px-6 py-4 md:px-8 md:py-5 shadow-lg border border-white/40 inline-block max-w-2xl">
+                  <p className="text-lg sm:text-xl md:text-2xl text-brown/90 leading-relaxed">
+                    A network of family caregivers in Southwest Missouri who support
+                    each other through practical help and shared resources.
+                  </p>
+                </div>
               </div>
 
               {/* CTA Button - With magnetic effect */}
