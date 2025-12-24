@@ -109,11 +109,11 @@ export default function Hero(): ReactElement {
             </div>
 
             {/* Text Content - appears second on mobile, left on desktop */}
-            <div className="flex-1 text-center lg:order-1">
+            <div className="flex-1 text-center lg:order-1 min-w-0">
               {/* Main Headline - Two-part with different styling */}
               <div className="mb-8 md:mb-10 animate-fade-in-up">
                 {/* "Southwest Missouri" - smaller, lighter weight */}
-                <p className="font-display text-[clamp(28px,5vw,56px)] text-brown font-medium tracking-tight mb-2 lg:mb-4">
+                <p className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-brown font-medium tracking-tight mb-2 lg:mb-4">
                   Southwest Missouri
                 </p>
                 {/* "CARE Collective" - MASSIVE, ultra bold, with shimmer gradient */}
