@@ -500,6 +500,20 @@ p {
   animation: gradient-x 3s ease infinite;
 }
 
+/* Shimmer animation for gradient text */
+@keyframes shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
 .delay-200 {
   animation-delay: 0.2s;
 }
