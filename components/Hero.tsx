@@ -2,6 +2,9 @@
 
 import Link from 'next/link'
 import { ReactElement, useState } from 'react'
+import AnimatedGradientText from './AnimatedGradientText'
+import MouseGradientBackground from './MouseGradientBackground'
+import MagneticButton from './MagneticButton'
 
 /**
  * Hero background with organic blob shapes
@@ -17,13 +20,13 @@ function HeroBackground(): ReactElement {
 
       {/* Large sage blob - top left */}
       <div
-        className="absolute -top-[10%] -left-[15%] w-[60%] h-[90%] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-sage opacity-[0.15] hero-blob-float"
+        className="absolute -top-[10%] -left-[15%] w-[60%] h-[90%] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-sage opacity-[0.15] hero-blob-enhanced"
         style={{ transform: 'rotate(-10deg)' }}
       />
 
       {/* Dusty rose blob - bottom right */}
       <div
-        className="absolute bottom-[15%] right-[5%] w-[35%] h-[40%] rounded-[50%_50%_50%_50%/50%_50%_50%_50%] bg-dusty-rose opacity-[0.20] hero-blob-float-delayed"
+        className="absolute bottom-[15%] right-[5%] w-[35%] h-[40%] rounded-[50%_50%_50%_50%/50%_50%_50%_50%] bg-dusty-rose opacity-[0.20] hero-blob-float-delayed hero-blob-pulse"
         style={{ transform: 'rotate(10deg)' }}
       />
 
@@ -89,33 +92,37 @@ export default function Hero(): ReactElement {
   return (
     <section
       id="home"
-      className="relative py-16 md:py-20 lg:py-24 bg-background min-h-[70vh] lg:min-h-[75vh] flex items-center overflow-hidden"
+      className="relative py-20 md:py-24 lg:py-28 bg-background min-h-[100vh] flex items-center overflow-hidden"
     >
       {/* Organic Blob Background */}
       <HeroBackground />
+      <MouseGradientBackground />
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
-          {/* Split Layout: Image first on mobile (flex-col-reverse), Text Left on desktop */}
-          <div className="flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-12 xl:gap-16">
-            
-            {/* Left: Text Content */}
-            <div className="flex-1 text-center lg:text-left">
+          {/* Split Layout: Image first on mobile, Text Left/Centered on desktop */}
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16 xl:gap-20">
+
+            {/* Image - appears first on mobile, right on desktop */}
+            <div className="animate-fade-in-up lg:animate-fade-in-right flex-shrink-0 lg:order-2" style={{ animationDelay: '150ms' }}>
+              <HeroImage />
+            </div>
+
+            {/* Text Content - appears second on mobile, left on desktop */}
+            <div className="flex-1 text-center lg:order-1">
               {/* Main Headline - Two-part with different styling */}
-              <div className="mb-4 md:mb-6 animate-fade-in-up">
+              <div className="mb-8 md:mb-10 animate-fade-in-up">
                 {/* "Southwest Missouri" - smaller, lighter weight */}
-                <p className="font-display text-[clamp(24px,4vw,48px)] text-brown font-medium tracking-tight mb-1 lg:mb-2">
+                <p className="font-display text-[clamp(28px,5vw,56px)] text-brown font-medium tracking-tight mb-2 lg:mb-4">
                   Southwest Missouri
                 </p>
-                {/* "CARE Collective" - MASSIVE, ultra bold, sans-serif for impact */}
-                <h1 className="text-[clamp(48px,12vw,140px)] font-black leading-[0.85] tracking-tighter text-sage-dark uppercase">
-                  CARE Collective
-                </h1>
+                {/* "CARE Collective" - MASSIVE, ultra bold, with shimmer gradient */}
+                <AnimatedGradientText />
               </div>
 
               {/* CARE Acronym */}
-              <div className="mb-4 md:mb-5 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                <p className="text-[clamp(18px,2.5vw,32px)] text-brown/90 font-semibold tracking-wide">
+              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                <p className="text-[clamp(20px,3vw,36px)] text-brown/90 font-semibold tracking-wide">
                   <span className="font-bold text-sage-dark">C</span>aregiver{' '}
                   <span className="font-bold text-sage-dark">A</span>ssistance and{' '}
                   <span className="font-bold text-sage-dark">R</span>esource{' '}
@@ -124,36 +131,33 @@ export default function Hero(): ReactElement {
               </div>
 
               {/* Description */}
-              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                <p className="text-[clamp(16px,2vw,22px)] text-foreground/80 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                <p className="text-[clamp(18px,2.2vw,24px)] text-foreground/80 max-w-2xl mx-auto leading-relaxed">
                   A network of family caregivers in Southwest Missouri who support
                   each other through practical help and shared resources.
                 </p>
               </div>
 
-              {/* CTA Button - Smaller, refined sizing */}
-              <div className="animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                <Link 
-                  href="/signup" 
-                  className="group w-full sm:w-auto inline-flex items-center justify-center bg-sage text-white px-8 py-4 md:px-10 md:py-5 text-lg md:text-xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 min-h-[56px] md:min-h-[60px]"
+              {/* CTA Button - With magnetic effect */}
+              <div className="mt-10 md:mt-12 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+                <MagneticButton
+                  href="/signup"
+                  className="group w-full sm:w-auto"
                 >
-                  <span>Join Our Community</span>
-                  <svg 
-                    className="w-5 h-5 md:w-6 md:h-6 ml-2 group-hover:translate-x-1 transition-transform duration-300" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
+                  <span className="inline-flex items-center justify-center bg-sage text-white px-10 py-5 md:px-12 md:py-6 text-lg md:text-xl lg:text-2xl font-bold rounded-full hover:bg-sage-dark transition-all duration-300 hover:shadow-2xl ring-4 ring-white/20 min-h-[64px] md:min-h-[72px]">
+                    <span>Join Our Community</span>
+                    <svg
+                      className="w-5 h-5 md:w-6 md:h-6 ml-3 group-hover:translate-x-1 transition-transform duration-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </span>
+                </MagneticButton>
               </div>
-            </div>
-            
-            {/* Right: Circular Image - appears first on mobile due to flex-col-reverse */}
-            <div className="animate-fade-in-up lg:animate-fade-in-right flex-shrink-0" style={{ animationDelay: '150ms' }}>
-              <HeroImage />
             </div>
           </div>
         </div>

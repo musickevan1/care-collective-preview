@@ -401,11 +401,55 @@ p {
   animation-delay: -10s;
 }
 
+/* Enhanced blob animations with organic breathing effect */
+@keyframes blob-float-organic {
+  0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(12px, -10px) scale(1.02) rotate(3deg);
+  }
+  50% {
+    transform: translate(8px, 8px) scale(1) rotate(-2deg);
+  }
+  75% {
+    transform: translate(-10px, -6px) scale(1.01) rotate(1deg);
+  }
+}
+
+.hero-blob-float-organic {
+  animation: blob-float-organic 25s ease-in-out infinite;
+}
+
+/* Subtle pulse glow effect on blobs */
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.22;
+  }
+}
+
+.hero-blob-pulse {
+  animation: gentle-pulse 6s ease-in-out infinite;
+}
+
+/* Combine organic float with pulse */
+.hero-blob-enhanced {
+  animation:
+    blob-float-organic 25s ease-in-out infinite,
+    gentle-pulse 6s ease-in-out infinite;
+}
+
 /* Reduce motion: static blobs */
 @media (prefers-reduced-motion: reduce) {
   .hero-blob-float,
   .hero-blob-float-delayed,
-  .hero-blob-float-slow {
+  .hero-blob-float-slow,
+  .hero-blob-float-organic,
+  .hero-blob-pulse,
+  .hero-blob-enhanced {
     animation: none !important;
   }
 }
