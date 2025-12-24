@@ -10,14 +10,18 @@ export default function AnimatedGradientText() {
       aria-label="CARE Collective"
     >
       <span
-        className="text-primary font-black drop-shadow-[0_8px_16px_rgba(188,101,71,0.25)]"
-        style={{ fontFamily: 'var(--font-overlock)' }}
+        className="font-black"
+        style={{ 
+          color: '#BC6547',
+          fontFamily: 'var(--font-overlock)',
+          filter: 'drop-shadow(0 4px 8px rgba(188, 101, 71, 0.2))'
+        }}
       >
         CARE
       </span>
       {' '}
       <span
-        className="text-sage font-medium"
+        className="text-sage font-light"
         style={{ fontFamily: 'var(--font-overlock)' }}
       >
         COLLECTIVE
