@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ReactElement, useState } from 'react'
 import AnimatedGradientText from './AnimatedGradientText'
 import MouseGradientBackground from './MouseGradientBackground'
@@ -109,32 +110,42 @@ export default function Hero(): ReactElement {
             </div>
 
             {/* Text Content - appears second on mobile, left on desktop */}
-            <div className="flex-1 text-center lg:order-1 min-w-0">
+            <div className="flex-1 text-center sm:text-left lg:order-1 min-w-0">
+              {/* Transparent Logo - Centered Above */}
+              <div className="flex justify-center sm:justify-start mb-6 animate-fade-in-up">
+                <Image
+                  src="/logo-textless.png"
+                  alt="CARE Collective Logo"
+                  width={120}
+                  height={120}
+                  className="rounded w-24 h-24 sm:w-28 sm:h-28 opacity-80"
+                  priority
+                />
+              </div>
+
               {/* Main Headline - Two-part with different styling */}
-              <div className="mb-6 md:mb-8 animate-fade-in-up">
-                {/* "Southwest Missouri" - subtle eyebrow label */}
-                <p className="text-lg sm:text-xl md:text-2xl text-brown/70 font-medium tracking-wide mb-2 md:mb-3">
+              <div className="mb-4 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
+                {/* "Southwest Missouri" - larger, bolded, closer to CARE */}
+                <p className="text-xl sm:text-2xl font-bold text-foreground mb-2">
                   Southwest Missouri
                 </p>
                 {/* "CARE Collective" - Gradient CARE, light COLLECTIVE */}
                 <AnimatedGradientText />
               </div>
 
-              {/* CARE Acronym - bolded letters */}
+              {/* C.A.R.E. Acronym - expanded width */}
               <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                <p className="text-base sm:text-lg md:text-xl text-brown/80 font-normal tracking-wide">
-                  <span className="font-bold text-sage">C</span>aregiver{' '}
-                  <span className="font-bold text-sage">A</span>ssistance and{' '}
-                  <span className="font-bold text-sage">R</span>esource{' '}
-                  <span className="font-bold text-sage">E</span>xchange
+                <p className="text-lg sm:text-xl md:text-2xl tracking-[0.2em] text-accent font-medium">
+                  C<span className="mx-1">.</span>A<span className="mx-1">.</span>R<span className="mx-1">.</span>E
                 </p>
               </div>
 
-              {/* Description - plain text, no card */}
+              {/* Description - larger text on two lines */}
               <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                <p className="text-base sm:text-lg md:text-xl text-brown/70 max-w-xl mx-auto leading-relaxed">
-                  A network of family caregivers in Southwest Missouri who support
-                  each other through practical help and shared resources.
+                <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed">
+                  Community Assistance &amp; Resources Exchange
+                  <br className="hidden sm:block" />
+                  Connecting neighbors through mutual aid
                 </p>
               </div>
 

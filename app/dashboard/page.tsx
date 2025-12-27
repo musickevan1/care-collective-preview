@@ -32,7 +32,16 @@ interface DashboardPageProps {
   searchParams: Promise<{ error?: string }>
 }
 
-async function getUser() {
+interface DashboardUser {
+  id: string
+  name: string
+  email: string
+  isAdmin: boolean
+  verificationStatus: string
+  profile: any
+}
+
+async function getUser(): Promise<DashboardUser | null> {
   const supabase = await createClient();
 
   // Force session refresh to ensure we have the latest auth state
@@ -154,26 +163,43 @@ async function getDashboardData(userId: string) {
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+  console.log('[Dashboard] Page load started:', {
+    timestamp: new Date().toISOString()
+  })
+
   const user = await getUser();
 
+  console.log('[Dashboard] User check:', {
+    hasUser: !!user,
+    userId: user?.id,
+    verificationStatus: user?.verificationStatus,
+    timestamp: new Date().toISOString()
+  })
+
   if (!user) {
+    console.log('[Dashboard] Redirecting to login - no user found')
     redirect('/login?redirect=/dashboard');
   }
 
   // Security: Block rejected users
   if (user.verificationStatus === 'rejected') {
+    console.log('[Dashboard] Blocking rejected user, redirecting to access-denied')
     redirect('/access-denied?reason=rejected');
   }
 
   // Redirect pending users to waitlist page
   if (user.verificationStatus === 'pending') {
+    console.log('[Dashboard] Redirecting pending user to waitlist')
     redirect('/waitlist');
   }
 
   // Only approved users past this point
   if (user.verificationStatus !== 'approved') {
+    console.log('[Dashboard] User not approved, redirecting to waitlist')
     redirect('/waitlist?message=approval_required');
   }
+
+  console.log('[Dashboard] Approved user, rendering dashboard')
 
   const resolvedSearchParams = await searchParams;
   const hasAdminError = resolvedSearchParams.error === 'admin_required';

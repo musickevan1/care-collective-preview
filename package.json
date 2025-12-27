@@ -78,7 +78,6 @@
     "@supabase/supabase-js": "^2.57.2",
     "@tanstack/react-query": "^5.90.10",
     "@types/dompurify": "^3.0.5",
-    "@types/react-window": "^1.8.8",
     "@types/validator": "^13.15.2",
     "@vercel/kv": "^3.0.0",
     "class-variance-authority": "^0.7.1",

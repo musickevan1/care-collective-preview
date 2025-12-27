@@ -83,7 +83,8 @@ export function PlatformLayout({
     {
       href: '/requests',
       label: 'Browse Requests',
-      icon: Search
+      icon: Search,
+      exactMatch: true
     },
     {
       href: '/requests/new',

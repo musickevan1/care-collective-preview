@@ -7,7 +7,7 @@
 
 import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { ReactElement } from 'react';
-import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
+import { List } from 'react-window';
 import { MessageBubble } from './MessageBubble';
 import { MessageWithSender } from '@/lib/messaging/types';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronDown, CornerDownRight, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+
+// Type for list item component props (react-window v2.x)
+interface ListItemProps {
+  index: number;
+  style: React.CSSProperties;
+  data: MessageItemData;
+}
 
 interface VirtualizedMessageListProps {
   messages: MessageWithSender[];
@@ -56,7 +63,7 @@ const DATE_SEPARATOR_HEIGHT = 40;
 /**
  * Individual message item renderer for virtualization
  */
-function MessageItem({ index, style, data }: ListChildComponentProps<MessageItemData>): ReactElement {
+function MessageItem({ index, style, data }: ListItemProps): ReactElement {
   const { groups, currentUserId, onMessageReply, onThreadOpen, showDateSeparators } = data;
 
   // Calculate which group and message this index refers to
@@ -292,7 +299,7 @@ export function VirtualizedMessageList({
   itemHeight = DEFAULT_ITEM_HEIGHT,
   height = 400
 }: VirtualizedMessageListProps): ReactElement {
-  const listRef = useRef<List>(null);
+  const listRef = useRef<typeof List>(null);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const previousMessageCount = useRef(messages.length);
