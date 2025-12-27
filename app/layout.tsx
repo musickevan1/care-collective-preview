@@ -6,23 +6,24 @@ import { Providers } from "./providers";
 import { overlock, fontClasses, atkinsonHyperlegible, playfairDisplay } from "@/lib/fonts";
 import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
 
+// LAUNCH: Disabled beta testing - removed "Preview" references and enabled SEO
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'),
-  title: "CARE Collective - Preview",
-  description: "Southwest Missouri CARE Collective - Building community through mutual support (Preview Version)",
+  title: "CARE Collective",
+  description: "Southwest Missouri CARE Collective - Building community through mutual support",
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',
   },
   openGraph: {
-    title: "CARE Collective - Preview",
+    title: "CARE Collective",
     description: "Southwest Missouri CARE Collective - Building community through mutual support",
     images: ['/logo.png'],
     type: 'website',
   },
   robots: {
-    index: false, // Preview version shouldn't be indexed
-    follow: false,
+    index: true, // Enable SEO for production launch
+    follow: true,
   },
   other: {
     // Critical resource hints for performance

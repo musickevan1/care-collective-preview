@@ -2,9 +2,6 @@ import { getProfileWithServiceRole } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-// Force Edge Runtime to test service role compatibility
-export const runtime = 'edge'
-
 /**
  * SECURITY: Test endpoint for service role verification
  *

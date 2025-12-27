@@ -1,3 +1,9 @@
+// LAUNCH: Disabled beta testing - component commented out for production launch
+// Code preserved for potential future feedback/bug reporting features
+// To re-enable, remove this block comment and uncomment all code below
+
+/* eslint-disable */
+/*
 'use client';
 
 import { ReactElement, useState } from 'react';
@@ -23,7 +29,6 @@ export function BetaBannerWithModal(): ReactElement {
         }
       }}
     >
-      {/* Beta Testing Notice Banner */}
       <div className="bg-gradient-to-r from-sage/10 to-primary/10 border-2 border-sage/30 rounded-lg p-4 mb-6">
         <div className="flex items-start gap-3">
           <div className="text-2xl flex-shrink-0">🚀</div>
@@ -54,3 +59,4 @@ export function BetaBannerWithModal(): ReactElement {
     </BetaTesterWrapper>
   );
 }
+*/

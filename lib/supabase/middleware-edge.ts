@@ -163,6 +163,10 @@ export async function updateSession(request: NextRequest) {
     if (isProtectedPath) {
       // First check if user is authenticated
       if (!user) {
+        console.log('[Middleware] BLOCKING: No user authenticated for protected route', {
+          path: request.nextUrl.pathname,
+          timestamp: new Date().toISOString()
+        })
         if (process.env.NODE_ENV === 'development') {
           console.log('[Middleware] Redirecting to login for protected route')
         }

@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
-import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
+// LAUNCH: Disabled beta testing - commented out import
+// import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
 import { FormattedDate } from '@/components/FormattedDate'
 import Link from 'next/link'
 import { HandHeart, Handshake, Sparkles } from 'lucide-react'
@@ -31,7 +32,16 @@ interface DashboardPageProps {
   searchParams: Promise<{ error?: string }>
 }
 
-async function getUser() {
+interface DashboardUser {
+  id: string
+  name: string
+  email: string
+  isAdmin: boolean
+  verificationStatus: string
+  profile: any
+}
+
+async function getUser(): Promise<DashboardUser | null> {
   const supabase = await createClient();
 
   // Force session refresh to ensure we have the latest auth state
@@ -153,26 +163,43 @@ async function getDashboardData(userId: string) {
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
+  console.log('[Dashboard] Page load started:', {
+    timestamp: new Date().toISOString()
+  })
+
   const user = await getUser();
 
+  console.log('[Dashboard] User check:', {
+    hasUser: !!user,
+    userId: user?.id,
+    verificationStatus: user?.verificationStatus,
+    timestamp: new Date().toISOString()
+  })
+
   if (!user) {
+    console.log('[Dashboard] Redirecting to login - no user found')
     redirect('/login?redirect=/dashboard');
   }
 
   // Security: Block rejected users
   if (user.verificationStatus === 'rejected') {
+    console.log('[Dashboard] Blocking rejected user, redirecting to access-denied')
     redirect('/access-denied?reason=rejected');
   }
 
   // Redirect pending users to waitlist page
   if (user.verificationStatus === 'pending') {
+    console.log('[Dashboard] Redirecting pending user to waitlist')
     redirect('/waitlist');
   }
 
   // Only approved users past this point
   if (user.verificationStatus !== 'approved') {
+    console.log('[Dashboard] User not approved, redirecting to waitlist')
     redirect('/waitlist?message=approval_required');
   }
+
+  console.log('[Dashboard] Approved user, rendering dashboard')
 
   const resolvedSearchParams = await searchParams;
   const hasAdminError = resolvedSearchParams.error === 'admin_required';
@@ -199,9 +226,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </div>
         )}
 
+        {/* LAUNCH: Disabled beta testing - BetaBannerWithModal commented out */}
         {/* Beta Testing Notice with Modal Control - Shows to beta testers only */}
-        <BetaBannerWithModal />
-
+        {/* <BetaBannerWithModal /> */}
+        
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-secondary">

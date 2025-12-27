@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ReactElement, useState, useEffect } from 'react'
+import { ReactElement, useState, useEffect, useRef } from 'react'
 import {
   Users,
   Hand,
@@ -90,18 +90,35 @@ export default function HomePage(): ReactElement {
   const handleSmoothScroll = useSmoothScroll()
   const [imageError, setImageError] = useState(false)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const scrollRAFRef = useRef<number | null>(null)
 
-  // Track scroll progress for progress bar
+  // Track scroll progress for progress bar with requestAnimationFrame
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight
-      const progress = (scrollTop / docHeight) * 100
-      setScrollProgress(Math.min(progress, 100))
+      // Cancel any pending animation frame
+      if (scrollRAFRef.current !== null) {
+        cancelAnimationFrame(scrollRAFRef.current)
+      }
+
+      // Schedule new animation frame to sync with browser repaint cycle
+      scrollRAFRef.current = requestAnimationFrame(() => {
+        const scrollTop = window.scrollY
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight
+        const progress = (scrollTop / docHeight) * 100
+        setScrollProgress(Math.min(progress, 100))
+        scrollRAFRef.current = null
+      })
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+
+    return () => {
+      // Clean up: cancel any pending RAF and remove event listener
+      if (scrollRAFRef.current !== null) {
+        cancelAnimationFrame(scrollRAFRef.current)
+      }
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   return (

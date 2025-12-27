@@ -89,10 +89,20 @@ export default function LoginPage() {
           const redirectTo = urlParams.get('redirectTo')
           const destination = redirectTo || redirect || '/dashboard'
 
-          // Add small delay to ensure auth session is properly set
+          // Debug logging to diagnose redirect issues
+          console.log('[Login] Redirect calculation:', {
+            redirectTo,
+            redirect,
+            destination,
+            timestamp: new Date().toISOString()
+          })
+
+          // Add delay to ensure auth session is properly set
+          // Increased from 100ms to 300ms to allow session cookies to propagate
           setTimeout(() => {
+            console.log('[Login] Executing redirect to:', destination)
             window.location.replace(destination)
-          }, 100)
+          }, 300)
           return
         }
 

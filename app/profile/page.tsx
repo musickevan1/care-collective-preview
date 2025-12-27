@@ -203,7 +203,6 @@ export default async function ProfilePage({ searchParams }: PageProps) {
   const requestStats = await getRequestStats(user.id)
 
   const breadcrumbs = [
-    { label: 'Dashboard', href: '/dashboard' },
     { label: 'Profile', href: '/profile' }
   ]
 

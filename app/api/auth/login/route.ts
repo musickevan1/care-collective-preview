@@ -198,6 +198,11 @@ export async function POST(request: NextRequest) {
         },
         timestamp: new Date().toISOString()
       })
+      console.log('[Login API] Approved user login response:', {
+        redirect: '/dashboard',
+        success: true,
+        userId: authData.user.id
+      })
       return response
     }
 

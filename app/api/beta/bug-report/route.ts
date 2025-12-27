@@ -1,3 +1,8 @@
+// LAUNCH: Disabled beta testing - API route commented out for production launch
+// Code preserved for potential future feedback/bug reporting features
+// To re-enable, remove this block comment and uncomment all code below
+
+/*
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
@@ -287,3 +292,4 @@ export async function PATCH(request: Request) {
     );
   }
 }
+*/
