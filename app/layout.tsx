@@ -5,6 +5,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { overlock, fontClasses, atkinsonHyperlegible, playfairDisplay } from "@/lib/fonts";
 import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // LAUNCH: Disabled beta testing - removed "Preview" references and enabled SEO
 export const metadata: Metadata = {
@@ -63,6 +64,7 @@ export default function RootLayout({
         {/* Service Worker and Performance Monitoring */}
         <DynamicServiceWorkerRegistration />
         <DynamicWebVitals />
+        <SpeedInsights />
       </body>
     </html>
   );
