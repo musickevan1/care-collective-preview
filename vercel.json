@@ -2,9 +2,7 @@
   "buildCommand": "rm -rf .next && next build",
   "framework": "nextjs",
   "git": {
-    "deploymentEnabled": {
-      "main": true
-    }
+    "deploymentEnabled": true
   },
   "headers": [
     {
