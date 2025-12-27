@@ -394,7 +394,7 @@ export default function HomePage(): ReactElement {
                     
                     {/* Main text - Large and impactful */}
                     <p className="text-xl md:text-2xl lg:text-[24px] text-white leading-relaxed">
-                      The CARE (Caregiver Assistance and Resource Exchange) Collective is a network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                      A network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
                     </p>
                     
                     {/* Highlighted statement + CTA button */}
