@@ -489,7 +489,7 @@ p {
 }
 
 .animate-gradient-x {
-  animation: gradient-x 3s linear infinite;
+  animation: gradient-x 8s linear infinite;
 }
 
 .animate-fade-in-up {
