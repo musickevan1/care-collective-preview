@@ -143,7 +143,7 @@ export default function Hero(): ReactElement {
               {/* Description - larger text on two lines */}
               <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                 <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed">
-                  Community Assistance &amp; Resources Exchange
+                  <strong>C</strong>aregiver <strong>A</strong>ssistance and <strong>R</strong>esource <strong>E</strong>xchange
                   <br className="hidden sm:block" />
                   Connecting neighbors through mutual aid
                 </p>
