@@ -10,8 +10,8 @@ export default function AnimatedGradientText() {
       aria-label="CARE Collective"
     >
       <span
-        className="font-black bg-gradient-to-r from-sage via-dusty-rose to-primary bg-clip-text text-transparent"
-        style={{ 
+        className="font-black bg-gradient-to-r from-sage via-dusty-rose to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-x"
+        style={{
           fontFamily: 'var(--font-overlock)',
           filter: 'drop-shadow(0 4px 8px rgba(122, 158, 153, 0.2))'
         }}
