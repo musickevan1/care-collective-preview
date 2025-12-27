@@ -118,7 +118,7 @@ export default function Hero(): ReactElement {
                   alt="CARE Collective Logo"
                   width={120}
                   height={120}
-                  className="rounded w-24 h-24 sm:w-28 sm:h-28 opacity-80"
+                  className="w-20 h-20 sm:w-24 sm:h-24"
                   priority
                 />
               </div>
@@ -137,7 +137,7 @@ export default function Hero(): ReactElement {
                <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
                  <p
                    className="tracking-[0.2em] text-accent font-medium"
-                   style={{ fontSize: 'clamp(1.1rem, 2.8vw, 2.2rem)' }}
+                   style={{ fontSize: 'clamp(0.9rem, 2.4vw, 1.8rem)' }}
                  >
                    <span className="font-bold text-sage-dark">C</span>aregiver <span className="font-bold text-sage-dark">A</span>ssistance and <span className="font-bold text-sage-dark">R</span>esource <span className="font-bold text-sage-dark">E</span>xchange
                  </p>
@@ -147,7 +147,7 @@ export default function Hero(): ReactElement {
                <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                  <p
                    className="text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed"
-                   style={{ fontSize: 'clamp(1rem, 1.6vw, 1.5rem)' }}
+                   style={{ fontSize: 'clamp(0.875rem, 1.4vw, 1.25rem)' }}
                  >
                    A network of family caregivers in Southwest Missouri who support each other
                    <br />
