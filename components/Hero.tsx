@@ -118,7 +118,7 @@ export default function Hero(): ReactElement {
                   alt="CARE Collective Logo"
                   width={120}
                   height={120}
-                  className="w-20 h-20 sm:w-24 sm:h-24"
+                  className="w-20 h-20 sm:w-24 sm:h-24 mix-blend-multiply"
                   priority
                 />
               </div>
@@ -150,7 +150,7 @@ export default function Hero(): ReactElement {
                    style={{ fontSize: 'clamp(0.875rem, 1.4vw, 1.25rem)' }}
                  >
                    A network of family caregivers in Southwest Missouri who support each other
-                   <br />
+                   <br className="hidden sm:block" />
                    through practical help and shared resources.
                  </p>
                </div>
