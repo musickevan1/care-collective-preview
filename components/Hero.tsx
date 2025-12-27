@@ -135,15 +135,23 @@ export default function Hero(): ReactElement {
 
                {/* C.A.R.E. Acronym - expanded width */}
                <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                 <p className="text-lg sm:text-xl md:text-2xl tracking-[0.2em] text-accent font-medium">
+                 <p
+                   className="tracking-[0.2em] text-accent font-medium"
+                   style={{ fontSize: 'clamp(1.5rem, 4vw, 3rem)' }}
+                 >
                    <span className="font-bold text-sage-dark">C</span>aregiver <span className="font-bold text-sage-dark">A</span>ssistance and <span className="font-bold text-sage-dark">R</span>esource <span className="font-bold text-sage-dark">E</span>xchange
                  </p>
                </div>
 
                {/* Description - larger text on two lines */}
                <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                 <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed">
-                   A network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                 <p
+                   className="text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed"
+                   style={{ fontSize: 'clamp(1.2rem, 3vw, 2.5rem)' }}
+                 >
+                   A network of family caregivers in Southwest Missouri who support each other
+                   <br />
+                   through practical help and shared resources.
                  </p>
                </div>
 
