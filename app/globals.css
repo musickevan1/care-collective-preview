@@ -478,14 +478,18 @@ p {
 }
 
 @keyframes gradient-x {
-  0%, 100% {
+  0% {
     background-size: 200% 200%;
-    background-position: left center;
+    background-position: 0% center;
   }
-  50% {
+  100% {
     background-size: 200% 200%;
-    background-position: right center;
+    background-position: 200% center;
   }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s linear infinite;
 }
 
 .animate-fade-in-up {
@@ -494,10 +498,6 @@ p {
 
 .animate-fade-in-right {
   animation: fade-in-right 0.8s ease-out forwards;
-}
-
-.animate-gradient-x {
-  animation: gradient-x 3s ease infinite;
 }
 
 /* Shimmer animation for gradient text */
