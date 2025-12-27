@@ -1,3 +1,8 @@
+// LAUNCH: Disabled beta testing - component commented out for production launch
+// Code preserved for potential future feedback/bug reporting features
+// To re-enable, remove this block comment and uncomment all code below
+
+/*
 'use client';
 
 import { ReactElement, useEffect, useState, useCallback } from 'react';
@@ -75,7 +80,6 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
       onClick={handleBackdropClick}
     >
       <div className="bg-background rounded-2xl shadow-2xl max-w-2xl w-full border-2 border-primary max-h-[90vh] flex flex-col overflow-hidden">
-        {/* Header with Close Button */}
         <div className="relative bg-primary text-white p-6 md:p-8 rounded-t-xl flex-shrink-0">
           <button
             onClick={handleClose}
@@ -96,9 +100,7 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
           </div>
         </div>
 
-        {/* Content - Scrollable */}
         <div className="p-6 md:p-8 space-y-6 overflow-y-auto flex-grow">
-          {/* Main Message */}
           <div className="text-center mb-6">
             <p className="text-xl font-bold text-secondary leading-relaxed">
               Thank you for helping us build Care Collective!
@@ -109,14 +111,13 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
             </p>
           </div>
 
-          {/* Key Points */}
           <div className="grid gap-5 my-6">
             <div className="flex items-start gap-4 p-5 bg-primary/5 rounded-lg border border-primary/20">
               <AlertCircle className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
               <div>
                 <p className="font-bold text-lg text-secondary mb-2">Report Bugs Easily</p>
                 <p className="text-base text-gray-700 leading-relaxed">
-                  Look for the <span className="font-bold text-primary">&quot;Report Bug&quot;</span> button
+                  Look for <span className="font-bold text-primary">&quot;Report Bug&quot;</span> button
                   in the bottom-right corner - use it whenever something doesn&apos;t work right!
                 </p>
               </div>
@@ -135,7 +136,6 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
             </div>
           </div>
 
-          {/* Important Note */}
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
             <p className="text-sm text-gray-700 leading-relaxed">
               <strong>Remember:</strong> Report anything confusing, test on mobile if possible,
@@ -145,7 +145,6 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
 
         </div>
 
-        {/* Footer - Fixed */}
         <div className="p-6 md:p-8 border-t flex-shrink-0 space-y-3">
           <Button
             onClick={handleClose}
@@ -155,10 +154,11 @@ export function BetaWelcomeModal({ forceOpen, onOpenChange }: BetaWelcomeModalPr
             Got it! Let&apos;s get started 🚀
           </Button>
           <p className="text-center text-sm text-gray-600">
-            Need help? Check the beta tester guide or use the bug report button anytime.
+            Need help? Check beta tester guide or use bug report button anytime.
           </p>
         </div>
       </div>
     </div>
   );
 }
+*/

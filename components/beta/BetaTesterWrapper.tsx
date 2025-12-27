@@ -1,3 +1,8 @@
+// LAUNCH: Disabled beta testing - component commented out for production launch
+// Code preserved for potential future feedback/bug reporting features
+// To re-enable, remove this block comment and uncomment all code below
+
+/*
 'use client';
 
 import { ReactElement, useEffect, useState } from 'react';
@@ -74,3 +79,4 @@ export function BetaTesterWrapper({
     </>
   );
 }
+*/

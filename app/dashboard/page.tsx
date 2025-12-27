@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
-import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
+// LAUNCH: Disabled beta testing - commented out import
+// import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
 import { FormattedDate } from '@/components/FormattedDate'
 import Link from 'next/link'
 import { HandHeart, Handshake, Sparkles } from 'lucide-react'
@@ -199,9 +200,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </div>
         )}
 
+        {/* LAUNCH: Disabled beta testing - BetaBannerWithModal commented out */}
         {/* Beta Testing Notice with Modal Control - Shows to beta testers only */}
-        <BetaBannerWithModal />
-
+        {/* <BetaBannerWithModal /> */}
+        
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-secondary">
