@@ -133,21 +133,19 @@ export default function Hero(): ReactElement {
                 <AnimatedGradientText />
               </div>
 
-              {/* C.A.R.E. Acronym - expanded width */}
-              <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-                <p className="text-lg sm:text-xl md:text-2xl tracking-[0.2em] text-accent font-medium">
-                  C<span className="mx-1">.</span>A<span className="mx-1">.</span>R<span className="mx-1">.</span>E
-                </p>
-              </div>
+               {/* C.A.R.E. Acronym - expanded width */}
+               <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+                 <p className="text-lg sm:text-xl md:text-2xl tracking-[0.2em] text-accent font-medium">
+                   <span className="font-bold text-sage-dark">C</span>aregiver <span className="font-bold text-sage-dark">A</span>ssistance and <span className="font-bold text-sage-dark">R</span>esource <span className="font-bold text-sage-dark">E</span>xchange
+                 </p>
+               </div>
 
-              {/* Description - larger text on two lines */}
-              <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed">
-                  <strong>C</strong>aregiver <strong>A</strong>ssistance and <strong>R</strong>esource <strong>E</strong>xchange
-                  <br className="hidden sm:block" />
-                  Connecting neighbors through mutual aid
-                </p>
-              </div>
+               {/* Description - larger text on two lines */}
+               <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                 <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed">
+                   A network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                 </p>
+               </div>
 
               {/* CTA Button - With magnetic effect */}
               <div className="mt-10 md:mt-12 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
