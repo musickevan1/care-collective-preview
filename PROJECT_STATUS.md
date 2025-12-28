@@ -1,6 +1,6 @@
 # Care Collective - Project Status Overview
 
-**Last Updated**: December 16, 2025
+**Last Updated**: December 27, 2025
 **Current Status**: Phase 2 Complete + Client Alignment Complete
 **Production URL**: https://care-collective-preview.vercel.app
 
@@ -99,6 +99,14 @@ All 4 phases of the December 2025 client alignment plan have been completed and 
 ### Known Issues
 - ⚠️ Password reset flow needs email verification enabled
 - ⚠️ Some historical TypeScript errors in test files (non-blocking)
+
+### Recent Activity (December 27, 2025)
+- ✅ **Middleware Edge Runtime Issue Resolved** (Development)
+  - Problem: `ReferenceError: exports is not defined` in `npm run dev`
+  - Root cause: Next.js 14 middleware always uses Edge Runtime (incompatible with CommonJS)
+  - Solution: Use production build in development (`npm run build && npx next start`)
+  - Impact: Development unblocked, production unaffected
+  - Documentation: `docs/development/MIDDLEWARE_FIX_INVESTIGATION_RESULTS.md`
 
 ---
 
