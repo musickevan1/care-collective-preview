@@ -9,7 +9,7 @@ import { PlatformLayout } from '@/components/layout/PlatformLayout'
 // import { BetaBannerWithModal } from '@/components/dashboard/BetaBannerWithModal'
 import { FormattedDate } from '@/components/FormattedDate'
 import Link from 'next/link'
-import { HandHeart, Handshake, Sparkles } from 'lucide-react'
+import { Handshake, Sparkles, Hand } from 'lucide-react'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
@@ -244,7 +244,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <div className="flex justify-center">
-                  <HandHeart className="w-6 h-6 text-primary fill-primary" aria-label="Need help" />
+                  <Hand className="w-6 h-6 text-primary" aria-label="Need help" />
                 </div>
                 Need Help?
               </CardTitle>
