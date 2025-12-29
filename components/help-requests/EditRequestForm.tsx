@@ -65,7 +65,7 @@ export function EditRequestForm({ request, onSuccess, onCancel }: EditRequestFor
   const [formData, setFormData] = useState({
     title: request.title,
     description: request.description || '',
-    category: request.category,
+    category: request.category || '',
     subcategory: request.subcategory || '',
     urgency: request.urgency,
     location_override: request.location_override || '',

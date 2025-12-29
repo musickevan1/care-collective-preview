@@ -17,7 +17,7 @@ interface CaregivingSituationEditorProps {
 }
 
 const MAX_LENGTH = 500;
-const PLACEHOLDER = "Share your caregiving context (e.g., 'Caring for aging parent with mobility challenges', 'Supporting two young children as a single parent')";
+const PLACEHOLDER = "Share your caregiving context (e.g., 'Caring for aging parent with mobility challenges')";
 
 export function CaregivingSituationEditor({
   userId,

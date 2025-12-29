@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
@@ -24,12 +25,23 @@ import {
 } from '@/components/ui/dialog'
 import { EditRequestForm } from '@/components/help-requests/EditRequestForm'
 import { Pencil } from 'lucide-react'
-import { Database } from '@/lib/database.types'
 
-type HelpRequest = Database['public']['Tables']['help_requests']['Row']
+type HelpRequestData = {
+  id: string
+  user_id: string
+  title: string
+  description: string | null
+  category: string
+  subcategory?: string | null
+  urgency: string
+  location_override?: string | null
+  location_privacy?: string | null
+  exchange_offer?: string | null
+  status: string
+}
 
 interface RequestActionsProps {
-  request: HelpRequest
+  request: HelpRequestData
   userId: string
   isOwner: boolean
   isHelper: boolean
@@ -48,6 +60,7 @@ export function RequestActions({
   const [error, setError] = useState<string | null>(null)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const router = useRouter()
+  const supabase = createClient()
 
   // NOTE: "Offer to Help" functionality has been moved to HelpRequestCardWithMessaging
   // to ensure proper conversation creation. This component now only handles status updates

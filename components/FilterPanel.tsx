@@ -272,8 +272,17 @@ export function FilterPanel({
                     <SelectValue placeholder="Order" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="desc">Newest First</SelectItem>
-                    <SelectItem value="asc">Oldest First</SelectItem>
+                    {filters.sortBy === 'urgency' ? (
+                      <>
+                        <SelectItem value="desc">Most Urgent First</SelectItem>
+                        <SelectItem value="asc">Least Urgent First</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="desc">Newest First</SelectItem>
+                        <SelectItem value="asc">Oldest First</SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>

@@ -31,6 +31,7 @@ export type Database = {
           terms_accepted_at: string | null
           terms_version: string | null
           avatar_url: string | null
+          caregiving_situation: string | null
         }
         Insert: {
           id?: string
@@ -75,6 +76,7 @@ export type Database = {
           terms_accepted_at?: string | null
           terms_version?: string | null
           avatar_url?: string | null
+          caregiving_situation?: string | null
         }
       }
       help_requests: {
@@ -228,6 +230,300 @@ export type Database = {
           status?: string | null
           title?: string | null
           last_message_at?: string | null
+        }
+      }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'new_message' | 'help_request_offer' | 'help_request_accepted' | 'help_request_completed' | 'help_request_cancelled' | 'system_announcement'
+          title: string
+          content: string | null
+          related_id: string | null
+          related_type: string | null
+          action_url: string | null
+          read_at: string | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'new_message' | 'help_request_offer' | 'help_request_accepted' | 'help_request_completed' | 'help_request_cancelled' | 'system_announcement'
+          title: string
+          content?: string | null
+          related_id?: string | null
+          related_type?: string | null
+          action_url?: string | null
+          read_at?: string | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'new_message' | 'help_request_offer' | 'help_request_accepted' | 'help_request_completed' | 'help_request_cancelled' | 'system_announcement'
+          title?: string
+          content?: string | null
+          related_id?: string | null
+          related_type?: string | null
+          action_url?: string | null
+          read_at?: string | null
+          created_at?: string | null
+        }
+      }
+      contact_exchanges: {
+        Row: {
+          id: string
+          request_id: string
+          helper_id: string
+          requester_id: string
+          exchange_type: string | null
+          contact_shared: Json | null
+          exchanged_at: string | null
+          confirmed_at: string | null
+        }
+        Insert: {
+          id?: string
+          request_id: string
+          helper_id: string
+          requester_id: string
+          exchange_type?: string | null
+          contact_shared?: Json | null
+          exchanged_at?: string | null
+          confirmed_at?: string | null
+        }
+        Update: {
+          id?: string
+          request_id?: string
+          helper_id?: string
+          requester_id?: string
+          exchange_type?: string | null
+          contact_shared?: Json | null
+          exchanged_at?: string | null
+          confirmed_at?: string | null
+        }
+      }
+      site_content: {
+        Row: {
+          id: string
+          section_key: string
+          content: Json
+          status: string
+          published_version: Json | null
+          published_at: string | null
+          published_by: string | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          section_key: string
+          content: Json
+          status?: string
+          published_version?: Json | null
+          published_at?: string | null
+          published_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          section_key?: string
+          content?: Json
+          status?: string
+          published_version?: Json | null
+          published_at?: string | null
+          published_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+          updated_by?: string | null
+        }
+      }
+      community_updates: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          icon: string | null
+          highlight_value: string | null
+          display_order: number | null
+          status: string
+          published_at: string | null
+          published_by: string | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          icon?: string | null
+          highlight_value?: string | null
+          display_order?: number | null
+          status?: string
+          published_at?: string | null
+          published_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          icon?: string | null
+          highlight_value?: string | null
+          display_order?: number | null
+          status?: string
+          published_at?: string | null
+          published_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+          updated_by?: string | null
+        }
+      }
+      event_categories: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          description: string | null
+          color: string | null
+          icon: string | null
+          display_order: number | null
+          is_active: boolean | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          description?: string | null
+          color?: string | null
+          icon?: string | null
+          display_order?: number | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          description?: string | null
+          color?: string | null
+          icon?: string | null
+          display_order?: number | null
+          is_active?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+          updated_by?: string | null
+        }
+      }
+      calendar_events: {
+        Row: {
+          id: string
+          title: string
+          description: string | null
+          category_id: string | null
+          start_date: string | null
+          end_date: string | null
+          all_day: boolean | null
+          timezone: string | null
+          location: string | null
+          location_type: string | null
+          virtual_link: string | null
+          is_recurring: boolean | null
+          recurrence_rule: string | null
+          recurrence_end_date: string | null
+          parent_event_id: string | null
+          google_calendar_id: string | null
+          google_calendar_event_id: string | null
+          last_synced_at: string | null
+          status: string
+          published_at: string | null
+          published_by: string | null
+          max_attendees: number | null
+          registration_required: boolean | null
+          registration_link: string | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string | null
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          title: string
+          description?: string | null
+          category_id?: string | null
+          start_date?: string | null
+          end_date?: string | null
+          all_day?: boolean | null
+          timezone?: string | null
+          location?: string | null
+          location_type?: string | null
+          virtual_link?: string | null
+          is_recurring?: boolean | null
+          recurrence_rule?: string | null
+          recurrence_end_date?: string | null
+          parent_event_id?: string | null
+          google_calendar_id?: string | null
+          google_calendar_event_id?: string | null
+          last_synced_at?: string | null
+          status?: string
+          published_at?: string | null
+          published_by?: string | null
+          max_attendees?: number | null
+          registration_required?: boolean | null
+          registration_link?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string | null
+          category_id?: string | null
+          start_date?: string | null
+          end_date?: string | null
+          all_day?: boolean | null
+          timezone?: string | null
+          location?: string | null
+          location_type?: string | null
+          virtual_link?: string | null
+          is_recurring?: boolean | null
+          recurrence_rule?: string | null
+          recurrence_end_date?: string | null
+          parent_event_id?: string | null
+          google_calendar_id?: string | null
+          google_calendar_event_id?: string | null
+          last_synced_at?: string | null
+          status?: string
+          published_at?: string | null
+          published_by?: string | null
+          max_attendees?: number | null
+          registration_required?: boolean | null
+          registration_link?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string | null
+          updated_by?: string | null
         }
       }
     }

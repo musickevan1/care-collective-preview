@@ -111,18 +111,6 @@ export default function Hero(): ReactElement {
 
             {/* Text Content - appears second on mobile, left on desktop */}
             <div className="flex-1 text-center sm:text-left lg:order-1 min-w-0">
-              {/* Transparent Logo - Centered Above */}
-              <div className="flex justify-center sm:justify-start mb-6 animate-fade-in-up">
-                <Image
-                  src="/logo-textless.png"
-                  alt="CARE Collective Logo"
-                  width={120}
-                  height={120}
-                  className="w-20 h-20 sm:w-24 sm:h-24 mix-blend-multiply"
-                  priority
-                />
-              </div>
-
               {/* Main Headline - Two-part with different styling */}
               <div className="mb-4 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
                 {/* "Southwest Missouri" - larger, bolded, closer to CARE */}

@@ -58,10 +58,25 @@ export function createAdminClient() {
 }
 
 /**
+ * Profile type returned by getProfileWithServiceRole
+ */
+type ProfileWithServiceRole = {
+  id: string
+  name: string
+  verification_status: string | null
+  is_admin: boolean | null
+  email_confirmed: boolean | null
+  location: string | null
+  created_at: string | null
+  avatar_url: string | null
+  caregiving_situation: string | null
+}
+
+/**
  * Get user profile with service role key (bypasses RLS)
  * Returns GUARANTEED accurate profile data
  */
-export async function getProfileWithServiceRole(userId: string) {
+export async function getProfileWithServiceRole(userId: string): Promise<ProfileWithServiceRole> {
   // ENHANCED DEBUG LOGGING - Track data flow
   Logger.getInstance().debug('[Service Role] INPUT userId', { userId })
   Logger.getInstance().debug('[Service Role] Env check', {
@@ -116,7 +131,7 @@ export async function getProfileWithServiceRole(userId: string) {
       })
     }
 
-    return profile
+    return profile as ProfileWithServiceRole
   } catch (error) {
     Logger.getInstance().error('[Service Role] CRITICAL: getProfileWithServiceRole failed', error as Error, {
       userId,
