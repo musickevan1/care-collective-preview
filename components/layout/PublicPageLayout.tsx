@@ -11,7 +11,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { MobileNav } from '@/components/MobileNav';
-import { SiteFooter } from '@/components/layout/SiteFooter';
+import { PublicPageFooter } from '@/components/layout/PublicPageFooter';
 import { LogoutButton } from '@/components/LogoutButton';
 import { useAuthNavigation } from '@/hooks/useAuthNavigation';
 import { cn } from '@/lib/utils';
@@ -155,7 +155,7 @@ export function PublicPageLayout({
       </main>
 
       {/* Footer */}
-      {showFooter && <SiteFooter />}
+      {showFooter && <PublicPageFooter />}
     </div>
   );
 }
