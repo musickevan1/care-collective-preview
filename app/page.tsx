@@ -613,7 +613,7 @@ export default function HomePage(): ReactElement {
             {/* Column 1: Branding */}
             <div>
               <h3 className="text-lg font-bold text-sage-light mb-3">CARE Collective</h3>
-              <p className="text-sm text-white/80">A project of Missouri State University, funded by the Southern Gerontological Society.</p>
+              <p className="text-sm text-white/80">Funded by the Southern Gerontological Society and the Department of Sociology, Anthropology, and Gerontology at Missouri State University.</p>
             </div>
 
             {/* Column 2: Contact Info */}
