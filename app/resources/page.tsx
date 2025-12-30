@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield } from 'lucide-react';
+import { ExternalLink as ExternalLinkIcon, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 
@@ -226,7 +226,7 @@ function ResourceCard({ title, description, url }: ResourceCardProps): ReactElem
       <CardHeader>
         <CardTitle className="flex items-start justify-between gap-2">
           <span className="text-lg font-bold">{title}</span>
-          {url && <ExternalLink className="w-5 h-5 text-sage flex-shrink-0 mt-1" />}
+          {url && <ExternalLinkIcon className="w-5 h-5 text-sage flex-shrink-0 mt-1" />}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -236,12 +236,10 @@ function ResourceCard({ title, description, url }: ResourceCardProps): ReactElem
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sage hover:text-sage-dark font-semibold inline-flex items-center gap-2 hover:underline transition-colors"
+            className="text-sage hover:text-sage-dark font-semibold inline-flex items-center gap-2 hover:underline transition-colors focus:outline-none focus:ring-2 focus:ring-sage/50 rounded"
           >
             Visit Website
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
+            <ExternalLinkIcon className="w-4 h-4 text-sage flex-shrink-0" />
           </a>
         )}
       </CardContent>

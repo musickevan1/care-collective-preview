@@ -23,30 +23,30 @@ export default function HelpPage(): ReactElement {
     <PublicPageLayout>
       <div className="container max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <div className="w-16 h-16 bg-sage/10 rounded-full flex items-center justify-center mx-auto mb-4">
             <HelpCircle className="w-8 h-8 text-sage" />
           </div>
-          <h1 className="text-3xl font-bold text-secondary mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             Platform Help & Support
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             We&apos;re here to help you connect with your community safely and effectively.
           </p>
         </div>
 
         {/* Help Categories */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Platform Help */}
           <div>
-            <h2 className="text-xl font-semibold text-secondary mb-4 flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-sage" />
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-2">
+              <HelpCircle className="w-6 h-6 text-sage" />
               Platform Help
             </h2>
             <div className="space-y-3">
               <Card>
                 <CardContent className="p-4">
-                  <h3 className="font-medium text-secondary mb-2">Getting Started</h3>
+                  <h3 className="font-semibold text-foreground mb-2">Getting Started</h3>
                   <p className="text-sm text-muted-foreground mb-3">
                     New to CARE Collective? Learn how to create your first help request or offer assistance.
                   </p>
@@ -69,7 +69,7 @@ export default function HelpPage(): ReactElement {
 
               <Card>
                 <CardContent className="p-4">
-                  <h3 className="font-medium text-secondary mb-2">Messaging System</h3>
+                  <h3 className="font-semibold text-foreground mb-2">Messaging System</h3>
                   <p className="text-sm text-muted-foreground mb-3">
                     Learn how to communicate safely with community members.
                   </p>
@@ -94,14 +94,14 @@ export default function HelpPage(): ReactElement {
 
           {/* Community Guidelines & Safety */}
           <div>
-            <h2 className="text-xl font-semibold text-secondary mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-dusty-rose" />
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-2">
+              <Shield className="w-6 h-6 text-dusty-rose" />
               Safety & Guidelines
             </h2>
             <div className="space-y-3">
               <Card>
                 <CardContent className="p-4">
-                  <h3 className="font-medium text-secondary mb-2">Community Guidelines</h3>
+                  <h3 className="font-semibold text-foreground mb-2">Community Guidelines</h3>
                   <p className="text-sm text-muted-foreground mb-3">
                     Our shared principles for creating a safe, supportive community.
                   </p>
@@ -124,7 +124,7 @@ export default function HelpPage(): ReactElement {
 
               <Card>
                 <CardContent className="p-4">
-                  <h3 className="font-medium text-secondary mb-2">Safety Tips</h3>
+                  <h3 className="font-semibold text-foreground mb-2">Safety Tips</h3>
                   <p className="text-sm text-muted-foreground mb-3">
                     Best practices for safe mutual support interactions.
                   </p>
@@ -165,7 +165,7 @@ export default function HelpPage(): ReactElement {
             <div className="flex justify-center">
               <div className="text-center p-4 border rounded-lg max-w-sm">
                 <Mail className="w-8 h-8 text-sage mx-auto mb-2" />
-                <h3 className="font-medium text-secondary mb-1">Email Support</h3>
+                <h3 className="font-semibold text-foreground mb-1">Email Support</h3>
                 <p className="text-sm text-muted-foreground mb-3">
                   Get help via email within 24 hours
                 </p>

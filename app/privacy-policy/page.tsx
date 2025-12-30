@@ -131,7 +131,7 @@ export default function PrivacyPolicyPage(): ReactElement {
               <p className="text-foreground mt-4">
                 You maintain full control over when and how your contact information is shared.
                 You can manage your privacy settings from your{' '}
-                <Link href="/privacy" className="text-primary hover:underline">Privacy Dashboard</Link>
+                <Link href="/privacy" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Privacy Dashboard</Link>
                 {' '}(requires login).
               </p>
             </CardContent>
@@ -206,7 +206,7 @@ export default function PrivacyPolicyPage(): ReactElement {
               </ul>
               <p className="text-foreground mt-4">
                 To exercise these rights, visit your{' '}
-                <Link href="/privacy" className="text-primary hover:underline">Privacy Dashboard</Link>
+                <Link href="/privacy" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Privacy Dashboard</Link>
                 {' '}or contact the CARE Collective administrator.
               </p>
             </CardContent>

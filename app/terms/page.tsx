@@ -43,9 +43,9 @@ export default function TermsPage(): ReactElement {
           <Card>
             <CardContent className="p-6 space-y-4">
               <p className="text-foreground">
-                By accessing or using the CARE Collective website and services, you agree to be bound by
+                By accessing or using CARE Collective website and services, you agree to be bound by
                 these Terms of Service and our{' '}
-                <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>.
+                <Link href="/privacy-policy" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Privacy Policy</Link>.
                 If you do not agree to these terms, you may not access or use our services.
               </p>
               <p className="text-foreground">
@@ -217,7 +217,7 @@ export default function TermsPage(): ReactElement {
               </p>
               <p className="text-foreground">
                 For complete information about how we collect, use, and protect your data, please review our{' '}
-                <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>.
+                <Link href="/privacy-policy" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Privacy Policy</Link>.
               </p>
               <p className="text-foreground">
                 By using the CARE Collective, you consent to our data practices as described in the Privacy Policy.
@@ -328,7 +328,7 @@ export default function TermsPage(): ReactElement {
                 <p className="text-muted-foreground">Dr. Maureen Templeman</p>
                 <p className="text-muted-foreground">Missouri State University</p>
                 <p className="text-muted-foreground">
-                  Visit our <Link href="/contact" className="text-primary hover:underline">Contact page</Link> for more information
+                  Visit our <Link href="/contact" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Contact page</Link> for more information
                 </p>
               </div>
             </CardContent>

@@ -57,6 +57,24 @@ Client meeting notes, feedback, and alignment documents.
 ### [database/](./database/) - Database Documentation
 Schema documentation, migration guides, and database patterns.
 
+### [reference/](./reference/) - Technical Reference
+Technical reference documentation and specifications.
+
+| File | Purpose |
+|------|---------|
+| [documentation-summary.md](./reference/documentation-summary.md) - API and pages documentation overview | Start here for complete reference |
+| [pages-reference.md](./reference/pages-reference.md) - Complete page navigation structure |
+| [api-overview.md](./reference/api-overview.md) - Authentication, rate limiting, error handling |
+| [api-auth.md](./reference/api-auth.md) - Authentication endpoints |
+| [api-requests.md](./reference/api-requests.md) - Help request management |
+| [api-messaging.md](./reference/api-messaging.md) - Conversations and messages |
+| [api-notifications.md](./reference/api-notifications.md) - Notification system |
+| [api-admin.md](./reference/api-admin.md) - Admin panel endpoints |
+| [api-health-monitoring.md](./reference/api-health-monitoring.md) - Health checks and monitoring |
+| [api-beta-testing.md](./reference/api-beta-testing.md) - Beta testing and debug endpoints |
+| [CLAUDE.md](./reference/CLAUDE.md) | Core project guidelines (copy of root) |
+| [FILE_SIZE_VIOLATIONS.md](./reference/FILE_SIZE_VIOLATIONS.md) | File size tracking and fixes |
+
 ### [security/](./security/) - Security Documentation
 Security patterns, privacy implementation, and compliance.
 
