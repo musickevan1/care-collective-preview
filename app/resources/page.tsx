@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 
 export const metadata = {
   title: 'Community Resources - CARE Collective',
@@ -11,15 +11,8 @@ export const metadata = {
 
 export default function ResourcesPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-sage-light/10 to-dusty-rose-light/10">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Back to Home */}
-        <div className="mb-6">
-          <Button asChild variant="default" size="sm">
-            <Link href="/">← Back to Home</Link>
-          </Button>
-        </div>
-
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block p-4 bg-gradient-to-br from-primary to-primary-contrast rounded-full shadow-lg mb-4">
@@ -216,18 +209,8 @@ export default function ResourcesPage(): ReactElement {
             </CardContent>
           </Card>
         </section>
-
-        {/* Back to Home */}
-        <div className="text-center mt-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium"
-          >
-            ← Back to Home
-          </Link>
-        </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }
 

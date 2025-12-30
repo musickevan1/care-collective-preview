@@ -7,6 +7,7 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Eye, Lock, Database, UserCheck, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 
 export const metadata = {
   title: 'Privacy Policy - CARE Collective',
@@ -15,15 +16,13 @@ export const metadata = {
 
 export default function PrivacyPolicyPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-background">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Privacy Policy</h1>
-          <p className="text-lg text-muted-foreground">
-            Last Updated: January 2025
-          </p>
-        </div>
+        <h1 className="text-4xl font-bold text-foreground mb-4">Privacy Policy</h1>
+        <p className="text-lg text-muted-foreground mb-8">
+          Last Updated: January 2025
+        </p>
 
         {/* Important Notice */}
         <Card className="mb-8 border-sage/30 bg-sage/5">
@@ -304,8 +303,8 @@ export default function PrivacyPolicyPage(): ReactElement {
           </CardContent>
         </Card>
 
-        {/* Navigation */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        {/* Legal Cross-References */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
           <Link
             href="/terms"
             className="text-primary hover:underline text-sm"
@@ -319,15 +318,8 @@ export default function PrivacyPolicyPage(): ReactElement {
           >
             Manage Privacy Settings
           </Link>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <Link
-            href="/"
-            className="text-primary hover:underline text-sm"
-          >
-            Back to Home
-          </Link>
         </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }

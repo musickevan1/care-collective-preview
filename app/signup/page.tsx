@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 import { createClient } from '@/lib/supabase/client'
 
 // Request deduplication for signup
@@ -118,87 +118,67 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <main id="main-content" className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-foreground">Application Submitted!</CardTitle>
-              <CardDescription>
-                Thank you for your interest in joining CARE Collective
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center space-y-4">
-              <div className="text-6xl mb-4">📋</div>
-              <p className="text-muted-foreground mb-4">
-                Your application has been submitted successfully! 
-                You can now check your application status and track your progress.
-              </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
-                <h3 className="font-semibold text-blue-900 mb-2">What happens next?</h3>
-                <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                  <li>Our team will review your application</li>
-                  <li>You&apos;ll receive an email once your application is approved</li>
-                  <li>Verify your email to access all platform features</li>
-                  <li>Start connecting with your community!</li>
-                </ol>
-              </div>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-left mt-4">
-                <p className="text-xs text-yellow-800">
-                  <strong>Note:</strong> We&apos;ve sent a confirmation email to <strong>{email}</strong>. 
-                  While you can check your application status now, you&apos;ll need to verify your email 
-                  once approved to access all platform features.
+      <PublicPageLayout showFooter={true}>
+        <div className="container mx-auto py-8 flex items-center justify-center p-6 min-h-screen">
+          <div className="w-full max-w-md">
+            <Card>
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl text-foreground">Application Submitted!</CardTitle>
+                <CardDescription>
+                  Thank you for your interest in joining CARE Collective
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center space-y-4">
+                <div className="text-6xl mb-4">📋</div>
+                <p className="text-muted-foreground mb-4">
+                  Your application has been submitted successfully!
+                  You can now check your application status and track your progress.
                 </p>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Applications are typically reviewed within 1-2 business days.
-              </p>
-              <div className="text-xs text-muted-foreground bg-gray-50 rounded p-2">
-                You&apos;ll be redirected to your application status page in a moment...
-              </div>
-              <Link href="/waitlist">
-                <Button className="w-full">
-                  Go to Application Status Now
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                  <h3 className="font-semibold text-blue-900 mb-2">What happens next?</h3>
+                  <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+                    <li>Our team will review your application</li>
+                    <li>You&apos;ll receive an email once your application is approved</li>
+                    <li>Verify your email to access all platform features</li>
+                    <li>Start connecting with your community!</li>
+                  </ol>
+                </div>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-left mt-4">
+                  <p className="text-xs text-yellow-800">
+                    <strong>Note:</strong> We&apos;ve sent a confirmation email to <strong>{email}</strong>.
+                    While you can check your application status now, you&apos;ll need to verify your email
+                    once approved to access all platform features.
+                  </p>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Applications are typically reviewed within 1-2 business days.
+                </p>
+                <div className="text-xs text-muted-foreground bg-gray-50 rounded p-2">
+                  You&apos;ll be redirected to your application status page in a moment...
+                </div>
+                <Link href="/waitlist">
+                  <Button className="w-full">
+                    Go to Application Status Now
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </main>
+      </PublicPageLayout>
     )
   }
 
   return (
-    <>
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-navy text-white shadow-lg">
-        <nav className="container mx-auto max-w-7xl">
-          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
-            <Link href="/" className="flex items-center gap-2 sm:gap-3">
-              <Image
-                src="/logo-textless.png"
-                alt="CARE Collective Logo"
-                width={56}
-                height={56}
-                className="rounded w-12 h-12 sm:w-14 sm:h-14"
-                priority
-              />
-              <span className="text-lg sm:text-xl font-bold">CARE Collective</span>
-            </Link>
-            <Link href="/" className="text-white hover:text-sage-light transition-colors py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">
-              ← Back to Home
-            </Link>
-          </div>
-        </nav>
-      </header>
-
-      <main id="main-content" className="min-h-screen bg-background flex items-center justify-center p-6 pt-24">
+    <PublicPageLayout showFooter={true}>
+      <div className="container mx-auto py-8 flex items-center justify-center p-6 min-h-screen">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-foreground mb-2">Join CARE Collective</h1>
             <p className="text-base md:text-lg text-muted-foreground">Create your account to start helping your community</p>
           </div>
 
-        <Card>
+          <Card>
           <CardHeader className="space-y-4">
             <CardTitle className="text-2xl text-center">Sign Up</CardTitle>
             <CardDescription className="text-center">
@@ -352,7 +332,7 @@ export default function SignUpPage() {
           </CardContent>
         </Card>
       </div>
-    </main>
-    </>
+    </div>
+    </PublicPageLayout>
   )
 }

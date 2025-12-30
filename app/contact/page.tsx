@@ -1,9 +1,8 @@
 import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Clock, Shield, MessageCircle } from 'lucide-react';
-import Link from 'next/link';
 import { ContactForm } from '@/components/ContactForm';
-import { Button } from '@/components/ui/button';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 
 export const metadata = {
   title: 'Contact Us - CARE Collective',
@@ -12,15 +11,8 @@ export const metadata = {
 
 export default function ContactPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-sage-light/10 to-primary/5">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-3xl">
-        {/* Back to Home */}
-        <div className="mb-6">
-          <Button asChild variant="default" size="sm">
-            <Link href="/">← Back to Home</Link>
-          </Button>
-        </div>
-
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block p-4 bg-gradient-to-br from-sage to-sage-dark rounded-full shadow-lg mb-4">
@@ -139,14 +131,7 @@ export default function ContactPage(): ReactElement {
             </Card>
           </div>
         </section>
-
-        {/* Back to Home */}
-        <div className="text-center">
-          <Link href="/" className="text-primary hover:underline">
-            ← Back to Home
-          </Link>
-        </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }

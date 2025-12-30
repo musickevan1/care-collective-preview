@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, Users, Sparkles, Handshake } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 
 export const metadata = {
   title: 'About Us - CARE Collective',
@@ -11,15 +11,8 @@ export const metadata = {
 
 export default function AboutPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-sage-light/10 to-dusty-rose-light/10">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Back to Home */}
-        <div className="mb-6">
-          <Button asChild variant="default" size="sm">
-            <Link href="/">← Back to Home</Link>
-          </Button>
-        </div>
-
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block p-3 bg-gradient-to-r from-sage/10 to-dusty-rose/10 rounded-full mb-4">
@@ -269,6 +262,6 @@ export default function AboutPage(): ReactElement {
           </Link>
         </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }

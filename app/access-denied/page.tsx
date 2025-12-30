@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 
 // Force dynamic rendering to ensure fresh data on each request
 export const dynamic = 'force-dynamic'
@@ -79,80 +80,82 @@ export default async function AccessDeniedPage({ searchParams }: AccessDeniedPag
   const colors = colorClasses[message.color as keyof typeof colorClasses] || colorClasses.yellow
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="max-w-md w-full">
-        <CardHeader className="text-center space-y-4">
-          {/* Logo */}
-          <div className="flex justify-center">
-            <Image
-              src="/logo.png"
-              alt="Care Collective Logo"
-              width={80}
-              height={80}
-              className="rounded-full"
-            />
-          </div>
-
-          {/* Main Icon */}
-          <div className="text-6xl" role="img" aria-label={message.title}>
-            {message.icon}
-          </div>
-
-          <CardTitle className="text-3xl font-bold text-secondary">
-            {message.title}
-          </CardTitle>
-
-          <CardDescription className="text-lg">
-            {message.description}
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          {/* Information Panel */}
-          <div className={`${colors.bg} border-2 ${colors.border} rounded-lg p-6 text-left`}>
-            <h2 className={`font-semibold ${colors.textTitle} mb-2`}>
-              What this means
-            </h2>
-            <p className={`text-sm ${colors.textBody} mb-4`}>
-              {message.details}
-            </p>
-            <p className={`text-sm ${colors.textBody}`}>
-              {message.action}
-            </p>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-4">
-            <a
-              href="mailto:swmocarecollective@gmail.com"
-              className="inline-flex items-center justify-center w-full px-6 py-3 bg-sage text-white rounded-lg hover:bg-sage-dark transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2"
-            >
-              Contact Support
-            </a>
-
-            <div className="flex flex-col gap-2">
-              <Link href="/" className="text-center">
-                <Button variant="outline" className="w-full">
-                  Return to Homepage
-                </Button>
-              </Link>
-              <Link href="/login" className="text-center">
-                <Button variant="ghost" className="w-full">
-                  Back to Login
-                </Button>
-              </Link>
+    <PublicPageLayout>
+      <div className="flex items-center justify-center min-h-screen px-4">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center space-y-4">
+            {/* Logo */}
+            <div className="flex justify-center">
+              <Image
+                src="/logo.png"
+                alt="Care Collective Logo"
+                width={80}
+                height={80}
+                className="rounded-full"
+              />
             </div>
-          </div>
 
-          {/* Privacy Notice */}
-          <div className="text-xs text-muted-foreground text-center">
-            <p>
-              We take community safety seriously. For privacy, we cannot provide
-              specific details about moderation decisions.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+            {/* Main Icon */}
+            <div className="text-6xl" role="img" aria-label={message.title}>
+              {message.icon}
+            </div>
+
+            <CardTitle className="text-3xl font-bold text-secondary">
+              {message.title}
+            </CardTitle>
+
+            <CardDescription className="text-lg">
+              {message.description}
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-6">
+            {/* Information Panel */}
+            <div className={`${colors.bg} border-2 ${colors.border} rounded-lg p-6 text-left`}>
+              <h2 className={`font-semibold ${colors.textTitle} mb-2`}>
+                What this means
+              </h2>
+              <p className={`text-sm ${colors.textBody} mb-4`}>
+                {message.details}
+              </p>
+              <p className={`text-sm ${colors.textBody}`}>
+                {message.action}
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-4">
+              <a
+                href="mailto:swmocarecollective@gmail.com"
+                className="inline-flex items-center justify-center w-full px-6 py-3 bg-sage text-white rounded-lg hover:bg-sage-dark transition-colors focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2"
+              >
+                Contact Support
+              </a>
+
+              <div className="flex flex-col gap-2">
+                <Link href="/" className="text-center">
+                  <Button variant="outline" className="w-full">
+                    Return to Homepage
+                  </Button>
+                </Link>
+                <Link href="/login" className="text-center">
+                  <Button variant="ghost" className="w-full">
+                    Back to Login
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Privacy Notice */}
+            <div className="text-xs text-muted-foreground text-center">
+              <p>
+                We take community safety seriously. For privacy, we cannot provide
+                specific details about moderation decisions.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </PublicPageLayout>
   )
 }

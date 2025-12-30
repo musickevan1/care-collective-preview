@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, Shield, FileText, Scale, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 
 export const metadata = {
   title: 'Terms of Service - CARE Collective',
@@ -10,15 +11,12 @@ export const metadata = {
 
 export default function TermsPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-background">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Terms of Service</h1>
-          <p className="text-lg text-muted-foreground">
-            Last Updated: January 2025
-          </p>
-        </div>
+        <h1 className="text-4xl font-bold text-foreground mb-4">Terms of Service</h1>
+        <p className="text-lg text-muted-foreground mb-8">
+          Last Updated: January 2025
+        </p>
 
         {/* Important Notice */}
         <Card className="mb-8 border-primary/30 bg-primary/5">
@@ -341,36 +339,12 @@ export default function TermsPage(): ReactElement {
         <Card className="mb-8 border-sage/30 bg-sage/5">
           <CardContent className="p-6">
             <p className="text-foreground">
-              By using the CARE Collective, you acknowledge that you have read, understood, and agree to be
+              By using CARE Collective, you acknowledge that you have read, understood, and agree to be
               bound by these Terms of Service and our Privacy Policy.
             </p>
           </CardContent>
         </Card>
-
-        {/* Navigation */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link
-            href="/about"
-            className="text-primary hover:underline text-sm"
-          >
-            Read Our Community Standards
-          </Link>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <Link
-            href="/privacy-policy"
-            className="text-primary hover:underline text-sm"
-          >
-            View Privacy Policy
-          </Link>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <Link
-            href="/"
-            className="text-primary hover:underline text-sm"
-          >
-            Back to Home
-          </Link>
-        </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }

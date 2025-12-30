@@ -6,7 +6,7 @@
 import { ReactElement } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 import Link from 'next/link';
 import {
   HelpCircle,
@@ -15,17 +15,12 @@ import {
   Heart,
   Shield,
   Mail,
-  ChevronRight,
-  Home
+  ChevronRight
 } from 'lucide-react';
 
 export default function HelpPage(): ReactElement {
-  const breadcrumbs = [
-    { label: 'Help & Support', href: '/help' }
-  ];
-
   return (
-    <div className="min-h-screen bg-background">
+    <PublicPageLayout>
       <div className="container max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -182,18 +177,8 @@ export default function HelpPage(): ReactElement {
             </div>
           </CardContent>
         </Card>
-
-        {/* Navigation Back */}
-        <div className="text-center mt-8">
-          <Button asChild variant="outline">
-            <Link href="/">
-              <Home className="w-4 h-4 mr-2" />
-              Back to Home
-            </Link>
-          </Button>
-        </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }
 

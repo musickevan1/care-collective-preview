@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ReactElement } from 'react'
 import { format } from 'date-fns'
 
@@ -152,85 +152,66 @@ export default function WaitlistPage(): ReactElement {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your application status...</p>
+      <PublicPageLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading your application status...</p>
+          </div>
         </div>
-      </main>
+      </PublicPageLayout>
     )
   }
 
   if (error && !profile) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-destructive">Error</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <p className="text-muted-foreground">{error}</p>
-            <div className="space-y-2">
-              <Link href="/login">
-                <Button className="w-full">Sign In</Button>
-              </Link>
-              <Link href="/">
-                <Button variant="outline" className="w-full">Back to Home</Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </main>
+      <PublicPageLayout>
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl text-destructive">Error</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <p className="text-muted-foreground">{error}</p>
+              <div className="space-y-2">
+                <Link href="/login">
+                  <Button className="w-full">Sign In</Button>
+                </Link>
+                <Link href="/">
+                  <Button variant="outline" className="w-full">Back to Home</Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </PublicPageLayout>
     )
   }
 
   // If user is approved, redirect them (this shouldn't normally happen due to middleware)
   if (profile?.verification_status === 'approved') {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-primary">Welcome to CARE Collective!</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <div className="text-6xl mb-4">🎉</div>
-            <p className="text-muted-foreground">Your application has been approved!</p>
-            <Link href="/dashboard">
-              <Button className="w-full">Go to Dashboard</Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </main>
+      <PublicPageLayout>
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl text-primary">Welcome to CARE Collective!</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <div className="text-6xl mb-4">🎉</div>
+              <p className="text-muted-foreground">Your application has been approved!</p>
+              <Link href="/dashboard">
+                <Button className="w-full">Go to Dashboard</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </PublicPageLayout>
     )
   }
 
   return (
-    <main className="min-h-screen bg-background">
-      {/* Header */}
-      <nav className="bg-secondary text-secondary-foreground border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-3">
-              <Image 
-                src="/logo.png" 
-                alt="Care Collective Logo" 
-                width={32} 
-                height={32}
-                className="rounded"
-              />
-              <span className="text-xl font-bold">CARE Collective</span>
-            </Link>
-            <div className="flex items-center gap-4">
-              <form action="/api/auth/logout" method="post">
-                <Button variant="ghost" size="sm" type="submit">
-                  Sign Out
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         {/* Status Card */}
         <Card className="mb-8">
@@ -403,6 +384,6 @@ export default function WaitlistPage(): ReactElement {
           </CardContent>
         </Card>
       </div>
-    </main>
+    </PublicPageLayout>
   )
 }
