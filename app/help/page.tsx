@@ -17,32 +17,31 @@ import {
   Mail,
   ChevronRight
 } from 'lucide-react';
+import { PageHeader } from '@/components/public/PageHeader';
+import { SectionHeader } from '@/components/public/SectionHeader';
+import { CTAButton } from '@/components/public/CTAButton';
 
 export default function HelpPage(): ReactElement {
   return (
     <PublicPageLayout>
       <div className="container max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="w-16 h-16 bg-sage/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <HelpCircle className="w-8 h-8 text-sage" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Platform Help & Support
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            We&apos;re here to help you connect with your community safely and effectively.
-          </p>
-        </div>
+        <PageHeader
+          title="Platform Help & Support"
+          description="We&apos;re here to help you connect with your community safely and effectively."
+          icon={<HelpCircle className="w-12 h-12 text-sage" />}
+          iconBgColor="sage"
+        />
 
         {/* Help Categories */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Platform Help */}
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-2">
-              <HelpCircle className="w-6 h-6 text-sage" />
-              Platform Help
-            </h2>
+            <SectionHeader
+              title="Platform Help"
+              icon={<HelpCircle className="w-6 h-6 text-sage" />}
+              iconBgColor="sage"
+            />
             <div className="space-y-3">
               <Card>
                 <CardContent className="p-4">
@@ -94,10 +93,11 @@ export default function HelpPage(): ReactElement {
 
           {/* Community Guidelines & Safety */}
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 flex items-center gap-2">
-              <Shield className="w-6 h-6 text-dusty-rose" />
-              Safety & Guidelines
-            </h2>
+            <SectionHeader
+              title="Safety & Guidelines"
+              icon={<Shield className="w-6 h-6 text-dusty-rose" />}
+              iconBgColor="dusty-rose"
+            />
             <div className="space-y-3">
               <Card>
                 <CardContent className="p-4">

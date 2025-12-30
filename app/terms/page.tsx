@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, Shield, FileText, Scale, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
+import { PageHeader } from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Terms of Service - CARE Collective',
@@ -13,10 +14,12 @@ export default function TermsPage(): ReactElement {
   return (
     <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-4xl font-bold text-foreground mb-4">Terms of Service</h1>
-        <p className="text-lg text-muted-foreground mb-8">
-          Last Updated: January 2025
-        </p>
+        <PageHeader
+          title="Terms of Service"
+          description="Last Updated: January 2025"
+          icon={<Scale className="w-12 h-12 text-primary" />}
+          iconBgColor="primary"
+        />
 
         {/* Important Notice */}
         <Card className="mb-8 border-primary/30 bg-primary/5">

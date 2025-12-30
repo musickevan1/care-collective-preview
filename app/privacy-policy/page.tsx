@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Eye, Lock, Database, UserCheck, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
+import { PageHeader } from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Privacy Policy - CARE Collective',
@@ -19,10 +20,12 @@ export default function PrivacyPolicyPage(): ReactElement {
     <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
-        <h1 className="text-4xl font-bold text-foreground mb-4">Privacy Policy</h1>
-        <p className="text-lg text-muted-foreground mb-8">
-          Last Updated: January 2025
-        </p>
+        <PageHeader
+          title="Privacy Policy"
+          description="Last Updated: January 2025"
+          icon={<Shield className="w-12 h-12" />}
+          iconBgColor="primary"
+        />
 
         {/* Important Notice */}
         <Card className="mb-8 border-sage/30 bg-sage/5">

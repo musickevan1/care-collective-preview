@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Clock, Shield, MessageCircle } from 'lucide-react';
 import { ContactForm } from '@/components/ContactForm';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
+import { PageHeader } from '@/components/public/PageHeader';
+import { SectionHeader } from '@/components/public/SectionHeader';
+import { CTAButton } from '@/components/public/CTAButton';
 
 export const metadata = {
   title: 'Contact Us - CARE Collective',
@@ -14,15 +17,12 @@ export default function ContactPage(): ReactElement {
     <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-3xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-block p-4 bg-gradient-to-br from-sage to-sage-dark rounded-full shadow-lg mb-4">
-            <MessageCircle className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Contact Us</h1>
-          <p className="text-xl text-muted-foreground">
-            We&apos;re here to help. Reach out with any questions, concerns, or feedback.
-          </p>
-        </div>
+        <PageHeader
+          title="Contact Us"
+          description="We&apos;re here to help. Reach out with any questions, concerns, or feedback."
+          icon={<MessageCircle className="w-10 h-10 text-white" />}
+          iconBgColor="sage"
+        />
 
         {/* Primary Contact */}
         <section className="mb-8">
@@ -41,7 +41,7 @@ export default function ContactPage(): ReactElement {
               </p>
               <a
                 href="mailto:swmocarecollective@gmail.com"
-                className="text-2xl font-semibold text-sage hover:text-sage-dark hover:underline transition-colors"
+                className="text-2xl font-semibold text-sage hover:text-sage-dark hover:underline transition-colors focus:outline-none focus:ring-2 focus:ring-sage/50 rounded"
               >
                 swmocarecollective@gmail.com
               </a>
@@ -92,7 +92,7 @@ export default function ContactPage(): ReactElement {
 
         {/* What to Contact Us About */}
         <section className="mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">How Can We Help?</h2>
+          <SectionHeader title="How Can We Help?" iconBgColor="sage" />
           <div className="grid gap-6 md:grid-cols-2">
             <Card className="border-sage/20 bg-white shadow-md hover:shadow-lg transition-all duration-300 hover:border-sage hover:-translate-y-1">
               <CardContent className="p-6">

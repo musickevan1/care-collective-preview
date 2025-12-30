@@ -3,6 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ExternalLink as ExternalLinkIcon, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
+import { PageHeader } from '@/components/public/PageHeader';
+import { SectionHeader } from '@/components/public/SectionHeader';
+import { CTAButton } from '@/components/public/CTAButton';
 
 export const metadata = {
   title: 'Community Resources - CARE Collective',
@@ -14,28 +17,21 @@ export default function ResourcesPage(): ReactElement {
     <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-block p-4 bg-gradient-to-br from-primary to-primary-contrast rounded-full shadow-lg mb-4">
-            <Heart className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Community Resources</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            The CARE Collective connects community members with trusted local and regional organizations
-            that offer practical support, guidance, and connection.
-          </p>
-        </div>
+        <PageHeader
+          title="Community Resources"
+          description="The CARE Collective connects community members with trusted local and regional organizations that offer practical support, guidance, and connection."
+          icon={<Heart className="w-10 h-10 text-white" />}
+          iconBgColor="primary"
+        />
 
         {/* Essentials Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gradient-to-br from-sage to-sage-dark rounded-xl shadow-md">
-              <Home className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Essentials</h2>
-              <p className="text-muted-foreground text-lg">Get help with food, housing, and everyday needs.</p>
-            </div>
-          </div>
+          <SectionHeader
+            title="Essentials"
+            description="Get help with food, housing, and everyday needs."
+            icon={<Home className="w-8 h-8 text-white" />}
+            iconBgColor="sage"
+          />
 
           <div className="grid gap-4 md:grid-cols-2">
             <ResourceCard
@@ -73,15 +69,12 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Well-Being Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gradient-to-br from-dusty-rose to-dusty-rose-dark rounded-xl shadow-md">
-              <Heart className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Well-Being</h2>
-              <p className="text-muted-foreground text-lg">Find support for emotional health, caregiving challenges, and serious illness.</p>
-            </div>
-          </div>
+          <SectionHeader
+            title="Well-Being"
+            description="Find support for emotional health, caregiving challenges, and serious illness."
+            icon={<Heart className="w-8 h-8 text-white" />}
+            iconBgColor="dusty-rose"
+          />
 
           <div className="grid gap-4 md:grid-cols-2">
             <ResourceCard
@@ -103,15 +96,12 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Community Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gradient-to-br from-primary to-primary-contrast rounded-xl shadow-md">
-              <Users className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Community</h2>
-              <p className="text-muted-foreground text-lg">Join local programs and spaces that promote health, creativity, and connection.</p>
-            </div>
-          </div>
+          <SectionHeader
+            title="Community"
+            description="Join local programs and spaces that promote health, creativity, and connection."
+            icon={<Users className="w-8 h-8 text-white" />}
+            iconBgColor="primary"
+          />
 
           <div className="grid gap-4 md:grid-cols-2">
             <ResourceCard
@@ -134,15 +124,12 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Learning Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gradient-to-br from-accent to-accent-dark rounded-xl shadow-md">
-              <GraduationCap className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Learning</h2>
-              <p className="text-muted-foreground text-lg">Learn new skills and connect with local experts.</p>
-            </div>
-          </div>
+          <SectionHeader
+            title="Learning"
+            description="Learn new skills and connect with local experts."
+            icon={<GraduationCap className="w-8 h-8 text-white" />}
+            iconBgColor="accent"
+          />
 
           <Card>
             <CardHeader>
