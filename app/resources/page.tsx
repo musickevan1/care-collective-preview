@@ -1,8 +1,10 @@
 import { ReactElement } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield } from 'lucide-react';
+import { ExternalLink as ExternalLinkIcon, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
+import { SectionHeader } from '@/components/public/SectionHeader';
+import { CTAButton } from '@/components/public/CTAButton';
 
 export const metadata = {
   title: 'Community Resources - CARE Collective',
@@ -11,40 +13,24 @@ export const metadata = {
 
 export default function ResourcesPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-sage-light/10 to-dusty-rose-light/10">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Back to Home */}
-        <div className="mb-6">
-          <Button asChild variant="default" size="sm">
-            <Link href="/">← Back to Home</Link>
-          </Button>
-        </div>
-
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-block p-4 bg-gradient-to-br from-primary to-primary-contrast rounded-full shadow-lg mb-4">
-            <Heart className="w-10 h-10 text-white" />
+        {/* Community Resources Header - matches homepage style */}
+        <section className="py-16 md:py-20">
+          <div className="container mx-auto px-4">
+            <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+              Community Resources
+            </h2>
+            <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed mb-12">
+              The CARE Collective connects community members with trusted local and regional organizations that offer practical support, guidance, and connection.
+            </p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">Community Resources</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            The CARE Collective connects community members with trusted local and regional organizations
-            that offer practical support, guidance, and connection.
-          </p>
-        </div>
+        </section>
 
         {/* Essentials Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gradient-to-br from-sage to-sage-dark rounded-xl shadow-md">
-              <Home className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Essentials</h2>
-              <p className="text-muted-foreground text-lg">Get help with food, housing, and everyday needs.</p>
-            </div>
-          </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
               title="SeniorAge Area Agency on Aging"
               description="Offers meals, transportation, in-home services, and community programs for older adults."
@@ -61,7 +47,7 @@ export default function ResourcesPage(): ReactElement {
               url="https://211helps.org"
             />
             <ResourceCard
-              title="Crosslines / Council of Churches of the Ozarks"
+              title="Crosslines / Council of Churches of Ozarks"
               description="Coordinates emergency assistance with rent, clothing, and household items."
               url="https://ccozarks.org/crosslines"
             />
@@ -80,17 +66,14 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Well-Being Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gradient-to-br from-dusty-rose to-dusty-rose-dark rounded-xl shadow-md">
-              <Heart className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Well-Being</h2>
-              <p className="text-muted-foreground text-lg">Find support for emotional health, caregiving challenges, and serious illness.</p>
-            </div>
-          </div>
+          <SectionHeader
+            title="Well-Being"
+            description="Find support for emotional health, caregiving challenges, and serious illness."
+            icon={<Heart className="w-8 h-8 text-white" />}
+            iconBgColor="dusty-rose"
+          />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
               title="Local Hospice & Palliative Care Programs"
               description="Provide compassionate support for individuals and families during serious illness (e.g., CoxHealth Palliative Care, Good Shepherd, Seasons)."
@@ -110,17 +93,14 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Community Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gradient-to-br from-primary to-primary-contrast rounded-xl shadow-md">
-              <Users className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Community</h2>
-              <p className="text-muted-foreground text-lg">Join local programs and spaces that promote health, creativity, and connection.</p>
-            </div>
-          </div>
+          <SectionHeader
+            title="Community"
+            description="Join local programs and spaces that promote health, creativity, and connection."
+            icon={<Users className="w-8 h-8 text-white" />}
+            iconBgColor="primary"
+          />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
               title="Senior Centers (SeniorAge)"
               description="Offer meals, exercise, and hobby groups near you."
@@ -141,15 +121,12 @@ export default function ResourcesPage(): ReactElement {
 
         {/* Learning Section */}
         <section className="mb-12">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-gradient-to-br from-accent to-accent-dark rounded-xl shadow-md">
-              <GraduationCap className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground">Learning</h2>
-              <p className="text-muted-foreground text-lg">Learn new skills and connect with local experts.</p>
-            </div>
-          </div>
+          <SectionHeader
+            title="Learning"
+            description="Learn new skills and connect with local experts."
+            icon={<GraduationCap className="w-8 h-8 text-white" />}
+            iconBgColor="accent"
+          />
 
           <Card>
             <CardHeader>
@@ -216,18 +193,8 @@ export default function ResourcesPage(): ReactElement {
             </CardContent>
           </Card>
         </section>
-
-        {/* Back to Home */}
-        <div className="text-center mt-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium"
-          >
-            ← Back to Home
-          </Link>
-        </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }
 
@@ -243,7 +210,7 @@ function ResourceCard({ title, description, url }: ResourceCardProps): ReactElem
       <CardHeader>
         <CardTitle className="flex items-start justify-between gap-2">
           <span className="text-lg font-bold">{title}</span>
-          {url && <ExternalLink className="w-5 h-5 text-sage flex-shrink-0 mt-1" />}
+          {url && <ExternalLinkIcon className="w-5 h-5 text-sage flex-shrink-0 mt-1" />}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -253,12 +220,10 @@ function ResourceCard({ title, description, url }: ResourceCardProps): ReactElem
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sage hover:text-sage-dark font-semibold inline-flex items-center gap-2 hover:underline transition-colors"
+            className="text-sage hover:text-sage-dark font-semibold inline-flex items-center gap-2 hover:underline transition-colors focus:outline-none focus:ring-2 focus:ring-sage/50 rounded"
           >
             Visit Website
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
+            <ExternalLinkIcon className="w-4 h-4 text-sage flex-shrink-0" />
           </a>
         )}
       </CardContent>

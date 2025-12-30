@@ -7,6 +7,8 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Shield, Eye, Lock, Database, UserCheck, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
+import { PageHeader } from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Privacy Policy - CARE Collective',
@@ -15,15 +17,15 @@ export const metadata = {
 
 export default function PrivacyPolicyPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-background">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Privacy Policy</h1>
-          <p className="text-lg text-muted-foreground">
-            Last Updated: January 2025
-          </p>
-        </div>
+        <PageHeader
+          title="Privacy Policy"
+          description="Last Updated: January 2025"
+          icon={<Shield className="w-12 h-12" />}
+          iconBgColor="primary"
+        />
 
         {/* Important Notice */}
         <Card className="mb-8 border-sage/30 bg-sage/5">
@@ -132,7 +134,7 @@ export default function PrivacyPolicyPage(): ReactElement {
               <p className="text-foreground mt-4">
                 You maintain full control over when and how your contact information is shared.
                 You can manage your privacy settings from your{' '}
-                <Link href="/privacy" className="text-primary hover:underline">Privacy Dashboard</Link>
+                <Link href="/privacy" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Privacy Dashboard</Link>
                 {' '}(requires login).
               </p>
             </CardContent>
@@ -207,7 +209,7 @@ export default function PrivacyPolicyPage(): ReactElement {
               </ul>
               <p className="text-foreground mt-4">
                 To exercise these rights, visit your{' '}
-                <Link href="/privacy" className="text-primary hover:underline">Privacy Dashboard</Link>
+                <Link href="/privacy" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Privacy Dashboard</Link>
                 {' '}or contact the CARE Collective administrator.
               </p>
             </CardContent>
@@ -304,8 +306,8 @@ export default function PrivacyPolicyPage(): ReactElement {
           </CardContent>
         </Card>
 
-        {/* Navigation */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        {/* Legal Cross-References */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-12">
           <Link
             href="/terms"
             className="text-primary hover:underline text-sm"
@@ -319,15 +321,8 @@ export default function PrivacyPolicyPage(): ReactElement {
           >
             Manage Privacy Settings
           </Link>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <Link
-            href="/"
-            className="text-primary hover:underline text-sm"
-          >
-            Back to Home
-          </Link>
         </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }

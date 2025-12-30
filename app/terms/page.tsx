@@ -2,6 +2,8 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, Shield, FileText, Scale, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
+import { PageHeader } from '@/components/public/PageHeader';
 
 export const metadata = {
   title: 'Terms of Service - CARE Collective',
@@ -10,15 +12,14 @@ export const metadata = {
 
 export default function TermsPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-background">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Terms of Service</h1>
-          <p className="text-lg text-muted-foreground">
-            Last Updated: January 2025
-          </p>
-        </div>
+        <PageHeader
+          title="Terms of Service"
+          description="Last Updated: January 2025"
+          icon={<Scale className="w-12 h-12 text-primary" />}
+          iconBgColor="primary"
+        />
 
         {/* Important Notice */}
         <Card className="mb-8 border-primary/30 bg-primary/5">
@@ -45,9 +46,9 @@ export default function TermsPage(): ReactElement {
           <Card>
             <CardContent className="p-6 space-y-4">
               <p className="text-foreground">
-                By accessing or using the CARE Collective website and services, you agree to be bound by
+                By accessing or using CARE Collective website and services, you agree to be bound by
                 these Terms of Service and our{' '}
-                <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>.
+                <Link href="/privacy-policy" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Privacy Policy</Link>.
                 If you do not agree to these terms, you may not access or use our services.
               </p>
               <p className="text-foreground">
@@ -219,7 +220,7 @@ export default function TermsPage(): ReactElement {
               </p>
               <p className="text-foreground">
                 For complete information about how we collect, use, and protect your data, please review our{' '}
-                <Link href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</Link>.
+                <Link href="/privacy-policy" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Privacy Policy</Link>.
               </p>
               <p className="text-foreground">
                 By using the CARE Collective, you consent to our data practices as described in the Privacy Policy.
@@ -330,7 +331,7 @@ export default function TermsPage(): ReactElement {
                 <p className="text-muted-foreground">Dr. Maureen Templeman</p>
                 <p className="text-muted-foreground">Missouri State University</p>
                 <p className="text-muted-foreground">
-                  Visit our <Link href="/contact" className="text-primary hover:underline">Contact page</Link> for more information
+                  Visit our <Link href="/contact" className="text-primary hover:text-primary/90 hover:underline focus:outline-none focus:ring-2 focus:ring-primary/50 rounded transition-colors">Contact page</Link> for more information
                 </p>
               </div>
             </CardContent>
@@ -341,36 +342,12 @@ export default function TermsPage(): ReactElement {
         <Card className="mb-8 border-sage/30 bg-sage/5">
           <CardContent className="p-6">
             <p className="text-foreground">
-              By using the CARE Collective, you acknowledge that you have read, understood, and agree to be
+              By using CARE Collective, you acknowledge that you have read, understood, and agree to be
               bound by these Terms of Service and our Privacy Policy.
             </p>
           </CardContent>
         </Card>
-
-        {/* Navigation */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link
-            href="/about"
-            className="text-primary hover:underline text-sm"
-          >
-            Read Our Community Standards
-          </Link>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <Link
-            href="/privacy-policy"
-            className="text-primary hover:underline text-sm"
-          >
-            View Privacy Policy
-          </Link>
-          <span className="hidden sm:inline text-muted-foreground">•</span>
-          <Link
-            href="/"
-            className="text-primary hover:underline text-sm"
-          >
-            Back to Home
-          </Link>
-        </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }

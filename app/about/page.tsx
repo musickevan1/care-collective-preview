@@ -2,40 +2,26 @@ import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, Users, Sparkles, Handshake } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
+import { SectionHeader } from '@/components/public/SectionHeader';
+import { CTAButton } from '@/components/public/CTAButton';
 
 export const metadata = {
   title: 'About Us - CARE Collective',
   description: 'Learn about the CARE Collective mission, vision, values, and community standards for family caregivers in Southwest Missouri.',
 };
-
 export default function AboutPage(): ReactElement {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-sage-light/10 to-dusty-rose-light/10">
+    <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Back to Home */}
-        <div className="mb-6">
-          <Button asChild variant="default" size="sm">
-            <Link href="/">← Back to Home</Link>
-          </Button>
-        </div>
-
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-block p-3 bg-gradient-to-r from-sage/10 to-dusty-rose/10 rounded-full mb-4">
-            <Heart className="w-12 h-12 text-sage" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">About CARE Collective</h1>
-        </div>
+        {/* About Section Header - matches homepage style */}
+        <SectionHeader
+          title="About CARE Collective"
+        />
 
         {/* Mission */}
         <section className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-br from-primary to-primary-contrast rounded-xl shadow-md">
-              <Heart className="w-7 h-7 text-white" />
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Our Mission</h2>
-          </div>
+          <h3 className="text-lg font-semibold text-sage/70 uppercase tracking-wide mb-4">Our Mission</h3>
           <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-1">
             <CardContent className="p-8">
               <p className="text-lg text-foreground leading-relaxed">
@@ -48,12 +34,11 @@ export default function AboutPage(): ReactElement {
 
         {/* Vision */}
         <section className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-br from-sage to-sage-dark rounded-xl shadow-md">
-              <Sparkles className="w-7 h-7 text-white" />
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Our Vision</h2>
-          </div>
+          <SectionHeader
+            title="Our Vision"
+            icon={<Sparkles className="w-6 h-6 text-white" />}
+            iconBgColor="sage"
+          />
           <Card className="border-sage/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-1">
             <CardContent className="p-8">
               <p className="text-lg text-foreground leading-relaxed">
@@ -66,15 +51,14 @@ export default function AboutPage(): ReactElement {
 
         {/* Values */}
         <section className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-gradient-to-br from-dusty-rose to-dusty-rose-dark rounded-xl shadow-md">
-              <Users className="w-7 h-7 text-white" />
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Our Values</h2>
-          </div>
+          <SectionHeader
+            title="Our Values"
+            icon={<Users className="w-6 h-6 text-white" />}
+            iconBgColor="dusty-rose"
+          />
 
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="border-sage/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-2">
+            <Card className="border-sage/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <div className="p-2 bg-sage/10 rounded-lg">
@@ -91,7 +75,7 @@ export default function AboutPage(): ReactElement {
               </CardContent>
             </Card>
 
-            <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-2">
+            <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <div className="p-2 bg-primary/10 rounded-lg">
@@ -107,7 +91,7 @@ export default function AboutPage(): ReactElement {
               </CardContent>
             </Card>
 
-            <Card className="border-dusty-rose/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-dusty-rose hover:-translate-y-2">
+            <Card className="border-dusty-rose/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-dusty-rose hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <div className="p-2 bg-dusty-rose/10 rounded-lg">
@@ -124,7 +108,7 @@ export default function AboutPage(): ReactElement {
               </CardContent>
             </Card>
 
-            <Card className="border-accent/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-accent hover:-translate-y-2">
+            <Card className="border-accent/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-accent hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <div className="p-2 bg-accent/10 rounded-lg">
@@ -258,17 +242,9 @@ export default function AboutPage(): ReactElement {
 
         {/* CTA */}
         <div className="text-center">
-          <Link
-            href="/signup"
-            className="inline-flex items-center justify-center gap-3 px-10 py-4 bg-gradient-to-r from-sage to-sage-dark text-white rounded-xl hover:from-sage-dark hover:to-sage text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-sage/30 min-h-[56px]"
-          >
-            <span>Join Our Community</span>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </Link>
+          <CTAButton href="/signup">Join Our Community</CTAButton>
         </div>
       </div>
-    </div>
+    </PublicPageLayout>
   );
 }

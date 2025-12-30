@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 
 // Request deduplication for login
 let loginPromise: Promise<void> | null = null
@@ -129,30 +129,8 @@ export default function LoginPage() {
   }
 
   return (
-    <>
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-navy text-white shadow-lg">
-        <nav className="container mx-auto max-w-7xl">
-          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
-            <Link href="/" className="flex items-center gap-2 sm:gap-3">
-              <Image
-                src="/logo-textless.png"
-                alt="CARE Collective Logo"
-                width={56}
-                height={56}
-                className="rounded w-12 h-12 sm:w-14 sm:h-14"
-                priority
-              />
-              <span className="text-lg sm:text-xl font-bold">CARE Collective</span>
-            </Link>
-            <Link href="/" className="text-white hover:text-sage-light transition-colors py-2 px-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy">
-              ← Back to Home
-            </Link>
-          </div>
-        </nav>
-      </header>
-
-      <main id="main-content" className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6 pt-24">
+    <PublicPageLayout showFooter={true}>
+      <main id="main-content" className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
@@ -227,6 +205,6 @@ export default function LoginPage() {
         </Card>
       </div>
     </main>
-    </>
+    </PublicPageLayout>
   )
 }
