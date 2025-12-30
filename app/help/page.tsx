@@ -169,9 +169,11 @@ export default function HelpPage(): ReactElement {
                 <p className="text-sm text-muted-foreground mb-3">
                   Get help via email within 24 hours
                 </p>
-                <Button variant="outline" className="w-full">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Email Us
+                <Button variant="outline" className="w-full" asChild>
+                  <a href="mailto:swmocarecollective@gmail.com">
+                    <Mail className="w-4 h-4 mr-2" />
+                    Email Us
+                  </a>
                 </Button>
               </div>
             </div>
