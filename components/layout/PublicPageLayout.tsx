@@ -50,8 +50,9 @@ export function PublicPageLayout({
     return pathname.startsWith(href);
   }, [pathname]);
 
-  // Consistent hover styling for all nav items (matches homepage)
-  const navItemClasses = "hover:text-sage-light";
+  // Subtle active state styling to match homepage "last clicked" effect
+  const activeClasses = "ring-1 ring-white/30 bg-white/10";
+  const inactiveClasses = "hover:text-sage-light";
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -94,7 +95,7 @@ export function PublicPageLayout({
                       href={item.href}
                       className={cn(
                         "py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap transition-colors relative",
-                        navItemClasses
+                        isActive(item.href) ? activeClasses : inactiveClasses
                       )}
                       aria-current={isActive(item.href) ? 'page' : undefined}
                     >
