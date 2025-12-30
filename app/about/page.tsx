@@ -66,7 +66,7 @@ export default function AboutPage(): ReactElement {
           />
 
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="border-sage/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-2">
+            <Card className="border-sage/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <div className="p-2 bg-sage/10 rounded-lg">
@@ -83,7 +83,7 @@ export default function AboutPage(): ReactElement {
               </CardContent>
             </Card>
 
-            <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-2">
+            <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <div className="p-2 bg-primary/10 rounded-lg">
@@ -99,7 +99,7 @@ export default function AboutPage(): ReactElement {
               </CardContent>
             </Card>
 
-            <Card className="border-dusty-rose/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-dusty-rose hover:-translate-y-2">
+            <Card className="border-dusty-rose/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-dusty-rose hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <div className="p-2 bg-dusty-rose/10 rounded-lg">
@@ -116,7 +116,7 @@ export default function AboutPage(): ReactElement {
               </CardContent>
             </Card>
 
-            <Card className="border-accent/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-accent hover:-translate-y-2">
+            <Card className="border-accent/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-accent hover:-translate-y-1">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <div className="p-2 bg-accent/10 rounded-lg">

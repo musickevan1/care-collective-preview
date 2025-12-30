@@ -33,7 +33,7 @@ export default function ResourcesPage(): ReactElement {
             iconBgColor="sage"
           />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
               title="SeniorAge Area Agency on Aging"
               description="Offers meals, transportation, in-home services, and community programs for older adults."
@@ -50,7 +50,7 @@ export default function ResourcesPage(): ReactElement {
               url="https://211helps.org"
             />
             <ResourceCard
-              title="Crosslines / Council of Churches of the Ozarks"
+              title="Crosslines / Council of Churches of Ozarks"
               description="Coordinates emergency assistance with rent, clothing, and household items."
               url="https://ccozarks.org/crosslines"
             />
@@ -76,7 +76,7 @@ export default function ResourcesPage(): ReactElement {
             iconBgColor="dusty-rose"
           />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
               title="Local Hospice & Palliative Care Programs"
               description="Provide compassionate support for individuals and families during serious illness (e.g., CoxHealth Palliative Care, Good Shepherd, Seasons)."
@@ -103,7 +103,7 @@ export default function ResourcesPage(): ReactElement {
             iconBgColor="primary"
           />
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
               title="Senior Centers (SeniorAge)"
               description="Offer meals, exercise, and hobby groups near you."
