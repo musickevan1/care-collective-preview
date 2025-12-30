@@ -137,7 +137,7 @@ export default function Hero(): ReactElement {
                    className="text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed"
                    style={{ fontSize: 'clamp(0.875rem, 1.4vw, 1.25rem)' }}
                  >
-                   A network of family caregivers in Southwest Missouri who support each other
+                   A network of family caregivers in Southwest Missouri who support each other{' '}
                    <br className="hidden sm:block" />
                    through practical help and shared resources.
                  </p>
