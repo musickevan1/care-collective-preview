@@ -50,6 +50,10 @@ export function PublicPageLayout({
     return pathname.startsWith(href);
   }, [pathname]);
 
+  // Active styling classes - make active state more prominent
+  const activeClasses = "bg-white/20 text-sage-light font-semibold border-l-4 border-sage-light";
+  const inactiveClasses = "hover:text-sage-light";
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Skip Link for Accessibility */}
@@ -92,14 +96,11 @@ export function PublicPageLayout({
                       className={cn(
                         "py-2 px-2 xl:px-3 rounded-lg min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy text-sm xl:text-base whitespace-nowrap transition-colors relative",
                         isActive(item.href)
-                          ? "bg-white/20 text-sage-light font-semibold"
-                          : "hover:text-sage-light"
+                          ? activeClasses
+                          : inactiveClasses
                       )}
                       aria-current={isActive(item.href) ? 'page' : undefined}
                     >
-                      {isActive(item.href) && (
-                        <span className="absolute left-1 w-2 h-2 bg-sage rounded-full" aria-hidden="true" />
-                      )}
                       <span className={isActive(item.href) ? 'pl-3' : ''}>{item.label}</span>
                     </Link>
                   </li>
