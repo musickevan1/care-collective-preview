@@ -1,6 +1,6 @@
 /**
  * @fileoverview Consistent section header component for public pages
- * Provides standardized section headers with optional icon and description
+ * Matches homepage section header style with visual hierarchy
  */
 
 import { ReactElement } from 'react';
@@ -17,8 +17,8 @@ export interface SectionHeaderProps {
 }
 
 /**
- * Consistent section header with small icon container and text
- * Uses solid tint backgrounds for cleaner appearance
+ * Consistent section header with optional icon
+ * Matches homepage section header style with uppercase tracking
  */
 export function SectionHeader({
   title,
@@ -34,18 +34,15 @@ export function SectionHeader({
   };
 
   return (
-    <div className="flex items-center gap-3 mb-6">
-      {icon && (
-        <div className={`p-2 rounded-lg ${colorClasses[iconBgColor]}`}>
-          {icon}
-        </div>
+    <div className="mb-12">
+      <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+        {title}
+      </h2>
+      {description && (
+        <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+          {description}
+        </p>
       )}
-      <div>
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground">{title}</h2>
-        {description && (
-          <p className="text-lg text-muted-foreground">{description}</p>
-        )}
-      </div>
     </div>
   );
 }

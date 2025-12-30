@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Heart, Users, Sparkles, Handshake } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
-import { PageHeader } from '@/components/public/PageHeader';
 import { SectionHeader } from '@/components/public/SectionHeader';
 import { CTAButton } from '@/components/public/CTAButton';
 
@@ -11,25 +10,18 @@ export const metadata = {
   title: 'About Us - CARE Collective',
   description: 'Learn about the CARE Collective mission, vision, values, and community standards for family caregivers in Southwest Missouri.',
 };
-
 export default function AboutPage(): ReactElement {
   return (
     <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
-        <PageHeader
+        {/* About Section Header - matches homepage style */}
+        <SectionHeader
           title="About CARE Collective"
-          icon={<Heart className="w-12 h-12 text-sage" />}
-          iconBgColor="sage"
         />
 
         {/* Mission */}
         <section className="mb-12">
-          <SectionHeader
-            title="Our Mission"
-            icon={<Heart className="w-6 h-6 text-white" />}
-            iconBgColor="primary"
-          />
+          <h3 className="text-lg font-semibold text-sage/70 uppercase tracking-wide mb-4">Our Mission</h3>
           <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-1">
             <CardContent className="p-8">
               <p className="text-lg text-foreground leading-relaxed">
