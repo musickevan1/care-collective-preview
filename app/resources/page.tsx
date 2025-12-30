@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ExternalLink as ExternalLinkIcon, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
-import { PageHeader } from '@/components/public/PageHeader';
 import { SectionHeader } from '@/components/public/SectionHeader';
 import { CTAButton } from '@/components/public/CTAButton';
 
@@ -16,22 +15,20 @@ export default function ResourcesPage(): ReactElement {
   return (
     <PublicPageLayout>
       <div className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Header */}
-        <PageHeader
-          title="Community Resources"
-          description="The CARE Collective connects community members with trusted local and regional organizations that offer practical support, guidance, and connection."
-          icon={<Heart className="w-10 h-10 text-white" />}
-          iconBgColor="primary"
-        />
+        {/* Community Resources Header - matches homepage style */}
+        <section className="py-16 md:py-20">
+          <div className="container mx-auto px-4">
+            <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+              Community Resources
+            </h2>
+            <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed mb-12">
+              The CARE Collective connects community members with trusted local and regional organizations that offer practical support, guidance, and connection.
+            </p>
+          </div>
+        </section>
 
         {/* Essentials Section */}
         <section className="mb-12">
-          <SectionHeader
-            title="Essentials"
-            description="Get help with food, housing, and everyday needs."
-            icon={<Home className="w-8 h-8 text-white" />}
-            iconBgColor="sage"
-          />
 
           <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
