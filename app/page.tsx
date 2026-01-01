@@ -609,6 +609,8 @@ export default function HomePage(): ReactElement {
       {/* Footer */}
       <footer id="contact" className="bg-navy text-white py-8">
         <div className="container mx-auto px-4 max-w-7xl">
+          {/* Divider line above footer content */}
+          <div className="border-t border-white/20 mb-6" aria-hidden="true" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             {/* Column 1: Branding */}
             <div>
