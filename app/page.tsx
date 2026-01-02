@@ -348,7 +348,7 @@ export default function HomePage(): ReactElement {
             
             <div className="container mx-auto px-4 pt-24 md:pt-32 pb-28 md:pb-36">
               <div className="max-w-6xl mx-auto">
-                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20">
                   
                   {/* Left: Photo with dusty rose ring */}
                   <div className="flex-shrink-0 text-center">
@@ -376,7 +376,7 @@ export default function HomePage(): ReactElement {
                     </div>
                     {/* Caption */}
                     <p className="mt-6 text-lg italic text-white/90 text-center font-medium">
-                      Dr. Maureen Templeman
+                      Dr. Maureen Templeman, Founder
                     </p>
                   </div>
 
@@ -399,7 +399,7 @@ export default function HomePage(): ReactElement {
                     
                     {/* Highlighted statement + CTA button */}
                     <div className="mt-10 flex flex-col items-center lg:items-start gap-8">
-                      <p className="text-2xl md:text-3xl lg:text-[32px] font-bold text-white leading-snug">
+                      <p className="text-[27px] md:text-[32px] lg:text-[36px] font-bold text-white leading-snug">
                         Together, we are making caregiving sustainable.
                       </p>
                       <Link

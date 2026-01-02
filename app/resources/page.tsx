@@ -71,11 +71,13 @@ export default function ResourcesPage(): ReactElement {
             description="Find support for emotional health, caregiving challenges, and serious illness."
             icon={<Heart className="w-8 h-8 text-white" />}
             iconBgColor="dusty-rose"
+            className="text-center"
+            descriptionClassName="text-center"
           />
 
           <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
-              title="Local Hospice & Palliative Care Programs"
+              title="Hospice Foundation for Outreach"
               description="Provide compassionate support for individuals and families during serious illness (e.g., CoxHealth Palliative Care, Good Shepherd, Seasons)."
             />
             <ResourceCard
@@ -98,6 +100,8 @@ export default function ResourcesPage(): ReactElement {
             description="Join local programs and spaces that promote health, creativity, and connection."
             icon={<Users className="w-8 h-8 text-white" />}
             iconBgColor="primary"
+            className="text-center"
+            descriptionClassName="text-center"
           />
 
           <div className="grid gap-6 md:grid-cols-2">
@@ -126,6 +130,8 @@ export default function ResourcesPage(): ReactElement {
             description="Learn new skills and connect with local experts."
             icon={<GraduationCap className="w-8 h-8 text-white" />}
             iconBgColor="accent"
+            className="text-center"
+            descriptionClassName="text-center"
           />
 
           <Card>

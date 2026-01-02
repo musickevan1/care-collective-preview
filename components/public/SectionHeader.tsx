@@ -14,6 +14,10 @@ export interface SectionHeaderProps {
   icon?: ReactElement;
   /** Icon background color variant */
   iconBgColor?: 'sage' | 'primary' | 'dusty-rose' | 'accent';
+  /** Optional className for the container */
+  className?: string;
+  /** Optional className for the description */
+  descriptionClassName?: string;
 }
 
 /**
@@ -24,7 +28,9 @@ export function SectionHeader({
   title,
   description,
   icon,
-  iconBgColor = 'primary'
+  iconBgColor = 'primary',
+  className = '',
+  descriptionClassName = ''
 }: SectionHeaderProps): ReactElement {
   const colorClasses = {
     sage: 'bg-sage/10',
@@ -34,12 +40,12 @@ export function SectionHeader({
   };
 
   return (
-    <div className="mb-12">
+    <div className={`mb-12 ${className}`}>
       <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
         {title}
       </h2>
       {description && (
-        <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+        <p className={`text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed ${descriptionClassName}`}>
           {description}
         </p>
       )}

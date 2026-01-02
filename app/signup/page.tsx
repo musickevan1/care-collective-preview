@@ -175,7 +175,7 @@ export default function SignUpPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold text-foreground mb-2">Join CARE Collective</h1>
-            <p className="text-base md:text-lg text-muted-foreground">Create your account to start helping your community</p>
+            <p className="text-base md:text-lg text-muted-foreground">Create an account below</p>
           </div>
 
           <Card>

@@ -13,6 +13,7 @@ export const dynamic = 'force-dynamic'
 interface ApplicationData {
   id: string
   name: string
+  email: string | null
   location: string | null
   application_reason: string | null
   applied_at: string | null
@@ -74,7 +75,7 @@ export default async function ApplicationsPage(): Promise<ReactElement> {
   // Fetch all applications with various statuses
   const { data: applications, error: applicationsError } = await supabase
     .from('profiles')
-    .select('id, name, location, application_reason, applied_at, verification_status, rejection_reason')
+    .select('id, name, email, location, application_reason, applied_at, verification_status, rejection_reason')
     .order('applied_at', { ascending: false })
 
   if (applicationsError) {
@@ -174,6 +175,9 @@ export default async function ApplicationsPage(): Promise<ReactElement> {
                             <div className="space-y-1 text-sm text-muted-foreground">
                               {application.location && (
                                 <p>📍 {application.location}</p>
+                              )}
+                              {application.email && (
+                                <p>✉️ {application.email}</p>
                               )}
                               <p>📅 Applied {formatTimeAgo(application.applied_at)}</p>
                             </div>

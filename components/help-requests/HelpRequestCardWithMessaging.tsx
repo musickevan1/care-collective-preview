@@ -363,18 +363,18 @@ export function HelpRequestCardWithMessaging({
 
               {/* Message Composition */}
               <div className="space-y-2">
-                <Label htmlFor="offer-message">Your message</Label>
+                <Label htmlFor="offer-message" className="text-base font-medium">Your message</Label>
                 <Textarea
                   id="offer-message"
                   value={offerMessage}
                   onChange={(e) => setOfferMessage(e.target.value)}
-                  placeholder="Let them know how you can help and when you're available..."
-                  className="resize-none"
+                  placeholder="Hi. I think I can help! I am available most days after 5 PM"
+                  className="resize-none text-base"
                   rows={4}
                   maxLength={1000}
                 />
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Be specific about how you can help</span>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span className="text-base">Be specific about how you can help</span>
                   <span>{offerMessage.length}/1000</span>
                 </div>
               </div>

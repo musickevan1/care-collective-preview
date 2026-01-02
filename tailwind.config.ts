@@ -50,6 +50,11 @@ const config: Config = {
         almond: "#E9DDD4",
         seafoam: "#D6E2DF",
         rose: "#C28C83",
+        teal: {
+          DEFAULT: "#3D4F52",
+          light: "#4A6065",
+          dark: "#2D3A3D",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

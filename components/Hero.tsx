@@ -114,7 +114,7 @@ export default function Hero(): ReactElement {
               {/* Main Headline - Two-part with different styling */}
               <div className="mb-4 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
                 {/* "Southwest Missouri" - larger, bolded, closer to CARE */}
-                <p className="text-xl sm:text-2xl font-bold text-foreground mb-2">
+                <p className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
                   Southwest Missouri
                 </p>
                 {/* "CARE Collective" - Gradient CARE, light COLLECTIVE */}
@@ -133,10 +133,10 @@ export default function Hero(): ReactElement {
 
                {/* Description - larger text on two lines */}
                <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                 <p
-                   className="text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed"
-                   style={{ fontSize: 'clamp(0.875rem, 1.4vw, 1.25rem)' }}
-                 >
+                  <p
+                    className="text-[17px] text-[color:var(--text-body-light)] max-w-2xl mx-auto sm:mx-0 leading-relaxed"
+                    style={{ fontSize: 'clamp(0.875rem, 1.4vw, 1.25rem)' }}
+                  >
                    A network of family caregivers in Southwest Missouri who support each other{' '}
                    <br className="hidden sm:block" />
                    through practical help and shared resources.

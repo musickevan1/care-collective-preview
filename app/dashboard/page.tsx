@@ -317,7 +317,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <Link href="/requests">
             <Card className="hover:bg-muted/50 hover:shadow-md transition-all cursor-pointer h-full">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base font-semibold text-muted-foreground">Your Requests</CardTitle>
+                <CardTitle className="text-xl font-semibold text-muted-foreground">Your Requests</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="text-4xl font-bold text-primary mb-1">{dashboardData.userRequestsCount}</div>
@@ -329,7 +329,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           <Link href="/messages">
             <Card className="hover:bg-muted/50 hover:shadow-md transition-all cursor-pointer h-full">
               <CardHeader className="pb-2">
-                <CardTitle className="text-base font-semibold text-muted-foreground">Messages</CardTitle>
+                <CardTitle className="text-xl font-semibold text-muted-foreground">Messages</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="text-4xl font-bold text-sage mb-1">{dashboardData.unreadCount}</div>
@@ -343,7 +343,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           <Card className="hover:shadow-md transition-shadow h-full">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base font-semibold text-muted-foreground">Community Impact</CardTitle>
+                <CardTitle className="text-xl font-semibold text-muted-foreground">Community Impact</CardTitle>
             </CardHeader>
             <CardContent className="pt-0">
               <div className="text-4xl font-bold text-accent mb-1">{dashboardData.helpedCount}</div>
