@@ -4,15 +4,32 @@
  */
 
 import { ReactElement } from 'react';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
 import { ModerationQueue } from '@/components/admin/ModerationQueue';
 
 // Force dynamic rendering for authentication
 export const dynamic = 'force-dynamic';
 
-export default function ModerationPage(): ReactElement {
-  const handleItemProcessed = () => {
-    console.log('Moderation item processed');
-  };
+export default async function ModerationPage(): Promise<ReactElement> {
+  // Authentication and authorization check
+  const supabase = createClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    redirect('/login?redirectTo=/admin/messaging/moderation');
+  }
+
+  // Check if user is admin
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('is_admin')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile?.is_admin) {
+    redirect('/dashboard?error=access_denied');
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -50,11 +67,8 @@ export default function ModerationPage(): ReactElement {
         </div>
       </div>
 
-      {/* Moderation Queue */}
-      <ModerationQueue 
-        items={[]}
-        onItemProcessed={handleItemProcessed}
-      />
+      {/* Moderation Queue - empty state for now */}
+      <ModerationQueue items={[]} />
     </div>
   );
 }

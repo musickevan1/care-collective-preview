@@ -9,7 +9,7 @@ import { ReactElement } from 'react';
 
 interface ModerationQueueProps {
   items: any[];
-  onItemProcessed: () => void;
+  onItemProcessed?: () => void;
 }
 
 export function ModerationQueue({ items, onItemProcessed }: ModerationQueueProps): ReactElement {

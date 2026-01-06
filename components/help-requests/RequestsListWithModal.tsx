@@ -156,6 +156,8 @@ export function RequestsListWithModal({
           return (
             <Card
               key={request.id}
+              role="article"
+              aria-label={`Help request: ${title}`}
               className="hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => handleRequestClick(request.id)}
             >
