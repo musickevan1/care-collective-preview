@@ -241,9 +241,15 @@ export function ConversationList({
             <h3 className="font-semibold text-foreground mb-2">{emptyStateTitle}</h3>
             <p className="text-sm text-muted-foreground">{emptyStateDescription}</p>
           </div>
+          <div className="bg-muted/50 rounded-lg p-3 text-left">
+            <p className="text-xs text-muted-foreground">
+              <strong className="text-foreground">How to start:</strong> Browse help requests, 
+              click &quot;Offer Help&quot;, and your offer will appear in the Pending tab until accepted.
+            </p>
+          </div>
           <Button 
-            variant="outline" 
-            className="mt-4"
+            variant="sage" 
+            className="mt-4 min-h-[44px]"
             onClick={() => window.location.href = '/requests'}
           >
             Browse Help Requests

@@ -4,6 +4,7 @@ import { ReactElement } from 'react'
 import { useMessagingContext } from './MessagingContext'
 import { ConversationList } from './ConversationList'
 import { PendingOffersSection } from './PendingOffersSection'
+import { WelcomeBanner } from './WelcomeBanner'
 import { HelpTooltip } from './HelpTooltip'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, RefreshCw } from 'lucide-react'
@@ -121,12 +122,17 @@ export function ConversationPanel({
 
       {/* Conditional Content */}
       {activeTab === 'active' && (
-        <ConversationList
-          conversations={conversations}
-          selectedConversationId={selectedConversation || undefined}
-          onConversationSelect={handleConversationSelect}
-          className="flex-1"
-        />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Welcome Banner for new users - compact variant */}
+          <WelcomeBanner variant="compact" />
+          
+          <ConversationList
+            conversations={conversations}
+            selectedConversationId={selectedConversation || undefined}
+            onConversationSelect={handleConversationSelect}
+            className="flex-1"
+          />
+        </div>
       )}
       {activeTab === 'pending' && (
         <div className="flex-1 overflow-auto p-4">

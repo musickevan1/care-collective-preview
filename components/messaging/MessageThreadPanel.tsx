@@ -6,6 +6,7 @@ import { ConversationHeader } from './ConversationHeader'
 import { MessageThreadView } from './MessageThreadView'
 import { TypingIndicator } from './TypingIndicator'
 import { MessageInput } from './MessageInput'
+import { WelcomeBanner } from './WelcomeBanner'
 import { MessageCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -61,7 +62,10 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
       >
         {!selectedConversation ? (
           // Empty state - no conversation selected
-          <div className="flex-1 flex items-center justify-center p-8">
+          <div className="flex-1 flex flex-col items-center justify-center p-8 overflow-auto">
+            {/* Show full welcome banner for new users in empty state */}
+            <WelcomeBanner variant="full" className="max-w-lg w-full mb-6" />
+            
             <div className="text-center space-y-4 max-w-md">
               <MessageCircle className="w-16 h-16 mx-auto text-muted-foreground/50" />
               <div>
@@ -69,7 +73,7 @@ export const MessageThreadPanel = forwardRef<HTMLDivElement, MessageThreadPanelP
                   Select a conversation
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Choose a conversation from the left to start messaging
+                  Choose a conversation from the left, or browse help requests to start helping
                 </p>
               </div>
             </div>
