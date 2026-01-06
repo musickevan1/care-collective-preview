@@ -372,8 +372,8 @@ export default function WaitlistPage(): ReactElement {
               <p>
                 <strong>Questions or concerns?</strong><br/>
                 Contact us at{' '}
-                <a href="mailto:evanmusick.dev@gmail.com" className="text-primary hover:underline">
-                  evanmusick.dev@gmail.com
+                <a href="mailto:swmocarecollective@gmail.com" className="text-primary hover:underline">
+                  swmocarecollective@gmail.com
                 </a>
               </p>
               <p>
