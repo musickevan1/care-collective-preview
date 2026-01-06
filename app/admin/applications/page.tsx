@@ -6,6 +6,7 @@ import { ApprovalActions } from './ApprovalActions'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
+import { Phone, CheckCircle, AlertCircle } from 'lucide-react'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
@@ -14,6 +15,9 @@ interface ApplicationData {
   id: string
   name: string
   location: string | null
+  phone: string | null
+  caregiving_situation: string | null
+  email_confirmed: boolean | null
   application_reason: string | null
   applied_at: string | null
   verification_status: 'pending' | 'approved' | 'rejected'
@@ -74,7 +78,7 @@ export default async function ApplicationsPage(): Promise<ReactElement> {
   // Fetch all applications with various statuses
   const { data: applications, error: applicationsError } = await supabase
     .from('profiles')
-    .select('id, name, location, application_reason, applied_at, verification_status, rejection_reason')
+    .select('id, name, location, phone, caregiving_situation, email_confirmed, application_reason, applied_at, verification_status, rejection_reason')
     .order('applied_at', { ascending: false })
 
   if (applicationsError) {
@@ -176,9 +180,39 @@ export default async function ApplicationsPage(): Promise<ReactElement> {
                                 <p>📍 {application.location}</p>
                               )}
                               <p>📅 Applied {formatTimeAgo(application.applied_at)}</p>
+                              {/* Phone number */}
+                              {application.phone && (
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Phone className="w-4 h-4" />
+                                  <span>{application.phone}</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Email verification status */}
+                            <div className="flex items-center gap-2 text-sm mt-1">
+                              {application.email_confirmed ? (
+                                <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  Email Verified
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="text-yellow-600 border-yellow-200 bg-yellow-50">
+                                  <AlertCircle className="w-3 h-3 mr-1" />
+                                  Email Unverified
+                                </Badge>
+                              )}
                             </div>
                           </div>
                         </div>
+
+                        {/* Caregiving situation */}
+                        {application.caregiving_situation && (
+                          <div className="mt-3 p-3 bg-sage-light/10 rounded-lg border border-sage-light/20">
+                            <p className="text-xs font-medium text-muted-foreground mb-1">Caregiving Situation:</p>
+                            <p className="text-sm text-secondary">{application.caregiving_situation}</p>
+                          </div>
+                        )}
 
                         {application.application_reason && (
                           <div className="bg-white rounded p-3 border">
