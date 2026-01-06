@@ -206,7 +206,7 @@ export default function HomePage(): ReactElement {
           {/* Section Title - transparent to allow Hero blob to show through */}
           <div className="py-16 md:py-20 relative z-10">
             <div className="container mx-auto px-4">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown text-center uppercase tracking-wide">
                 What is CARE Collective?
               </h2>
             </div>
@@ -330,7 +330,7 @@ export default function HomePage(): ReactElement {
           {/* Section Title on cream background */}
           <div className="bg-background py-16 md:py-20 relative z-10">
             <div className="container mx-auto px-4">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown text-center uppercase tracking-wide">
                 About CARE Collective
               </h2>
             </div>
@@ -438,7 +438,7 @@ export default function HomePage(): ReactElement {
           {/* Section Title on cream background */}
           <div className="bg-background py-16 md:py-20">
             <div className="container mx-auto px-4">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown text-center uppercase tracking-wide">
                 What&apos;s Happening
               </h2>
             </div>
@@ -484,7 +484,7 @@ export default function HomePage(): ReactElement {
           <div className="container mx-auto px-4">
             {/* Section Header */}
             <div className="text-center mb-16">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown mb-6 uppercase tracking-wide">
+              <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown mb-6 uppercase tracking-wide">
                 Community Resources
               </h2>
               <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
@@ -566,7 +566,7 @@ export default function HomePage(): ReactElement {
             <div className="container mx-auto px-4 pt-12 md:pt-16">
               <div className="text-center">
                 {/* Section Header */}
-                <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-4 uppercase tracking-wide">
+                <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-white mb-4 uppercase tracking-wide">
                   Get in Touch
                 </h2>
                 <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">

@@ -36,6 +36,9 @@
   --color-background: #FBF2E9;
   --color-foreground: #483129;
   
+  /* Body text color - darkened for better readability on cream bg */
+  --text-body-light: #5a453d;
+  
   --color-destructive: #D32F2F;
   --color-destructive-foreground: #FFFFFF;
   
@@ -164,17 +167,25 @@ p {
     min-height: 44px;
   }
   
-  /* Better mobile typography */
+  /* Better mobile typography - increased sizes */
   h1 {
-    font-size: 1.75rem;
+    font-size: 2rem;      /* was 1.75rem */
   }
   
   h2 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;   /* was 1.5rem */
   }
   
   h3 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;    /* was 1.25rem */
+  }
+  
+  p, .text-base {
+    font-size: 1.125rem;  /* 18px */
+  }
+  
+  .text-sm {
+    font-size: 1rem;      /* 16px minimum */
   }
   
   /* Improve form inputs on mobile */
