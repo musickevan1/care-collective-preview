@@ -410,8 +410,9 @@ export default function HomePage(): ReactElement {
                       </div>
                     </div>
                     {/* Caption */}
-                    <p className="mt-6 text-lg italic text-white/90 text-center font-medium">
-                      Dr. Maureen Templeman, Founder
+                    <p className="mt-6 text-lg md:text-xl italic text-white/90 text-center font-medium">
+                      <span className="block sm:inline">Dr. Maureen Templeman,</span>
+                      <span className="block sm:inline"> Founder</span>
                     </p>
                   </div>
                 </div>
@@ -482,7 +483,7 @@ export default function HomePage(): ReactElement {
               <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown mb-6 uppercase tracking-wide">
                 Community Resources
               </h2>
-              <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
                 Connect with trusted local and regional organizations that offer practical support, guidance, and connection.
               </p>
             </div>
@@ -564,7 +565,7 @@ export default function HomePage(): ReactElement {
                 <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-white mb-4 uppercase tracking-wide">
                   Get in Touch
                 </h2>
-                <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
+                <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
                   Have questions or feedback? We&apos;re here to help.
                 </p>
 
