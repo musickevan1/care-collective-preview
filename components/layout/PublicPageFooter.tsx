@@ -31,7 +31,7 @@ export function PublicPageFooter(): ReactElement {
               <p className="text-white/80">Springfield, MO</p>
               <a
                 href="mailto:swmocarecollective@gmail.com"
-                className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
+                className="text-white/80 hover:text-sage-light transition-colors inline-flex items-center min-h-[44px] py-2 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
                 aria-label="Email Dr. Maureen Templeman at swmocarecollective@gmail.com"
               >
                 swmocarecollective@gmail.com
@@ -46,7 +46,7 @@ export function PublicPageFooter(): ReactElement {
               <li>
                 <Link
                   href="/signup"
-                  className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
+                  className="text-white/80 hover:text-sage-light transition-colors inline-flex items-center min-h-[44px] py-2 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
                   aria-label="Join the community"
                 >
                   Join Community
@@ -55,7 +55,7 @@ export function PublicPageFooter(): ReactElement {
               <li>
                 <Link
                   href="/login"
-                  className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
+                  className="text-white/80 hover:text-sage-light transition-colors inline-flex items-center min-h-[44px] py-2 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
                   aria-label="Login as a member"
                 >
                   Member Login
@@ -71,7 +71,7 @@ export function PublicPageFooter(): ReactElement {
               <li>
                 <Link
                   href="/help"
-                  className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
+                  className="text-white/80 hover:text-sage-light transition-colors inline-flex items-center min-h-[44px] py-2 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
                   aria-label="Get help and support"
                 >
                   Help & Support
@@ -80,7 +80,7 @@ export function PublicPageFooter(): ReactElement {
               <li>
                 <Link
                   href="/terms"
-                  className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
+                  className="text-white/80 hover:text-sage-light transition-colors inline-flex items-center min-h-[44px] py-2 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
                   aria-label="View terms of service"
                 >
                   Terms of Service
@@ -89,7 +89,7 @@ export function PublicPageFooter(): ReactElement {
               <li>
                 <Link
                   href="/privacy-policy"
-                  className="text-white/80 hover:text-sage-light transition-colors inline-block focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
+                  className="text-white/80 hover:text-sage-light transition-colors inline-flex items-center min-h-[44px] py-2 focus:outline-none focus:ring-2 focus:ring-sage-light focus:ring-offset-2 focus:ring-offset-navy rounded"
                   aria-label="View privacy policy"
                 >
                   Privacy Policy

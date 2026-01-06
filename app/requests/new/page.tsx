@@ -335,8 +335,9 @@ export default function NewRequestPage() {
                   </p>
                 </div>
 
-                <label className="flex items-start gap-3 cursor-pointer">
+                <label htmlFor="nothingToOffer" className="flex items-start gap-3 cursor-pointer">
                   <input
+                    id="nothingToOffer"
                     type="checkbox"
                     checked={nothingToOffer}
                     onChange={(e) => {
@@ -347,9 +348,10 @@ export default function NewRequestPage() {
                     }}
                     disabled={loading}
                     className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-primary flex-shrink-0 mt-0.5"
+                    aria-describedby="nothingToOffer-description"
                   />
                   <div>
-                    <div className="text-sm font-medium text-foreground">I don&apos;t have anything to exchange right now</div>
+                    <div className="text-sm font-medium text-foreground" id="nothingToOffer-description">I don&apos;t have anything to exchange right now</div>
                     <div className="text-xs text-muted-foreground">
                       That&apos;s completely okay - accepting help is also a gift to the community
                     </div>
@@ -381,14 +383,15 @@ export default function NewRequestPage() {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
+              <div className="space-y-2" role="radiogroup" aria-labelledby="urgency-label">
+                <label id="urgency-label" className="text-sm font-medium text-foreground">
                   Urgency Level *
                 </label>
                 <div className="space-y-3">
                   {urgencyLevels.map((level) => (
-                    <label key={level.value} className="flex items-center gap-3 cursor-pointer">
+                    <label key={level.value} htmlFor={`urgency-${level.value}`} className="flex items-center gap-3 cursor-pointer">
                       <input
+                        id={`urgency-${level.value}`}
                         type="radio"
                         name="urgency"
                         value={level.value}
@@ -396,10 +399,11 @@ export default function NewRequestPage() {
                         onChange={(e) => setUrgency(e.target.value)}
                         disabled={loading}
                         className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-primary flex-shrink-0"
+                        aria-describedby={`urgency-${level.value}-description`}
                       />
                       <div>
                         <div className="text-sm font-medium text-foreground capitalize">{level.value}</div>
-                        <div className="text-xs text-muted-foreground">{level.label}</div>
+                        <div id={`urgency-${level.value}-description`} className="text-xs text-muted-foreground">{level.label}</div>
                       </div>
                     </label>
                   ))}
@@ -408,17 +412,19 @@ export default function NewRequestPage() {
 
               {/* Ongoing Request Checkbox */}
               <div className="space-y-2">
-                <label className="flex items-start gap-3 cursor-pointer">
+                <label htmlFor="isOngoing" className="flex items-start gap-3 cursor-pointer">
                   <input
+                    id="isOngoing"
                     type="checkbox"
                     checked={isOngoing}
                     onChange={(e) => setIsOngoing(e.target.checked)}
                     disabled={loading}
                     className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-primary flex-shrink-0 mt-0.5"
+                    aria-describedby="isOngoing-description"
                   />
                   <div>
                     <div className="text-sm font-medium text-foreground">This is an ongoing need</div>
-                    <div className="text-xs text-muted-foreground">
+                    <div id="isOngoing-description" className="text-xs text-muted-foreground">
                       Check this if you need recurring help (e.g., weekly grocery runs, daily dog walking).
                       Ongoing requests won&apos;t automatically expire after 30 days.
                     </div>
@@ -449,20 +455,22 @@ export default function NewRequestPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">
+                <label htmlFor="locationPrivacy" className="text-sm font-medium text-foreground">
                   Who Can See the Location?
                 </label>
                 <select
+                  id="locationPrivacy"
                   value={locationPrivacy}
                   onChange={(e) => setLocationPrivacy(e.target.value)}
                   disabled={loading}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-describedby="locationPrivacy-description"
                 >
                   <option value="public">Everyone (Public)</option>
                   <option value="helpers_only">Only People Who Offer Help</option>
                   <option value="after_match">Only After I Accept Help</option>
                 </select>
-                <p className="text-xs text-muted-foreground">
+                <p id="locationPrivacy-description" className="text-xs text-muted-foreground">
                   Control who can see your location information
                 </p>
               </div>

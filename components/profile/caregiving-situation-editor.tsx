@@ -79,6 +79,7 @@ export function CaregivingSituationEditor({
             size="sm"
             onClick={() => setIsEditing(true)}
             className="h-8 px-2"
+            aria-label="Edit caregiving situation"
           >
             <Pencil className="w-4 h-4" />
           </Button>

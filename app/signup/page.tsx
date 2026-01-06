@@ -280,16 +280,18 @@ export default function SignUpPage() {
 
               {/* Community Standards and Terms Acceptance */}
               <div className="space-y-3 border border-sage/20 bg-sage/5 rounded-lg p-4">
-                <label className="flex items-start gap-3 cursor-pointer">
+                <label htmlFor="termsAccepted" className="flex items-start gap-3 cursor-pointer">
                   <input
+                    id="termsAccepted"
                     type="checkbox"
                     checked={termsAccepted}
                     onChange={(e) => setTermsAccepted(e.target.checked)}
                     disabled={loading}
                     className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-sage flex-shrink-0 mt-0.5"
                     required
+                    aria-describedby="termsAccepted-description"
                   />
-                  <div className="text-sm">
+                  <div className="text-sm" id="termsAccepted-description">
                     <span className="text-foreground">
                       I agree to follow the CARE Collective&apos;s{' '}
                       <Link
