@@ -29,9 +29,6 @@ export const metadata: Metadata = {
     // Critical resource hints for performance
     'dns-prefetch': 'https://fonts.googleapis.com',
     'preconnect': 'https://fonts.gstatic.com',
-    'preload': JSON.stringify([
-      { href: '/logo.png', as: 'image', type: 'image/png' },
-    ])
   },
 };
 
@@ -50,8 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fontClasses.primary} ${fontClasses.accessible} ${fontClasses.display}`}>
       <head>
-        {/* Critical font preload */}
-        <link rel="preload" href="/logo.png" as="image" />
+        {/* DNS prefetch and preconnect for external resources */}
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
