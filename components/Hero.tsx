@@ -114,7 +114,7 @@ export default function Hero(): ReactElement {
               {/* Main Headline - Two-part with different styling */}
               <div className="mb-4 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
                 {/* "Southwest Missouri" - larger, bolded, closer to CARE */}
-                <p className="font-bold text-foreground mb-2 tracking-[0.1em]" style={{ fontSize: 'clamp(1.25rem, 3vw, 1.8rem)' }}>
+                <p className="font-bold text-foreground mb-2 tracking-[0.05em] sm:tracking-[0.1em]" style={{ fontSize: 'clamp(1.5rem, 4vw, 2rem)' }}>
                   Southwest Missouri
                 </p>
                 {/* "CARE Collective" - Gradient CARE, light COLLECTIVE */}
@@ -124,8 +124,8 @@ export default function Hero(): ReactElement {
                {/* C.A.R.E. Acronym - expanded width */}
                <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
 <p
-                    className="tracking-tight sm:tracking-[0.15em] md:tracking-[0.2em] text-accent font-medium"
-                    style={{ fontSize: 'clamp(1.1rem, 2.8vw, 1.8rem)' }}
+                    className="tracking-normal sm:tracking-[0.1em] md:tracking-[0.15em] text-accent font-medium"
+                    style={{ fontSize: 'clamp(1.125rem, 3vw, 1.75rem)' }}
                   >
                    <span className="font-bold text-sage-dark">C</span>aregiver <span className="font-bold text-sage-dark">A</span>ssistance and <span className="font-bold text-sage-dark">R</span>esource <span className="font-bold text-sage-dark">E</span>xchange
                  </p>
@@ -135,7 +135,7 @@ export default function Hero(): ReactElement {
                <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
 <p
                     className="text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed"
-                    style={{ fontSize: 'clamp(1.25rem, 2.2vw, 1.5rem)' }}
+                    style={{ fontSize: 'clamp(1.35rem, 2.5vw, 1.625rem)' }}
                   >
                    A network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
                  </p>
