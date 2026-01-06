@@ -242,7 +242,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="flex items-center gap-2 text-xl md:text-2xl font-bold">
                 <div className="flex justify-center">
                   <Hand className="w-6 h-6 text-primary" aria-label="Need help" />
                 </div>
@@ -263,7 +263,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="flex items-center gap-2 text-xl md:text-2xl font-bold">
                 <div className="flex justify-center">
                   <Handshake className="w-6 h-6 text-sage-dark" aria-label="Want to help" />
                 </div>
@@ -284,7 +284,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
           <Card className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
+              <CardTitle className="flex items-center gap-2 text-xl md:text-2xl font-bold">
                 <span className="text-xl">💬</span>
                 Messages
                 {dashboardData.unreadCount > 0 && (

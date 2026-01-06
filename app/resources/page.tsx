@@ -75,7 +75,7 @@ export default function ResourcesPage(): ReactElement {
 
           <div className="grid gap-6 md:grid-cols-2">
             <ResourceCard
-              title="Local Hospice & Palliative Care Programs"
+              title="Hospice Foundation for Outreach"
               description="Provide compassionate support for individuals and families during serious illness (e.g., CoxHealth Palliative Care, Good Shepherd, Seasons)."
             />
             <ResourceCard
