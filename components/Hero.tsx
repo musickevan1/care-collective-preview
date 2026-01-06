@@ -124,8 +124,8 @@ export default function Hero(): ReactElement {
                {/* C.A.R.E. Acronym - expanded width */}
                <div className="mb-6 md:mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
 <p
-                    className="tracking-[0.2em] text-accent font-medium"
-                    style={{ fontSize: 'clamp(1.125rem, 2.4vw, 1.8rem)' }}
+                    className="tracking-tight sm:tracking-[0.15em] md:tracking-[0.2em] text-accent font-medium"
+                    style={{ fontSize: 'clamp(1.1rem, 2.8vw, 1.8rem)' }}
                   >
                    <span className="font-bold text-sage-dark">C</span>aregiver <span className="font-bold text-sage-dark">A</span>ssistance and <span className="font-bold text-sage-dark">R</span>esource <span className="font-bold text-sage-dark">E</span>xchange
                  </p>
