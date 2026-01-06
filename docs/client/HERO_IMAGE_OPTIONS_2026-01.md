@@ -1,186 +1,193 @@
 # Hero Image Options for CARE Collective
 
 **Prepared:** January 6, 2026  
+**Updated:** January 6, 2026 (with client reference)  
 **For:** Maureen Templeman, CARE Collective  
 **Purpose:** Community/peer-focused hero image alternatives  
 
 ---
 
-## Background
+## Client Reference Image
 
-Per client feedback (January 1, 2026):
-> "Current image is too older-adult focused. Want more community/peer-focused imagery."
+The client provided a reference image (`Help with yard work.jpeg`) showing the desired style:
 
-### Image Requirements
-- Community/peer-focused (not just elderly people)
-- Diverse ages and backgrounds
-- Warm, supportive mood
-- High resolution (1920x1080 minimum for hero)
-- Free for commercial use
-- Southwest Missouri feel if possible (outdoor, community, heartland)
-
----
-
-## Recommended Image Options
-
-### Option 1: Diverse Hands Together (Recommended)
-
-**Description:** Multiple hands of different skin tones stacked together in a gesture of unity and support. Clean, modern, and symbolic.
-
-**Source:** Unsplash  
-**Search Term:** "hands together diverse"  
-**Direct URL:** https://unsplash.com/photos/Zyx1bK9mqmA (Hannah Busing)  
-**License:** Unsplash License (free for commercial use, no attribution required)  
-
-**Rationale:**
-- Universal symbol of community and mutual support
-- Diverse representation without focusing on age
-- Works well as hero background with text overlay
-- Warm, natural lighting
-- Timeless - won't feel dated
-
-**Considerations:**
-- Abstract/symbolic rather than literal caregiving
-- May need gradient overlay for text readability
+**Key Characteristics Identified:**
+- **Peer-to-peer interaction** - Two neighbors/friends helping each other, not a professional caregiver situation
+- **Casual, natural conversation** - One person actively helping (with rake), one visiting/chatting (with coffee)
+- **Racially diverse** - Different backgrounds represented naturally
+- **Active older adults** - Not frail or dependent-looking, engaged and capable
+- **Outdoor yard work context** - Matches CARE Collective's common request types
+- **Warm, friendly atmosphere** - Genuine conversation and connection
+- **Autumn/seasonal Midwest feel** - Leaves, garden setting, heartland aesthetic
 
 ---
 
-### Option 2: Community Garden/Neighbors
+## Updated Image Requirements
 
-**Description:** People of various ages working together in a community garden or outdoor setting. Shows intergenerational connection naturally.
-
-**Source:** Pexels  
-**Search Term:** "community garden volunteers"  
-**Example URL:** https://www.pexels.com/search/community%20garden/  
-**License:** Pexels License (free for commercial and personal use)  
-
-**Rationale:**
-- Southwest Missouri/heartland aesthetic
-- Natural intergenerational interaction
-- Active helping (not passive care receiving)
-- Outdoor/community feel aligns with mutual aid values
-
-**Considerations:**
-- Seasonal (may look dated in winter)
-- Ensure image isn't too busy for text overlay
+Based on the reference image:
+- **Peer helping peer** - NOT institutional care, NOT professional caregiver
+- **Natural interaction** - Conversation, connection, genuine friendship
+- **Outdoor/yard context preferred** - Yard work, gardening, neighborhood
+- **Diverse representation** - Different racial backgrounds, naturally integrated
+- **Active participants** - Both people engaged, not one passive/receiving
+- **Midwest/heartland aesthetic** - Seasonal, outdoor, community feel
+- **High resolution** - 1920x1080 minimum for hero section
+- **Free for commercial use**
 
 ---
 
-### Option 3: Neighbors Helping with Groceries
+## Recommended Image Search Strategy
 
-**Description:** Someone helping a neighbor carry groceries or bags - simple, relatable act of community care.
+### Primary Search Terms
+1. "neighbors helping yard work"
+2. "friends gardening together diverse"
+3. "community yard work volunteers"
+4. "seniors helping neighbors outdoor"
+5. "intergenerational yard work"
 
-**Source:** Unsplash or Pexels  
-**Search Term:** "neighbors helping groceries" or "community helping"  
-**License:** Platform license (free for commercial use)  
+### Image Sources (All Free for Commercial Use)
 
-**Rationale:**
-- Directly relates to CARE Collective services (groceries is a top request category)
-- Shows peer support, not institutional care
-- Relatable everyday scenario
-- Can feature diverse ages naturally
-
-**Considerations:**
-- Need to find image with right demographic diversity
-- Should feel candid, not staged
-
----
-
-### Option 4: Group of Volunteers/Team
-
-**Description:** Small group of diverse people in casual clothes, possibly wearing matching t-shirts, smiling and looking collaborative.
-
-**Source:** Unsplash  
-**Search Term:** "volunteer team diverse"  
-**Example URL:** https://unsplash.com/s/photos/volunteer-group  
-**License:** Unsplash License (free for commercial use)  
-
-**Rationale:**
-- Shows community as active participants, not recipients
-- Diverse ages and backgrounds easily achievable
-- Conveys organization and purpose
-- Warm, positive energy
-
-**Considerations:**
-- Avoid overly corporate/staged look
-- Should feel like real community members
+| Source | URL | License |
+|--------|-----|---------|
+| Unsplash | unsplash.com | Free, no attribution required |
+| Pexels | pexels.com | Free, no attribution required |
+| Pixabay | pixabay.com | Free, no attribution required |
 
 ---
 
-### Option 5: Heartland/Missouri Community Scene
+## Curated Image Options
 
-**Description:** Wide shot of a small town community event, farmer's market, or neighborhood gathering with diverse attendees.
+### Option 1: Two Neighbors with Garden Tools (BEST MATCH)
 
-**Source:** Pixabay or Unsplash  
-**Search Term:** "small town community" or "midwest neighborhood"  
-**License:** Pixabay License or Unsplash License (free for commercial use)  
+**Search:** "neighbors gardening" or "friends yard work diverse"
 
-**Rationale:**
-- Authentic Southwest Missouri feel
-- Shows community gathering naturally
-- Warm, inviting atmosphere
-- Geographic relevance
+**What to Look For:**
+- Two people, different backgrounds
+- Garden tools (rake, shovel, wheelbarrow)
+- Casual clothing (flannel, jeans - like reference)
+- Outdoor setting with greenery
+- Conversational body language
 
-**Considerations:**
-- May be harder to find with exact right aesthetic
-- Need to ensure image doesn't look too rural/isolated
+**Why This Works:**
+- Direct match to reference image style
+- Shows CARE Collective's actual services (yard work is a top request)
+- Authentic peer-to-peer dynamic
+- Midwest/heartland aesthetic
 
 ---
 
-## License Verification Summary
+### Option 2: Community Garden Collaboration
+
+**Search:** "community garden volunteers diverse" or "intergenerational gardening"
+
+**What to Look For:**
+- Multiple people working together
+- Mix of ages (not all elderly)
+- Outdoor garden setting
+- Active engagement, not posed
+
+**Why This Works:**
+- Shows community in action
+- Natural diversity
+- Southwest Missouri feel (gardens, outdoors)
+- Warm, collaborative energy
+
+---
+
+### Option 3: Neighborhood Helping Scene
+
+**Search:** "neighbor helping elderly" or "community support outdoors"
+
+**What to Look For:**
+- Clear helping dynamic between peers
+- Outdoor residential setting
+- Everyday activity (carrying items, yard work, etc.)
+- Warm, friendly interaction
+
+**Why This Works:**
+- Directly illustrates CARE Collective mission
+- Relatable to target audience
+- Shows mutual aid in action
+
+---
+
+### Option 4: Volunteers Raking Leaves Together
+
+**Search:** "volunteers raking leaves" or "fall yard work community"
+
+**What to Look For:**
+- Autumn setting (matches reference image season)
+- Multiple people with rakes/tools
+- Diverse group
+- Casual, friendly atmosphere
+
+**Why This Works:**
+- Seasonal match to reference image
+- Common CARE request type
+- Shows teamwork and community
+- Midwest autumn aesthetic
+
+---
+
+## Alternative: Use Client's Image
+
+If the client owns or has rights to the reference image (`Help with yard work.jpeg`), this could potentially be used directly. 
+
+**Questions to ask:**
+1. Is this image owned by CARE Collective?
+2. Was it taken by a professional photographer with a release?
+3. Do the subjects have model releases on file?
+
+If yes to all, this image is an excellent candidate as it perfectly captures the desired aesthetic.
+
+---
+
+## Recommended Next Steps
+
+### Option A: Client Provides/Sources Image
+The client's reference image is ideal. If they can source similar images or have rights to the reference, that would be the best path forward.
+
+### Option B: Search with Specific Terms
+Use the search terms above on Unsplash, Pexels, or Pixabay to find a close match. Key searches:
+- "diverse neighbors yard work"
+- "friends gardening autumn"
+- "community volunteers outdoor"
+
+### Option C: Custom Photography
+Commission a local photographer to recreate a scene similar to the reference image with actual CARE Collective members/volunteers.
+
+**Estimated Cost:** $200-500 for a 2-hour session
+**Benefits:** 100% authentic, perfect brand fit, unlimited usage rights
+
+---
+
+## License Verification
 
 | Source | License Type | Commercial Use | Attribution |
 |--------|-------------|----------------|-------------|
-| Unsplash | Unsplash License | Yes, free | Not required |
-| Pexels | Pexels License | Yes, free | Not required |
-| Pixabay | Pixabay License | Yes, free | Not required |
+| Unsplash | Unsplash License | ✅ Yes, free | Not required |
+| Pexels | Pexels License | ✅ Yes, free | Not required |
+| Pixabay | Pixabay License | ✅ Yes, free | Not required |
 
-**Important Notes:**
-- All three platforms allow free commercial use
-- No attribution required, but appreciated
-- Cannot resell the images as-is
-- Cannot use for defamatory purposes
-- Safe to use for CARE Collective website
+**All three platforms allow free commercial use without attribution.**
 
 ---
 
-## Final Recommendation
+## Summary
 
-**Primary Choice: Option 1 (Diverse Hands Together)**
+The client's reference image sets a clear direction:
+- **Peer-to-peer** (not professional care)
+- **Outdoor/yard work** context
+- **Diverse but natural** representation
+- **Warm, conversational** atmosphere
+- **Midwest seasonal** aesthetic
 
-**Reasons:**
-1. **Universal appeal** - Works across all demographics without focusing on any one age group
-2. **Symbolic strength** - Immediately communicates mutual support and community
-3. **Technical quality** - Clean image works well with text overlay
-4. **Timeless** - Won't need to be updated seasonally or as trends change
-5. **Inclusive** - Shows diversity without feeling performative
-
-**Secondary Choice: Option 3 (Neighbors Helping with Groceries)**
-
-If a more literal/action-oriented image is preferred, this directly shows the kind of peer support CARE Collective facilitates.
-
----
-
-## Next Steps
-
-1. **Client Review:** Please review these options and let us know your preference
-2. **Image Selection:** Once selected, we can source the highest resolution version
-3. **Implementation:** Image will be optimized and integrated with appropriate text overlay
-4. **Fallback:** If none of these work, we can discuss a paid stock subscription for more options
-
----
-
-## Alternative: Custom Photography
-
-If budget allows, consider commissioning a local photographer to capture authentic CARE Collective members/volunteers. Benefits:
-- 100% authentic representation
-- Perfect fit for brand
-- Can be used across all marketing materials
-- Tells the real story
-
-Estimated cost: $200-500 for a 2-hour session with edited deliverables.
+The best path forward is either:
+1. Source the reference image if client has rights
+2. Search stock sites with targeted terms above
+3. Commission custom photography for perfect fit
 
 ---
 
 *Document prepared by: Development Team*  
-*For questions: Reply to this document or schedule a call*
+*Updated: January 6, 2026 with client reference image analysis*
