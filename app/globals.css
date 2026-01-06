@@ -177,25 +177,33 @@ p {
     min-height: 44px;
   }
   
-  /* Better mobile typography - increased sizes */
+  /* Better mobile typography - increased sizes for readability */
   h1 {
-    font-size: 2rem;      /* was 1.75rem */
+    font-size: 2.25rem;   /* 36px */
   }
   
   h2 {
-    font-size: 1.75rem;   /* was 1.5rem */
+    font-size: 1.875rem;  /* 30px */
   }
   
   h3 {
-    font-size: 1.5rem;    /* was 1.25rem */
+    font-size: 1.5rem;    /* 24px */
   }
   
   p, .text-base {
-    font-size: 1.125rem;  /* 18px */
+    font-size: 1.25rem;   /* 20px - larger for mobile readability */
   }
   
   .text-sm {
-    font-size: 1rem;      /* 16px minimum */
+    font-size: 1.125rem;  /* 18px minimum on mobile */
+  }
+  
+  .text-lg {
+    font-size: 1.375rem;  /* 22px */
+  }
+  
+  .text-xl {
+    font-size: 1.5rem;    /* 24px */
   }
   
   /* Improve form inputs on mobile */

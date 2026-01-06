@@ -74,16 +74,16 @@
   --font-family-readable: "Atkinson Hyperlegible", "Inter", "Noto Sans", Arial, sans-serif;
   
   /* Font sizes - Comprehensive scale for better readability */
-  --font-size-xs: 15px;  /* Small text, captions */
-  --font-size-sm: 17px;  /* Secondary text */
-  --font-size-base: 18px; /* Body text */
-  --font-size-lg: 20px;   /* Larger body text */
-  --font-size-xl: 22px;   /* Small headings */
-  --font-size-2xl: 26px;  /* Medium headings */
-  --font-size-3xl: 32px;  /* Large headings */
-  --font-size-4xl: 38px;  /* Page titles */
-  --font-size-5xl: 50px;  /* Hero text */
-  --font-size-6xl: 62px;  /* Display text */
+  --font-size-xs: 16px;  /* Small text, captions - bumped from 15px */
+  --font-size-sm: 18px;  /* Secondary text - bumped from 17px */
+  --font-size-base: 20px; /* Body text - bumped from 18px */
+  --font-size-lg: 22px;   /* Larger body text - bumped from 20px */
+  --font-size-xl: 24px;   /* Small headings - bumped from 22px */
+  --font-size-2xl: 28px;  /* Medium headings - bumped from 26px */
+  --font-size-3xl: 34px;  /* Large headings - bumped from 32px */
+  --font-size-4xl: 40px;  /* Page titles - bumped from 38px */
+  --font-size-5xl: 52px;  /* Hero text - bumped from 50px */
+  --font-size-6xl: 64px;  /* Display text - bumped from 62px */
   
   /* Font weights */
   --font-weight-normal: 400;
