@@ -338,6 +338,13 @@ Questions? Visit our Help page or reply here!
 - Hero image document with 5 options created
 - Final E2E: 43/45 tests passed (95.6%)
 - Only remaining issue: Admin Reports page timeout (deferred)
+- **UPDATE (Jan 6, late session):** Client provided reference image showing desired style:
+  - Target audience: 30-50 year old caregivers (NOT elderly peers)
+  - Helper demographic: Working adults who can identify as the helper
+  - Recipient demographic: Elderly person being helped
+  - Relationship: Community/neighbor (not professional, not family)
+  - Setting: Outdoor yard work, not medical/institutional
+  - Updated QUICK_IMAGE_SEARCH.md and HERO_IMAGE_OPTIONS_2026-01.md with refined intergenerational search terms
 
 ---
 
@@ -362,6 +369,7 @@ Questions? Visit our Help page or reply here!
 4. **Stock Image Subscription Question** (`96b6483d`)
    - Still awaiting client response
    - Follow up if hero image research is well-received
+   - **UPDATE:** May be moot if client finds suitable free images using search guides
 
 ---
 
