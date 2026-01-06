@@ -7,29 +7,46 @@
 
 ---
 
-## Client Reference Image
+## Client Reference Image & Target Audience
 
 The client provided a reference image (`Help with yard work.jpeg`) showing the desired style:
 
 **Key Characteristics Identified:**
-- **Peer-to-peer interaction** - Two neighbors/friends helping each other, not a professional caregiver situation
-- **Casual, natural conversation** - One person actively helping (with rake), one visiting/chatting (with coffee)
+- **Intergenerational support** - Younger adult (30-50) helping older adult (65+)
+- **Community, not professional** - Neighbor helping neighbor, not institutional care
+- **Casual, natural conversation** - Helper actively working (with rake), elderly person chatting/appreciating
 - **Racially diverse** - Different backgrounds represented naturally
-- **Active older adults** - Not frail or dependent-looking, engaged and capable
+- **Dignified elderly** - Not frail or helpless-looking, maintaining independence
 - **Outdoor yard work context** - Matches CARE Collective's common request types
-- **Warm, friendly atmosphere** - Genuine conversation and connection
+- **Warm, friendly atmosphere** - Genuine connection, mutual respect
 - **Autumn/seasonal Midwest feel** - Leaves, garden setting, heartland aesthetic
+
+### Critical: Target Audience Insight
+
+**CARE Collective members are primarily 30-50 year old caregivers** who:
+- Have elderly parents, relatives, or neighbors
+- Are working adults who need/provide community support
+- Value mutual aid over institutional care
+- Want to see themselves as the HELPER in the image
+
+**The hero image should show:**
+- Helper: 30-50 year old (target member can identify with this role)
+- Recipient: Elderly person (dignified, appreciative, not dependent)
+- Context: Community/neighborhood setting
+- Tone: Respectful, warm, peer-to-peer community support
 
 ---
 
 ## Updated Image Requirements
 
-Based on the reference image:
-- **Peer helping peer** - NOT institutional care, NOT professional caregiver
-- **Natural interaction** - Conversation, connection, genuine friendship
-- **Outdoor/yard context preferred** - Yard work, gardening, neighborhood
+Based on the reference image and target audience (30-50 year old caregivers):
+- **Intergenerational support** - Younger adult (30-50) helping elderly person (65+)
+- **Community, not professional** - Neighbor/volunteer, NOT institutional care, NOT in uniform
+- **Natural interaction** - Conversation, connection, mutual respect
+- **Outdoor/yard context preferred** - Yard work, gardening, groceries, neighborhood tasks
 - **Diverse representation** - Different racial backgrounds, naturally integrated
-- **Active participants** - Both people engaged, not one passive/receiving
+- **Dignified elderly** - Appreciative but not helpless, maintaining agency
+- **Helper is identifiable** - 30-50 demographic should see themselves in the helper role
 - **Midwest/heartland aesthetic** - Seasonal, outdoor, community feel
 - **High resolution** - 1920x1080 minimum for hero section
 - **Free for commercial use**
@@ -38,12 +55,15 @@ Based on the reference image:
 
 ## Recommended Image Search Strategy
 
-### Primary Search Terms
-1. "neighbors helping yard work"
-2. "friends gardening together diverse"
-3. "community yard work volunteers"
-4. "seniors helping neighbors outdoor"
-5. "intergenerational yard work"
+### Primary Search Terms (30-50 year old helping elderly)
+1. "neighbor helping elderly yard work"
+2. "adult volunteer helping senior garden"
+3. "younger helping elderly outdoor"
+4. "intergenerational community support"
+5. "volunteer assisting senior neighbor"
+6. "adult helping elderly groceries"
+7. "community caregiver outdoor"
+8. "neighbor care elderly yard"
 
 ### Image Sources (All Free for Commercial Use)
 
@@ -57,21 +77,23 @@ Based on the reference image:
 
 ## Curated Image Options
 
-### Option 1: Two Neighbors with Garden Tools (BEST MATCH)
+### Option 1: Adult Helping Elderly with Yard Work (BEST MATCH)
 
-**Search:** "neighbors gardening" or "friends yard work diverse"
+**Search:** "neighbor helping elderly yard" or "volunteer senior garden"
 
 **What to Look For:**
-- Two people, different backgrounds
-- Garden tools (rake, shovel, wheelbarrow)
-- Casual clothing (flannel, jeans - like reference)
+- 30-50 year old with rake/tools (active helper)
+- Elderly person chatting/supervising (appreciative)
+- Clear age difference (intergenerational)
+- Casual clothing on both (community, not professional)
 - Outdoor setting with greenery
 - Conversational body language
 
 **Why This Works:**
-- Direct match to reference image style
+- Target audience (30-50) sees themselves as the helper
 - Shows CARE Collective's actual services (yard work is a top request)
-- Authentic peer-to-peer dynamic
+- Authentic community dynamic, not professional care
+- Dignified representation of elderly
 - Midwest/heartland aesthetic
 
 ---
