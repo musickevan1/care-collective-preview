@@ -79,7 +79,7 @@ function Step({ number, title, description }: StepProps): ReactElement {
       </div>
       <div>
         <strong className="text-foreground block mb-2 text-xl md:text-2xl">{title}</strong>
-        <p className="text-foreground/70 text-base md:text-lg leading-relaxed">{description}</p>
+        <p className="text-foreground/70 text-lg md:text-xl leading-relaxed">{description}</p>
       </div>
     </div>
   )
@@ -258,7 +258,7 @@ export default function HomePage(): ReactElement {
                       </div>
                       <div>
                         <strong className="text-brown text-lg">Mutual exchange</strong>
-                        <span className="text-foreground/70 text-base block mt-1">Give what you can and receive what you need.</span>
+                        <span className="text-foreground/70 text-lg block mt-1">Give what you can and receive what you need.</span>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
@@ -267,7 +267,7 @@ export default function HomePage(): ReactElement {
                       </div>
                       <div>
                         <strong className="text-brown text-lg">Flexibility</strong>
-                        <span className="text-foreground/70 text-base block mt-1">Engage when and how you can.</span>
+                        <span className="text-foreground/70 text-lg block mt-1">Engage when and how you can.</span>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
@@ -276,7 +276,7 @@ export default function HomePage(): ReactElement {
                       </div>
                       <div>
                         <strong className="text-brown text-lg">Learning opportunities</strong>
-                        <span className="text-foreground/70 text-base block mt-1">Workshops on topics chosen by members.</span>
+                        <span className="text-foreground/70 text-lg block mt-1">Workshops on topics chosen by members.</span>
                       </div>
                     </li>
                   </ul>
@@ -497,7 +497,7 @@ export default function HomePage(): ReactElement {
                   </div>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-brown mb-3">Essentials</h3>
-                <p className="text-base md:text-lg text-foreground/70">Food, housing, and everyday needs</p>
+                <p className="text-lg md:text-xl text-foreground/70">Food, housing, and everyday needs</p>
               </div>
 
               {/* Well-Being */}
@@ -508,7 +508,7 @@ export default function HomePage(): ReactElement {
                   </div>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-brown mb-3">Well-Being</h3>
-                <p className="text-base md:text-lg text-foreground/70">Emotional health and caregiving support</p>
+                <p className="text-lg md:text-xl text-foreground/70">Emotional health and caregiving support</p>
               </div>
 
               {/* Community */}
@@ -519,7 +519,7 @@ export default function HomePage(): ReactElement {
                   </div>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-brown mb-3">Community</h3>
-                <p className="text-base md:text-lg text-foreground/70">Local programs and connections</p>
+                <p className="text-lg md:text-xl text-foreground/70">Local programs and connections</p>
               </div>
 
               {/* Learning */}
@@ -530,7 +530,7 @@ export default function HomePage(): ReactElement {
                   </div>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-brown mb-3">Learning</h3>
-                <p className="text-base md:text-lg text-foreground/70">Training and educational programs</p>
+                <p className="text-lg md:text-xl text-foreground/70">Training and educational programs</p>
               </div>
             </div>
 

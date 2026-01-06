@@ -133,10 +133,10 @@ export default function Hero(): ReactElement {
 
                {/* Description - larger text on two lines */}
                <div className="mb-8 md:mb-10 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                 <p
-                   className="text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed"
-                   style={{ fontSize: 'clamp(0.875rem, 1.4vw, 1.25rem)' }}
-                 >
+<p
+                    className="text-muted-foreground max-w-2xl mx-auto sm:mx-0 leading-relaxed"
+                    style={{ fontSize: 'clamp(1.125rem, 2vw, 1.5rem)' }}
+                  >
                    A network of family caregivers in Southwest Missouri who support each other{' '}
                    <br className="hidden sm:block" />
                    through practical help and shared resources.
