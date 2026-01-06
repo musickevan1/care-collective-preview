@@ -54,6 +54,11 @@ BETA_LAUNCH_READY.md
 # Playwright MCP artifacts
 .playwright-mcp/
 
+# Visual verification screenshots
+docs/reports/screenshots/
+test-results/
+playwright-report/
+
 # Temporary/generated files (root cleanup prevention)
 *_log.txt
 *.log.txt

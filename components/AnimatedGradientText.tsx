@@ -5,7 +5,7 @@ export default function AnimatedGradientText() {
     <h1
       className="uppercase tracking-tighter leading-[0.85]"
       style={{
-        fontSize: 'clamp(2.5rem, 8vw, 6rem)',
+        fontSize: 'clamp(3rem, 10vw, 6rem)',
       }}
       aria-label="CARE Collective"
     >

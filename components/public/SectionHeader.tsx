@@ -39,7 +39,7 @@ export function SectionHeader({
         {title}
       </h2>
       {description && (
-        <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed text-center">
           {description}
         </p>
       )}

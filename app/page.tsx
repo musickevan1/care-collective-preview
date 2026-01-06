@@ -79,7 +79,7 @@ function Step({ number, title, description }: StepProps): ReactElement {
       </div>
       <div>
         <strong className="text-foreground block mb-2 text-xl md:text-2xl">{title}</strong>
-        <p className="text-foreground/70 text-base md:text-lg leading-relaxed">{description}</p>
+        <p className="text-foreground/70 text-lg md:text-xl leading-relaxed">{description}</p>
       </div>
     </div>
   )
@@ -206,7 +206,7 @@ export default function HomePage(): ReactElement {
           {/* Section Title - transparent to allow Hero blob to show through */}
           <div className="py-16 md:py-20 relative z-10">
             <div className="container mx-auto px-4">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown text-center uppercase tracking-wide">
                 What is CARE Collective?
               </h2>
             </div>
@@ -237,11 +237,6 @@ export default function HomePage(): ReactElement {
                       <Step key={step.number} {...step} />
                     ))}
                   </div>
-                  <div className="mt-10 text-center">
-                    <Link href="/signup" className="inline-flex items-center justify-center bg-sage text-white px-8 py-4 text-lg font-bold rounded-xl hover:bg-sage-dark transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-sage/20 min-h-[56px]">
-                      Get Started Today
-                    </Link>
-                  </div>
                 </div>
 
                 {/* Box 2: Why Join? */}
@@ -263,7 +258,7 @@ export default function HomePage(): ReactElement {
                       </div>
                       <div>
                         <strong className="text-brown text-lg">Mutual exchange</strong>
-                        <span className="text-foreground/70 text-base block mt-1">Give what you can and receive what you need.</span>
+                        <span className="text-foreground/70 text-lg block mt-1">Give what you can and receive what you need.</span>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
@@ -272,7 +267,7 @@ export default function HomePage(): ReactElement {
                       </div>
                       <div>
                         <strong className="text-brown text-lg">Flexibility</strong>
-                        <span className="text-foreground/70 text-base block mt-1">Engage when and how you can.</span>
+                        <span className="text-foreground/70 text-lg block mt-1">Engage when and how you can.</span>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
@@ -281,7 +276,7 @@ export default function HomePage(): ReactElement {
                       </div>
                       <div>
                         <strong className="text-brown text-lg">Learning opportunities</strong>
-                        <span className="text-foreground/70 text-base block mt-1">Workshops on topics chosen by members.</span>
+                        <span className="text-foreground/70 text-lg block mt-1">Workshops on topics chosen by members.</span>
                       </div>
                     </li>
                   </ul>
@@ -330,7 +325,7 @@ export default function HomePage(): ReactElement {
           {/* Section Title on cream background */}
           <div className="bg-background py-16 md:py-20 relative z-10">
             <div className="container mx-auto px-4">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown text-center uppercase tracking-wide">
                 About CARE Collective
               </h2>
             </div>
@@ -350,8 +345,48 @@ export default function HomePage(): ReactElement {
               <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
                   
-                  {/* Left: Photo with dusty rose ring */}
-                  <div className="flex-shrink-0 text-center">
+                  {/* Content - appears FIRST on mobile, on RIGHT on desktop */}
+                  <div className="flex-1 text-center lg:text-left order-1 lg:order-2">
+                    {/* Icon + Who We Are heading */}
+                    <div className="flex items-center justify-center lg:justify-start gap-4 mb-8">
+                      <div className="bg-white/10 p-3.5 rounded-full">
+                        <Handshake className="w-8 h-8 text-white" aria-hidden="true" />
+                      </div>
+                      <h3 className="text-3xl md:text-4xl font-bold text-white">
+                        Who We Are
+                      </h3>
+                    </div>
+                    
+                    {/* Main text - Large and impactful */}
+                    <p className="text-2xl md:text-3xl lg:text-[32px] font-semibold text-white leading-relaxed">
+                      A network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
+                    </p>
+                    
+                    {/* Highlighted statement + CTA button */}
+                    <div className="mt-10 flex flex-col items-center lg:items-start gap-8">
+                      <p className="text-2xl md:text-3xl lg:text-[32px] font-semibold text-white leading-snug">
+                        Together, we are making caregiving sustainable.
+                      </p>
+                      <Link
+                        href="/about"
+                        className="group inline-flex items-center gap-3 bg-background hover:bg-white text-brown py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-xl"
+                      >
+                        Learn More About Us
+                        <svg 
+                          className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Photo - appears SECOND on mobile (below), on LEFT on desktop */}
+                  <div className="flex-shrink-0 text-center order-2 lg:order-1">
                     {/* Circular photo with decorative border ring */}
                     <div className="relative inline-block">
                       {/* Outer dusty rose ring */}
@@ -375,49 +410,10 @@ export default function HomePage(): ReactElement {
                       </div>
                     </div>
                     {/* Caption */}
-                    <p className="mt-6 text-lg italic text-white/90 text-center font-medium">
-                      Dr. Maureen Templeman
+                    <p className="mt-6 text-lg md:text-xl italic text-white/90 text-center font-medium">
+                      <span className="block sm:inline">Dr. Maureen Templeman,</span>
+                      <span className="block sm:inline"> Founder</span>
                     </p>
-                  </div>
-
-                  {/* Right: Content */}
-                  <div className="flex-1 text-center lg:text-left">
-                    {/* Icon + Who We Are heading */}
-                    <div className="flex items-center justify-center lg:justify-start gap-4 mb-8">
-                      <div className="bg-white/10 p-3.5 rounded-full">
-                        <Handshake className="w-8 h-8 text-white" aria-hidden="true" />
-                      </div>
-                      <h3 className="text-3xl md:text-4xl font-bold text-white">
-                        Who We Are
-                      </h3>
-                    </div>
-                    
-                    {/* Main text - Large and impactful */}
-                    <p className="text-xl md:text-2xl lg:text-[24px] text-white leading-relaxed">
-                      A network of family caregivers in Southwest Missouri who support each other through practical help and shared resources.
-                    </p>
-                    
-                    {/* Highlighted statement + CTA button */}
-                    <div className="mt-10 flex flex-col items-center lg:items-start gap-8">
-                      <p className="text-2xl md:text-3xl lg:text-[32px] font-bold text-white leading-snug">
-                        Together, we are making caregiving sustainable.
-                      </p>
-                      <Link
-                        href="/about"
-                        className="group inline-flex items-center gap-3 bg-background hover:bg-white text-brown py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-xl"
-                      >
-                        Learn More About Us
-                        <svg 
-                          className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                      </Link>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -438,7 +434,7 @@ export default function HomePage(): ReactElement {
           {/* Section Title on cream background */}
           <div className="bg-background py-16 md:py-20">
             <div className="container mx-auto px-4">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
+              <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown text-center uppercase tracking-wide">
                 What&apos;s Happening
               </h2>
             </div>
@@ -484,10 +480,10 @@ export default function HomePage(): ReactElement {
           <div className="container mx-auto px-4">
             {/* Section Header */}
             <div className="text-center mb-16">
-              <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown mb-6 uppercase tracking-wide">
+              <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-brown mb-6 uppercase tracking-wide">
                 Community Resources
               </h2>
-              <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl md:text-2xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
                 Connect with trusted local and regional organizations that offer practical support, guidance, and connection.
               </p>
             </div>
@@ -502,7 +498,7 @@ export default function HomePage(): ReactElement {
                   </div>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-brown mb-3">Essentials</h3>
-                <p className="text-base md:text-lg text-foreground/70">Food, housing, and everyday needs</p>
+                <p className="text-lg md:text-xl text-foreground/70">Food, housing, and everyday needs</p>
               </div>
 
               {/* Well-Being */}
@@ -513,7 +509,7 @@ export default function HomePage(): ReactElement {
                   </div>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-brown mb-3">Well-Being</h3>
-                <p className="text-base md:text-lg text-foreground/70">Emotional health and caregiving support</p>
+                <p className="text-lg md:text-xl text-foreground/70">Emotional health and caregiving support</p>
               </div>
 
               {/* Community */}
@@ -524,7 +520,7 @@ export default function HomePage(): ReactElement {
                   </div>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-brown mb-3">Community</h3>
-                <p className="text-base md:text-lg text-foreground/70">Local programs and connections</p>
+                <p className="text-lg md:text-xl text-foreground/70">Local programs and connections</p>
               </div>
 
               {/* Learning */}
@@ -535,7 +531,7 @@ export default function HomePage(): ReactElement {
                   </div>
                 </div>
                 <h3 className="text-xl md:text-2xl font-bold text-brown mb-3">Learning</h3>
-                <p className="text-base md:text-lg text-foreground/70">Training and educational programs</p>
+                <p className="text-lg md:text-xl text-foreground/70">Training and educational programs</p>
               </div>
             </div>
 
@@ -566,10 +562,10 @@ export default function HomePage(): ReactElement {
             <div className="container mx-auto px-4 pt-12 md:pt-16">
               <div className="text-center">
                 {/* Section Header */}
-                <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-white mb-4 uppercase tracking-wide">
+                <h2 className="text-[clamp(36px,6vw,56px)] font-bold text-white mb-4 uppercase tracking-wide">
                   Get in Touch
                 </h2>
-                <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
+                <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
                   Have questions or feedback? We&apos;re here to help.
                 </p>
 

@@ -36,11 +36,14 @@
   --color-background: #FBF2E9;
   --color-foreground: #483129;
   
+  /* Body text color - darkened for better readability on cream bg */
+  --text-body-light: #5a453d;
+  
   --color-destructive: #D32F2F;
   --color-destructive-foreground: #FFFFFF;
   
   --color-muted: #C39778;
-  --color-muted-foreground: #483129;
+  --color-muted-foreground: #3d2a23;
   
   --color-card: #FFFFFF;
   --color-card-foreground: #483129;
@@ -115,6 +118,16 @@ p {
   text-wrap: balance;
 }
 
+/* Darker body text for cream backgrounds - better contrast */
+.text-body-dark {
+  color: #3d2a23;
+}
+
+/* Override foreground/70 opacity for better readability on cream */
+.text-foreground\/70 {
+  color: #5a453d !important;
+}
+
 /* Enhanced Focus and Accessibility Styles */
 .focus\:ring-enhanced:focus {
   outline: 2px solid var(--color-sage);
@@ -164,17 +177,33 @@ p {
     min-height: 44px;
   }
   
-  /* Better mobile typography */
+  /* Better mobile typography - increased sizes for readability */
   h1 {
-    font-size: 1.75rem;
+    font-size: 2.25rem;   /* 36px */
   }
   
   h2 {
-    font-size: 1.5rem;
+    font-size: 1.875rem;  /* 30px */
   }
   
   h3 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;    /* 24px */
+  }
+  
+  p, .text-base {
+    font-size: 1.25rem;   /* 20px - larger for mobile readability */
+  }
+  
+  .text-sm {
+    font-size: 1.125rem;  /* 18px minimum on mobile */
+  }
+  
+  .text-lg {
+    font-size: 1.375rem;  /* 22px */
+  }
+  
+  .text-xl {
+    font-size: 1.5rem;    /* 24px */
   }
   
   /* Improve form inputs on mobile */
