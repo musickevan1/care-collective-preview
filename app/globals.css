@@ -118,6 +118,16 @@ p {
   text-wrap: balance;
 }
 
+/* Darker body text for cream backgrounds - better contrast */
+.text-body-dark {
+  color: #3d2a23;
+}
+
+/* Override foreground/70 opacity for better readability on cream */
+.text-foreground\/70 {
+  color: #5a453d !important;
+}
+
 /* Enhanced Focus and Accessibility Styles */
 .focus\:ring-enhanced:focus {
   outline: 2px solid var(--color-sage);

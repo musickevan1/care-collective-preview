@@ -114,7 +114,7 @@ export default function Hero(): ReactElement {
               {/* Main Headline - Two-part with different styling */}
               <div className="mb-4 animate-fade-in-up" style={{ animationDelay: '50ms' }}>
                 {/* "Southwest Missouri" - larger, bolded, closer to CARE */}
-                <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-2">
+                <p className="font-bold text-foreground mb-2" style={{ fontSize: 'clamp(1.875rem, 5vw, 3.5rem)' }}>
                   Southwest Missouri
                 </p>
                 {/* "CARE Collective" - Gradient CARE, light COLLECTIVE */}
