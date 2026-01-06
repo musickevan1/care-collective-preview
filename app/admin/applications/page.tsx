@@ -181,12 +181,10 @@ export default async function ApplicationsPage(): Promise<ReactElement> {
                               )}
                               <p>📅 Applied {formatTimeAgo(application.applied_at)}</p>
                               {/* Phone number */}
-                              {application.phone && (
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                  <Phone className="w-4 h-4" />
-                                  <span>{application.phone}</span>
-                                </div>
-                              )}
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Phone className="w-4 h-4" />
+                                <span>{application.phone || 'Not provided'}</span>
+                              </div>
                             </div>
 
                             {/* Email verification status */}
@@ -207,12 +205,10 @@ export default async function ApplicationsPage(): Promise<ReactElement> {
                         </div>
 
                         {/* Caregiving situation */}
-                        {application.caregiving_situation && (
-                          <div className="mt-3 p-3 bg-sage-light/10 rounded-lg border border-sage-light/20">
-                            <p className="text-xs font-medium text-muted-foreground mb-1">Caregiving Situation:</p>
-                            <p className="text-sm text-secondary">{application.caregiving_situation}</p>
-                          </div>
-                        )}
+                        <div className="mt-3 p-3 bg-sage-light/10 rounded-lg border border-sage-light/20">
+                          <p className="text-xs font-medium text-muted-foreground mb-1">Caregiving Situation:</p>
+                          <p className="text-sm text-secondary">{application.caregiving_situation || 'Not provided'}</p>
+                        </div>
 
                         {application.application_reason && (
                           <div className="bg-white rounded p-3 border">
