@@ -20,6 +20,8 @@ const HERO_IMAGES = [
 
 const CROSSFADE_INTERVAL = 4000; // 4 seconds between images
 const CROSSFADE_DURATION = 1000; // 1 second transition
+const FLIP_DELAY = 500; // Delay before coin flip starts (let page load)
+const FLIP_DURATION = 1200; // Duration of coin flip animation
 
 /**
  * Hero background with organic blob shapes
@@ -55,25 +57,21 @@ function HeroBackground(): ReactElement {
 }
 
 /**
- * Circular hero image carousel with crossfade animation
- * Features optimized WebP images with responsive srcset
- * Client request: 4-second intervals, 1-second crossfade transitions
+ * Circular hero image carousel with coin-flip intro animation
+ * Features:
+ * - 3D coin flip animation on page load (logo → photos)
+ * - Optimized WebP images with responsive srcset
+ * - 4-second intervals, 1-second crossfade transitions
  */
 function HeroImageCarousel(): ReactElement {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoaded, setIsLoaded] = useState<boolean[]>(new Array(HERO_IMAGES.length).fill(false));
+  const [hasFlipped, setHasFlipped] = useState(false);
+  const [carouselStarted, setCarouselStarted] = useState(false);
 
   // Preload next image
   const preloadImage = useCallback((index: number) => {
     const img = new window.Image();
     img.src = `/hero-images/optimized/hero-${HERO_IMAGES[index].id}-800w.webp`;
-    img.onload = () => {
-      setIsLoaded(prev => {
-        const next = [...prev];
-        next[index] = true;
-        return next;
-      });
-    };
   }, []);
 
   // Initialize: preload first two images
@@ -82,8 +80,29 @@ function HeroImageCarousel(): ReactElement {
     preloadImage(1);
   }, [preloadImage]);
 
-  // Auto-advance carousel
+  // Trigger coin flip after initial delay
   useEffect(() => {
+    const flipTimer = setTimeout(() => {
+      setHasFlipped(true);
+    }, FLIP_DELAY);
+    return () => clearTimeout(flipTimer);
+  }, []);
+
+  // Start carousel after flip animation completes
+  useEffect(() => {
+    if (!hasFlipped) return;
+    
+    const startTimer = setTimeout(() => {
+      setCarouselStarted(true);
+    }, FLIP_DURATION);
+    
+    return () => clearTimeout(startTimer);
+  }, [hasFlipped]);
+
+  // Auto-advance carousel (only after flip completes)
+  useEffect(() => {
+    if (!carouselStarted) return;
+
     const interval = setInterval(() => {
       setCurrentIndex(prev => {
         const nextIndex = (prev + 1) % HERO_IMAGES.length;
@@ -95,7 +114,7 @@ function HeroImageCarousel(): ReactElement {
     }, CROSSFADE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [preloadImage]);
+  }, [carouselStarted, preloadImage]);
 
   // Generate srcset for responsive images
   const getSrcSet = (id: number) => 
@@ -103,31 +122,66 @@ function HeroImageCarousel(): ReactElement {
     `/hero-images/optimized/hero-${id}-800w.webp 800w, ` +
     `/hero-images/optimized/hero-${id}-1200w.webp 1200w`;
 
-  // Sizes attribute for responsive loading - updated for larger hero image
+  // Sizes attribute for responsive loading
   const sizes = '(max-width: 640px) 220px, (max-width: 768px) 260px, (max-width: 1024px) 300px, (max-width: 1280px) 400px, (max-width: 1536px) 450px, 500px';
 
   return (
     <div className="relative flex-shrink-0">
       {/* Outer decorative ring - dusty rose gradient */}
-      {/* Mobile-first sizing: larger sizes for more visual impact */}
       <div className="w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] md:w-[300px] md:h-[300px] lg:w-[400px] lg:h-[400px] xl:w-[450px] xl:h-[450px] 2xl:w-[500px] 2xl:h-[500px] rounded-full p-2.5 sm:p-3 md:p-3.5 lg:p-4 xl:p-5 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30 shadow-2xl">
-        {/* Inner image container with carousel */}
-        <div className="relative w-full h-full rounded-full overflow-hidden bg-cream shadow-inner">
-          {HERO_IMAGES.map((image, index) => (
-            <img
-              key={image.id}
-              src={`/hero-images/optimized/hero-${image.id}-800w.webp`}
-              srcSet={getSrcSet(image.id)}
-              sizes={sizes}
-              alt={image.alt}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity ease-in-out ${
-                index === currentIndex ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{ transitionDuration: `${CROSSFADE_DURATION}ms` }}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-            />
-          ))}
+        
+        {/* 3D Coin flip container */}
+        <div 
+          className="relative w-full h-full"
+          style={{ perspective: '1000px' }}
+        >
+          {/* Coin inner - this rotates */}
+          <div 
+            className="relative w-full h-full transition-transform duration-[1200ms]"
+            style={{ 
+              transformStyle: 'preserve-3d',
+              transform: hasFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+            }}
+          >
+            {/* Front face - Logo */}
+            <div 
+              className="absolute inset-0 w-full h-full rounded-full overflow-hidden bg-cream shadow-inner flex items-center justify-center"
+              style={{ backfaceVisibility: 'hidden' }}
+            >
+              <img
+                src="/logo-textless.png"
+                alt="CARE Collective Logo"
+                className="w-[75%] h-[75%] object-contain"
+                loading="eager"
+              />
+            </div>
+            
+            {/* Back face - Carousel images */}
+            <div 
+              className="absolute inset-0 w-full h-full rounded-full overflow-hidden bg-cream shadow-inner"
+              style={{ 
+                backfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg)',
+              }}
+            >
+              {HERO_IMAGES.map((image, index) => (
+                <img
+                  key={image.id}
+                  src={`/hero-images/optimized/hero-${image.id}-800w.webp`}
+                  srcSet={getSrcSet(image.id)}
+                  sizes={sizes}
+                  alt={image.alt}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity ease-in-out ${
+                    index === currentIndex ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  style={{ transitionDuration: `${CROSSFADE_DURATION}ms` }}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       
@@ -139,7 +193,10 @@ function HeroImageCarousel(): ReactElement {
       
       {/* Visually hidden status for screen readers */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
-        Image {currentIndex + 1} of {HERO_IMAGES.length}: {HERO_IMAGES[currentIndex].alt}
+        {hasFlipped 
+          ? `Image ${currentIndex + 1} of ${HERO_IMAGES.length}: ${HERO_IMAGES[currentIndex].alt}`
+          : 'CARE Collective Logo'
+        }
       </div>
     </div>
   );
