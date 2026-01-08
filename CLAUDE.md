@@ -33,7 +33,7 @@ Care Collective: Mutual aid platform connecting community members for support an
 ```bash
 # 1. Commit changes with descriptive message
 git add .
-git commit -m "feat: description 🤖 Generated with Claude (claude-opus-4)"
+git commit -m "feat: description 🤖 Generated with Claude (claude-opus-4-5)"
 
 # 2. Push to main branch (AUTOMATICALLY deploys to production via Git integration)
 git push origin main
