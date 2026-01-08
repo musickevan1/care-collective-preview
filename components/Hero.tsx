@@ -20,7 +20,7 @@ const HERO_IMAGES = [
 
 const CROSSFADE_INTERVAL = 4000; // 4 seconds between images
 const CROSSFADE_DURATION = 1000; // 1 second transition
-const FLIP_DELAY = 800; // Delay before coin flip starts (let page load)
+const FLIP_DELAY = 1000; // Delay before coin flip starts (let page load)
 const FLIP_DURATION = 1800; // Duration of coin flip animation
 
 /**
