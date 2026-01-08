@@ -20,7 +20,7 @@ const HERO_IMAGES = [
 
 const CROSSFADE_INTERVAL = 4000; // 4 seconds between images
 const CROSSFADE_DURATION = 1000; // 1 second transition
-const FLIP_DELAY = 500; // Delay before coin flip starts (let page load)
+const FLIP_DELAY = 800; // Delay before coin flip starts (let page load)
 const FLIP_DURATION = 1800; // Duration of coin flip animation
 
 /**
@@ -127,21 +127,12 @@ function HeroImageCarousel(): ReactElement {
 
   return (
     <div className="relative flex-shrink-0">
-      {/* Shadow beneath the coin - stays in place during flip */}
-      <div 
-        className="absolute inset-0 w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] md:w-[300px] md:h-[300px] lg:w-[400px] lg:h-[400px] xl:w-[450px] xl:h-[450px] 2xl:w-[500px] 2xl:h-[500px] rounded-full"
-        style={{
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 12px 24px -8px rgba(0, 0, 0, 0.15)',
-        }}
-        aria-hidden="true"
-      />
-      
       {/* 3D Coin flip container */}
       <div 
         className="relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] md:w-[300px] md:h-[300px] lg:w-[400px] lg:h-[400px] xl:w-[450px] xl:h-[450px] 2xl:w-[500px] 2xl:h-[500px]"
         style={{ perspective: '1000px' }}
       >
-        {/* Coin inner - this rotates (including the border) */}
+        {/* Coin inner - this rotates (including border and shadow) */}
         <div 
           className="relative w-full h-full transition-transform duration-[1800ms]"
           style={{ 
@@ -150,10 +141,13 @@ function HeroImageCarousel(): ReactElement {
             transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
         >
-          {/* Front face - Logo with border */}
+          {/* Front face - Logo with border and shadow */}
           <div 
             className="absolute inset-0 w-full h-full rounded-full p-2.5 sm:p-3 md:p-3.5 lg:p-4 xl:p-5 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30"
-            style={{ backfaceVisibility: 'hidden' }}
+            style={{ 
+              backfaceVisibility: 'hidden',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 12px 24px -8px rgba(0, 0, 0, 0.15)',
+            }}
           >
             <div className="w-full h-full rounded-full overflow-hidden bg-cream shadow-inner flex items-center justify-center">
               <img
@@ -165,12 +159,13 @@ function HeroImageCarousel(): ReactElement {
             </div>
           </div>
           
-          {/* Back face - Carousel images with border */}
+          {/* Back face - Carousel images with border and shadow */}
           <div 
             className="absolute inset-0 w-full h-full rounded-full p-2.5 sm:p-3 md:p-3.5 lg:p-4 xl:p-5 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30"
             style={{ 
               backfaceVisibility: 'hidden',
               transform: 'rotateY(180deg)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 12px 24px -8px rgba(0, 0, 0, 0.15)',
             }}
           >
             <div className="relative w-full h-full rounded-full overflow-hidden bg-cream shadow-inner">
