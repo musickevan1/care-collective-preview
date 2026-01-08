@@ -103,14 +103,14 @@ function HeroImageCarousel(): ReactElement {
     `/hero-images/optimized/hero-${id}-800w.webp 800w, ` +
     `/hero-images/optimized/hero-${id}-1200w.webp 1200w`;
 
-  // Sizes attribute for responsive loading
-  const sizes = '(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, (max-width: 1280px) 320px, (max-width: 1536px) 360px, 400px';
+  // Sizes attribute for responsive loading - updated for larger hero image
+  const sizes = '(max-width: 640px) 220px, (max-width: 768px) 260px, (max-width: 1024px) 300px, (max-width: 1280px) 400px, (max-width: 1536px) 450px, 500px';
 
   return (
     <div className="relative flex-shrink-0">
       {/* Outer decorative ring - dusty rose gradient */}
-      {/* Mobile-first sizing: smaller on mobile, larger on desktop */}
-      <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-[320px] lg:h-[320px] xl:w-[360px] xl:h-[360px] 2xl:w-[400px] 2xl:h-[400px] rounded-full p-2 sm:p-2.5 md:p-3 lg:p-4 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30 shadow-2xl">
+      {/* Mobile-first sizing: larger sizes for more visual impact */}
+      <div className="w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] md:w-[300px] md:h-[300px] lg:w-[400px] lg:h-[400px] xl:w-[450px] xl:h-[450px] 2xl:w-[500px] 2xl:h-[500px] rounded-full p-2.5 sm:p-3 md:p-3.5 lg:p-4 xl:p-5 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30 shadow-2xl">
         {/* Inner image container with carousel */}
         <div className="relative w-full h-full rounded-full overflow-hidden bg-cream shadow-inner">
           {HERO_IMAGES.map((image, index) => (
@@ -131,9 +131,9 @@ function HeroImageCarousel(): ReactElement {
         </div>
       </div>
       
-      {/* Decorative accent circle */}
+      {/* Decorative accent circle - scaled up proportionally */}
       <div 
-        className="absolute -bottom-3 -left-3 w-16 h-16 md:w-20 md:h-20 rounded-full bg-sage/20 -z-10"
+        className="absolute -bottom-4 -left-4 w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full bg-sage/20 -z-10"
         aria-hidden="true"
       />
       
