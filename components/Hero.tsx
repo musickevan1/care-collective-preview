@@ -1,11 +1,25 @@
 'use client'
 
-import Link from 'next/link'
 import Image from 'next/image'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useState, useEffect, useCallback } from 'react'
 import AnimatedGradientText from './AnimatedGradientText'
 import MouseGradientBackground from './MouseGradientBackground'
 import MagneticButton from './MagneticButton'
+
+/**
+ * Hero carousel images configuration
+ * Uses optimized WebP images with responsive srcset
+ */
+const HERO_IMAGES = [
+  { id: 1, alt: 'Caring hands supporting community members' },
+  { id: 2, alt: 'Neighbors helping each other with daily tasks' },
+  { id: 3, alt: 'Community volunteers sharing resources' },
+  { id: 4, alt: 'Caregivers connecting and supporting one another' },
+  { id: 5, alt: 'Southwest Missouri community members united in care' },
+] as const;
+
+const CROSSFADE_INTERVAL = 4000; // 4 seconds between images
+const CROSSFADE_DURATION = 1000; // 1 second transition
 
 /**
  * Hero background with organic blob shapes
@@ -41,42 +55,79 @@ function HeroBackground(): ReactElement {
 }
 
 /**
- * Circular hero image with decorative dusty-rose ring
- * Inspired by Kinderground's circular photo treatment
+ * Circular hero image carousel with crossfade animation
+ * Features optimized WebP images with responsive srcset
+ * Client request: 4-second intervals, 1-second crossfade transitions
  */
-function HeroImage(): ReactElement {
-  const [imageError, setImageError] = useState(false)
+function HeroImageCarousel(): ReactElement {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoaded, setIsLoaded] = useState<boolean[]>(new Array(HERO_IMAGES.length).fill(false));
 
-  // Use local hero image
-  const heroImageUrl = '/hero-image.jpg'
+  // Preload next image
+  const preloadImage = useCallback((index: number) => {
+    const img = new window.Image();
+    img.src = `/hero-images/optimized/hero-${HERO_IMAGES[index].id}-800w.webp`;
+    img.onload = () => {
+      setIsLoaded(prev => {
+        const next = [...prev];
+        next[index] = true;
+        return next;
+      });
+    };
+  }, []);
+
+  // Initialize: preload first two images
+  useEffect(() => {
+    preloadImage(0);
+    preloadImage(1);
+  }, [preloadImage]);
+
+  // Auto-advance carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex(prev => {
+        const nextIndex = (prev + 1) % HERO_IMAGES.length;
+        // Preload the image after the next one
+        const preloadIndex = (nextIndex + 1) % HERO_IMAGES.length;
+        preloadImage(preloadIndex);
+        return nextIndex;
+      });
+    }, CROSSFADE_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [preloadImage]);
+
+  // Generate srcset for responsive images
+  const getSrcSet = (id: number) => 
+    `/hero-images/optimized/hero-${id}-400w.webp 400w, ` +
+    `/hero-images/optimized/hero-${id}-800w.webp 800w, ` +
+    `/hero-images/optimized/hero-${id}-1200w.webp 1200w`;
+
+  // Sizes attribute for responsive loading
+  const sizes = '(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, (max-width: 1280px) 320px, (max-width: 1536px) 360px, 400px';
 
   return (
     <div className="relative flex-shrink-0">
       {/* Outer decorative ring - dusty rose gradient */}
       {/* Mobile-first sizing: smaller on mobile, larger on desktop */}
       <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-[320px] lg:h-[320px] xl:w-[360px] xl:h-[360px] 2xl:w-[400px] 2xl:h-[400px] rounded-full p-2 sm:p-2.5 md:p-3 lg:p-4 bg-gradient-to-br from-dusty-rose/70 via-dusty-rose/50 to-dusty-rose/30 shadow-2xl">
-        {/* Inner image container */}
-        <div className="w-full h-full rounded-full overflow-hidden bg-cream shadow-inner">
-          {imageError ? (
-            <div className="w-full h-full flex items-center justify-center bg-sage/10">
-              <div className="text-center p-4">
-                <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-sage/20 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                </div>
-                <span className="text-sm text-sage-dark font-medium">Caring Together</span>
-              </div>
-            </div>
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
+        {/* Inner image container with carousel */}
+        <div className="relative w-full h-full rounded-full overflow-hidden bg-cream shadow-inner">
+          {HERO_IMAGES.map((image, index) => (
             <img
-              src={heroImageUrl}
-              alt="Supportive hands holding - representing care and compassion"
-              className="w-full h-full object-cover"
-              onError={() => setImageError(true)}
+              key={image.id}
+              src={`/hero-images/optimized/hero-${image.id}-800w.webp`}
+              srcSet={getSrcSet(image.id)}
+              sizes={sizes}
+              alt={image.alt}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity ease-in-out ${
+                index === currentIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{ transitionDuration: `${CROSSFADE_DURATION}ms` }}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="async"
             />
-          )}
+          ))}
         </div>
       </div>
       
@@ -85,8 +136,13 @@ function HeroImage(): ReactElement {
         className="absolute -bottom-3 -left-3 w-16 h-16 md:w-20 md:h-20 rounded-full bg-sage/20 -z-10"
         aria-hidden="true"
       />
+      
+      {/* Visually hidden status for screen readers */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        Image {currentIndex + 1} of {HERO_IMAGES.length}: {HERO_IMAGES[currentIndex].alt}
+      </div>
     </div>
-  )
+  );
 }
 
 export default function Hero(): ReactElement {
@@ -106,7 +162,7 @@ export default function Hero(): ReactElement {
 
             {/* Image - appears first on mobile, right on desktop */}
             <div className="animate-fade-in-up lg:animate-fade-in-right flex-shrink-0 lg:order-2" style={{ animationDelay: '150ms' }}>
-              <HeroImage />
+              <HeroImageCarousel />
             </div>
 
             {/* Text Content - appears second on mobile, left on desktop */}

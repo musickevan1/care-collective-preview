@@ -69,3 +69,6 @@ playwright-report/
 ~$*.docx
 ~$*.xlsx
 .env*.local
+
+# Original hero images (large PNGs - use optimized WebP versions)
+public/hero-images/*.png
