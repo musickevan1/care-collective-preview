@@ -1,15 +1,70 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { kv } from '@vercel/kv'
+import { createClient } from 'redis'
 
 /**
- * Rate Limiter with Vercel KV (Redis) backing
- * Falls back to in-memory storage in development
+ * Rate Limiter with Redis backing
+ * Falls back to in-memory storage in development or when Redis is unavailable
  *
- * Phase 3.2 Enhancement: Production-ready distributed rate limiting
+ * Uses standard Redis client compatible with Vercel Marketplace Redis providers
  */
 
-// In-memory fallback for development (when KV is not available)
+// In-memory fallback for development (when Redis is not available)
 const requestCounts = new Map<string, { count: number; resetTime: number }>()
+
+// Redis client type (simplified for compatibility)
+type RedisClient = ReturnType<typeof createClient>
+
+// Redis client singleton with lazy initialization
+let redisClient: RedisClient | null = null
+let redisConnectionPromise: Promise<RedisClient> | null = null
+
+/**
+ * Get or create Redis client connection
+ * Uses lazy initialization pattern suitable for serverless environments
+ */
+async function getRedisClient(): Promise<RedisClient | null> {
+  const redisUrl = process.env.REDIS_URL
+
+  if (!redisUrl) {
+    return null
+  }
+
+  // Return existing client if connected
+  if (redisClient?.isOpen) {
+    return redisClient
+  }
+
+  // If connection is in progress, wait for it
+  if (redisConnectionPromise) {
+    try {
+      return await redisConnectionPromise
+    } catch {
+      redisConnectionPromise = null
+    }
+  }
+
+  // Create new connection
+  redisConnectionPromise = (async () => {
+    try {
+      const client = createClient({ url: redisUrl })
+
+      client.on('error', (err: Error) => {
+        console.error('[Rate Limiter] Redis client error:', err)
+      })
+
+      await client.connect()
+      redisClient = client
+      console.log('[Rate Limiter] Redis connected successfully')
+      return client
+    } catch (error) {
+      console.error('[Rate Limiter] Failed to connect to Redis:', error)
+      redisConnectionPromise = null
+      throw error
+    }
+  })()
+
+  return redisConnectionPromise
+}
 
 interface RateLimitConfig {
   windowMs: number // Time window in milliseconds
@@ -33,11 +88,10 @@ interface RateLimitData {
 
 /**
  * Rate limiter implementation for Next.js API routes
- * Uses Vercel KV (Redis) in production, falls back to in-memory in development
+ * Uses Redis in production, falls back to in-memory in development
  */
 export class RateLimiter {
   private config: Required<RateLimitConfig>
-  private useKV: boolean
 
   constructor(config: RateLimitConfig) {
     this.config = {
@@ -46,12 +100,25 @@ export class RateLimiter {
       legacyHeaders: false,
       ...config,
     }
+  }
 
-    // Check if KV is available (production)
-    this.useKV = process.env.NODE_ENV === 'production' && !!process.env.KV_REST_API_URL
+  /**
+   * Check if Redis is available for this request
+   */
+  private async shouldUseRedis(): Promise<boolean> {
+    if (process.env.NODE_ENV !== 'production') {
+      return false
+    }
 
-    if (!this.useKV && process.env.NODE_ENV === 'production') {
-      console.warn('[Rate Limiter] KV_REST_API_URL not found. Falling back to in-memory storage. This will not scale across multiple instances.')
+    if (!process.env.REDIS_URL) {
+      return false
+    }
+
+    try {
+      const client = await getRedisClient()
+      return client !== null && client.isOpen
+    } catch {
+      return false
     }
   }
 
@@ -62,22 +129,32 @@ export class RateLimiter {
     const key = this.getIdentifier(request, identifier)
     const now = Date.now()
 
-    if (this.useKV) {
-      return this.checkWithKV(key, now)
+    const useRedis = await this.shouldUseRedis()
+
+    if (useRedis) {
+      return this.checkWithRedis(key, now)
     } else {
       return this.checkInMemory(key, now)
     }
   }
 
   /**
-   * Check rate limit using Vercel KV (Redis)
+   * Check rate limit using Redis
    */
-  private async checkWithKV(key: string, now: number): Promise<RateLimitResult> {
+  private async checkWithRedis(key: string, now: number): Promise<RateLimitResult> {
     try {
+      const client = await getRedisClient()
+      if (!client) {
+        return this.checkInMemory(key, now)
+      }
+
       const rateLimitKey = `ratelimit:${key}`
 
-      // Get current count from KV
-      const current = await kv.get<RateLimitData>(rateLimitKey)
+      // Get current count from Redis
+      const currentData = await client.get(rateLimitKey)
+      const current: RateLimitData | null = currentData && typeof currentData === 'string' 
+        ? JSON.parse(currentData) 
+        : null
 
       if (!current || current.resetTime <= now) {
         // First request in window or window expired
@@ -87,9 +164,9 @@ export class RateLimiter {
           resetTime,
         }
 
-        // Set with TTL (convert ms to seconds for Redis)
-        await kv.set(rateLimitKey, newData, {
-          px: this.config.windowMs, // px = milliseconds expiry
+        // Set with TTL (PX = milliseconds expiry)
+        await client.set(rateLimitKey, JSON.stringify(newData), {
+          PX: this.config.windowMs,
         })
 
         return {
@@ -118,8 +195,8 @@ export class RateLimiter {
 
       // Update with remaining TTL
       const remainingMs = current.resetTime - now
-      await kv.set(rateLimitKey, updatedData, {
-        px: remainingMs > 0 ? remainingMs : this.config.windowMs,
+      await client.set(rateLimitKey, JSON.stringify(updatedData), {
+        PX: remainingMs > 0 ? remainingMs : this.config.windowMs,
       })
 
       return {
@@ -129,8 +206,8 @@ export class RateLimiter {
         total: this.config.max,
       }
     } catch (error) {
-      console.error('[Rate Limiter] KV error, falling back to in-memory:', error)
-      // Fallback to in-memory on KV error
+      console.error('[Rate Limiter] Redis error, falling back to in-memory:', error)
+      // Fallback to in-memory on Redis error
       return this.checkInMemory(key, now)
     }
   }
@@ -255,11 +332,16 @@ export class RateLimiter {
    * Reset rate limit for a specific key (useful for testing)
    */
   async reset(key: string): Promise<void> {
-    if (this.useKV) {
+    const useRedis = await this.shouldUseRedis()
+
+    if (useRedis) {
       try {
-        await kv.del(`ratelimit:${key}`)
+        const client = await getRedisClient()
+        if (client) {
+          await client.del(`ratelimit:${key}`)
+        }
       } catch (error) {
-        console.error('[Rate Limiter] Failed to reset KV key:', error)
+        console.error('[Rate Limiter] Failed to reset Redis key:', error)
       }
     } else {
       requestCounts.delete(key)
@@ -270,16 +352,22 @@ export class RateLimiter {
    * Get current rate limit status for a key
    */
   async getStatus(key: string): Promise<RateLimitData | null> {
-    if (this.useKV) {
+    const useRedis = await this.shouldUseRedis()
+
+    if (useRedis) {
       try {
-        return await kv.get<RateLimitData>(`ratelimit:${key}`)
+        const client = await getRedisClient()
+        if (client) {
+          const data = await client.get(`ratelimit:${key}`)
+          return data && typeof data === 'string' ? JSON.parse(data) : null
+        }
       } catch (error) {
-        console.error('[Rate Limiter] Failed to get KV status:', error)
+        console.error('[Rate Limiter] Failed to get Redis status:', error)
         return null
       }
-    } else {
-      return requestCounts.get(key) || null
     }
+
+    return requestCounts.get(key) || null
   }
 }
 
