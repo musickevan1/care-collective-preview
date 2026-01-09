@@ -56,8 +56,9 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
+     * - waiver-preview (preview page for development)
 
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|waiver-preview|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

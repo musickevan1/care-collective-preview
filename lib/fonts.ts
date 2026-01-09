@@ -1,4 +1,4 @@
-import { Inter, Overlock, Atkinson_Hyperlegible, Playfair_Display } from 'next/font/google'
+import { Inter, Overlock, Atkinson_Hyperlegible, Playfair_Display, Caveat } from 'next/font/google'
 
 // Primary brand font - Overlock with optimized loading
 export const overlock = Overlock({
@@ -43,6 +43,17 @@ export const inter = Inter({
   adjustFontFallback: true,
 })
 
+// Handwriting font for digital signatures - Caveat
+export const caveat = Caveat({
+  subsets: ['latin'],
+  variable: '--font-caveat',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+  preload: false, // Only load when signature component is used
+  fallback: ['Brush Script MT', 'cursive'],
+  adjustFontFallback: true,
+})
+
 /**
  * Preload critical fonts for better LCP
  * Call this in the document head
@@ -71,7 +82,8 @@ export const fontClasses = {
   primary: overlock.variable,
   accessible: atkinsonHyperlegible.variable,
   system: inter.variable,
-  display: playfairDisplay.variable
+  display: playfairDisplay.variable,
+  signature: caveat.variable,
 }
 
 // CSS variable mapping
@@ -79,5 +91,6 @@ export const fontVariables = {
   '--font-family-sans': 'var(--font-overlock), system-ui, -apple-system, sans-serif',
   '--font-family-accessible': 'var(--font-atkinson), system-ui, -apple-system, sans-serif', 
   '--font-family-system': 'var(--font-inter), system-ui, -apple-system, sans-serif',
-  '--font-family-display': 'var(--font-playfair), Georgia, Times New Roman, serif'
+  '--font-family-display': 'var(--font-playfair), Georgia, Times New Roman, serif',
+  '--font-family-signature': 'var(--font-caveat), Brush Script MT, cursive',
 }

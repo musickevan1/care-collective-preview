@@ -3,7 +3,7 @@ import "@/lib/global-polyfills.js";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
-import { overlock, fontClasses, atkinsonHyperlegible, playfairDisplay } from "@/lib/fonts";
+import { overlock, fontClasses, atkinsonHyperlegible, playfairDisplay, caveat } from "@/lib/fonts";
 import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
 
 // LAUNCH: Disabled beta testing - removed "Preview" references and enabled SEO
@@ -45,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fontClasses.primary} ${fontClasses.accessible} ${fontClasses.display}`}>
+    <html lang="en" className={`${fontClasses.primary} ${fontClasses.accessible} ${fontClasses.display} ${fontClasses.signature}`}>
       <head>
         {/* DNS prefetch and preconnect for external resources */}
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />

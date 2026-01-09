@@ -4,7 +4,7 @@ import {
   getProfileWithServiceRole,
   hasPendingSessionInvalidation,
   markSessionInvalidated
-} from '@/lib/supabase/admin'
+} from '@/lib/supabase/admin-edge'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -138,7 +138,7 @@ export async function updateSession(request: NextRequest) {
     )
 
     // Allow access to public and auth pages without additional checks
-    const publicPaths = ['/login', '/signup', '/auth', '/', '/design-system', '/help', '/api']
+    const publicPaths = ['/login', '/signup', '/auth', '/', '/design-system', '/help', '/api', '/waiver-preview']
     const isPublicPath = publicPaths.some(path => 
       request.nextUrl.pathname.startsWith(path)
     )
