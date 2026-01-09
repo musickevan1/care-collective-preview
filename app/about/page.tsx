@@ -1,247 +1,214 @@
+/**
+ * @fileoverview About page for CARE Collective
+ * Polished for visual consistency with warm, organic aesthetics
+ */
+
 import { ReactElement } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, Users, Sparkles, Handshake, Target } from 'lucide-react';
-import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 import { SectionHeader } from '@/components/public/SectionHeader';
+import { InfoCard } from '@/components/public/InfoCard';
 import { CTAButton } from '@/components/public/CTAButton';
+import {
+  Heart,
+  Users,
+  Sparkles,
+  Handshake,
+  Target,
+  Shield,
+  Info,
+  GraduationCap,
+  CheckCircle
+} from 'lucide-react';
 
 export const metadata = {
   title: 'About Us - CARE Collective',
   description: 'Learn about the CARE Collective mission, vision, values, and community standards for family caregivers in Southwest Missouri.',
 };
+
 export default function AboutPage(): ReactElement {
   return (
     <PublicPageLayout>
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* About Section Header - matches homepage style */}
-        <SectionHeader
-          title="About CARE Collective"
-        />
+      <div className="container mx-auto px-4 py-12 md:py-16 max-w-5xl">
+        {/* Page Header */}
+        <header className="text-center mb-16">
+          <div className="inline-flex items-center justify-center p-4 bg-sage rounded-2xl shadow-lg shadow-sage/20 mb-6">
+            <Info className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-[clamp(32px,5vw,48px)] font-bold text-brown uppercase tracking-wide mb-4">
+            About CARE Collective
+          </h1>
+          <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto leading-relaxed">
+            A community of family caregivers supporting each other through practical help and shared resources.
+          </p>
+        </header>
 
-        {/* Mission */}
-        <section className="mb-12">
-          <SectionHeader
-            title="Our Mission"
-            icon={<Target className="w-6 h-6 text-white" />}
-            iconBgColor="primary"
-          />
-          <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-1">
-            <CardContent className="p-8">
-              <p className="text-lg text-foreground leading-relaxed">
+        {/* Mission & Vision - Side by Side */}
+        <section className="mb-16">
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Mission */}
+            <div className="bg-white rounded-2xl border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary transition-all duration-500 p-6 md:p-8 hover:-translate-y-1">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-primary rounded-xl shadow-lg shadow-primary/20">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground pt-1">Our Mission</h2>
+              </div>
+              <p className="text-lg text-foreground/80 leading-relaxed">
                 To connect caregivers with one another for the exchange of practical help, shared resources,
                 and mutual support.
               </p>
-            </CardContent>
-          </Card>
-        </section>
+            </div>
 
-        {/* Vision */}
-        <section className="mb-12">
-          <SectionHeader
-            title="Our Vision"
-            icon={<Sparkles className="w-6 h-6 text-white" />}
-            iconBgColor="sage"
-          />
-          <Card className="border-sage/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-1">
-            <CardContent className="p-8">
-              <p className="text-lg text-foreground leading-relaxed">
+            {/* Vision */}
+            <div className="bg-white rounded-2xl border-2 border-sage/20 shadow-lg hover:shadow-xl hover:border-sage transition-all duration-500 p-6 md:p-8 hover:-translate-y-1">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-sage rounded-xl shadow-lg shadow-sage/20">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground pt-1">Our Vision</h2>
+              </div>
+              <p className="text-lg text-foreground/80 leading-relaxed">
                 Reimagining caregiving as a collective act of compassion and mutual care that strengthens families
                 and communities, supports dignity and well-being in later life, and makes caregiving sustainable for all.
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </section>
 
         {/* Values */}
-        <section className="mb-12">
+        <section className="mb-16">
           <SectionHeader
             title="Our Values"
-            icon={<Users className="w-6 h-6 text-white" />}
+            description="The principles that guide everything we do."
+            icon={<Heart className="w-7 h-7 text-white" />}
             iconBgColor="dusty-rose"
           />
 
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="border-sage/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-1">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <div className="p-2 bg-sage/10 rounded-lg">
-                    <Sparkles className="w-6 h-6 text-sage" />
-                  </div>
-                  Empowerment
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  We build this collective by voicing our needs, cultivating confidence and growth,
-                  and shaping the support that works for us.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-2xl border-2 border-sage/20 shadow-lg hover:shadow-xl hover:border-sage transition-all duration-500 p-6 md:p-8 hover:-translate-y-1">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-sage/10 rounded-xl">
+                  <Sparkles className="w-6 h-6 text-sage" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground pt-1">Empowerment</h3>
+              </div>
+              <p className="text-foreground/70 leading-relaxed">
+                We build this collective by voicing our needs, cultivating confidence and growth,
+                and shaping the support that works for us.
+              </p>
+            </div>
 
-            <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-1">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Heart className="w-6 h-6 text-primary" />
-                  </div>
-                  Compassion
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  We act with kindness and empathy, honoring the dignity of caregivers and those they care for.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-2xl border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary transition-all duration-500 p-6 md:p-8 hover:-translate-y-1">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-primary/10 rounded-xl">
+                  <Heart className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground pt-1">Compassion</h3>
+              </div>
+              <p className="text-foreground/70 leading-relaxed">
+                We act with kindness and empathy, honoring the dignity of caregivers and those they care for.
+              </p>
+            </div>
 
-            <Card className="border-dusty-rose/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-dusty-rose hover:-translate-y-1">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <div className="p-2 bg-dusty-rose/10 rounded-lg">
-                    <Handshake className="w-6 h-6 text-dusty-rose" />
-                  </div>
-                  Reciprocity
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  We value both giving and receiving support, recognizing that everyone contributes differently
-                  and all contributions strengthen our community.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-2xl border-2 border-dusty-rose/20 shadow-lg hover:shadow-xl hover:border-dusty-rose transition-all duration-500 p-6 md:p-8 hover:-translate-y-1">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-dusty-rose/10 rounded-xl">
+                  <Handshake className="w-6 h-6 text-dusty-rose" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground pt-1">Reciprocity</h3>
+              </div>
+              <p className="text-foreground/70 leading-relaxed">
+                We value both giving and receiving support, recognizing that everyone contributes differently
+                and all contributions strengthen our community.
+              </p>
+            </div>
 
-            <Card className="border-accent/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-accent hover:-translate-y-1">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <div className="p-2 bg-accent/10 rounded-lg">
-                    <Users className="w-6 h-6 text-accent" />
-                  </div>
-                  Community
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
-                  We foster connections among caregivers and neighbors, creating belonging through
-                  shared experience and purpose.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="bg-white rounded-2xl border-2 border-accent/20 shadow-lg hover:shadow-xl hover:border-accent transition-all duration-500 p-6 md:p-8 hover:-translate-y-1">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="p-3 bg-accent/10 rounded-xl">
+                  <Users className="w-6 h-6 text-accent" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground pt-1">Community</h3>
+              </div>
+              <p className="text-foreground/70 leading-relaxed">
+                We foster connections among caregivers and neighbors, creating belonging through
+                shared experience and purpose.
+              </p>
+            </div>
           </div>
         </section>
 
         {/* Community Standards */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-foreground mb-6">Community Standards</h2>
+        <section className="mb-16">
+          <SectionHeader
+            title="Community Standards"
+            description="Our shared agreements for building a safe, supportive community."
+            icon={<Shield className="w-7 h-7 text-white" />}
+            iconBgColor="sage"
+          />
 
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Our Commitment to Each Other</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">Members of the CARE Collective agree to:</p>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
-                  <span className="text-foreground">
-                    Treat all caregivers with respect and avoid judgment or discrimination based on their situations,
-                    choices, or circumstances.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
-                  <span className="text-foreground">
-                    Keep all shared information confidential and use member contact details only for
-                    CARE Collective exchanges.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
-                  <span className="text-foreground">
-                    Honor commitments by communicating promptly if plans change or you&apos;re unable to
-                    follow through on an exchange.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
-                  <span className="text-foreground">
-                    Respect each caregiver&apos;s limits around time, energy, and the type of support they
-                    can give or receive.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
-                  <span className="text-foreground">
-                    Use the platform only to give or receive caregiving help and use good judgment about
-                    safety when meeting or exchanging with members.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Heart className="w-4 h-4 text-sage mt-1 flex-shrink-0" />
-                  <span className="text-foreground">
-                    Avoid harassment or any behavior that undermines the safety or trust of the community.
-                  </span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            {/* Our Commitment */}
+            <InfoCard
+              title="Our Commitment to Each Other"
+              description="Members of the CARE Collective agree to uphold these values in all interactions."
+              icon={<CheckCircle className="w-6 h-6" />}
+              iconBgColor="sage"
+              items={[
+                "Treat all caregivers with respect and avoid judgment or discrimination",
+                "Keep all shared information confidential",
+                "Honor commitments and communicate promptly if plans change",
+                "Respect each caregiver's limits around time and energy",
+                "Use the platform only for caregiving support and practice safety",
+                "Avoid harassment or behavior that undermines community trust"
+              ]}
+            />
 
-          <Card className="mb-6 border-primary/20 bg-primary/5">
-            <CardHeader>
-              <CardTitle>Terms of Use</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-foreground">
-                By joining the CARE Collective, you agree to follow these community standards and use the site
-                responsibly. Membership may be paused or removed if behavior compromises the safety or trust of others.
-              </p>
-            </CardContent>
-          </Card>
+            {/* Additional Standards Grid */}
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="bg-primary/5 rounded-2xl border-2 border-primary/20 p-6 md:p-8">
+                <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-3">
+                  <Shield className="w-5 h-5 text-primary" />
+                  Terms of Use
+                </h3>
+                <p className="text-foreground/70 leading-relaxed">
+                  By joining CARE Collective, you agree to follow these community standards.
+                  Membership may be paused or removed if behavior compromises the safety or trust of others.
+                </p>
+              </div>
 
-          <Card className="mb-6 border-sage/20 bg-sage/5">
-            <CardHeader>
-              <CardTitle>Background Checks</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-foreground">
-                To help ensure the safety of our community, we use <strong>Sterling Volunteers</strong> for background checks (approximately $19). This secure service helps us maintain a trusted environment for all members.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-sage/20 bg-sage/5">
-            <CardHeader>
-              <CardTitle>Privacy & Safety</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-foreground mb-4">
-                Your contact information is never shared publicly. If you have any concerns about safety or
-                appropriate behavior, contact the CARE Collective administrator.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                We respond to safety issues within 24 hours and other inquiries within 2-3 business days.
-              </p>
-            </CardContent>
-          </Card>
+              <div className="bg-sage/5 rounded-2xl border-2 border-sage/20 p-6 md:p-8">
+                <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-sage" />
+                  Background Checks
+                </h3>
+                <p className="text-foreground/70 leading-relaxed">
+                  We use <strong>Sterling Volunteers</strong> for background checks (~$19) to help maintain
+                  a trusted environment for all members.
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Academic Partnership */}
-        <section className="mb-12">
-          <Card className="bg-background border-muted">
-            <CardHeader>
-              <CardTitle>Academic Partnership</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-foreground leading-relaxed">
-                The CARE Collective was developed by <strong>Dr. Maureen Templeman</strong>, Assistant Professor of
-                Gerontology at Missouri State University, with support from Missouri State University students and
-                community partners. The project is supported by the Department of Sociology, Anthropology, and
-                Gerontology at Missouri State University and funded by the Southern Gerontological Society
-                Innovative Projects Grant.
-              </p>
-            </CardContent>
-          </Card>
+        <section className="mb-16">
+          <SectionHeader
+            title="Academic Partnership"
+            description="Research-backed community development."
+            icon={<GraduationCap className="w-7 h-7 text-white" />}
+            iconBgColor="primary"
+          />
+
+          <div className="bg-white rounded-2xl border-2 border-primary/20 shadow-lg p-6 md:p-8">
+            <p className="text-lg text-foreground/80 leading-relaxed">
+              CARE Collective was developed by <strong>Dr. Maureen Templeman</strong>, Assistant Professor of
+              Gerontology at Missouri State University, with support from MSU students and community partners.
+              The project is supported by the Department of Sociology, Anthropology, and Gerontology at
+              Missouri State University and funded by the <strong>Southern Gerontological Society
+              Innovative Projects Grant</strong>.
+            </p>
+          </div>
         </section>
 
         {/* CTA */}

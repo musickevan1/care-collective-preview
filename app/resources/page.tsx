@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink as ExternalLinkIcon, Heart, Home, Users, GraduationCap, Phone, MessageSquare, Shield, LifeBuoy } from 'lucide-react';
+import { Heart, Users, GraduationCap, Phone, MessageSquare, Shield, LifeBuoy } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 import { SectionHeader } from '@/components/public/SectionHeader';
-import { CTAButton } from '@/components/public/CTAButton';
+import { ResourceCard } from '@/components/public/ResourceCard';
 
 export const metadata = {
   title: 'Community Resources - CARE Collective',
@@ -204,35 +204,3 @@ export default function ResourcesPage(): ReactElement {
   );
 }
 
-interface ResourceCardProps {
-  title: string;
-  description: string;
-  url?: string;
-}
-
-function ResourceCard({ title, description, url }: ResourceCardProps): ReactElement {
-  return (
-    <Card className="bg-white border-sage/20 shadow-md hover:shadow-xl transition-all duration-300 hover:border-sage hover:-translate-y-1">
-      <CardHeader>
-        <CardTitle className="flex items-start justify-between gap-2">
-          <span className="text-lg font-bold">{title}</span>
-          {url && <ExternalLinkIcon className="w-5 h-5 text-sage flex-shrink-0 mt-1" />}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground mb-4 leading-relaxed">{description}</p>
-        {url && (
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sage hover:text-sage-dark font-semibold inline-flex items-center gap-2 hover:underline transition-colors focus:outline-none focus:ring-2 focus:ring-sage/50 rounded"
-          >
-            Visit Website
-            <ExternalLinkIcon className="w-4 h-4 text-sage flex-shrink-0" />
-          </a>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
