@@ -26,18 +26,26 @@ export function SectionHeader({
   icon,
   iconBgColor = 'primary'
 }: SectionHeaderProps): ReactElement {
-  const colorClasses = {
-    sage: 'bg-sage/10',
-    primary: 'bg-primary/10',
-    'dusty-rose': 'bg-dusty-rose/10',
-    accent: 'bg-accent/10'
+  const iconBgClasses = {
+    sage: 'bg-sage',
+    primary: 'bg-primary',
+    'dusty-rose': 'bg-dusty-rose',
+    accent: 'bg-accent'
   };
 
   return (
-    <div className="mb-12">
-      <h2 className="text-[clamp(32px,5vw,48px)] font-bold text-brown text-center uppercase tracking-wide">
-        {title}
-      </h2>
+    <div className="mb-8">
+      {/* Title with optional icon */}
+      <div className="flex items-center justify-center gap-3 mb-4">
+        {icon && (
+          <div className={`p-2.5 rounded-xl ${iconBgClasses[iconBgColor]} shadow-md`}>
+            {icon}
+          </div>
+        )}
+        <h2 className="text-[clamp(24px,4vw,36px)] font-bold text-brown uppercase tracking-wide">
+          {title}
+        </h2>
+      </div>
       {description && (
         <p className="text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed text-center">
           {description}

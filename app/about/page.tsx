@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, Users, Sparkles, Handshake } from 'lucide-react';
+import { Heart, Users, Sparkles, Handshake, Target } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 import { SectionHeader } from '@/components/public/SectionHeader';
@@ -21,7 +21,11 @@ export default function AboutPage(): ReactElement {
 
         {/* Mission */}
         <section className="mb-12">
-          <h3 className="text-lg font-semibold text-sage/70 uppercase tracking-wide mb-4">Our Mission</h3>
+          <SectionHeader
+            title="Our Mission"
+            icon={<Target className="w-6 h-6 text-white" />}
+            iconBgColor="primary"
+          />
           <Card className="border-primary/30 bg-white shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary hover:-translate-y-1">
             <CardContent className="p-8">
               <p className="text-lg text-foreground leading-relaxed">

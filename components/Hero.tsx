@@ -16,6 +16,7 @@ const HERO_IMAGES = [
   { id: 3, alt: 'Community volunteers sharing resources' },
   { id: 4, alt: 'Caregivers connecting and supporting one another' },
   { id: 5, alt: 'Southwest Missouri community members united in care' },
+  { id: 6, alt: 'Community members sharing moments of connection and support' },
 ] as const;
 
 const CROSSFADE_INTERVAL = 4000; // 4 seconds between images
