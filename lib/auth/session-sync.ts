@@ -32,7 +32,7 @@ function isSessionValid(session: Session | null): boolean {
   // Consider session invalid if it expires within the next 5 minutes
   const bufferTime = 5 * 60; // 5 minutes
   
-  return expiresAt > (now + bufferTime);
+  return (expiresAt ?? 0) > (now + bufferTime);
 }
 
 /**

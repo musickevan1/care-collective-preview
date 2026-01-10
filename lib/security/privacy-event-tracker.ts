@@ -71,7 +71,7 @@ const privacyEventSchema = z.object({
 
   // Event details
   description: z.string(),
-  metadata: z.record(z.unknown()).default({}),
+  metadata: z.record(z.string(), z.unknown()).default({}),
 
   // Context
   ip_address: z.string().optional(),
@@ -185,8 +185,10 @@ export class PrivacyEventTracker {
       if (auditError) {
         captureWarning('Failed to store privacy event in audit trail', {
           component: 'PrivacyEventTracker',
-          eventId,
-          error: auditError.message
+          extra: {
+            eventId,
+            error: auditError.message
+          }
         });
       }
 
@@ -449,7 +451,7 @@ export class PrivacyEventTracker {
         detect: (events) => {
           const recentExchanges = events.filter(e =>
             e.event_type === 'CONTACT_EXCHANGE_STARTED' &&
-            new Date(e.metadata?.timestamp || Date.now()).getTime() > Date.now() - 60 * 60 * 1000
+            new Date(String(e.metadata?.timestamp ?? Date.now())).getTime() > Date.now() - 60 * 60 * 1000
           );
           return recentExchanges.length > 5; // More than 5 in an hour
         }
@@ -461,7 +463,7 @@ export class PrivacyEventTracker {
         detect: (events) => {
           const recentFailures = events.filter(e =>
             e.event_type === 'DECRYPTION_FAILURE' &&
-            new Date(e.metadata?.timestamp || Date.now()).getTime() > Date.now() - 15 * 60 * 1000
+            new Date(String(e.metadata?.timestamp ?? Date.now())).getTime() > Date.now() - 15 * 60 * 1000
           );
           return recentFailures.length > 3; // More than 3 in 15 minutes
         }
@@ -473,7 +475,7 @@ export class PrivacyEventTracker {
         detect: (events) => {
           const unauthorizedAttempts = events.filter(e =>
             e.event_type === 'UNAUTHORIZED_ACCESS_ATTEMPT' &&
-            new Date(e.metadata?.timestamp || Date.now()).getTime() > Date.now() - 30 * 60 * 1000
+            new Date(String(e.metadata?.timestamp ?? Date.now())).getTime() > Date.now() - 30 * 60 * 1000
           );
           return unauthorizedAttempts.length > 2; // More than 2 in 30 minutes
         }
@@ -546,7 +548,7 @@ export class PrivacyEventTracker {
       if (error) {
         captureWarning('Failed to create privacy violation alert', {
           component: 'PrivacyEventTracker',
-          error: error.message
+          extra: { error: error.message }
         });
         return null;
       }
@@ -627,7 +629,7 @@ export class PrivacyEventTracker {
       case 'RATE_LIMIT_EXCEEDED':
         // Could temporarily limit user's contact exchange abilities
         break;
-      case 'MULTIPLE_DECRYPTION_FAILURES':
+      case 'DECRYPTION_FAILURE':
         // Could trigger security review or temporary account restriction
         break;
       case 'UNAUTHORIZED_ACCESS_ATTEMPT':
@@ -704,5 +706,3 @@ export async function getPrivacyAlerts(options?: any) {
   return await tracker.getPrivacyAlerts(options);
 }
 
-// Export types
-export type { PrivacyEvent, PrivacyEventType };

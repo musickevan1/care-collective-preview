@@ -6,7 +6,7 @@
 import { createClient } from '@/lib/supabase/server';
 import type { Database } from '@/lib/database.types';
 
-export type NotificationType = Database['public']['Enums']['notification_type'];
+export type NotificationType = Database['public']['Tables']['notifications']['Row']['type'];
 export type Notification = Database['public']['Tables']['notifications']['Row'];
 export type NotificationInsert = Database['public']['Tables']['notifications']['Insert'];
 

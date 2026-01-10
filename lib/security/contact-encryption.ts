@@ -162,7 +162,7 @@ export class ContactEncryptionService {
     return await window.crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
-        salt: salt,
+        salt: salt.buffer as ArrayBuffer,
         iterations: ENCRYPTION_CONFIG.pbkdf2Iterations,
         hash: 'SHA-256'
       },
@@ -202,8 +202,10 @@ export class ContactEncryptionService {
       const fieldsEncrypted: string[] = [];
 
       for (const field of fieldsToEncrypt) {
-        if (contactInfo[field] !== undefined) {
-          dataToEncrypt[field] = contactInfo[field];
+        const value = contactInfo[field];
+        if (value !== undefined) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (dataToEncrypt as any)[field] = value;
           fieldsEncrypted.push(field);
         }
       }
@@ -217,7 +219,7 @@ export class ContactEncryptionService {
       const encryptedBuffer = await window.crypto.subtle.encrypt(
         {
           name: ENCRYPTION_CONFIG.algorithm,
-          iv: iv,
+          iv: new Uint8Array(iv) as unknown as BufferSource,
           tagLength: ENCRYPTION_CONFIG.tagLength * 8 // Convert to bits
         },
         key,

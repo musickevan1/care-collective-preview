@@ -19,7 +19,7 @@ const errorTrackingEnvSchema = z.object({
 
   // General configuration
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
-  ENABLE_ERROR_TRACKING: z.string().transform(val => val === 'true').default('true'),
+  ENABLE_ERROR_TRACKING: z.string().transform(val => val === 'true').default(true),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development')
 })
 

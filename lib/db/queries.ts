@@ -16,8 +16,18 @@ type HelpRequest = Database['public']['Tables']['help_requests']['Row']
 type Profile = Database['public']['Tables']['profiles']['Row']
 type ContactExchange = Database['public']['Tables']['contact_exchanges']['Row']
 
-interface HelpRequestWithProfile extends Omit<HelpRequest, 'user_id'> {
-  profiles: Pick<Profile, 'name' | 'location'>
+interface HelpRequestWithProfile {
+  id: string;
+  title: string;
+  description?: string | null;
+  category: string;
+  urgency: string;
+  status?: string;
+  created_at: string;
+  updated_at?: string | null;
+  location?: string | null;
+  user_id?: string | null;
+  profiles: Pick<Profile, 'name' | 'location'> | Pick<Profile, 'name' | 'location'>[];
 }
 
 interface HelpRequestFilters {
@@ -258,7 +268,7 @@ export const getUserHelpRequests = unstable_cache(
  * Optimized contact exchange queries with privacy controls
  */
 export const getContactExchanges = unstable_cache(
-  async (requestId: string, userId: string): Promise<ContactExchange[]> => {
+  async (requestId: string, userId: string): Promise<Partial<ContactExchange>[]> => {
     const supabase = createClient()
     
     const { data, error } = await supabase
@@ -281,7 +291,7 @@ export const getContactExchanges = unstable_cache(
       throw new Error(`Failed to fetch contact exchanges: ${error.message}`)
     }
     
-    return data || []
+    return (data || []) as Partial<ContactExchange>[]
   },
   ['contact-exchanges'],
   {
