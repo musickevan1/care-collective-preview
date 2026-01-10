@@ -315,7 +315,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <Link href="/requests">
-            <Card className="hover:bg-muted/50 hover:shadow-md transition-all cursor-pointer h-full">
+            <Card data-testid="stats-card-requests" className="hover:bg-muted/50 hover:shadow-md transition-all cursor-pointer h-full">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base font-semibold text-muted-foreground">Your Requests</CardTitle>
               </CardHeader>
@@ -327,7 +327,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </Link>
 
           <Link href="/messages">
-            <Card className="hover:bg-muted/50 hover:shadow-md transition-all cursor-pointer h-full">
+            <Card data-testid="stats-card-messages" className="hover:bg-muted/50 hover:shadow-md transition-all cursor-pointer h-full">
               <CardHeader className="pb-2">
                 <CardTitle className="text-base font-semibold text-muted-foreground">Messages</CardTitle>
               </CardHeader>
@@ -341,7 +341,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
             </Card>
           </Link>
 
-          <Card className="hover:shadow-md transition-shadow h-full">
+          <Card data-testid="stats-card-impact" className="hover:shadow-md transition-shadow h-full">
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold text-muted-foreground">Community Impact</CardTitle>
             </CardHeader>
