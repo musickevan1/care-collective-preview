@@ -16,6 +16,11 @@ type HelpRequest = Database['public']['Tables']['help_requests']['Row']
 type Profile = Database['public']['Tables']['profiles']['Row']
 type ContactExchange = Database['public']['Tables']['contact_exchanges']['Row']
 
+// Profile data from Supabase joins (can be array or object depending on relation)
+type ProfileJoinRaw = Pick<Profile, 'name' | 'location'> | Pick<Profile, 'name' | 'location'>[] | null;
+// Normalized profile data (always single object or null)
+type ProfileData = Pick<Profile, 'name' | 'location'> | null;
+
 interface HelpRequestWithProfile {
   id: string;
   title: string;
@@ -27,7 +32,43 @@ interface HelpRequestWithProfile {
   updated_at?: string | null;
   location?: string | null;
   user_id?: string | null;
-  profiles: Pick<Profile, 'name' | 'location'> | Pick<Profile, 'name' | 'location'>[];
+  profiles: ProfileData;
+}
+
+// Raw type from Supabase before normalization
+interface HelpRequestRaw {
+  id: string;
+  title: string;
+  description?: string | null;
+  category: string;
+  urgency: string;
+  status?: string;
+  created_at: string;
+  updated_at?: string | null;
+  location?: string | null;
+  user_id?: string | null;
+  profiles: ProfileJoinRaw;
+}
+
+/**
+ * Normalize profile data from Supabase join (handles array vs object)
+ */
+function normalizeProfile(profiles: ProfileJoinRaw): ProfileData {
+  if (!profiles) return null;
+  if (Array.isArray(profiles)) {
+    return profiles[0] ?? null;
+  }
+  return profiles;
+}
+
+/**
+ * Normalize help request data from Supabase
+ */
+function normalizeHelpRequest(raw: HelpRequestRaw): HelpRequestWithProfile {
+  return {
+    ...raw,
+    profiles: normalizeProfile(raw.profiles),
+  };
 }
 
 interface HelpRequestFilters {
@@ -120,8 +161,9 @@ export const getHelpRequests = unstable_cache(
 
       throw new Error(`Failed to fetch help requests: ${error.message}`)
     }
-    
-    return data || []
+
+    // Normalize profile data from Supabase array format
+    return (data || []).map(item => normalizeHelpRequest(item as unknown as HelpRequestRaw))
   },
   ['help-requests'],
   {
@@ -190,8 +232,9 @@ export const getHelpRequestById = unstable_cache(
 
       throw new Error(`Failed to fetch help request: ${error.message}`)
     }
-    
-    return data
+
+    // Normalize profile data from Supabase array format
+    return data ? normalizeHelpRequest(data as unknown as HelpRequestRaw) : null
   },
   ['help-request-detail'],
   {
@@ -253,7 +296,7 @@ export const getUserHelpRequests = unstable_cache(
     }
     
     return {
-      requests: requests || [],
+      requests: (requests || []).map(item => normalizeHelpRequest(item as unknown as HelpRequestRaw)),
       counts: statusCounts,
     }
   },
@@ -345,7 +388,7 @@ export const getRecentActivity = unstable_cache(
     }
     
     return {
-      recentRequests: recentRequests || [],
+      recentRequests: (recentRequests || []).map(item => normalizeHelpRequest(item as unknown as HelpRequestRaw)),
       activeExchanges: activeExchanges || 0,
     }
   },
@@ -409,8 +452,9 @@ export const searchHelpRequests = unstable_cache(
       console.error('[DB Query] Error searching help requests:', error)
       throw new Error(`Failed to search help requests: ${error.message}`)
     }
-    
-    return data || []
+
+    // Normalize profile data from Supabase array format
+    return (data || []).map(item => normalizeHelpRequest(item as unknown as HelpRequestRaw))
   },
   ['search-help-requests'],
   {
