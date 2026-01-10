@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, Users, GraduationCap, Phone, MessageSquare, Shield, LifeBuoy } from 'lucide-react';
+import { Heart, Users, GraduationCap, Phone, MessageSquare, Shield, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 import { SectionHeader } from '@/components/public/SectionHeader';
@@ -32,7 +32,7 @@ export default function ResourcesPage(): ReactElement {
           <SectionHeader
             title="Essentials"
             description="Core services for food, housing, transportation, and daily living support."
-            icon={<LifeBuoy className="w-8 h-8 text-white" />}
+            icon={<HelpCircle className="w-8 h-8 text-white" />}
             iconBgColor="sage"
           />
 

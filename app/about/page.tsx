@@ -13,7 +13,7 @@ import {
   Users,
   Sparkles,
   Handshake,
-  Target,
+  Star,
   Shield,
   Info,
   GraduationCap,
@@ -49,7 +49,7 @@ export default function AboutPage(): ReactElement {
             <div className="bg-white rounded-2xl border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary transition-all duration-500 p-6 md:p-8 hover:-translate-y-1">
               <div className="flex items-start gap-4 mb-4">
                 <div className="p-3 bg-primary rounded-xl shadow-lg shadow-primary/20">
-                  <Target className="w-6 h-6 text-white" />
+                  <Star className="w-6 h-6 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-foreground pt-1">Our Mission</h2>
               </div>
