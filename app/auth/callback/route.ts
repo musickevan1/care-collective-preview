@@ -5,7 +5,13 @@ import { getProfileWithServiceRole } from '@/lib/supabase/admin'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const type = searchParams.get('type')
   let next = searchParams.get('next') ?? '/dashboard'
+
+  // Handle password recovery flow
+  if (type === 'recovery') {
+    next = '/reset-password'
+  }
 
   if (code) {
     const supabase = await createClient()
@@ -44,7 +50,8 @@ export async function GET(request: NextRequest) {
           }
 
           // Determine redirect destination based on user status
-          if (profile) {
+          // Skip verification check for password recovery - let them reset first
+          if (profile && type !== 'recovery') {
             if (profile.verification_status === 'rejected') {
               // CRITICAL SECURITY: Block rejected users immediately
               console.log('[Auth Callback] BLOCKING REJECTED USER - signing out')
