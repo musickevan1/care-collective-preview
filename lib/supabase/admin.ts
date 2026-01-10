@@ -213,3 +213,96 @@ export async function markSessionInvalidated(userId: string): Promise<void> {
     })
   }
 }
+
+/**
+ * Create a profile for OAuth users (Google, etc.)
+ * Called when a user signs in via OAuth for the first time
+ *
+ * @param userId - The Supabase auth user ID
+ * @param metadata - User metadata from OAuth provider
+ * @returns The created profile
+ */
+export async function createOAuthProfile(userId: string, metadata: {
+  name?: string;
+  email?: string;
+  avatarUrl?: string;
+}): Promise<ProfileWithServiceRole> {
+  Logger.getInstance().info('[Service Role] Creating OAuth profile', {
+    userId,
+    hasName: !!metadata.name,
+    hasEmail: !!metadata.email,
+    category: 'service_role'
+  })
+
+  try {
+    const admin = createAdminClient()
+
+    // Generate a display name from available metadata
+    const displayName = metadata.name
+      || metadata.email?.split('@')[0]
+      || 'User'
+
+    // Insert profile data using any-typed approach due to Supabase type inference issues
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const profilesTable = admin.from('profiles') as any
+    const { data, error } = await profilesTable
+      .insert({
+        id: userId,
+        name: displayName,
+        verification_status: 'pending',
+        is_admin: false,
+        email_confirmed: true,
+        avatar_url: metadata.avatarUrl || null,
+        location: null,
+      })
+      .select('id, name, verification_status, is_admin, email_confirmed, location, created_at, avatar_url, caregiving_situation')
+      .single()
+
+    if (error) {
+      Logger.getInstance().error('[Service Role] Failed to create OAuth profile', error, {
+        userId,
+        code: error.code,
+        details: error.details,
+        category: 'service_role'
+      })
+      throw error
+    }
+
+    if (!data) {
+      throw new Error(`Failed to create profile for user ${userId}`)
+    }
+
+    Logger.getInstance().info('[Service Role] OAuth profile created successfully', {
+      userId,
+      profileName: data.name,
+      category: 'service_role'
+    })
+
+    return data as ProfileWithServiceRole
+  } catch (error) {
+    Logger.getInstance().error('[Service Role] Exception creating OAuth profile', error as Error, {
+      userId,
+      category: 'service_role',
+      severity: 'critical'
+    })
+    throw error
+  }
+}
+
+/**
+ * Check if a profile needs completion (missing required fields for approval)
+ * OAuth users need to fill in location and caregiving_situation
+ */
+export async function profileNeedsCompletion(userId: string): Promise<boolean> {
+  try {
+    const profile = await getProfileWithServiceRole(userId)
+
+    // Profile needs completion if location is missing
+    // This is required for the approval workflow
+    return !profile.location
+  } catch {
+    // If we can't get the profile, assume it doesn't need completion
+    // (the callback will handle missing profiles separately)
+    return false
+  }
+}

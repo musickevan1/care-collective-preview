@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
+import { GoogleSignInButton, AuthDivider } from '@/components/auth/google-sign-in-button'
 
 // Request deduplication for login
 let loginPromise: Promise<void> | null = null
@@ -200,6 +201,10 @@ export default function LoginPage() {
                 {loading ? 'Signing In...' : 'Sign In'}
               </Button>
             </form>
+
+            <AuthDivider />
+
+            <GoogleSignInButton mode="signin" />
 
             <div className="mt-6 text-center text-sm">
               <span className="text-muted-foreground">Don&apos;t have an account? </span>
