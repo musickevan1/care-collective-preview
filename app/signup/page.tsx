@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 import { createClient } from '@/lib/supabase/client'
+import { GoogleSignInButton, AuthDivider } from '@/components/auth/google-sign-in-button'
 
 // Request deduplication for signup
 let signupPromise: Promise<void> | null = null
@@ -186,13 +187,23 @@ export default function SignUpPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {/* Google Sign-Up Option */}
+            <div className="mb-6">
+              <GoogleSignInButton mode="signup" />
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Sign up with Google, then complete a short application
+              </p>
+            </div>
+
+            <AuthDivider />
+
             <form onSubmit={handleSignUp} className="space-y-6">
               {error && (
                 <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
                   {error}
                 </div>
               )}
-              
+
               <div className="space-y-2">
                 <label htmlFor="name" className="text-sm font-medium text-foreground">
                   Full Name

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { getProfileWithServiceRole } from '@/lib/supabase/admin'
+import { getProfileWithServiceRole, createOAuthProfile, profileNeedsCompletion } from '@/lib/supabase/admin'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -33,6 +33,8 @@ export async function GET(request: NextRequest) {
         if (user) {
           // Use service role to bypass RLS and get guaranteed accurate data
           let profile
+          let isNewOAuthUser = false
+
           try {
             profile = await getProfileWithServiceRole(user.id)
 
@@ -41,12 +43,46 @@ export async function GET(request: NextRequest) {
               verificationStatus: profile.verification_status,
               timestamp: new Date().toISOString()
             })
-          } catch (error) {
-            console.error('[Auth Callback] Service role query failed:', error)
-            // Sign out on any error - secure by default
-            await supabase.auth.signOut()
-            next = '/login?error=verification_failed'
-            profile = null
+          } catch (profileError) {
+            // Profile doesn't exist - check if this is a new OAuth user
+            const provider = user.app_metadata?.provider
+
+            if (provider === 'google') {
+              // Create profile for new Google OAuth user
+              console.log('[Auth Callback] New Google OAuth user, creating profile:', {
+                userId: user.id,
+                email: user.email,
+                provider,
+                timestamp: new Date().toISOString()
+              })
+
+              try {
+                const userMetadata = user.user_metadata
+                profile = await createOAuthProfile(user.id, {
+                  name: userMetadata?.full_name || userMetadata?.name,
+                  email: user.email || undefined,
+                  avatarUrl: userMetadata?.avatar_url || userMetadata?.picture,
+                })
+                isNewOAuthUser = true
+
+                console.log('[Auth Callback] OAuth profile created:', {
+                  userId: user.id,
+                  profileName: profile.name,
+                  timestamp: new Date().toISOString()
+                })
+              } catch (createError) {
+                console.error('[Auth Callback] Failed to create OAuth profile:', createError)
+                await supabase.auth.signOut()
+                next = '/login?error=profile_creation_failed'
+                profile = null
+              }
+            } else {
+              // Non-OAuth error - sign out
+              console.error('[Auth Callback] Service role query failed:', profileError)
+              await supabase.auth.signOut()
+              next = '/login?error=verification_failed'
+              profile = null
+            }
           }
 
           // Determine redirect destination based on user status
@@ -59,8 +95,16 @@ export async function GET(request: NextRequest) {
               await supabase.auth.signOut()
               next = '/access-denied?reason=rejected'
             } else if (profile.verification_status === 'pending') {
-              console.log('[Auth Callback] Redirecting pending user to waitlist')
-              next = '/waitlist'
+              // Check if OAuth user needs to complete their profile
+              const needsCompletion = isNewOAuthUser || await profileNeedsCompletion(user.id)
+
+              if (needsCompletion) {
+                console.log('[Auth Callback] OAuth user needs profile completion')
+                next = '/complete-profile'
+              } else {
+                console.log('[Auth Callback] Redirecting pending user to waitlist')
+                next = '/waitlist'
+              }
             } else if (profile.verification_status === 'approved') {
               console.log('[Auth Callback] Approved user, proceeding to:', next)
               // If email was just confirmed or already confirmed, go to dashboard
