@@ -61,3 +61,25 @@ export class MessagingServiceV2Client {
 
 // Export singleton instance
 export const messagingServiceV2Client = new MessagingServiceV2Client();
+
+/**
+ * Send a message in a conversation
+ * Client-side wrapper for the messaging API
+ */
+export async function sendMessage(
+  conversationId: string,
+  content: string
+): Promise<{ success: boolean; message?: any; error?: string }> {
+  try {
+    const response = await fetch('/api/messaging/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conversationId, content }),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error('[sendMessage] Error:', error);
+    return { success: false, error: 'Failed to send message' };
+  }
+}

@@ -13,6 +13,7 @@ import {
   infoBox,
   successBox,
   alertBox,
+  warningBox,
   section,
   divider,
   BRAND_COLORS,

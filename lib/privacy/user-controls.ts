@@ -30,7 +30,7 @@ const privacySettingsSchema = z.object({
   }),
 
   // Category-specific privacy overrides
-  category_privacy_overrides: z.record(z.object({
+  category_privacy_overrides: z.record(z.string(), z.object({
     email: z.boolean().optional(),
     phone: z.boolean().optional(),
     location: z.boolean().optional(),

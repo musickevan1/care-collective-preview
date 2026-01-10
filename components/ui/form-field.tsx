@@ -7,7 +7,7 @@
 
 'use client'
 
-import { ReactElement, ReactNode, useId } from 'react'
+import React, { ReactElement, ReactNode, useId } from 'react'
 import { Label } from '@/components/ui/label'
 import { AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -40,20 +40,16 @@ export function FormField({
   const helpId = useId()
   
   // Clone the child element to add required props
-  const childWithProps = children && typeof children === 'object' && 'props' in children 
-    ? {
-        ...children,
-        props: {
-          ...children.props,
-          id: fieldId,
-          'aria-describedby': [
-            error ? errorId : undefined,
-            help ? helpId : undefined,
-          ].filter(Boolean).join(' ') || undefined,
-          'aria-invalid': !!error,
-          'aria-required': required,
-        }
-      }
+  const childWithProps = React.isValidElement(children)
+    ? React.cloneElement(children, {
+        id: fieldId,
+        'aria-describedby': [
+          error ? errorId : undefined,
+          help ? helpId : undefined,
+        ].filter(Boolean).join(' ') || undefined,
+        'aria-invalid': !!error,
+        'aria-required': required,
+      } as React.HTMLAttributes<HTMLElement>)
     : children
 
   return (

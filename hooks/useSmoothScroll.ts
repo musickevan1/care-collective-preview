@@ -16,7 +16,7 @@ export function useSmoothScroll() {
 
       if (targetElement) {
         // DYNAMIC header height detection
-        const header = document.querySelector('header.fixed');
+        const header = document.querySelector('header.fixed') as HTMLElement | null;
         const headerHeight = header ? header.offsetHeight : 64;
         const buffer = 16;
 

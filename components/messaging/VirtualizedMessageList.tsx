@@ -7,7 +7,7 @@
 
 import React, { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { ReactElement } from 'react';
-import { List } from 'react-window';
+import { List, useListRef, ListImperativeAPI } from 'react-window';
 import { MessageBubble } from './MessageBubble';
 import { MessageWithSender } from '@/lib/messaging/types';
 import { Button } from '@/components/ui/button';
@@ -16,12 +16,13 @@ import { ChevronDown, CornerDownRight, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
-// Type for list item component props (react-window v2.x)
-interface ListItemProps {
+// Type for row component props (react-window v2.x)
+// The row component receives index, style, ariaAttributes, plus all rowProps fields merged in
+type RowComponentProps = {
   index: number;
   style: React.CSSProperties;
-  data: MessageItemData;
-}
+  ariaAttributes: { 'aria-posinset': number; 'aria-setsize': number; role: 'listitem' };
+} & MessageItemData;
 
 interface VirtualizedMessageListProps {
   messages: MessageWithSender[];
@@ -63,8 +64,7 @@ const DATE_SEPARATOR_HEIGHT = 40;
 /**
  * Individual message item renderer for virtualization
  */
-function MessageItem({ index, style, data }: ListItemProps): ReactElement {
-  const { groups, currentUserId, onMessageReply, onThreadOpen, showDateSeparators } = data;
+function MessageItem({ index, style, groups, currentUserId, onMessageReply, onThreadOpen, showDateSeparators }: RowComponentProps): ReactElement {
 
   // Calculate which group and message this index refers to
   let currentIndex = 0;
@@ -299,7 +299,7 @@ export function VirtualizedMessageList({
   itemHeight = DEFAULT_ITEM_HEIGHT,
   height = 400
 }: VirtualizedMessageListProps): ReactElement {
-  const listRef = useRef<typeof List>(null);
+  const listRef = useRef<ListImperativeAPI>(null);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const previousMessageCount = useRef(messages.length);
@@ -324,7 +324,7 @@ export function VirtualizedMessageList({
       // Use setTimeout to prevent interrupting user scroll gestures
       setTimeout(() => {
         if (listRef.current && autoScrollEnabled) {
-          listRef.current.scrollToItem(itemCount - 1, 'end');
+          listRef.current.scrollToRow({ index: itemCount - 1, align: 'end' });
         }
       }, 100);
     }
@@ -348,7 +348,7 @@ export function VirtualizedMessageList({
   // Scroll to bottom manually
   const scrollToBottom = useCallback(() => {
     if (listRef.current) {
-      listRef.current.scrollToItem(itemCount - 1, 'end');
+      listRef.current.scrollToRow({ index: itemCount - 1, align: 'end' });
       setAutoScrollEnabled(true);
       setShowScrollToBottom(false);
     }
@@ -466,18 +466,21 @@ export function VirtualizedMessageList({
         </div>
       )}
 
-      <List
-        ref={listRef}
-        height={height}
-        itemCount={itemCount}
-        itemSize={itemHeight}
-        itemData={itemData}
-        onScroll={handleScroll}
-        onItemsRendered={handleItemsRendered}
+      <List<MessageItemData>
+        listRef={listRef}
+        style={{ height }}
+        rowCount={itemCount}
+        rowHeight={itemHeight}
+        rowComponent={MessageItem}
+        rowProps={itemData}
+        onRowsRendered={({ startIndex }) => {
+          // Load more when scrolled to top
+          if (startIndex === 0 && hasMore && onLoadMore && !isLoading) {
+            onLoadMore();
+          }
+        }}
         className="scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
-      >
-        {MessageItem}
-      </List>
+      />
 
       {showScrollToBottom && (
         <Button

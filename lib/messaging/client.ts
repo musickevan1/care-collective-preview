@@ -215,6 +215,7 @@ export class MessagingClient {
     await this.sendMessage(creatorId, {
       conversation_id: conversation.id,
       content: validated.initial_message,
+      message_type: 'text',
     });
 
     return conversation;
@@ -540,7 +541,7 @@ export class MessagingClient {
     return message || undefined;
   }
 
-  private async getConversationDetails(conversationId: string, userId: string): Promise<ConversationWithDetails> {
+  async getConversationDetails(conversationId: string, userId: string): Promise<ConversationWithDetails> {
     const supabase = await this.getClient();
     const { data: conversation, error } = await supabase
       .from('conversations')
