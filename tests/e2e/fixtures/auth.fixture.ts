@@ -58,9 +58,10 @@ export async function loginAsUser(
   await page.locator('button[type="submit"]').click()
 
   // Wait for either navigation OR error message
+  // Use longer timeout to handle slow local dev servers
   try {
     await page.waitForURL(/\/(dashboard|waitlist|access-denied)/, {
-      timeout: 15000,
+      timeout: 30000,
     })
   } catch (error) {
     // Check if there's an error message on the page (look for specific error container, not empty alerts)
@@ -92,7 +93,8 @@ export async function loginAsApprovedUser(page: Page): Promise<void> {
   await loginAsUser(page, testCredentials.userA.email, testCredentials.userA.password)
 
   // Verify we're on the dashboard (user is approved)
-  await page.waitForURL('**/dashboard', { timeout: 10000 })
+  // Use longer timeout for slow local dev servers
+  await page.waitForURL('**/dashboard', { timeout: 20000 })
 }
 
 /**
@@ -103,7 +105,8 @@ export async function loginAsSecondaryUser(page: Page): Promise<void> {
   await loginAsUser(page, testCredentials.userB.email, testCredentials.userB.password)
 
   // Verify we're on the dashboard
-  await page.waitForURL('**/dashboard', { timeout: 10000 })
+  // Use longer timeout for slow local dev servers
+  await page.waitForURL('**/dashboard', { timeout: 20000 })
 }
 
 /**

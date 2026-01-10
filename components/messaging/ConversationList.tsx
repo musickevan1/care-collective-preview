@@ -76,6 +76,7 @@ function ConversationItem({
     <Button
       variant="ghost"
       onClick={onClick}
+      data-testid="conversation-item"
       className={cn(
         "w-full h-auto p-4 justify-start text-left relative",
         "hover:bg-muted/50 transition-colors duration-200",
@@ -262,10 +263,11 @@ export function ConversationList({
   return (
     <div className={cn("flex-1 overflow-hidden", className)}>
       <ScrollArea className="h-full">
-        <div 
+        <div
           className="p-2 space-y-1"
-          role="listbox" 
+          role="listbox"
           aria-label="Conversations"
+          data-testid="conversation-list"
         >
           {conversations.map((conversation) => (
             <ConversationItem

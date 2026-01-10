@@ -214,33 +214,29 @@ export class RequestsPage extends BasePage {
       await descriptionInput.fill(data.description)
     }
 
-    // Select category
+    // Select category using native select
     if (data.category) {
       const categorySelect = this.page.locator(selectors.createRequest.categorySelect)
-      if (await categorySelect.count() > 0) {
-        await categorySelect.click()
-        // Try to click the option
-        const option = this.page.locator(`text=${data.category}`)
-        await option.first().click()
-      }
+      await categorySelect.selectOption(data.category)
     }
 
-    // Select urgency
+    // Select urgency using radio buttons
     if (data.urgency) {
-      const urgencySelect = this.page.locator(selectors.createRequest.urgencySelect)
-      if (await urgencySelect.count() > 0) {
-        await urgencySelect.click()
-        const option = this.page.locator(`text=${data.urgency}`)
-        await option.first().click()
+      const urgencyMap: Record<string, string> = {
+        normal: selectors.createRequest.urgencyNormal,
+        urgent: selectors.createRequest.urgencyUrgent,
+        critical: selectors.createRequest.urgencyCritical,
+      }
+      const radioSelector = urgencyMap[data.urgency]
+      if (radioSelector) {
+        await this.page.locator(radioSelector).check()
       }
     }
 
     // Fill location override (optional)
     if (data.locationOverride) {
       const locationInput = this.page.locator(selectors.createRequest.locationInput)
-      if (await locationInput.count() > 0) {
-        await locationInput.fill(data.locationOverride)
-      }
+      await locationInput.fill(data.locationOverride)
     }
 
     // Submit form

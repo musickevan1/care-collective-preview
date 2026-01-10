@@ -241,6 +241,7 @@ export function MessageInput({
             placeholder={placeholder}
             disabled={disabled || isSending}
             autoFocus={autoFocus}
+            data-testid="message-input"
             className={cn(
               "min-h-[60px] max-h-[120px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 py-3",
               "placeholder:text-muted-foreground",
@@ -289,6 +290,7 @@ export function MessageInput({
           <Button
             type="submit"
             disabled={!canSend}
+            data-testid="send-button"
             className={cn(
               "bg-sage hover:bg-sage-dark text-white",
               "disabled:opacity-50 disabled:cursor-not-allowed",

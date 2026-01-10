@@ -298,10 +298,11 @@ test.describe('Help Request Flow - Create Request', () => {
     const testTitle = `E2E Test Request - ${Date.now()}`
 
     // Fill form with valid data
+    // Note: category value must match CATEGORY_VALUES in lib/constants/categories.ts
     await requestsPage.createRequest({
       title: testTitle,
       description: 'This is a test request created by E2E automation',
-      category: 'Groceries',
+      category: 'groceries-meals',
       urgency: 'normal',
     })
 
@@ -366,11 +367,12 @@ test.describe('Help Request Flow - Offer Help (CRITICAL)', () => {
 
       expect(hasPrivacyError).toBe(false)
 
-      // Should either redirect to messages or show success
+      // Should either redirect to messages or show success indicator
+      // The dialog shows: "Conversation Started", "Your offer has been sent!", "Offer Sent Successfully!"
       const currentUrl = page.url()
       const isOnMessagesPage = currentUrl.includes('/messages')
       const hasSuccessIndicator =
-        (await page.locator('text=/Success|Conversation started|Message sent/i').count()) > 0
+        (await page.locator('text=/Conversation Started|Offer Sent|offer has been sent/i').count()) > 0
 
       expect(isOnMessagesPage || hasSuccessIndicator).toBe(true)
     } finally {

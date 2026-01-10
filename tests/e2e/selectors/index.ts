@@ -60,22 +60,26 @@ export const selectors = {
 
   // Create Request Form
   createRequest: {
-    titleInput: 'input[name="title"]',
-    descriptionInput: 'textarea[name="description"]',
-    categorySelect: '[data-testid="category-select"], select[name="category"]',
-    urgencySelect: '[data-testid="urgency-select"], select[name="urgency"]',
-    locationInput: 'input[name="locationOverride"]',
+    titleInput: '#title',
+    descriptionInput: '#description',
+    categorySelect: '#category',
+    // Urgency uses radio buttons with name="urgency" and ids like urgency-normal, urgency-urgent, urgency-critical
+    urgencyRadio: 'input[name="urgency"]',
+    urgencyNormal: '#urgency-normal',
+    urgencyUrgent: '#urgency-urgent',
+    urgencyCritical: '#urgency-critical',
+    locationInput: '#location',
     submitButton: 'button[type="submit"]',
-    errorMessage: '[role="alert"], .text-red-500',
+    errorMessage: '[role="alert"], .text-red-500, .text-red-600',
   },
 
   // Messaging
   messages: {
-    conversationList: '[data-testid="conversation-list"], [role="list"]',
-    conversationItem: '[data-testid="conversation-item"], [role="listitem"]',
+    conversationList: '[data-testid="conversation-list"], [role="listbox"]',
+    conversationItem: '[data-testid="conversation-item"], [role="option"]',
     messageThread: '[data-testid="message-thread"], [role="log"]',
-    messageInput: 'textarea[placeholder*="message"], input[placeholder*="message"]',
-    sendButton: 'button[type="submit"], button:has-text("Send")',
+    messageInput: '[data-testid="message-input"], textarea[placeholder*="message"]',
+    sendButton: '[data-testid="send-button"], button:has-text("Send")',
     backButton: '[aria-label="Back"], button:has-text("Back")',
     unreadBadge: '[data-testid="unread-badge"]',
   },
