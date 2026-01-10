@@ -141,9 +141,9 @@ export function NotificationItem({
             className="text-xs text-gray-500 flex-shrink-0"
             dateTime={notification.created_at ?? undefined}
           >
-            {formatDistanceToNow(new Date(notification.created_at ?? Date.now()), {
-              addSuffix: true,
-            })}
+            {notification.created_at
+              ? formatDistanceToNow(new Date(notification.created_at), { addSuffix: true })
+              : '—'}
           </time>
         </div>
 
