@@ -1,10 +1,14 @@
 // Import polyfills first to fix server-side 'self is not defined' errors
 import "@/lib/global-polyfills.js";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { Providers } from "./providers";
 import { overlock, fontClasses, atkinsonHyperlegible, playfairDisplay, caveat } from "@/lib/fonts";
 import { DynamicServiceWorkerRegistration, DynamicWebVitals } from "@/components/DynamicComponents";
+
+// Google Analytics 4 Measurement ID
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-WXQB8CVXZN';
 
 // LAUNCH: Disabled beta testing - removed "Preview" references and enabled SEO
 export const metadata: Metadata = {
@@ -59,6 +63,26 @@ export default function RootLayout({
         {/* Service Worker and Performance Monitoring */}
         <DynamicServiceWorkerRegistration />
         <DynamicWebVitals />
+
+        {/* Google Analytics 4 - Only in production */}
+        {process.env.NODE_ENV === 'production' && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  page_path: window.location.pathname,
+                });
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );
