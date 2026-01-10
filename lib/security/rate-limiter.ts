@@ -19,8 +19,27 @@ let redisClient: RedisClient | null = null
 let redisConnectionPromise: Promise<RedisClient> | null = null
 
 /**
+ * Connection timeout for Redis (in milliseconds)
+ * Serverless functions have strict timeouts, so we fail fast
+ */
+const REDIS_CONNECTION_TIMEOUT_MS = 3000
+
+/**
+ * Promise.race helper with timeout
+ */
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, errorMessage: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+    )
+  ])
+}
+
+/**
  * Get or create Redis client connection
  * Uses lazy initialization pattern suitable for serverless environments
+ * Includes connection timeout to prevent hanging in serverless context
  */
 async function getRedisClient(): Promise<RedisClient | null> {
   const redisUrl = process.env.REDIS_URL
@@ -34,25 +53,45 @@ async function getRedisClient(): Promise<RedisClient | null> {
     return redisClient
   }
 
-  // If connection is in progress, wait for it
+  // If connection is in progress, wait for it (with timeout)
   if (redisConnectionPromise) {
     try {
-      return await redisConnectionPromise
+      return await withTimeout(
+        redisConnectionPromise,
+        REDIS_CONNECTION_TIMEOUT_MS,
+        'Redis connection timeout (waiting for existing connection)'
+      )
     } catch {
       redisConnectionPromise = null
     }
   }
 
-  // Create new connection
+  // Create new connection with timeout
   redisConnectionPromise = (async () => {
     try {
-      const client = createClient({ url: redisUrl })
+      const client = createClient({
+        url: redisUrl,
+        socket: {
+          connectTimeout: REDIS_CONNECTION_TIMEOUT_MS,
+          reconnectStrategy: (retries) => {
+            // Don't retry in serverless - fail fast
+            if (retries > 0) return false
+            return 1000
+          }
+        }
+      })
 
       client.on('error', (err: Error) => {
         console.error('[Rate Limiter] Redis client error:', err)
       })
 
-      await client.connect()
+      // Connect with timeout
+      await withTimeout(
+        client.connect(),
+        REDIS_CONNECTION_TIMEOUT_MS,
+        'Redis connection timeout'
+      )
+
       redisClient = client
       console.log('[Rate Limiter] Redis connected successfully')
       return client
@@ -63,7 +102,13 @@ async function getRedisClient(): Promise<RedisClient | null> {
     }
   })()
 
-  return redisConnectionPromise
+  try {
+    return await redisConnectionPromise
+  } catch (error) {
+    // Connection failed - return null to trigger fallback
+    console.warn('[Rate Limiter] Redis unavailable, using in-memory fallback')
+    return null
+  }
 }
 
 interface RateLimitConfig {
