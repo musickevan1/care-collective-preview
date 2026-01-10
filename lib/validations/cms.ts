@@ -15,7 +15,7 @@ const sanitizeHTML = (str: string) => validator.escape(str);
  */
 export const siteContentSchema = z.object({
   section_key: z.enum(['events_updates', 'mission', 'about']),
-  content: z.record(z.any()), // JSONB content - flexible structure
+  content: z.record(z.string(), z.any()), // JSONB content - flexible structure
   status: z.enum(['draft', 'published']).default('draft'),
 });
 
@@ -230,7 +230,7 @@ export type EventCategoryInput = z.infer<typeof eventCategorySchema>;
 export const contentRevisionSchema = z.object({
   content_id: z.string().uuid('Invalid content ID'),
   content_type: z.enum(['site_content', 'community_update', 'calendar_event']),
-  content_snapshot: z.record(z.any()), // JSONB snapshot
+  content_snapshot: z.record(z.string(), z.any()), // JSONB snapshot
   change_summary: z
     .string()
     .max(500, 'Change summary must be 500 characters or less')

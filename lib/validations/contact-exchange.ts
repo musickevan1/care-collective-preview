@@ -53,7 +53,7 @@ export const contactExchangeAuditSchema = z.object({
   helperId: z.string().uuid(),
   requesterId: z.string().uuid(),
   timestamp: z.string().datetime(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
   ipAddress: z.string().optional(),
   userAgent: z.string().optional(),
 });

@@ -89,7 +89,7 @@ export function normalizeEmail(email: string): string | null {
     return null
   }
   
-  return validator.normalizeEmail(email, {
+  const result = validator.normalizeEmail(email, {
     gmail_lowercase: true,
     gmail_remove_dots: true,
     gmail_remove_subaddress: true,
@@ -101,6 +101,7 @@ export function normalizeEmail(email: string): string | null {
     icloud_lowercase: true,
     icloud_remove_subaddress: true,
   })
+  return result || null
 }
 
 /**
@@ -280,25 +281,24 @@ export const createEmailValidationSchema = (options: {
   strict?: boolean
 } = {}) => {
   const { required = true, allowDisposable = false, strict = false } = options
-  
-  let schema = z.string()
-  
-  if (required) {
-    schema = schema.min(1, 'Email is required')
-  } else {
-    schema = schema.optional()
-  }
-  
-  return schema.refine((email) => {
-    if (!email) return !required
-    
+
+  const validateEmailValue = (email: string) => {
     const result = validateEmailComprehensive(email)
-    
     if (!result.isValid) return false
     if (!allowDisposable && result.isDisposable) return false
     if (strict && !validateEmailStrict(email)) return false
-    
     return true
+  }
+
+  if (required) {
+    return z.string().min(1, 'Email is required').refine(validateEmailValue, {
+      message: 'Please enter a valid email address'
+    })
+  }
+
+  return z.string().optional().refine((email) => {
+    if (!email) return true
+    return validateEmailValue(email)
   }, {
     message: 'Please enter a valid email address'
   })

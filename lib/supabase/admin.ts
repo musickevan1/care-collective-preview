@@ -89,11 +89,14 @@ export async function getProfileWithServiceRole(userId: string): Promise<Profile
   try {
     const admin = createAdminClient()
 
-    const { data: profile, error } = await admin
+    const { data, error } = await admin
       .from('profiles')
       .select('id, name, verification_status, is_admin, email_confirmed, location, created_at, avatar_url, caregiving_situation')
       .eq('id', userId)
       .single()
+
+    // Cast to expected type - Supabase can't infer from string-based select
+    const profile = data as ProfileWithServiceRole | null
 
     // ENHANCED DEBUG LOGGING - Track query result
     Logger.getInstance().debug('[Service Role] RESULT', {
@@ -117,6 +120,10 @@ export async function getProfileWithServiceRole(userId: string): Promise<Profile
         category: 'service_role'
       })
       throw error
+    }
+
+    if (!profile) {
+      throw new Error(`Profile not found for user ${userId}`)
     }
 
     // CRITICAL: Verify profile ID matches input user ID
