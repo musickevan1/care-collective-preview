@@ -158,17 +158,23 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
   };
 
   const handleEdit = (event: CalendarEvent) => {
+    // Ensure location_type is a valid value
+    const locationType = event.location_type as 'in_person' | 'virtual' | 'hybrid' | null;
+    const validLocationType = locationType && ['in_person', 'virtual', 'hybrid'].includes(locationType)
+      ? locationType
+      : 'in_person';
+
     setFormData({
       title: event.title,
       description: event.description || '',
       category_id: event.category_id || '',
-      start_date: event.start_date.slice(0, 16),
-      end_date: event.end_date.slice(0, 16),
-      all_day: event.all_day,
+      start_date: event.start_date?.slice(0, 16) || '',
+      end_date: event.end_date?.slice(0, 16) || '',
+      all_day: event.all_day ?? false,
       location: event.location || '',
-      location_type: event.location_type || 'in_person',
+      location_type: validLocationType,
       virtual_link: event.virtual_link || '',
-      registration_required: event.registration_required,
+      registration_required: event.registration_required ?? false,
       registration_link: event.registration_link || '',
       max_attendees: event.max_attendees,
       status: (event.status === 'published' ? 'published' : 'draft'),
@@ -457,8 +463,8 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">
-                        {format(new Date(event.start_date), 'MMM d, yyyy h:mm a')} →{' '}
-                        {format(new Date(event.end_date), 'MMM d, yyyy h:mm a')}
+                        {event.start_date && format(new Date(event.start_date), 'MMM d, yyyy h:mm a')} →{' '}
+                        {event.end_date && format(new Date(event.end_date), 'MMM d, yyyy h:mm a')}
                       </p>
                     </div>
                     <div className="flex gap-2 flex-wrap">

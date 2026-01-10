@@ -114,10 +114,10 @@ export function EventCategoriesManager({ adminUserId }: EventCategoriesManagerPr
       name: category.name,
       slug: category.slug,
       description: category.description || '',
-      color: category.color,
+      color: category.color || '#7A9E99',
       icon: category.icon || '',
-      display_order: category.display_order,
-      is_active: category.is_active,
+      display_order: category.display_order ?? 0,
+      is_active: category.is_active ?? true,
     });
     setEditingId(category.id);
   };
@@ -296,7 +296,7 @@ export function EventCategoriesManager({ adminUserId }: EventCategoriesManagerPr
                       <div className="flex items-center gap-2 mb-1">
                         <div
                           className="w-4 h-4 rounded-full"
-                          style={{ backgroundColor: category.color }}
+                          style={{ backgroundColor: category.color || '#7A9E99' }}
                         />
                         <h3 className="font-medium">{category.name}</h3>
                         <code className="text-sm text-muted-foreground">{category.slug}</code>

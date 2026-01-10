@@ -2,6 +2,17 @@
 // Code preserved for potential future feedback/bug reporting features
 // To re-enable, remove this block comment and uncomment all code below
 
+import { NextResponse } from 'next/server';
+
+// Placeholder exports to satisfy Next.js module requirements
+export async function GET() {
+  return NextResponse.json({ error: 'Bug reporting is currently disabled' }, { status: 503 });
+}
+
+export async function POST() {
+  return NextResponse.json({ error: 'Bug reporting is currently disabled' }, { status: 503 });
+}
+
 /*
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';

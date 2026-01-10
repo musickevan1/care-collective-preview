@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { moderationService } from '@/lib/messaging/moderation';
-import { requireAdminAuth } from '@/lib/api/admin-auth';
+import { getAdminUser } from '@/lib/api/admin-auth';
 
 /**
  * GET /api/admin/moderation/queue
@@ -15,10 +15,8 @@ import { requireAdminAuth } from '@/lib/api/admin-auth';
 export async function GET(request: NextRequest) {
   try {
     // SECURITY: Verify admin access using proper authentication
-    const user = await requireAdminAuth();
-    if (!user) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
+    // getAdminUser() throws if not authorized, returns user object on success
+    const user = await getAdminUser();
 
     // Parse query parameters
     const url = new URL(request.url);
@@ -126,10 +124,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // SECURITY: Verify admin access using proper authentication
-    const user = await requireAdminAuth();
-    if (!user) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
+    // getAdminUser() throws if not authorized, returns user object on success
+    const user = await getAdminUser();
 
     const body = await request.json();
     const { items, action, notes } = body;

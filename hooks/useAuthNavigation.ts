@@ -33,7 +33,7 @@ async function fetchProfile(userId: string): Promise<Profile | null> {
   }
 
   // Return in-flight request if exists
-  if (profileCache[userId]) {
+  if (userId in profileCache) {
     return profileCache[userId]
   }
 

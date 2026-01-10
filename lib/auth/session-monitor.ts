@@ -91,22 +91,32 @@ export function useSessionMonitor(options: SessionMonitorOptions = {}) {
       const isExpired = timeUntilExpiry <= 0
       const isNearExpiry = !isExpired && minutesUntilExpiry <= warningTimeMinutes
       
-      setState(prev => ({
-        ...prev,
-        sessionExpiry: expiryTime,
-        isExpired,
-        isNearExpiry,
-        timeUntilExpiry: isExpired ? 0 : timeUntilExpiry,
-      }))
-      
+      // Track if we need to trigger callbacks after state update
+      let shouldTriggerExpired = false
+      let shouldTriggerWarning = false
+
+      setState(prev => {
+        // Check transition states before updating
+        shouldTriggerExpired = isExpired && !prev.isExpired
+        shouldTriggerWarning = isNearExpiry && !prev.isNearExpiry && !prev.warning
+
+        return {
+          ...prev,
+          sessionExpiry: expiryTime,
+          isExpired,
+          isNearExpiry,
+          timeUntilExpiry: isExpired ? 0 : timeUntilExpiry,
+        }
+      })
+
       // Handle expired session
-      if (isExpired && !prev.isExpired) {
+      if (shouldTriggerExpired) {
         console.log('[Session Monitor] Session expired')
         onSessionExpired?.()
       }
-      
+
       // Handle near expiry warning
-      if (isNearExpiry && !prev.isNearExpiry && !prev.warning) {
+      if (shouldTriggerWarning) {
         const warning: SessionWarning = {
           message: `Your session will expire in ${minutesUntilExpiry} minute${minutesUntilExpiry !== 1 ? 's' : ''}`,
           action: 'Stay Logged In',

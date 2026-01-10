@@ -1,32 +1,31 @@
 /**
  * @fileoverview Loading UI for Browse Help Requests page
- * Displays while help requests data is being fetched from the server
+ * Displays skeleton components while help requests data is being fetched
  */
 
 import { ReactElement } from 'react';
+import {
+  Skeleton,
+  PageHeaderSkeleton,
+  CardSkeleton
+} from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
-import { LoadingSkeleton, LoadingSpinner } from '@/components/ui/loading';
+import { LoadingSpinner } from '@/components/ui/loading';
 
 export default function Loading(): ReactElement {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Page Header Skeleton */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex-1">
-          <div className="animate-pulse bg-muted rounded h-8 w-48 mb-2" />
-          <div className="animate-pulse bg-muted rounded h-4 w-64" />
-        </div>
-        <div className="animate-pulse bg-muted rounded h-10 w-32" />
-      </div>
+      <PageHeaderSkeleton hasSubtitle={false} hasAction={true} />
 
       {/* Filter Panel Skeleton */}
       <Card className="mb-6">
         <CardContent className="p-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="animate-pulse bg-muted rounded h-10 w-full" />
-            <div className="animate-pulse bg-muted rounded h-10 w-full" />
-            <div className="animate-pulse bg-muted rounded h-10 w-full" />
-            <div className="animate-pulse bg-muted rounded h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
           </div>
         </CardContent>
       </Card>
@@ -42,9 +41,9 @@ export default function Loading(): ReactElement {
 
       {/* Help Request Cards Skeleton */}
       <div className="space-y-4">
-        <LoadingSkeleton type="card" />
-        <LoadingSkeleton type="card" />
-        <LoadingSkeleton type="card" />
+        <CardSkeleton hasAvatar={true} hasDescription={true} hasFooter={true} />
+        <CardSkeleton hasAvatar={true} hasDescription={true} hasFooter={true} />
+        <CardSkeleton hasAvatar={true} hasDescription={true} hasFooter={true} />
       </div>
 
       {/* Screen reader announcement */}

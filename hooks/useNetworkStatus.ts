@@ -54,7 +54,7 @@ export function useNetworkStatus({
   const [isRetrying, setIsRetrying] = useState(false)
   const [lastChecked, setLastChecked] = useState<Date | null>(null)
 
-  const pingTimeoutRef = useRef<NodeJS.Timeout>()
+  const pingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const retryCountRef = useRef(0)
   const maxRetries = 3
 
@@ -143,8 +143,12 @@ export function useNetworkStatus({
 
     const newStatus: NetworkStatus = {
       isOnline: isOnline && serverReachable,
-      ...connectionInfo,
-      isSlowConnection: connectionInfo.isSlowConnection || false
+      isSlowConnection: connectionInfo.isSlowConnection ?? false,
+      connectionType: connectionInfo.connectionType ?? 'unknown',
+      effectiveType: connectionInfo.effectiveType ?? 'unknown',
+      rtt: connectionInfo.rtt ?? 0,
+      downlink: connectionInfo.downlink ?? 0,
+      saveData: connectionInfo.saveData ?? false,
     }
 
     setNetworkStatus(prev => {
