@@ -105,10 +105,11 @@ export function useMessagingIntegration(userId?: string): UseMessagingIntegratio
         throw messagesError;
       }
 
+      // Note: Supabase types nested joins as arrays, access first element
       const formattedMessages = recentMessages?.map(msg => ({
         id: msg.id,
         content: msg.content,
-        sender_name: msg.sender?.name || 'Unknown',
+        sender_name: (msg.sender as unknown as { name: string } | null)?.name || 'Unknown',
         created_at: msg.created_at,
         conversation_id: msg.conversation_id
       })) || [];

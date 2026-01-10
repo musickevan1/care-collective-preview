@@ -87,21 +87,21 @@ export function useInfiniteMessages(
 ): UseInfiniteQueryResult<MessagesResponse, Error> {
   const { limit = 50, enabled = true } = options || {};
 
-  return useInfiniteQuery({
+  return useInfiniteQuery<MessagesResponse, Error, MessagesResponse, readonly string[], string | undefined>({
     queryKey: queryKeys.messages.list(conversationId || ''),
     queryFn: async ({ pageParam }) => {
       if (!conversationId) throw new Error('Conversation ID required');
 
       return await messagingClient.getMessages(conversationId, userId, {
         limit,
-        cursor: pageParam as string | undefined,
+        cursor: pageParam,
         direction: 'older',
       });
     },
     getNextPageParam: (lastPage) => {
-      return lastPage.pagination.next_cursor || undefined;
+      return lastPage.pagination.has_more ? lastPage.pagination.cursor : undefined;
     },
-    initialPageParam: undefined,
+    initialPageParam: undefined as string | undefined,
     enabled: enabled && !!conversationId && !!userId,
     staleTime: 1000 * 60 * 10, // 10 minutes (messages are immutable)
     gcTime: 1000 * 60 * 30, // 30 minutes

@@ -497,8 +497,8 @@ export class ContentModerationService {
       },
       reporter: report.reporter,
       context: {
-        conversation_id: report.messages.conversation_id,
-        help_request_title: report.messages.conversations?.help_requests?.title
+        conversation_id: report.messages?.[0]?.conversation_id,
+        help_request_title: report.messages?.[0]?.conversations?.[0]?.help_requests?.[0]?.title
       }
     }));
   }
@@ -551,7 +551,7 @@ export class ContentModerationService {
 
       case 'warn_user':
         await this.applyModerationAction(
-          report.messages.sender_id,
+          report.messages?.[0]?.sender_id,
           'warn',
           `Warning for ${report.reason}`,
         );
@@ -559,7 +559,7 @@ export class ContentModerationService {
 
       case 'restrict_user':
         await this.applyModerationAction(
-          report.messages.sender_id,
+          report.messages?.[0]?.sender_id,
           'limit',
           `Limited for ${report.reason}`,
           '7 days'
@@ -568,7 +568,7 @@ export class ContentModerationService {
 
       case 'ban_user':
         await this.applyModerationAction(
-          report.messages.sender_id,
+          report.messages?.[0]?.sender_id,
           'ban',
           `Banned for ${report.reason}`,
           'permanent'
