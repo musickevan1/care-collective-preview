@@ -8,15 +8,33 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type')
   let next = searchParams.get('next') ?? '/dashboard'
 
+  // Debug: Log all received params
+  console.log('[Auth Callback] Received params:', {
+    code: code ? 'present' : 'missing',
+    type,
+    next,
+    fullUrl: request.url,
+    timestamp: new Date().toISOString()
+  })
+
   // Handle password recovery flow
   if (type === 'recovery') {
     next = '/reset-password'
   }
 
   if (code) {
-    const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    
+    const supabase = createClient()
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+
+    // Check if this was a recovery flow by examining the session's AMR
+    if (data?.session) {
+      const sessionData = data.session as unknown as { amr?: Array<{ method: string }> }
+      if (sessionData.amr?.some(m => m.method === 'recovery' || m.method === 'otp')) {
+        console.log('[Auth Callback] Detected recovery flow from AMR:', sessionData.amr)
+        next = '/reset-password'
+      }
+    }
+
     if (!error) {
       // Get user profile to determine where to redirect based on verification status
       try {

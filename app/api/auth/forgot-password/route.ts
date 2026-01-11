@@ -53,14 +53,17 @@ export async function POST(request: NextRequest) {
 
     // Get the site URL for the redirect
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ||
-                    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
-                    'http://localhost:3000'
+                    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+
+    const redirectUrl = `${siteUrl}/auth/callback?type=recovery`
+
+    console.log('[Forgot Password] Using redirect URL:', redirectUrl)
 
     const supabase = await createClient()
 
     // Send password reset email
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteUrl}/auth/callback?type=recovery`,
+      redirectTo: redirectUrl,
     })
 
     if (error) {
