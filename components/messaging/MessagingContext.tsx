@@ -322,6 +322,7 @@ export function MessagingProvider({
 
   /**
    * Load pending offers
+   * Transforms RPC response to match PendingOffersSection expected format
    */
   const loadPendingOffers = useCallback(async () => {
     setIsLoadingOffers(true)
@@ -338,7 +339,30 @@ export function MessagingProvider({
 
       const result = data as any
       if (result.success && result.conversations) {
-        setPendingOffers(result.conversations)
+        // Transform data to match PendingOffersSection expected format
+        const transformedOffers = result.conversations.map((conv: any) => {
+          // Determine if current user is helper or requester
+          const isHelper = conv.helper_id === userId
+          const otherParticipant = conv.other_participant || {}
+
+          return {
+            id: conv.id,
+            initial_message: conv.initial_message,
+            created_at: conv.created_at,
+            expires_at: conv.expires_at || conv.created_at, // Fallback if no expires_at
+            requester_id: conv.requester_id,
+            helper_id: conv.helper_id,
+            // Build helper_profile and requester_profile from other_participant
+            helper_profile: isHelper
+              ? { id: userId, name: 'You', location: '' }
+              : { id: otherParticipant.id, name: otherParticipant.name || 'Unknown', location: otherParticipant.location || '' },
+            requester_profile: isHelper
+              ? { id: otherParticipant.id, name: otherParticipant.name || 'Unknown', location: otherParticipant.location || '' }
+              : { id: userId, name: 'You', location: '' },
+            help_request: conv.help_request || { id: '', title: 'Conversation', category: 'other', urgency: 'normal' }
+          }
+        })
+        setPendingOffers(transformedOffers)
       }
     } catch (error) {
       console.error('Error loading pending offers:', error)
