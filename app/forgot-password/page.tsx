@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,11 +9,26 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react'
 
+// Map URL error codes to user-friendly messages
+const ERROR_MESSAGES: Record<string, string> = {
+  link_expired: 'Your password reset link has expired. Please request a new one.',
+  invalid_link: 'The password reset link is invalid. Please request a new one.',
+}
+
 export default function ForgotPasswordPage() {
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  // Check for error params from expired/invalid links
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam && ERROR_MESSAGES[errorParam]) {
+      setError(ERROR_MESSAGES[errorParam])
+    }
+  }, [searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

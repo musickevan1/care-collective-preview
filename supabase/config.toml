@@ -193,34 +193,33 @@ otp_expiry = 3600
 # Production Supabase Email Templates
 # Hybrid approach: Supabase for auth, Resend for business emails
 
-# Fix: Remove leading ./ from template paths (Supabase CLI handles this)
 [auth.email.template.confirm_signup]
 subject = "Welcome to CARE Collective - Please Confirm Your Email"
-content_path = "confirm_signup.html"
+content_path = "templates/confirm_signup.html"
 
 [auth.email.template.invite]
 subject = "You've been invited to CARE Collective"
-content_path = "invite.html"
+content_path = "templates/invite.html"
 
 [auth.email.template.magic_link]
 subject = "Your CARE Collective Sign-In Link"
-content_path = "magic_link.html"
+content_path = "templates/magic_link.html"
 
 [auth.email.template.recovery]
 subject = "Reset Your CARE Collective Password"
-content_path = "reset_password.html"
+content_path = "templates/reset_password.html"
 
 [auth.email.template.reauthentication]
 subject = "Confirm Your CARE Collective Action"
-content_path = "reauthentication.html"
+content_path = "templates/reauthentication.html"
 
 [auth.email.template.email_change]
 subject = "Confirm Your CARE Collective Email Change"
-content_path = "email_change.html"
+content_path = "templates/email_change.html"
 
 [auth.email.template.email_change_notification]
 subject = "Your CARE Collective Email Has Been Changed"
-content_path = "email_change_notification.html"
+content_path = "templates/email_change_notification.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
