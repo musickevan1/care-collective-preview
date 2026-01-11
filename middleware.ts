@@ -1,26 +1,44 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware-edge'
-import { Logger } from '@/lib/logger'
+
+// Note: Logger removed - date-fns import causes Edge Runtime issues locally
+// Using console.log for Edge Runtime compatibility
 
 export async function middleware(request: NextRequest) {
   // CRITICAL DEBUG: Verify middleware executes
-  Logger.getInstance().debug('[Middleware] ENTRY POINT', {
-    path: request.nextUrl.pathname,
-    category: 'middleware'
-  })
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Middleware] ENTRY POINT:', request.nextUrl.pathname)
+  }
+
+  // Handle Supabase auth errors (e.g., expired password reset links)
+  // Supabase redirects to Site URL with error params when tokens are invalid/expired
+  const errorCode = request.nextUrl.searchParams.get('error_code')
+  const error = request.nextUrl.searchParams.get('error')
+
+  if (error === 'access_denied' && errorCode) {
+    const redirectUrl = new URL('/forgot-password', request.url)
+
+    // Map Supabase error codes to user-friendly messages
+    if (errorCode === 'otp_expired') {
+      redirectUrl.searchParams.set('error', 'link_expired')
+    } else {
+      redirectUrl.searchParams.set('error', 'invalid_link')
+    }
+
+    console.log('[Middleware] Auth error detected, redirecting:', { error, errorCode })
+    return NextResponse.redirect(redirectUrl)
+  }
 
   try {
     const result = await updateSession(request)
-    Logger.getInstance().debug('[Middleware] EXIT - Returning response', {
-      path: request.nextUrl.pathname,
-      category: 'middleware'
-    })
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[Middleware] EXIT - Returning response:', request.nextUrl.pathname)
+    }
     return result
   } catch (error) {
-    Logger.getInstance().error('[Middleware] CRITICAL ERROR - Blocking request for security', error as Error, {
+    console.error('[Middleware] CRITICAL ERROR - Blocking request for security', {
       path: request.nextUrl.pathname,
-      category: 'middleware',
-      severity: 'critical'
+      error: error instanceof Error ? error.message : 'Unknown error'
     })
 
     // SECURITY: In production, block all requests if middleware fails
@@ -33,10 +51,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Development: Allow through with warning
-    Logger.getInstance().warn('[Middleware] Development mode - allowing request despite error', {
-      path: request.nextUrl.pathname,
-      category: 'middleware'
-    })
+    console.warn('[Middleware] Development mode - allowing request despite error:', request.nextUrl.pathname)
     const response = NextResponse.next()
 
     // Add basic security headers even when middleware fails
