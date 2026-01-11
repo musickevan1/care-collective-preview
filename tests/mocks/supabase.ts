@@ -3,11 +3,11 @@ import { vi } from 'vitest';
 // Mock Supabase client
 export const mockSupabaseClient = {
   auth: {
-    signIn: vi.fn(),
-    signUp: vi.fn(),
-    signOut: vi.fn(),
-    getUser: vi.fn(),
-    getSession: vi.fn(),
+    signIn: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signUp: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signOut: vi.fn().mockResolvedValue({ error: null }),
+    getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
     onAuthStateChange: vi.fn(() => ({
       data: { subscription: { unsubscribe: vi.fn() } }
     })),
