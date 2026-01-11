@@ -41,6 +41,7 @@ const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuth
       { href: '/admin', label: 'Overview' },
       { href: '/admin/help-requests', label: 'Manage Requests' },
       { href: '/admin/users', label: 'Manage Users' },
+      { href: '/settings', label: 'Settings' },
     ] : [
       { href: '/dashboard', label: 'Dashboard' },
       { href: '/requests', label: 'Browse Requests' },

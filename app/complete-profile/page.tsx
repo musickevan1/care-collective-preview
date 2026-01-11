@@ -9,16 +9,20 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 import { createClient } from '@/lib/supabase/client'
+import { TypedSignatureField, type SignatureData } from '@/components/legal'
+import { WAIVER_VERSION } from '@/lib/constants/waiver'
 
 export default function CompleteProfilePage(): ReactElement {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
   const [applicationReason, setApplicationReason] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [signatureData, setSignatureData] = useState<SignatureData | null>(null)
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [error, setError] = useState('')
   const [userEmail, setUserEmail] = useState('')
+  const [userId, setUserId] = useState<string | undefined>(undefined)
 
   const router = useRouter()
   const supabase = createClient()
@@ -42,8 +46,8 @@ export default function CompleteProfilePage(): ReactElement {
         }
 
         setUserEmail(user.email || '')
-      } catch (err) {
-        console.error('Error loading user:', err)
+        setUserId(user.id)
+      } catch {
         setError('Failed to load user data. Please try again.')
       } finally {
         setInitialLoading(false)
@@ -61,6 +65,11 @@ export default function CompleteProfilePage(): ReactElement {
       return
     }
 
+    if (!signatureData) {
+      setError('Please sign the Community Safety Guidelines & Liability Waiver.')
+      return
+    }
+
     if (applicationReason.trim().length < 10) {
       setError('Please provide a bit more detail about why you want to join (at least 10 characters).')
       return
@@ -75,14 +84,8 @@ export default function CompleteProfilePage(): ReactElement {
         location: location.trim(),
         application_reason: applicationReason.trim(),
         terms_accepted: true,
+        waiver_signature: signatureData,
       }
-
-      // Debug logging for troubleshooting
-      console.log('[CompleteProfile] Submitting:', {
-        nameLength: payload.name.length,
-        locationLength: payload.location.length,
-        reasonLength: payload.application_reason.length,
-      })
 
       const response = await fetch('/api/auth/complete-profile', {
         method: 'POST',
@@ -94,13 +97,6 @@ export default function CompleteProfilePage(): ReactElement {
 
       const data = await response.json()
 
-      // Log full response for debugging
-      console.log('[CompleteProfile] Response:', {
-        status: response.status,
-        ok: response.ok,
-        data,
-      })
-
       if (!response.ok) {
         // Show detailed validation errors if available
         let errorMessage = data.message || 'Failed to complete profile. Please try again.'
@@ -110,15 +106,13 @@ export default function CompleteProfilePage(): ReactElement {
           ).join(', ')
           errorMessage = `${errorMessage} (${fieldErrors})`
         }
-        console.error('[CompleteProfile] Error:', errorMessage)
         setError(errorMessage)
         return
       }
 
       // Success - redirect to waitlist
       router.replace('/waitlist')
-    } catch (err) {
-      console.error('Profile completion error:', err)
+    } catch {
       setError('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
@@ -177,14 +171,20 @@ export default function CompleteProfilePage(): ReactElement {
                     id="name"
                     type="text"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      setName(e.target.value)
+                      // Reset signature if name changes after signing
+                      if (signatureData) {
+                        setSignatureData(null)
+                      }
+                    }}
                     placeholder="Enter your full name"
                     required
                     disabled={loading}
                     aria-describedby="name-hint"
                   />
                   <p id="name-hint" className="text-xs text-muted-foreground">
-                    You can update this if needed
+                    You can update this if needed{signatureData && ' (editing will require re-signing)'}
                   </p>
                 </div>
 
@@ -267,11 +267,20 @@ export default function CompleteProfilePage(): ReactElement {
                   </label>
                 </div>
 
+                {/* Waiver Signature */}
+                <TypedSignatureField
+                  expectedName={name}
+                  userId={userId}
+                  onSignatureComplete={(data) => setSignatureData(data)}
+                  documentVersion={WAIVER_VERSION}
+                  disabled={loading || !name}
+                />
+
                 <Button
                   type="submit"
                   className="w-full"
                   size="lg"
-                  disabled={loading || !termsAccepted || applicationReason.trim().length < 10}
+                  disabled={loading || !termsAccepted || applicationReason.trim().length < 10 || !signatureData}
                 >
                   {loading ? 'Submitting...' : 'Complete Application'}
                 </Button>

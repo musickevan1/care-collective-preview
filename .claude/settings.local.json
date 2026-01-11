@@ -68,7 +68,17 @@
       "mcp__vulcan-todo__assign_task_to_sprint",
       "mcp__vulcan-todo__list_sprints",
       "mcp__vulcan-todo__start_sprint",
-      "mcp__vulcan-todo__start_task"
+      "mcp__vulcan-todo__start_task",
+      "mcp__vulcan-todo__complete_task",
+      "mcp__vulcan-todo__complete_sprint",
+      "mcp__vulcan-todo__get_backlog",
+      "mcp__vulcan-todo__complete_and_get_next",
+      "Bash(E2E_BASE_URL=https://care-collective-preview.vercel.app npx playwright test:*)",
+      "mcp__vulcan-todo__uncomplete_task",
+      "mcp__vulcan-todo__update_task",
+      "mcp__vulcan-todo__update_sprint",
+      "mcp__vulcan-todo__get_sprint",
+      "mcp__vulcan-todo__create_task"
     ],
     "deny": [],
     "ask": []

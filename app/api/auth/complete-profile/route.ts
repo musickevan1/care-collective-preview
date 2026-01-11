@@ -5,12 +5,23 @@ import { cookies } from 'next/headers'
 import { logSecurityEvent } from '@/lib/security/middleware'
 import { createWelcomeConversation } from '@/lib/messaging/welcome-service'
 
+// Waiver signature schema
+const waiverSignatureSchema = z.object({
+  signedName: z.string().min(1, 'Signed name required'),
+  signedAt: z.string(),
+  documentVersion: z.string(),
+  userAgent: z.string(),
+  namesMatch: z.literal(true),
+  recordId: z.string(),
+})
+
 // Validation schema for profile completion request
 const completeProfileSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
   location: z.string().min(1, 'Location is required').max(100, 'Location too long'),
   application_reason: z.string().min(10, 'Please provide a bit more detail').max(500, 'Reason too long'),
   terms_accepted: z.literal(true, { message: 'You must accept the terms' }),
+  waiver_signature: waiverSignatureSchema,
 })
 
 /**
@@ -52,7 +63,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { name, location, application_reason } = validation.data
+    const { name, location, application_reason, waiver_signature } = validation.data
 
     // Create Supabase client
     const cookieStore = await cookies()
@@ -140,6 +151,29 @@ export async function POST(request: NextRequest) {
         },
         { status: 500 }
       )
+    }
+
+    // Save waiver signature to database
+    const { error: waiverError } = await supabase
+      .from('signed_waivers')
+      .insert({
+        user_id: user.id,
+        document_version: waiver_signature.documentVersion,
+        signed_name: waiver_signature.signedName,
+        signed_at: waiver_signature.signedAt,
+        ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || null,
+        user_agent: waiver_signature.userAgent,
+        record_id: waiver_signature.recordId,
+      })
+
+    if (waiverError) {
+      console.error('[Complete Profile] Failed to save waiver signature:', waiverError)
+      // Continue anyway - profile completion shouldn't fail due to waiver storage issues
+    } else {
+      console.log('[Complete Profile] Waiver signature saved:', {
+        userId: user.id,
+        recordId: waiver_signature.recordId,
+      })
     }
 
     // Log the successful profile completion

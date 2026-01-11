@@ -4,6 +4,7 @@
  */
 
 import { ReactElement } from 'react';
+import Link from 'next/link';
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout';
 import { SectionHeader } from '@/components/public/SectionHeader';
 import { InfoCard } from '@/components/public/InfoCard';
@@ -17,7 +18,9 @@ import {
   Shield,
   Info,
   GraduationCap,
-  CheckCircle
+  CheckCircle,
+  FileText,
+  ExternalLink
 } from 'lucide-react';
 
 export const metadata = {
@@ -179,13 +182,21 @@ export default function AboutPage(): ReactElement {
 
               <div className="bg-sage/5 rounded-2xl border-2 border-sage/20 p-6 md:p-8">
                 <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-sage" />
-                  Background Checks
+                  <FileText className="w-5 h-5 text-sage" />
+                  Safety Guidelines & Waiver
                 </h3>
-                <p className="text-foreground/70 leading-relaxed">
-                  We use <strong>Sterling Volunteers</strong> for background checks (~$19) to help maintain
-                  a trusted environment for all members.
+                <p className="text-foreground/70 leading-relaxed mb-3">
+                  All members sign our <strong>Community Safety Guidelines & Liability Waiver</strong> acknowledging
+                  personal responsibility for safety during exchanges. This ensures everyone understands
+                  the voluntary nature of our mutual aid community.
                 </p>
+                <Link
+                  href="/waiver"
+                  className="inline-flex items-center gap-1.5 text-sage hover:text-sage-dark text-sm font-medium transition-colors"
+                >
+                  View full waiver document
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
           </div>
