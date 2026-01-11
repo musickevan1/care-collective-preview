@@ -74,7 +74,8 @@ async function getMessagingData(userId: string) {
         name: conv.other_participant.name || 'Unknown',
         location: conv.other_participant.location,
         avatar_url: conv.other_participant.avatar_url,
-        role: 'member' as const
+        role: 'member' as const,
+        is_system_user: conv.other_participant.is_system_user || false
       }] : [];
 
       // Transform last_message to expected format
@@ -98,7 +99,8 @@ async function getMessagingData(userId: string) {
         unread_count: conv.unread_count || 0,
         participants,
         help_request: conv.help_request || undefined,
-        last_message: lastMessage
+        last_message: lastMessage,
+        is_system_conversation: conv.is_system_conversation || false
       };
     });
 

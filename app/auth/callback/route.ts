@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { getProfileWithServiceRole, createOAuthProfile, profileNeedsCompletion } from '@/lib/supabase/admin'
+import { getProfileWithServiceRole, createOAuthProfile, profileNeedsCompletion, syncEmailConfirmationStatus } from '@/lib/supabase/admin'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -49,6 +49,19 @@ export async function GET(request: NextRequest) {
         })
 
         if (user) {
+          // Sync email confirmation status from auth.users to profiles
+          // This ensures profiles.email_confirmed stays in sync even if DB triggers don't fire
+          if (user.email_confirmed_at) {
+            try {
+              const synced = await syncEmailConfirmationStatus(user.id)
+              if (synced) {
+                console.log('[Auth Callback] Email confirmation synced to profile')
+              }
+            } catch (syncError) {
+              // Non-fatal - log but continue with auth flow
+              console.error('[Auth Callback] Email sync failed:', syncError)
+            }
+          }
           // Use service role to bypass RLS and get guaranteed accurate data
           let profile
           let isNewOAuthUser = false

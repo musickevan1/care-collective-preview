@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { cookies } from 'next/headers'
 import { logSecurityEvent } from '@/lib/security/middleware'
+import { createWelcomeConversation } from '@/lib/messaging/welcome-service'
 
 // Validation schema for profile completion request
 const completeProfileSchema = z.object({
@@ -22,9 +23,25 @@ export async function POST(request: NextRequest) {
   try {
     // Parse and validate request body
     const body = await request.json()
+
+    console.log('[Complete Profile] Received request:', {
+      hasName: !!body.name,
+      nameLength: body.name?.length || 0,
+      hasLocation: !!body.location,
+      locationLength: body.location?.length || 0,
+      hasReason: !!body.application_reason,
+      reasonLength: body.application_reason?.length || 0,
+      termsAccepted: body.terms_accepted,
+      timestamp: new Date().toISOString(),
+    })
+
     const validation = completeProfileSchema.safeParse(body)
 
     if (!validation.success) {
+      console.log('[Complete Profile] Validation failed:', {
+        issues: validation.error.issues,
+        timestamp: new Date().toISOString(),
+      })
       return NextResponse.json(
         {
           error: 'Validation Error',
@@ -146,6 +163,19 @@ export async function POST(request: NextRequest) {
     } catch (notifyError) {
       console.warn('[Complete Profile] Failed to send notification:', notifyError)
       // Don't fail the request if notification fails
+    }
+
+    // Create welcome message from CARE Team (non-blocking)
+    try {
+      const welcomeResult = await createWelcomeConversation(user.id)
+      if (welcomeResult.success) {
+        console.log('[Complete Profile] Welcome message created:', welcomeResult.conversationId)
+      } else {
+        console.warn('[Complete Profile] Failed to create welcome message:', welcomeResult.error)
+      }
+    } catch (welcomeError) {
+      console.warn('[Complete Profile] Failed to create welcome message:', welcomeError)
+      // Don't fail the request if welcome message fails
     }
 
     console.log('[Complete Profile] Profile completed successfully:', {

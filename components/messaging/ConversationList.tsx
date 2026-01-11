@@ -7,15 +7,14 @@ import { formatDistanceToNow } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import {
   MessageCircle,
-  User,
   MapPin,
   Clock,
   AlertCircle,
   CheckCircle,
-  Users
+  Users,
+  Shield
 } from 'lucide-react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ClientOnly } from '@/components/ClientOnly'
@@ -42,13 +41,14 @@ interface ConversationItemProps {
 /**
  * Individual conversation item component
  */
-function ConversationItem({ 
-  conversation, 
-  isSelected, 
-  onClick 
+function ConversationItem({
+  conversation,
+  isSelected,
+  onClick
 }: ConversationItemProps): ReactElement {
   const otherParticipant = conversation.participants.find(p => p.role === 'member')
   const lastMessage = conversation.last_message
+  const isSystemConversation = conversation.is_system_conversation || otherParticipant?.is_system_user
   
   const getUrgencyColor = (urgency?: string) => {
     switch (urgency) {
@@ -101,9 +101,17 @@ function ConversationItem({
           {/* Header: Participant info and help request */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm truncate">
-                {otherParticipant?.name || 'Unknown User'}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-sm truncate">
+                  {otherParticipant?.name || 'Unknown User'}
+                </h3>
+                {isSystemConversation && (
+                  <Badge variant="outline" className="text-xs px-1.5 py-0 bg-sage/10 text-sage border-sage/30">
+                    <Shield className="w-3 h-3 mr-1" />
+                    Official
+                  </Badge>
+                )}
+              </div>
 
               {otherParticipant?.location && (
                 <div className="flex items-center gap-1 mt-1">
