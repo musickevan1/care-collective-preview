@@ -162,7 +162,6 @@ export function AdminReportingDashboard(): ReactElement {
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
     } catch (err) {
-      console.error('Export error:', err)
       setError(`Failed to export ${type} data`)
     }
   }

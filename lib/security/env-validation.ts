@@ -1,32 +1,42 @@
-import { envSchema } from '@/lib/validations'
+import { envSchema, productionEnvSchema } from '@/lib/validations'
 import { z } from 'zod'
 
 /**
  * Validate environment variables at startup
+ * Uses stricter validation in production mode
  */
 export function validateEnvironment(): void {
+  const isProduction = process.env.NODE_ENV === 'production'
+  const schema = isProduction ? productionEnvSchema : envSchema
+
   try {
     const env = {
       NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+      RESEND_API_KEY: process.env.RESEND_API_KEY,
       NODE_ENV: process.env.NODE_ENV,
     }
 
-    envSchema.parse(env)
-    
-    console.log('✅ Environment validation passed')
+    schema.parse(env)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error('❌ Environment validation failed:')
+      const level = isProduction ? 'error' : 'warn'
+      console[level](`Environment validation issues (${isProduction ? 'PRODUCTION' : 'development'}):`)
       error.issues.forEach((err: z.ZodIssue) => {
-        console.error(`  - ${err.path.join('.')}: ${err.message}`)
+        console[level](`  - ${err.path.join('.')}: ${err.message}`)
       })
+
+      // Only exit in production for critical failures
+      if (isProduction) {
+        process.exit(1)
+      }
     } else {
-      console.error('❌ Environment validation error:', error)
+      console.error('Environment validation error:', error)
+      if (isProduction) {
+        process.exit(1)
+      }
     }
-    
-    process.exit(1)
   }
 }
 
@@ -46,40 +56,69 @@ export function getValidatedEnv() {
 
 /**
  * Check for common security misconfigurations
+ * Returns warnings and errors for the caller to handle
  */
-export function checkSecurityConfig(): void {
+export function checkSecurityConfig(): { warnings: string[]; errors: string[] } {
   const warnings: string[] = []
+  const errors: string[] = []
+  const isProduction = process.env.NODE_ENV === 'production'
 
-  // Check if in production
-  if (process.env.NODE_ENV === 'production') {
-    // Warn about debug flags
-    if (process.env.DEBUG === 'true') {
-      warnings.push('DEBUG mode is enabled in production')
+  // Production-critical checks
+  if (isProduction) {
+    // Critical: Service role key needed for admin functions
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      errors.push('SUPABASE_SERVICE_ROLE_KEY is required in production for admin functions')
     }
 
-    // Check for development URLs in production
+    // Debug mode in production
+    if (process.env.DEBUG === 'true') {
+      errors.push('DEBUG mode must not be enabled in production')
+    }
+
+    // Development URLs in production
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     if (supabaseUrl?.includes('localhost') || supabaseUrl?.includes('127.0.0.1')) {
-      warnings.push('Using localhost Supabase URL in production')
+      errors.push('Cannot use localhost Supabase URL in production')
     }
 
-    // Check for weak keys (basic check)
+    // Weak keys check
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     if (anonKey && anonKey.length < 100) {
-      warnings.push('Supabase anon key appears to be too short')
+      errors.push('Supabase anon key appears invalid (too short)')
     }
   }
 
-  // Check for missing security environment variables
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY && process.env.NODE_ENV === 'production') {
-    warnings.push('SUPABASE_SERVICE_ROLE_KEY is not set (may be needed for admin functions)')
+  // Recommended but not critical
+  if (!process.env.RESEND_API_KEY) {
+    warnings.push('RESEND_API_KEY not set - email notifications will not work')
+  }
+
+  if (!process.env.NEXT_PUBLIC_SENTRY_DSN) {
+    warnings.push('NEXT_PUBLIC_SENTRY_DSN not set - error tracking will not work')
+  }
+
+  if (!process.env.REDIS_URL && isProduction) {
+    warnings.push('REDIS_URL not set - rate limiting will use in-memory store (not recommended for production)')
   }
 
   // Log warnings
   if (warnings.length > 0) {
-    console.warn('⚠️ Security configuration warnings:')
+    console.warn('⚠️ Environment configuration warnings:')
     warnings.forEach(warning => console.warn(`  - ${warning}`))
   }
+
+  // Log and handle errors
+  if (errors.length > 0) {
+    console.error('❌ Critical environment configuration errors:')
+    errors.forEach(error => console.error(`  - ${error}`))
+
+    if (isProduction) {
+      console.error('Exiting due to critical configuration errors in production')
+      process.exit(1)
+    }
+  }
+
+  return { warnings, errors }
 }
 
 /**
@@ -104,12 +143,18 @@ export function sanitizeEnvForLogging(): Record<string, string> {
 
 /**
  * Initialize environment validation
+ * Call this at application startup to validate all environment configuration
  */
-export function initializeEnvironment(): void {
-  console.log('🔧 Initializing environment validation...')
-  
+export function initializeEnvironment(): { valid: boolean; warnings: string[]; errors: string[] } {
+  // Validate environment variables
   validateEnvironment()
-  checkSecurityConfig()
-  
-  console.log('✅ Environment initialization complete')
+
+  // Check security configuration
+  const { warnings, errors } = checkSecurityConfig()
+
+  return {
+    valid: errors.length === 0,
+    warnings,
+    errors
+  }
 }

@@ -163,7 +163,6 @@ export function AdminPrivacyDashboard({ adminUserId, className }: AdminPrivacyDa
       })
 
     } catch (err) {
-      console.error('Error loading dashboard data:', err)
       captureError(err as Error, {
         component: 'AdminPrivacyDashboard',
         action: 'loadDashboardData',

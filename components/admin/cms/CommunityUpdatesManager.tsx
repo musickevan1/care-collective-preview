@@ -42,7 +42,6 @@ export function CommunityUpdatesManager({ adminUserId }: CommunityUpdatesManager
       const result = await response.json();
       setUpdates(result.updates || []);
     } catch (err) {
-      console.error('[CMS] Error loading updates:', err);
       setError('Failed to load community updates');
     } finally {
       setLoading(false);
@@ -87,7 +86,6 @@ export function CommunityUpdatesManager({ adminUserId }: CommunityUpdatesManager
       // Reload updates
       await loadUpdates();
     } catch (err) {
-      console.error('[CMS] Error creating update:', err);
       setError(err instanceof Error ? err.message : 'Failed to create update');
     } finally {
       setSaving(false);
@@ -105,7 +103,6 @@ export function CommunityUpdatesManager({ adminUserId }: CommunityUpdatesManager
 
       await loadUpdates();
     } catch (err) {
-      console.error('[CMS] Error publishing update:', err);
       setError('Failed to publish update');
     }
   };
@@ -123,7 +120,6 @@ export function CommunityUpdatesManager({ adminUserId }: CommunityUpdatesManager
 
       await loadUpdates();
     } catch (err) {
-      console.error('[CMS] Error deleting update:', err);
       setError('Failed to delete update');
     }
   };

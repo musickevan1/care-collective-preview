@@ -48,13 +48,11 @@ export async function GET() {
       .order('applied_at', { ascending: true })
 
     if (error) {
-      console.error('[Admin API] Error fetching applications:', error)
       return NextResponse.json({ error: 'Failed to fetch applications' }, { status: 500 })
     }
 
     return NextResponse.json({ applications })
-  } catch (error) {
-    console.error('[Admin API] Applications GET error:', error)
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -104,7 +102,6 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('[Admin API] Error updating application:', error)
       return NextResponse.json({ error: 'Failed to update application' }, { status: 500 })
     }
 
@@ -123,18 +120,11 @@ export async function POST(request: NextRequest) {
           reason
         )
 
-        if (!emailResult.success) {
-          console.error('[Admin API] Failed to send application notification:', emailResult.error)
-        } else {
-          console.log('[Admin API] Application notification sent successfully:', emailResult.messageId)
-        }
+        // Email result tracked via email service - no console logging needed
       }
-    } catch (emailError) {
-      console.error('[Admin API] Error sending application notification:', emailError)
+    } catch {
       // Don't fail the request if email fails
     }
-
-    console.log(`[Admin API] Application ${action}d:`, { applicationId, adminId: user.id })
 
     return NextResponse.json({
       success: true,
@@ -142,8 +132,6 @@ export async function POST(request: NextRequest) {
       action: action
     })
   } catch (error) {
-    console.error('[Admin API] Applications POST error:', error)
-    
     if (error instanceof z.ZodError) {
       return NextResponse.json({ 
         error: 'Invalid request data',

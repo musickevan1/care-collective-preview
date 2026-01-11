@@ -168,7 +168,6 @@ export function BulkUserActions({ selectedUsers, onClearSelection, onRefresh }: 
       onRefresh()
 
     } catch (error) {
-      console.error('Bulk operation error:', error)
       setExecutionResult({
         success: false,
         error: 'Network error occurred'

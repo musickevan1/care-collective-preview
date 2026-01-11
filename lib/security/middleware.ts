@@ -3,15 +3,23 @@ import { validateUUID } from '@/lib/validations'
 
 /**
  * Content Security Policy configuration
+ * Environment-specific: Vercel live URLs only allowed in development
  */
 export function getCSPHeader(): string {
+  const isDev = process.env.NODE_ENV !== 'production'
+
+  // Vercel live reload URLs - only in development
+  const vercelSources = isDev ? ' https://vercel.live https://*.vercel.app' : ''
+  const vercelImg = isDev ? ' https://vercel.live' : ''
+  const vercelConnect = isDev ? ' https://vercel.live' : ''
+
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel.app", // Next.js requires unsafe-inline and unsafe-eval
+    `script-src 'self' 'unsafe-inline' 'unsafe-eval'${vercelSources}`, // Next.js requires unsafe-inline and unsafe-eval
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // Tailwind requires unsafe-inline
-    "img-src 'self' data: blob: https://*.supabase.co https://vercel.live",
+    `img-src 'self' data: blob: https://*.supabase.co${vercelImg}`,
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vercel.live",
+    `connect-src 'self' https://*.supabase.co wss://*.supabase.co${vercelConnect}`,
     "media-src 'self' https://*.supabase.co",
     "object-src 'none'",
     "base-uri 'self'",

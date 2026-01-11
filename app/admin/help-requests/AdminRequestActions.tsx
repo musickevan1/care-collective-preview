@@ -47,7 +47,6 @@ export function AdminRequestActions({ request }: AdminRequestActionsProps) {
       .eq('id', request.id)
     
     if (error) {
-      console.error('Error updating request:', error)
       alert('Failed to update request status')
     } else {
       // Log admin action
@@ -72,8 +71,8 @@ export function AdminRequestActions({ request }: AdminRequestActionsProps) {
         new_values: newValues,
         metadata: { timestamp: new Date().toISOString() }
       })
-    } catch (error) {
-      console.error('Failed to log admin action:', error)
+    } catch {
+      // Admin action logging is non-critical - silent fail
     }
   }
 
@@ -90,7 +89,6 @@ export function AdminRequestActions({ request }: AdminRequestActionsProps) {
       .eq('id', request.id)
     
     if (error) {
-      console.error('Error deleting request:', error)
       alert('Failed to delete request')
     } else {
       await logAdminAction('delete', request.id, request, null)

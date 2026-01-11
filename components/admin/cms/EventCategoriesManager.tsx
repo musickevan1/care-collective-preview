@@ -50,7 +50,6 @@ export function EventCategoriesManager({ adminUserId }: EventCategoriesManagerPr
       const result = await response.json();
       setCategories(result.categories || []);
     } catch (err) {
-      console.error('[CMS Categories] Error loading:', err);
       setError('Failed to load event categories');
     } finally {
       setLoading(false);
@@ -102,7 +101,6 @@ export function EventCategoriesManager({ adminUserId }: EventCategoriesManagerPr
       resetForm();
       await loadCategories();
     } catch (err) {
-      console.error('[CMS Categories] Error saving:', err);
       setError(err instanceof Error ? err.message : 'Failed to save category');
     } finally {
       setSaving(false);
@@ -135,7 +133,6 @@ export function EventCategoriesManager({ adminUserId }: EventCategoriesManagerPr
 
       await loadCategories();
     } catch (err) {
-      console.error('[CMS Categories] Error deleting:', err);
       setError('Failed to delete category');
     }
   };

@@ -105,10 +105,11 @@ const nextConfig = {
   },
 
   // Content Security Policy
+  // NOTE: CSP is implemented in lib/security/middleware.ts via addSecurityHeaders()
+  // and applied through lib/supabase/middleware.ts. This provides more flexibility
+  // for environment-specific policies (e.g., allowing vercel.live only in development).
   async rewrites() {
-    return [
-      // Add CSP via middleware instead for more flexibility
-    ]
+    return []
   },
 
   // Environment variable validation
@@ -116,9 +117,12 @@ const nextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
 
-  // Enhanced image optimization
+  // Image optimization - enabled for SSR deployment on Vercel
+  // All images are local (/public/), no remote patterns needed
   images: {
-    unoptimized: true, // Required for static export
+    // Vercel handles image optimization automatically for SSR apps
+    // Removed unoptimized: true (was incorrectly set for static export)
+    formats: ['image/avif', 'image/webp'],
   },
 
   // Strict mode for better error handling

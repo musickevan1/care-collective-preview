@@ -68,7 +68,6 @@ export default function UsersPage(): ReactElement {
       const data = await response.json()
       setState(prev => ({ ...prev, users: data.users, loading: false }))
     } catch (error) {
-      console.error('Error fetching users:', error)
       setState(prev => ({ 
         ...prev, 
         loading: false, 

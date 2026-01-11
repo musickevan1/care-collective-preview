@@ -65,7 +65,6 @@ export function SiteContentManager({ adminUserId }: SiteContentManagerProps): Re
       });
       setFormData(initialFormData);
     } catch (err) {
-      console.error('[CMS Site Content] Error loading:', err);
       setError('Failed to load site content');
     } finally {
       setLoading(false);
@@ -98,7 +97,6 @@ export function SiteContentManager({ adminUserId }: SiteContentManagerProps): Re
 
       await loadSections();
     } catch (err) {
-      console.error('[CMS Site Content] Error saving:', err);
       setError(err instanceof Error ? err.message : 'Failed to save content');
     } finally {
       setSaving(false);
@@ -116,7 +114,6 @@ export function SiteContentManager({ adminUserId }: SiteContentManagerProps): Re
 
       await loadSections();
     } catch (err) {
-      console.error('[CMS Site Content] Error publishing:', err);
       setError('Failed to publish content');
     }
   };

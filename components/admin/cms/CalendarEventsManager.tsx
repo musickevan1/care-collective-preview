@@ -78,7 +78,6 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
       setEvents(eventsData.events || []);
       setCategories(categoriesData.categories || []);
     } catch (err) {
-      console.error('[CMS Calendar] Error loading:', err);
       setError('Failed to load calendar data');
     } finally {
       setLoading(false);
@@ -150,7 +149,6 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
       resetForm();
       await loadData();
     } catch (err) {
-      console.error('[CMS Calendar] Error saving:', err);
       setError(err instanceof Error ? err.message : 'Failed to save event');
     } finally {
       setSaving(false);
@@ -194,7 +192,6 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
 
       await loadData();
     } catch (err) {
-      console.error('[CMS Calendar] Error publishing:', err);
       setError('Failed to publish event');
     }
   };
@@ -212,7 +209,6 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
 
       await loadData();
     } catch (err) {
-      console.error('[CMS Calendar] Error deleting:', err);
       setError('Failed to delete event');
     }
   };

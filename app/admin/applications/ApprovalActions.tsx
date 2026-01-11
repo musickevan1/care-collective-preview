@@ -52,23 +52,7 @@ export function ApprovalActions({ userId, userName }: ApprovalActionsProps): Rea
 
       if (error) {
         setError(`Failed to ${action} user: ${error.message}`)
-        console.error(`Error ${action}ing user:`, error)
       } else {
-        // If approving, trigger email confirmation for the user
-        if (action === 'approve') {
-          try {
-            // Get user email and trigger confirmation
-            const { data: userData } = await supabase.auth.admin.getUserById(userId)
-            if (userData?.user?.email) {
-              // In production, this would trigger Supabase's email confirmation
-              // For now, we'll mark it in our notification system
-              console.log(`Email confirmation will be sent to: ${userData.user.email}`)
-            }
-          } catch (confirmError) {
-            console.warn('Could not trigger email confirmation:', confirmError)
-          }
-        }
-        
         // Send notification email about status change
         try {
           await fetch('/api/notify', {
@@ -82,17 +66,15 @@ export function ApprovalActions({ userId, userName }: ApprovalActionsProps): Rea
               adminAction: action
             })
           })
-        } catch (notifyError) {
-          console.warn('Failed to send notification email:', notifyError)
+        } catch {
           // Don't fail the approval process if email fails
         }
-        
+
         // Refresh the page to show updated status
         window.location.reload()
       }
-    } catch (err) {
+    } catch {
       setError(`An unexpected error occurred while ${action}ing the user.`)
-      console.error(`Unexpected error ${action}ing user:`, err)
     } finally {
       setLoading(false)
     }

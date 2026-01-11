@@ -90,7 +90,6 @@ export function UserDetailModal({ userId, isOpen, onClose }: UserDetailModalProp
           loading: false
         }))
       } catch (error) {
-        console.error('Error fetching user details:', error)
         setUserActivity(prev => ({
           ...prev,
           loading: false,

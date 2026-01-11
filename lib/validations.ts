@@ -119,7 +119,7 @@ export const adminActionSchema = z.object({
     .nullable(),
 })
 
-// Environment variable validation
+// Environment variable validation (base schema)
 export const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z
     .string()
@@ -136,6 +136,23 @@ export const envSchema = z.object({
     .optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 })
+
+// Production-specific schema with stricter requirements
+export const productionEnvSchema = envSchema.extend({
+  SUPABASE_SERVICE_ROLE_KEY: z
+    .string()
+    .min(1, 'SUPABASE_SERVICE_ROLE_KEY is required in production for admin functions')
+    .refine((key) => key.startsWith('eyJ'), 'Invalid service role key format'),
+  RESEND_API_KEY: z
+    .string()
+    .min(1, 'RESEND_API_KEY is required in production for email notifications')
+    .optional(), // Optional but recommended
+})
+
+// Helper to get appropriate schema based on environment
+export const getEnvSchema = (nodeEnv?: string) => {
+  return nodeEnv === 'production' ? productionEnvSchema : envSchema
+}
 
 // Rate limiting schemas
 export const rateLimitConfigSchema = z.object({
@@ -175,6 +192,18 @@ export const validateAndSanitizeInput = <T>(
     return { success: false, error: 'Validation failed' }
   }
 }
+
+// Common API validation schemas
+export const uuidSchema = z.string().uuid('Invalid UUID format')
+
+export const paginationSchema = z.object({
+  limit: z.coerce.number().min(1, 'Limit must be >= 1').max(100, 'Limit must be <= 100').default(20),
+  offset: z.coerce.number().min(0, 'Offset must be >= 0').default(0),
+})
+
+export const notificationQuerySchema = paginationSchema.extend({
+  unread_only: z.coerce.boolean().optional().default(false),
+})
 
 // SQL injection prevention helpers
 export const validateUUID = (uuid: string): boolean => {

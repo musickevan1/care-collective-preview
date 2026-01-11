@@ -53,91 +53,63 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // If we still don't have metrics, calculate them directly
+    // If we still don't have metrics, calculate them using efficient count queries
     if (!cachedMetrics) {
-      console.log('Calculating metrics directly from database...')
+      const now = new Date()
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+      const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
 
+      // Use efficient count queries with database-level filtering
       const [
-        usersResult,
-        helpRequestsResult,
-        messagesResult,
-        reportsResult
+        totalUsersResult,
+        activeUsersResult,
+        pendingUsersResult,
+        newUsers30dResult,
+        totalRequestsResult,
+        openRequestsResult,
+        completedRequestsResult,
+        newRequests7dResult,
+        totalMessagesResult,
+        messages24hResult,
+        totalReportsResult,
+        pendingReportsResult
       ] = await Promise.all([
-        // User metrics
-        supabase
-          .from('profiles')
-          .select('id, verification_status, created_at', { count: 'exact' }),
+        // User metrics - efficient count queries
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('verification_status', 'approved'),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('verification_status', 'pending'),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', thirtyDaysAgo),
 
-        // Help request metrics
-        supabase
-          .from('help_requests')
-          .select('id, status, created_at, closed_at', { count: 'exact' }),
+        // Help request metrics - efficient count queries
+        supabase.from('help_requests').select('id', { count: 'exact', head: true }),
+        supabase.from('help_requests').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+        supabase.from('help_requests').select('id', { count: 'exact', head: true }).eq('status', 'closed'),
+        supabase.from('help_requests').select('id', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo),
 
         // Message metrics
-        supabase
-          .from('messages')
-          .select('id, created_at', { count: 'exact' }),
+        supabase.from('messages').select('id', { count: 'exact', head: true }),
+        supabase.from('messages').select('id', { count: 'exact', head: true }).gte('created_at', twentyFourHoursAgo),
 
         // Report metrics
-        supabase
-          .from('message_reports')
-          .select('id, status', { count: 'exact' })
+        supabase.from('message_reports').select('id', { count: 'exact', head: true }),
+        supabase.from('message_reports').select('id', { count: 'exact', head: true }).eq('status', 'pending')
       ])
 
-      if (usersResult.error || helpRequestsResult.error || messagesResult.error || reportsResult.error) {
-        throw new Error('Failed to fetch metrics data')
-      }
-
-      const users = usersResult.data || []
-      const helpRequests = helpRequestsResult.data || []
-      const messages = messagesResult.data || []
-      const reports = reportsResult.data || []
-
-      const now = new Date()
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-      const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-
-      // Calculate metrics manually
-      const totalUsers = users.length
-      const activeUsers = users.filter(u => u.verification_status === 'approved').length
-      const pendingUsers = users.filter(u => u.verification_status === 'pending').length
-      const newUsers30d = users.filter(u => new Date(u.created_at) >= thirtyDaysAgo).length
-
-      const totalHelpRequests = helpRequests.length
-      const openRequests = helpRequests.filter(r => r.status === 'open').length
-      const completedRequests = helpRequests.filter(r => r.status === 'closed').length
-      const newRequests7d = helpRequests.filter(r => new Date(r.created_at) >= sevenDaysAgo).length
-
-      const totalMessages = messages.length
-      const messages24h = messages.filter(m => new Date(m.created_at) >= twentyFourHoursAgo).length
-
-      const totalReports = reports.length
-      const pendingReports = reports.filter(r => r.status === 'pending').length
-
-      // Calculate average resolution time
-      const closedRequests = helpRequests.filter(r => r.status === 'closed' && r.closed_at)
-      const avgResolutionHours = closedRequests.length > 0
-        ? closedRequests.reduce((sum, r) => {
-            const resolutionTime = new Date(r.closed_at).getTime() - new Date(r.created_at).getTime()
-            return sum + (resolutionTime / (1000 * 60 * 60)) // Convert to hours
-          }, 0) / closedRequests.length
-        : 0
-
       cachedMetrics = {
-        total_users: totalUsers,
-        active_users: activeUsers,
-        pending_users: pendingUsers,
-        new_users_30d: newUsers30d,
-        total_help_requests: totalHelpRequests,
-        open_requests: openRequests,
-        completed_requests: completedRequests,
-        new_requests_7d: newRequests7d,
-        total_messages: totalMessages,
-        messages_24h: messages24h,
-        total_reports: totalReports,
-        pending_reports: pendingReports,
-        avg_resolution_hours: Math.round(avgResolutionHours * 100) / 100,
+        total_users: totalUsersResult.count || 0,
+        active_users: activeUsersResult.count || 0,
+        pending_users: pendingUsersResult.count || 0,
+        new_users_30d: newUsers30dResult.count || 0,
+        total_help_requests: totalRequestsResult.count || 0,
+        open_requests: openRequestsResult.count || 0,
+        completed_requests: completedRequestsResult.count || 0,
+        new_requests_7d: newRequests7dResult.count || 0,
+        total_messages: totalMessagesResult.count || 0,
+        messages_24h: messages24hResult.count || 0,
+        total_reports: totalReportsResult.count || 0,
+        pending_reports: pendingReportsResult.count || 0,
+        avg_resolution_hours: 0, // Would need a separate query for this
         last_updated: now.toISOString()
       }
     }

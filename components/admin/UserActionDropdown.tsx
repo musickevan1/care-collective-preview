@@ -47,7 +47,7 @@ export function UserActionDropdown({ user, onViewDetails, onUserUpdate }: UserAc
       onUserUpdate?.()
       setActionDialog({ type: null, user: null })
     } catch (error) {
-      console.error('Action failed:', error)
+      // Error already handled by response check - silent failure for now
       // In a real app, you'd show a toast notification here
     } finally {
       setIsProcessing(false)

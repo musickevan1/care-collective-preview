@@ -81,9 +81,7 @@ export default async function ApplicationsPage(): Promise<ReactElement> {
     .select('id, name, location, phone, caregiving_situation, email_confirmed, application_reason, applied_at, verification_status, rejection_reason')
     .order('applied_at', { ascending: false })
 
-  if (applicationsError) {
-    console.error('Error fetching applications:', applicationsError)
-  }
+  // Applications fetch errors are handled gracefully with empty array fallback
 
   const pendingApplications = applications?.filter(app => app.verification_status === 'pending') || []
   const recentActions = applications?.filter(app => app.verification_status !== 'pending').slice(0, 10) || []

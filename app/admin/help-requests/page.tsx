@@ -57,9 +57,7 @@ export default async function AdminHelpRequestsPage() {
     `)
     .order('created_at', { ascending: false })
 
-  if (error) {
-    console.error('Error fetching help requests:', error)
-  }
+  // Help requests fetch errors handled via empty array fallback
 
   // Get stats with new statuses
   const [

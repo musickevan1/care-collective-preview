@@ -28,7 +28,6 @@ export default async function PerformancePage() {
 
   // Handle profile errors gracefully
   if (profileError) {
-    console.error('Profile query error in admin:', profileError)
     redirect('/dashboard?error=admin_required')
   }
 
