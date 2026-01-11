@@ -16,7 +16,6 @@ import { LogoutButton } from '@/components/LogoutButton';
 import { NotificationDropdown } from '@/components/notifications';
 import {
   MessageCircle,
-  Heart,
   Home,
   PlusCircle,
   Search,
@@ -64,14 +63,6 @@ export function PlatformLayout({
 
   const isAuthenticated = !!user;
 
-  // DEBUG: Log admin status
-  console.log('[PlatformLayout] User data:', {
-    hasUser: !!user,
-    userName: user?.name,
-    isAdmin: user?.isAdmin,
-    userKeys: user ? Object.keys(user) : []
-  });
-
   // Main navigation items
   const navItems: NavItem[] = [
     {
@@ -105,6 +96,12 @@ export function PlatformLayout({
       icon: User,
       exactMatch: true
     },
+    {
+      href: '/settings',
+      label: 'Settings',
+      icon: Settings,
+      exactMatch: false
+    },
     // Conditionally add Admin Panel link for admin users
     ...(user?.isAdmin ? [{
       href: '/admin',
@@ -113,13 +110,6 @@ export function PlatformLayout({
       exactMatch: false
     }] : [])
   ];
-
-  // DEBUG: Log navigation items
-  console.log('[PlatformLayout] Navigation items:', {
-    totalItems: navItems.length,
-    items: navItems.map(item => item.label),
-    hasAdmin: navItems.some(item => item.label === 'Admin Panel')
-  });
 
   const isActive = useCallback((item: NavItem) => {
     if (item.exactMatch) {

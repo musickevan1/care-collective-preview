@@ -4,6 +4,7 @@ import { ReactElement, useState } from 'react';
 import { TypedSignatureField, WaiverDocument, SignatureData } from '@/components/legal';
 import { Button } from '@/components/ui/button';
 import { RotateCcw, FileText, ClipboardList, Download } from 'lucide-react';
+import { WAIVER_VERSION } from '@/lib/constants/waiver';
 
 type ViewMode = 'form' | 'document';
 
@@ -118,7 +119,7 @@ export default function WaiverPreviewPage(): ReactElement {
               key={`form-${key}`}
               expectedName="Jane Doe"
               onSignatureComplete={handleSignatureComplete}
-              documentVersion="1.0"
+              documentVersion={WAIVER_VERSION}
             />
           </div>
         ) : (
@@ -128,7 +129,7 @@ export default function WaiverPreviewPage(): ReactElement {
             expectedName="Jane Doe"
             userId="a1b2c3d4-5678-90ab-cdef-1234567890ab"
             onSignatureComplete={handleSignatureComplete}
-            documentVersion="1.0"
+            documentVersion={WAIVER_VERSION}
             externalSignatureState={sharedState}
             onStateChange={setSharedState}
           />
