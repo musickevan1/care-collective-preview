@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
 
     if (waiverError) {
       console.error('[Complete Profile] Failed to save waiver signature:', waiverError)
-      // Continue anyway - waiver is logged in user metadata
+      // Continue anyway - profile completion shouldn't fail due to waiver storage issues
     } else {
       console.log('[Complete Profile] Waiver signature saved:', {
         userId: user.id,

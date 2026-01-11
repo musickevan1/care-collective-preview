@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 import { createClient } from '@/lib/supabase/client'
 import { TypedSignatureField, type SignatureData } from '@/components/legal'
+import { WAIVER_VERSION } from '@/lib/constants/waiver'
 
 export default function CompleteProfilePage(): ReactElement {
   const [name, setName] = useState('')
@@ -21,6 +22,7 @@ export default function CompleteProfilePage(): ReactElement {
   const [initialLoading, setInitialLoading] = useState(true)
   const [error, setError] = useState('')
   const [userEmail, setUserEmail] = useState('')
+  const [userId, setUserId] = useState<string | undefined>(undefined)
 
   const router = useRouter()
   const supabase = createClient()
@@ -44,6 +46,7 @@ export default function CompleteProfilePage(): ReactElement {
         }
 
         setUserEmail(user.email || '')
+        setUserId(user.id)
       } catch {
         setError('Failed to load user data. Please try again.')
       } finally {
@@ -168,14 +171,20 @@ export default function CompleteProfilePage(): ReactElement {
                     id="name"
                     type="text"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      setName(e.target.value)
+                      // Reset signature if name changes after signing
+                      if (signatureData) {
+                        setSignatureData(null)
+                      }
+                    }}
                     placeholder="Enter your full name"
                     required
                     disabled={loading}
                     aria-describedby="name-hint"
                   />
                   <p id="name-hint" className="text-xs text-muted-foreground">
-                    You can update this if needed
+                    You can update this if needed{signatureData && ' (editing will require re-signing)'}
                   </p>
                 </div>
 
@@ -261,8 +270,9 @@ export default function CompleteProfilePage(): ReactElement {
                 {/* Waiver Signature */}
                 <TypedSignatureField
                   expectedName={name}
+                  userId={userId}
                   onSignatureComplete={(data) => setSignatureData(data)}
-                  documentVersion="1.0"
+                  documentVersion={WAIVER_VERSION}
                   disabled={loading || !name}
                 />
 

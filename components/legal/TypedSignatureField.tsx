@@ -118,11 +118,11 @@ export function TypedSignatureField({
           <WaiverContent />
         </div>
 
-        {/* Checkbox Confirmation */}
-        <label 
-          className={`flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all ${
-            hasReadWaiver 
-              ? 'border-sage bg-sage/5' 
+        {/* Checkbox Confirmation - min-h-[44px] ensures WCAG 2.1 AA touch target */}
+        <label
+          className={`flex items-center gap-3 p-4 min-h-[44px] border rounded-lg cursor-pointer transition-all ${
+            hasReadWaiver
+              ? 'border-sage bg-sage/5'
               : 'border-muted hover:border-sage/50'
           } ${disabled || isComplete ? 'cursor-not-allowed opacity-75' : ''}`}
         >
@@ -131,9 +131,10 @@ export function TypedSignatureField({
             checked={hasReadWaiver}
             onChange={(e) => !isComplete && setHasReadWaiver(e.target.checked)}
             disabled={disabled || isComplete}
-            className="w-5 h-5 text-sage accent-sage flex-shrink-0 mt-0.5 rounded"
+            className="w-6 h-6 min-w-[24px] min-h-[24px] text-sage accent-sage flex-shrink-0 rounded"
+            aria-describedby="waiver-checkbox-description"
           />
-          <span className="text-sm text-foreground">
+          <span id="waiver-checkbox-description" className="text-sm text-foreground">
             I have read and understand the Safety Guidelines & Liability Waiver above.
           </span>
         </label>
