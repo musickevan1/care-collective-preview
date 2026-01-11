@@ -1,14 +1,22 @@
 'use client'
 
-import { ReactElement, ReactNode } from 'react'
+import { ReactElement, ReactNode, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Bell, Shield, User, ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Bell, Shield, User, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { PlatformLayout } from '@/components/layout/PlatformLayout'
+import { createClient } from '@/lib/supabase/client'
 
 interface SettingsLayoutProps {
   children: ReactNode
+}
+
+interface UserData {
+  id: string
+  name: string
+  email: string
+  isAdmin: boolean
 }
 
 const settingsNav = [
@@ -34,30 +42,59 @@ const settingsNav = [
 
 export default function SettingsLayout({ children }: SettingsLayoutProps): ReactElement {
   const pathname = usePathname()
+  const [user, setUser] = useState<UserData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const supabase = createClient()
+        const { data: { user: authUser } } = await supabase.auth.getUser()
+
+        if (authUser) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('name, is_admin')
+            .eq('id', authUser.id)
+            .single()
+
+          setUser({
+            id: authUser.id,
+            name: profile?.name || authUser.email?.split('@')[0] || 'User',
+            email: authUser.email || '',
+            isAdmin: profile?.is_admin || false
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUser()
+  }, [])
+
+  // Show loading state while fetching user
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-sage" />
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-secondary text-secondary-foreground shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="min-h-[44px]">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold">Settings</h1>
-              <p className="text-sm text-secondary-foreground/70">
-                Manage your account preferences
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <PlatformLayout user={user || undefined}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        {/* Settings page header */}
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Settings</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Manage your account preferences
+          </p>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Navigation */}
           <nav className="w-full lg:w-64 flex-shrink-0">
@@ -97,6 +134,6 @@ export default function SettingsLayout({ children }: SettingsLayoutProps): React
           </main>
         </div>
       </div>
-    </div>
+    </PlatformLayout>
   )
 }
