@@ -5,18 +5,20 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { uuidSchema } from '@/lib/validations'
+import { Logger } from '@/lib/logger'
 
 export async function GET(
-  request: Request,
+  _request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = await createClient()
     const { id } = params
 
-    // Validate UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    if (!uuidRegex.test(id)) {
+    // Validate UUID format with Zod
+    const uuidResult = uuidSchema.safeParse(id)
+    if (!uuidResult.success) {
       return NextResponse.json(
         { error: 'Invalid request ID format' },
         { status: 400 }
@@ -41,7 +43,7 @@ export async function GET(
       .single()
 
     if (requestError) {
-      console.error('[API] Error fetching request:', requestError)
+      Logger.getInstance().error('Error fetching request', requestError)
       if (requestError.code === 'PGRST116') {
         return NextResponse.json(
           { error: 'Request not found' },
@@ -104,7 +106,7 @@ export async function GET(
     return NextResponse.json(fullRequest)
 
   } catch (error) {
-    console.error('[API] Unexpected error:', error)
+    Logger.getInstance().error('Unexpected error fetching request', error as Error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

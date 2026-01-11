@@ -20,6 +20,7 @@ export default function SignUpPage() {
   const [location, setLocation] = useState('')
   const [applicationReason, setApplicationReason] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [waiverAcknowledged, setWaiverAcknowledged] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -44,6 +45,12 @@ export default function SignUpPage() {
       return
     }
 
+    if (!waiverAcknowledged) {
+      setError('You must acknowledge the Community Safety Guidelines and Liability Waiver.')
+      setLoading(false)
+      return
+    }
+
     signupPromise = (async () => {
       try {
         const { data: signUpData, error } = await supabase.auth.signUp({
@@ -56,6 +63,8 @@ export default function SignUpPage() {
             application_reason: applicationReason,
             terms_accepted_at: new Date().toISOString(),
             terms_version: '1.0',
+            waiver_acknowledged_at: new Date().toISOString(),
+            waiver_version: '1.0',
           },
         },
       })
@@ -326,11 +335,40 @@ export default function SignUpPage() {
                 </label>
               </div>
 
+              {/* Waiver Acknowledgment */}
+              <div className="space-y-3 border border-sage/20 bg-sage/5 rounded-lg p-4">
+                <label htmlFor="waiverAcknowledged" className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    id="waiverAcknowledged"
+                    type="checkbox"
+                    checked={waiverAcknowledged}
+                    onChange={(e) => setWaiverAcknowledged(e.target.checked)}
+                    disabled={loading}
+                    className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-sage flex-shrink-0 mt-0.5"
+                    required
+                    aria-describedby="waiverAcknowledged-description"
+                  />
+                  <div className="text-sm" id="waiverAcknowledged-description">
+                    <span className="text-foreground">
+                      I acknowledge that I have read and understand the{' '}
+                      <Link
+                        href="/waiver"
+                        target="_blank"
+                        className="text-primary hover:underline font-medium"
+                      >
+                        Community Safety Guidelines & Liability Waiver
+                      </Link>
+                      . I agree to sign the waiver when I complete my profile.
+                    </span>
+                  </div>
+                </label>
+              </div>
+
               <Button
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={loading || !termsAccepted}
+                disabled={loading || !termsAccepted || !waiverAcknowledged}
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </Button>
