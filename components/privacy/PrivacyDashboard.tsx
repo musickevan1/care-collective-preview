@@ -85,14 +85,8 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
       setLoading(true)
       setError(null)
 
-      // Load privacy settings
-      const { data: settings, error: settingsError } = await supabase
-        .from('user_privacy_settings')
-        .select('*')
-        .eq('user_id', userId)
-        .single()
-
-      if (settingsError && settingsError.code !== 'PGRST116') throw settingsError
+      // Load privacy settings using service (creates defaults if none exist)
+      const settings = await getUserPrivacySettings(userId)
       setPrivacySettings(settings)
 
       // Load sharing history

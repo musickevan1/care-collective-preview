@@ -3,10 +3,9 @@ import { OptimizedQueries } from '@/lib/db-cache'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Users, Handshake, Shield, BarChart3, TrendingUp, FileText, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { MobileNav } from '@/components/MobileNav'
 import { redirect } from 'next/navigation'
+import { AdminPageClient } from './AdminPageClient'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
@@ -16,6 +15,12 @@ export default async function AdminDashboard() {
   let totalHelpRequests = 0
   let openHelpRequests = 0
   let pendingApplications = 0
+  let userData = {
+    id: '',
+    name: 'Admin',
+    email: '',
+    isAdmin: true
+  }
 
   try {
     const supabase = await createClient()
@@ -25,6 +30,20 @@ export default async function AdminDashboard() {
 
     if (authError || !user) {
       redirect('/login?redirectTo=/admin')
+    }
+
+    // Fetch user profile for navigation
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('name, is_admin')
+      .eq('id', user.id)
+      .single()
+
+    userData = {
+      id: user.id,
+      name: profile?.name || user.email?.split('@')[0] || 'Admin',
+      email: user.email || '',
+      isAdmin: profile?.is_admin || true
     }
 
     const [
@@ -81,44 +100,7 @@ export default async function AdminDashboard() {
   ]
 
   return (
-    <main className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-secondary text-secondary-foreground shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <Link href="/" className="flex items-center gap-3">
-                <Image 
-                  src="/logo.png" 
-                  alt="Care Collective Logo" 
-                  width={28} 
-                  height={28}
-                  className="rounded"
-                />
-                <span className="text-xl font-bold">CARE Collective</span>
-              </Link>
-              <nav className="hidden md:flex items-center gap-4">
-                <Link href="/dashboard" className="hover:text-accent transition-colors">Dashboard</Link>
-                <Link href="/requests" className="hover:text-accent transition-colors">Requests</Link>
-                <Link href="/admin" className="text-accent">Admin</Link>
-              </nav>
-            </div>
-            <div className="flex items-center gap-2">
-              <MobileNav isAdmin={true} />
-              <form action="/api/auth/logout" method="post" className="hidden md:block">
-                <Button
-                  size="sm"
-                  type="submit"
-                  variant="terracotta"
-                >
-                  Sign Out
-                </Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <AdminPageClient user={userData}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* Admin Notice */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-8">
@@ -255,6 +237,6 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-    </main>
+    </AdminPageClient>
   )
 }

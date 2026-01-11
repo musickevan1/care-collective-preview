@@ -105,6 +105,12 @@ export function PlatformLayout({
       icon: User,
       exactMatch: true
     },
+    {
+      href: '/settings',
+      label: 'Settings',
+      icon: Settings,
+      exactMatch: false
+    },
     // Conditionally add Admin Panel link for admin users
     ...(user?.isAdmin ? [{
       href: '/admin',

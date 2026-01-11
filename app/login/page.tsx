@@ -99,11 +99,11 @@ export default function LoginPage() {
           })
 
           // Add delay to ensure auth session is properly set
-          // Increased from 100ms to 300ms to allow session cookies to propagate
+          // Increased to 500ms for reliable mobile browser cookie propagation
           setTimeout(() => {
             console.log('[Login] Executing redirect to:', destination)
             window.location.replace(destination)
-          }, 300)
+          }, 500)
           return
         }
 
