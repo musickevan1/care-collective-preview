@@ -306,3 +306,89 @@ export async function profileNeedsCompletion(userId: string): Promise<boolean> {
     return false
   }
 }
+
+/**
+ * Sync email confirmation status from auth.users to profiles table
+ *
+ * Called during auth callback to ensure profiles.email_confirmed stays in sync
+ * with Supabase's native auth.users.email_confirmed_at field.
+ *
+ * This is needed because database triggers on auth.users don't reliably fire
+ * when Supabase confirms emails through their built-in flow.
+ *
+ * @param userId - The user ID to sync
+ * @returns true if sync was performed, false if already in sync
+ */
+export async function syncEmailConfirmationStatus(userId: string): Promise<boolean> {
+  try {
+    const admin = createAdminClient()
+
+    // Use admin API to get user's email confirmation status from auth.users
+    const { data: { user }, error: userError } = await admin.auth.admin.getUserById(userId)
+
+    if (userError || !user) {
+      Logger.getInstance().error('[Email Sync] Failed to get auth user', userError || new Error('User not found'), {
+        userId,
+        category: 'email_sync'
+      })
+      return false
+    }
+
+    if (!user.email_confirmed_at) {
+      // User hasn't confirmed email yet, nothing to sync
+      return false
+    }
+
+    // Check if profiles table is already in sync
+    // Use any-typed approach due to Supabase type generation quirks
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const profilesTable = admin.from('profiles') as any
+    const { data: profile, error: profileError } = await profilesTable
+      .select('email_confirmed, email_confirmed_at')
+      .eq('id', userId)
+      .single()
+
+    if (profileError) {
+      Logger.getInstance().error('[Email Sync] Failed to get profile', profileError, {
+        userId,
+        category: 'email_sync'
+      })
+      return false
+    }
+
+    // If already synced, skip update
+    if (profile?.email_confirmed === true) {
+      return false
+    }
+
+    // Update profiles table
+    const { error: updateError } = await profilesTable
+      .update({
+        email_confirmed: true,
+        email_confirmed_at: user.email_confirmed_at
+      })
+      .eq('id', userId)
+
+    if (updateError) {
+      Logger.getInstance().error('[Email Sync] Failed to update profile', updateError, {
+        userId,
+        category: 'email_sync'
+      })
+      return false
+    }
+
+    Logger.getInstance().info('[Email Sync] Synced email confirmation status', {
+      userId,
+      emailConfirmedAt: user.email_confirmed_at,
+      category: 'email_sync'
+    })
+
+    return true
+  } catch (error) {
+    Logger.getInstance().error('[Email Sync] Exception during sync', error as Error, {
+      userId,
+      category: 'email_sync'
+    })
+    return false
+  }
+}

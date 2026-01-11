@@ -63,7 +63,12 @@
       "Bash(while read file)",
       "Bash(do wc -l \"$file\")",
       "Bash(done)",
-      "Bash(sort:*)"
+      "Bash(sort:*)",
+      "mcp__vulcan-todo__get_sprint_tasks",
+      "mcp__vulcan-todo__assign_task_to_sprint",
+      "mcp__vulcan-todo__list_sprints",
+      "mcp__vulcan-todo__start_sprint",
+      "mcp__vulcan-todo__start_task"
     ],
     "deny": [],
     "ask": []

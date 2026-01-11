@@ -1,3 +1,5 @@
+const { withSentryConfig } = require("@sentry/nextjs");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Security headers
@@ -131,10 +133,8 @@ const nextConfig = {
 
   // TypeScript configuration
   typescript: {
-    // Temporarily allow build despite remaining TypeScript errors
-    // 100 errors already fixed (176 → 76), remaining errors in non-critical paths
-    // Will be addressed incrementally in follow-up commits
-    ignoreBuildErrors: true,
+    // Strict type checking enabled for production safety
+    ignoreBuildErrors: false,
   },
 
   // ESLint configuration
@@ -203,11 +203,11 @@ const nextConfig = {
             chunks: 'all',
             priority: 15,
           },
-          // Supabase client
+          // Supabase client - only split for client bundles (not server/edge)
           supabase: {
             test: /[\\/]node_modules[\\/]@supabase[\\/]/,
             name: 'supabase',
-            chunks: 'all',
+            chunks: 'async', // Changed from 'all' to 'async' to avoid Edge Runtime issues
             priority: 10,
           },
           // Large vendor libraries
@@ -234,4 +234,29 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withSentryConfig(nextConfig, {
+  // Sentry configuration options
+  org: "evan-musick",
+  project: "care-collective",
+
+  // Suppress source map upload logs during build
+  silent: !process.env.CI,
+
+  // Upload source maps for better error debugging
+  widenClientFileUpload: true,
+
+  // Hide source maps from client bundles
+  hideSourceMaps: true,
+
+  // Webpack-specific options (new API)
+  webpack: {
+    // Disable automatic instrumentation (we configure manually)
+    autoInstrumentServerFunctions: false,
+    autoInstrumentMiddleware: false,
+    autoInstrumentAppDirectory: true,
+    // Tree-shake Sentry logger statements
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
+});

@@ -21,7 +21,7 @@ export const WELCOME_BOT_USER_ID = '00000000-0000-0000-0000-000000000001';
 /**
  * Display name for the Welcome Bot
  */
-export const WELCOME_BOT_NAME = 'CARE Collective Support';
+export const WELCOME_BOT_NAME = 'CARE Team';
 
 /**
  * LocalStorage key for tracking welcome completion

@@ -61,27 +61,57 @@ export default function CompleteProfilePage(): ReactElement {
       return
     }
 
+    if (applicationReason.trim().length < 10) {
+      setError('Please provide a bit more detail about why you want to join (at least 10 characters).')
+      return
+    }
+
     setLoading(true)
     setError('')
 
     try {
+      const payload = {
+        name: name.trim(),
+        location: location.trim(),
+        application_reason: applicationReason.trim(),
+        terms_accepted: true,
+      }
+
+      // Debug logging for troubleshooting
+      console.log('[CompleteProfile] Submitting:', {
+        nameLength: payload.name.length,
+        locationLength: payload.location.length,
+        reasonLength: payload.application_reason.length,
+      })
+
       const response = await fetch('/api/auth/complete-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: name.trim(),
-          location: location.trim(),
-          application_reason: applicationReason.trim(),
-          terms_accepted: true,
-        }),
+        body: JSON.stringify(payload),
       })
 
       const data = await response.json()
 
+      // Log full response for debugging
+      console.log('[CompleteProfile] Response:', {
+        status: response.status,
+        ok: response.ok,
+        data,
+      })
+
       if (!response.ok) {
-        setError(data.message || 'Failed to complete profile. Please try again.')
+        // Show detailed validation errors if available
+        let errorMessage = data.message || 'Failed to complete profile. Please try again.'
+        if (data.errors && Array.isArray(data.errors)) {
+          const fieldErrors = data.errors.map((e: { path?: string[]; message?: string }) =>
+            `${e.path?.join('.') || 'Field'}: ${e.message}`
+          ).join(', ')
+          errorMessage = `${errorMessage} (${fieldErrors})`
+        }
+        console.error('[CompleteProfile] Error:', errorMessage)
+        setError(errorMessage)
         return
       }
 
@@ -185,14 +215,18 @@ export default function CompleteProfilePage(): ReactElement {
                     id="applicationReason"
                     value={applicationReason}
                     onChange={(e) => setApplicationReason(e.target.value)}
-                    placeholder="Tell us briefly why you'd like to join our community"
+                    placeholder="Tell us briefly why you'd like to join our community (minimum 10 characters)"
                     required
+                    minLength={10}
                     disabled={loading}
                     rows={3}
                     aria-describedby="reason-hint"
                   />
                   <p id="reason-hint" className="text-xs text-muted-foreground">
-                    This helps us understand what brings you here.
+                    This helps us understand what brings you here.{' '}
+                    <span className={applicationReason.length < 10 ? 'text-primary font-medium' : 'text-sage'}>
+                      ({applicationReason.length}/10 min)
+                    </span>
                   </p>
                 </div>
 
@@ -237,7 +271,7 @@ export default function CompleteProfilePage(): ReactElement {
                   type="submit"
                   className="w-full"
                   size="lg"
-                  disabled={loading || !termsAccepted}
+                  disabled={loading || !termsAccepted || applicationReason.trim().length < 10}
                 >
                   {loading ? 'Submitting...' : 'Complete Application'}
                 </Button>

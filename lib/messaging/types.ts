@@ -84,6 +84,7 @@ export interface ConversationWithDetails extends Conversation {
     location?: string;
     avatar_url?: string | null;
     role: 'member' | 'moderator';
+    is_system_user?: boolean;
   }>;
   help_request?: {
     id: string;
@@ -96,6 +97,8 @@ export interface ConversationWithDetails extends Conversation {
     sender_name: string;
   };
   unread_count: number;
+  /** True for system conversations like welcome messages from CARE Team */
+  is_system_conversation?: boolean;
 }
 
 export interface MessageWithSender extends Message {
