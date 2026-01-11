@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   invalid_link: 'The password reset link is invalid. Please request a new one.',
 }
 
-export default function ForgotPasswordPage() {
+// Inner component that uses useSearchParams (requires Suspense boundary)
+function ForgotPasswordContent() {
   const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -173,5 +174,23 @@ export default function ForgotPasswordPage() {
         </div>
       </main>
     </PublicPageLayout>
+  )
+}
+
+// Wrap in Suspense for useSearchParams (required by Next.js App Router)
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={
+      <PublicPageLayout showFooter={true}>
+        <main className="min-h-screen bg-background flex items-center justify-center p-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Loading...</p>
+          </div>
+        </main>
+      </PublicPageLayout>
+    }>
+      <ForgotPasswordContent />
+    </Suspense>
   )
 }
