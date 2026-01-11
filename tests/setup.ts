@@ -3,6 +3,76 @@ import 'vitest-canvas-mock';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, vi } from 'vitest';
 
+// Mock Supabase client - must be at module level for proper hoisting
+const mockSupabaseClient = {
+  auth: {
+    signIn: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signUp: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signOut: vi.fn().mockResolvedValue({ error: null }),
+    getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
+    onAuthStateChange: vi.fn(() => ({
+      data: { subscription: { unsubscribe: vi.fn() } }
+    })),
+    admin: {
+      listUsers: vi.fn().mockResolvedValue({ data: [], error: null }),
+      getUserById: vi.fn().mockResolvedValue({ data: null, error: null }),
+      updateUser: vi.fn().mockResolvedValue({ data: null, error: null }),
+      deleteUser: vi.fn().mockResolvedValue({ data: null, error: null }),
+    },
+  },
+  from: vi.fn(() => ({
+    select: vi.fn().mockReturnThis(),
+    insert: vi.fn().mockReturnThis(),
+    update: vi.fn().mockReturnThis(),
+    upsert: vi.fn().mockReturnThis(),
+    delete: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    neq: vi.fn().mockReturnThis(),
+    gt: vi.fn().mockReturnThis(),
+    lt: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
+    like: vi.fn().mockReturnThis(),
+    ilike: vi.fn().mockReturnThis(),
+    is: vi.fn().mockReturnThis(),
+    in: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
+    single: vi.fn().mockReturnThis(),
+    maybeSingle: vi.fn().mockReturnThis(),
+  })),
+  storage: {
+    from: vi.fn(() => ({
+      upload: vi.fn(),
+      download: vi.fn(),
+      remove: vi.fn(),
+      list: vi.fn(),
+      getPublicUrl: vi.fn(),
+    })),
+  },
+  channel: vi.fn(() => ({
+    on: vi.fn().mockReturnThis(),
+    subscribe: vi.fn(),
+  })),
+  removeChannel: vi.fn(),
+  rpc: vi.fn(),
+};
+
+// Mock Supabase modules - these need to be at top level for hoisting
+vi.mock('@supabase/ssr', () => ({
+  createServerClient: vi.fn(() => mockSupabaseClient),
+  createBrowserClient: vi.fn(() => mockSupabaseClient),
+}));
+
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: vi.fn(() => mockSupabaseClient),
+}));
+
+vi.mock('@/lib/supabase/server', () => ({
+  createClient: vi.fn(() => Promise.resolve(mockSupabaseClient)),
+}));
+
 // Validate environment variables for test environment
 function validateTestEnvironment() {
   const requiredEnvVars = [
@@ -45,7 +115,7 @@ function validateTestEnvironment() {
 }
 
 // Set up environment variables before any module imports
-process.env.NODE_ENV = 'test';
+// Note: NODE_ENV is set automatically by Vitest
 validateTestEnvironment();
 
 // Mock Next.js modules

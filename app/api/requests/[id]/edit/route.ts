@@ -6,12 +6,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+import { CATEGORY_VALUES } from '@/lib/constants/categories';
 
 // Validation schema for edit requests (subset of create schema)
+// Uses CATEGORY_VALUES from constants to stay in sync with database constraints
 const editRequestSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters').max(100, 'Title too long').optional(),
   description: z.string().max(500, 'Description too long').optional(),
-  category: z.enum(['groceries', 'transport', 'household', 'medical', 'other']).optional(),
+  category: z.enum(CATEGORY_VALUES).optional(),
   subcategory: z.string().max(100).optional(),
   urgency: z.enum(['normal', 'urgent', 'critical']).optional(),
   location_override: z.string().max(200).optional(),
