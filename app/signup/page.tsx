@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
 import { createClient } from '@/lib/supabase/client'
 import { GoogleSignInButton, AuthDivider } from '@/components/auth/google-sign-in-button'
+import { TypedSignatureField, type SignatureData } from '@/components/legal'
+import { WAIVER_VERSION } from '@/lib/constants/waiver'
 
 // Request deduplication for signup
 let signupPromise: Promise<void> | null = null
@@ -21,11 +24,12 @@ export default function SignUpPage() {
   const [applicationReason, setApplicationReason] = useState('')
   const [caregivingSituation, setCaregivingSituation] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const [waiverAcknowledged, setWaiverAcknowledged] = useState(false)
+  const [signatureData, setSignatureData] = useState<SignatureData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
+  const router = useRouter()
   const supabase = createClient()
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -46,8 +50,8 @@ export default function SignUpPage() {
       return
     }
 
-    if (!waiverAcknowledged) {
-      setError('You must acknowledge the Community Safety Guidelines and Liability Waiver.')
+    if (!signatureData) {
+      setError('You must sign the Community Safety Guidelines & Liability Waiver.')
       setLoading(false)
       return
     }
@@ -65,8 +69,7 @@ export default function SignUpPage() {
             caregiving_situation: caregivingSituation || null,
             terms_accepted_at: new Date().toISOString(),
             terms_version: '1.0',
-            waiver_acknowledged_at: new Date().toISOString(),
-            waiver_version: '1.0',
+            // Waiver signature saved via /api/auth/save-waiver after signup
           },
         },
       })
@@ -105,11 +108,30 @@ export default function SignUpPage() {
           console.warn('Failed to send new application notification:', notifyError)
         }
 
+        // Save waiver signature to database (also creates welcome message)
+        if (signatureData) {
+          try {
+            await fetch('/api/auth/save-waiver', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                userId: signUpData.user.id,
+                signature: signatureData,
+              })
+            })
+          } catch (waiverError) {
+            console.warn('Failed to save waiver signature:', waiverError)
+            // Continue anyway - profile creation shouldn't fail due to waiver storage
+          }
+        }
+
         setSuccess(true)
-        
-        // Redirect to waitlist after showing success message
+
+        // Redirect to waitlist using client-side navigation (maintains session)
         setTimeout(() => {
-          window.location.href = '/waitlist'
+          router.replace('/waitlist')
         }, 2500)
       }
       } catch (err) {
@@ -223,7 +245,13 @@ export default function SignUpPage() {
                   id="name"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value)
+                    // Reset signature when name changes (signature must match name)
+                    if (signatureData) {
+                      setSignatureData(null)
+                    }
+                  }}
                   placeholder="Enter your full name"
                   required
                   disabled={loading}
@@ -359,40 +387,20 @@ export default function SignUpPage() {
                 </label>
               </div>
 
-              {/* Waiver Acknowledgment */}
-              <div className="space-y-3 border border-sage/20 bg-sage/5 rounded-lg p-4">
-                <label htmlFor="waiverAcknowledged" className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    id="waiverAcknowledged"
-                    type="checkbox"
-                    checked={waiverAcknowledged}
-                    onChange={(e) => setWaiverAcknowledged(e.target.checked)}
-                    disabled={loading}
-                    className="w-5 h-5 sm:w-4 sm:h-4 text-primary accent-sage flex-shrink-0 mt-0.5"
-                    required
-                    aria-describedby="waiverAcknowledged-description"
-                  />
-                  <div className="text-sm" id="waiverAcknowledged-description">
-                    <span className="text-foreground">
-                      I acknowledge that I have read and understand the{' '}
-                      <Link
-                        href="/waiver"
-                        target="_blank"
-                        className="text-primary hover:underline font-medium"
-                      >
-                        Community Safety Guidelines & Liability Waiver
-                      </Link>
-                      . I agree to sign the waiver when I complete my profile.
-                    </span>
-                  </div>
-                </label>
-              </div>
+              {/* Digital Waiver Signature */}
+              <TypedSignatureField
+                expectedName={name}
+                userId={undefined}
+                onSignatureComplete={(data) => setSignatureData(data)}
+                documentVersion={WAIVER_VERSION}
+                disabled={loading || !name}
+              />
 
               <Button
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={loading || !termsAccepted || !waiverAcknowledged}
+                disabled={loading || !termsAccepted || !signatureData}
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </Button>
