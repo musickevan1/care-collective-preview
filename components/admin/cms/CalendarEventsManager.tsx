@@ -28,6 +28,7 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [showForm, setShowForm] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
@@ -106,11 +107,31 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
     });
     setEditingId(null);
     setShowForm(false);
+    setFieldErrors({});
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Required fields
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.start_date) newErrors.start_date = 'Start date is required';
+    if (!formData.end_date) newErrors.end_date = 'End date is required';
+
+    // Conditional virtual_link requirement
+    if (
+      (formData.location_type === 'virtual' || formData.location_type === 'hybrid') &&
+      !formData.virtual_link.trim()
+    ) {
+      newErrors.virtual_link = 'Virtual link is required for virtual/hybrid events';
+    }
+
+    setFieldErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleCreateOrUpdate = async () => {
-    if (!formData.title.trim() || !formData.start_date || !formData.end_date) {
-      setError('Title and dates are required');
+    if (!validateForm()) {
       return;
     }
 
@@ -367,12 +388,25 @@ export function CalendarEventsManager({ adminUserId }: CalendarEventsManagerProp
                   />
                 )}
                 {(formData.location_type === 'virtual' || formData.location_type === 'hybrid') && (
-                  <Input
-                    placeholder="Virtual Link (required for virtual/hybrid) *"
-                    value={formData.virtual_link}
-                    onChange={(e) => setFormData({ ...formData, virtual_link: e.target.value })}
-                    className="min-h-[44px]"
-                  />
+                  <div className="space-y-1">
+                    <label className="block text-sm font-medium text-secondary">
+                      Virtual Link <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      placeholder="https://zoom.us/j/... or meeting link"
+                      value={formData.virtual_link}
+                      onChange={(e) => {
+                        setFormData({ ...formData, virtual_link: e.target.value });
+                        if (fieldErrors.virtual_link) {
+                          setFieldErrors({ ...fieldErrors, virtual_link: '' });
+                        }
+                      }}
+                      className={`min-h-[44px] ${fieldErrors.virtual_link ? 'border-red-500 focus:ring-red-500' : ''}`}
+                    />
+                    {fieldErrors.virtual_link && (
+                      <p className="text-sm text-red-600">{fieldErrors.virtual_link}</p>
+                    )}
+                  </div>
                 )}
                 <div className="flex items-center gap-2">
                   <input
