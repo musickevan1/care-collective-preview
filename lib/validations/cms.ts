@@ -10,16 +10,42 @@ const sanitizeHTML = (str: string) => validator.escape(str);
 // ============================================================================
 
 /**
+ * Schema for site content value items.
+ * Supports both legacy data (objects with title/description/icon) and new data (strings).
+ */
+export const siteContentValueSchema = z.union([
+  z.string(),
+  z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    icon: z.string().optional(),
+  }),
+]);
+
+/**
+ * Schema for site content data structure.
+ * Validates the JSONB content field with proper types.
+ */
+export const siteContentDataSchema = z.object({
+  heading: z.string().optional(),
+  body: z.string().optional(),
+  mission_statement: z.string().optional(),
+  values: z.array(siteContentValueSchema).optional(),
+}).passthrough(); // Allow additional fields for flexibility
+
+/**
  * Schema for site content sections (mission, about, events_updates)
  * Used for home page editable sections
  */
 export const siteContentSchema = z.object({
   section_key: z.enum(['events_updates', 'mission', 'about']),
-  content: z.record(z.string(), z.any()), // JSONB content - flexible structure
+  content: siteContentDataSchema,
   status: z.enum(['draft', 'published']).default('draft'),
 });
 
 export type SiteContentInput = z.infer<typeof siteContentSchema>;
+export type SiteContentData = z.infer<typeof siteContentDataSchema>;
+export type SiteContentValue = z.infer<typeof siteContentValueSchema>;
 
 /**
  * Schema for publishing a site content section

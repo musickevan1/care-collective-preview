@@ -5,7 +5,6 @@ import { Users, Handshake, Shield, BarChart3, TrendingUp, FileText, AlertCircle 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { redirect } from 'next/navigation'
-import { AdminPageClient } from './AdminPageClient'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
