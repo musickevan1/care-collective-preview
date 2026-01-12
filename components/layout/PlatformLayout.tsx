@@ -42,6 +42,7 @@ interface PlatformLayoutProps {
     label: string;
     href?: string;
   }>;
+  mobileNavVariant?: 'dashboard' | 'admin';
 }
 
 interface NavItem {
@@ -57,7 +58,8 @@ export function PlatformLayout({
   user,
   messagingData = { unreadCount: 0, activeConversations: 0 },
   showMessagingContext = false,
-  breadcrumbs = []
+  breadcrumbs = [],
+  mobileNavVariant = 'dashboard'
 }: PlatformLayoutProps): ReactElement {
   const pathname = usePathname();
 
@@ -226,7 +228,7 @@ export function PlatformLayout({
               </div>
 
               {/* Mobile Navigation */}
-              <MobileNav variant="dashboard" isAdmin={user?.isAdmin || false} />
+              <MobileNav variant={mobileNavVariant} isAdmin={user?.isAdmin || false} />
             </div>
           </div>
         </div>

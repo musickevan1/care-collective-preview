@@ -3,17 +3,45 @@
 import React, { useState, useMemo, useCallback, memo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import {
+  Home, Users, FileText, Heart, BarChart3,
+  TrendingUp, Settings, AlertCircle, MessageCircle, Shield, ArrowLeft,
+  type LucideIcon
+} from 'lucide-react'
 import { LogoutButton } from '@/components/LogoutButton'
 import { useAuthNavigation } from '@/hooks/useAuthNavigation'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 
+interface NavItem {
+  href: string
+  label: string
+  icon?: LucideIcon
+  isBackLink?: boolean
+}
+
 interface MobileNavProps {
   isAdmin?: boolean
-  variant?: 'homepage' | 'dashboard'
+  variant?: 'homepage' | 'dashboard' | 'admin'
 }
 
 // Navigation items for different contexts
-const getNavItems = (variant: 'homepage' | 'dashboard', isAdmin: boolean, isAuthenticated: boolean) => {
+const getNavItems = (variant: 'homepage' | 'dashboard' | 'admin', isAdmin: boolean, isAuthenticated: boolean): NavItem[] => {
+  if (variant === 'admin') {
+    return [
+      { href: '/dashboard', label: 'Back to Dashboard', icon: ArrowLeft, isBackLink: true },
+      { href: '/admin', label: 'Overview', icon: Home },
+      { href: '/admin/users', label: 'Manage Users', icon: Users },
+      { href: '/admin/applications', label: 'Review Applications', icon: FileText },
+      { href: '/admin/help-requests', label: 'Review Help Requests', icon: Heart },
+      { href: '/admin/performance', label: 'Performance Dashboard', icon: BarChart3 },
+      { href: '/admin/reports', label: 'Reports & Analytics', icon: TrendingUp },
+      { href: '/admin/cms', label: 'Content Management', icon: Settings },
+      { href: '/admin/bug-reports', label: 'Bug Reports', icon: AlertCircle },
+      { href: '/admin/messaging/moderation', label: 'Message Moderation', icon: MessageCircle },
+      { href: '/admin/privacy', label: 'Privacy Dashboard', icon: Shield },
+    ]
+  }
+
   if (variant === 'homepage') {
     if (isAuthenticated) {
       return [
@@ -181,13 +209,15 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
           >
             <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/10 bg-secondary/50">
               <div className="flex flex-col">
-                <h2 className="text-xl font-semibold text-secondary-foreground">Menu</h2>
+                <h2 className="text-xl font-semibold text-secondary-foreground">
+                  {variant === 'admin' ? 'Admin Menu' : 'Menu'}
+                </h2>
                 {variant === 'homepage' && isAuthenticated && displayName && (
                   <p className="text-sm text-secondary-foreground/70 mt-1">Welcome, {displayName}</p>
                 )}
-                {variant === 'dashboard' && isAdmin && (
+                {(variant === 'dashboard' && isAdmin) || variant === 'admin' ? (
                   <span className="inline-flex items-center px-2 py-1 mt-1 text-xs bg-accent/20 text-accent rounded-full font-medium">Admin</span>
-                )}
+                ) : null}
               </div>
               <button
                 onClick={handleClose}
@@ -211,15 +241,29 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
             <nav className="p-3 sm:p-4 flex-1 overflow-y-auto">
               <ul className="space-y-0.5">
                 {navItems.map((item, index) => {
-                  const isActive = pathname === item.href
+                  // For admin variant: exact match for /admin, startsWith for other admin routes
+                  const isActive = variant === 'admin'
+                    ? (item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href))
+                    : pathname === item.href
+
+                  // Back link styling (no active state, separator after)
+                  const isBackLink = 'isBackLink' in item && item.isBackLink
+                  const Icon = 'icon' in item ? item.icon : null
+
                   const linkClassName = `block px-3 py-2.5 rounded-lg transition-all duration-200 min-h-[44px] flex items-center focus:outline-none focus:ring-2 focus:ring-sage focus:ring-inset group relative ${
-                    isActive
-                      ? 'bg-white/20 text-secondary-foreground font-semibold shadow-sm'
-                      : 'text-secondary-foreground/80 hover:bg-white/10 hover:text-secondary-foreground hover:translate-x-1'
+                    isBackLink
+                      ? 'text-secondary-foreground/70 hover:bg-white/10 hover:text-secondary-foreground'
+                      : isActive
+                        ? 'bg-white/20 text-secondary-foreground font-semibold shadow-sm'
+                        : 'text-secondary-foreground/80 hover:bg-white/10 hover:text-secondary-foreground hover:translate-x-1'
                   }`
-                  
+
                   return (
-                    <li key={item.href} style={{ animationDelay: `${index * 50}ms` }} className="animate-in slide-in-from-right-4 duration-300">
+                    <li
+                      key={item.href}
+                      style={{ animationDelay: `${index * 50}ms` }}
+                      className={`animate-in slide-in-from-right-4 duration-300 ${isBackLink ? 'mb-2 pb-2 border-b border-white/10' : ''}`}
+                    >
                       <Link
                         href={item.href}
                         onClick={(e) => {
@@ -230,8 +274,9 @@ export const MobileNav = memo<MobileNavProps>(({ isAdmin = false, variant = 'das
                         }}
                         className={linkClassName}
                       >
+                        {Icon && <Icon className="w-5 h-5 mr-3 flex-shrink-0" />}
                         <span className="flex-1">{item.label}</span>
-                        {isActive && (
+                        {isActive && !isBackLink && (
                           <div className="w-2 h-2 bg-sage rounded-full"></div>
                         )}
                       </Link>
