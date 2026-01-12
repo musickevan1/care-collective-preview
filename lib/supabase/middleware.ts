@@ -75,20 +75,29 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Get user profile to check verification status
+    // Use maybeSingle() to handle race condition with profile creation trigger
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('verification_status, email_confirmed')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
 
     if (profileError) {
       logSecurityEvent('profile_check_error', request, { error: profileError.message })
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
+    // If profile doesn't exist yet (new signup, trigger still running),
+    // allow access to waitlist - the page has retry logic for profile creation
+    if (!profile) {
+      logSecurityEvent('waitlist_access_new_signup', request, { reason: 'profile_pending_creation' })
+      addSecurityHeaders(supabaseResponse)
+      return supabaseResponse
+    }
+
     // Allow access to waitlist for pending users (no email confirmation required)
     // If user is approved, redirect them to dashboard
-    if (profile?.verification_status === 'approved') {
+    if (profile.verification_status === 'approved') {
       const redirectUrl = new URL('/dashboard', request.url)
       return NextResponse.redirect(redirectUrl)
     }
@@ -114,29 +123,38 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Check if user is admin and email is confirmed
+    // Use maybeSingle() to handle race condition with profile creation trigger
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('is_admin, verification_status, email_confirmed')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
 
     if (profileError) {
       logSecurityEvent('admin_check_error', request, { error: profileError.message })
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
+    // If profile doesn't exist, redirect to login (can't be admin without profile)
+    if (!profile) {
+      logSecurityEvent('admin_access_denied', request, { reason: 'no_profile', userId: user.id })
+      const redirectUrl = new URL('/login', request.url)
+      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+
     // If not admin or email not confirmed, redirect appropriately
-    if (!profile?.is_admin || profile?.verification_status !== 'approved' || !profile?.email_confirmed) {
-      logSecurityEvent('admin_access_denied', request, { 
-        reason: profile?.is_admin ? 'email_not_confirmed' : 'not_admin', 
-        userId: user.id 
+    if (!profile.is_admin || profile.verification_status !== 'approved' || !profile.email_confirmed) {
+      logSecurityEvent('admin_access_denied', request, {
+        reason: profile.is_admin ? 'email_not_confirmed' : 'not_admin',
+        userId: user.id
       })
-      
+
       // Redirect based on verification status
-      if (profile?.verification_status === 'pending') {
+      if (profile.verification_status === 'pending') {
         const redirectUrl = new URL('/waitlist', request.url)
         return NextResponse.redirect(redirectUrl)
-      } else if (profile?.verification_status === 'approved' && !profile?.email_confirmed) {
+      } else if (profile.verification_status === 'approved' && !profile.email_confirmed) {
         const redirectUrl = new URL('/verify-email', request.url)
         return NextResponse.redirect(redirectUrl)
       } else {
@@ -169,27 +187,35 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Get user profile to check verification and email confirmation status
+    // Use maybeSingle() to handle race condition with profile creation trigger
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('verification_status, email_confirmed')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
 
     if (profileError) {
       logSecurityEvent('profile_check_error', request, { error: profileError.message })
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 
+    // If profile doesn't exist (new signup, trigger still running), redirect to waitlist
+    if (!profile) {
+      logSecurityEvent('protected_access_new_signup', request, { reason: 'profile_pending_creation' })
+      const redirectUrl = new URL('/waitlist', request.url)
+      return NextResponse.redirect(redirectUrl)
+    }
+
     // Redirect based on user status
-    if (profile?.verification_status === 'pending') {
+    if (profile.verification_status === 'pending') {
       // Pending users should use the waitlist
       const redirectUrl = new URL('/waitlist', request.url)
       return NextResponse.redirect(redirectUrl)
-    } else if (profile?.verification_status === 'rejected') {
+    } else if (profile.verification_status === 'rejected') {
       // Rejected users should go to waitlist to reapply
       const redirectUrl = new URL('/waitlist', request.url)
       return NextResponse.redirect(redirectUrl)
-    } else if (profile?.verification_status === 'approved' && !profile?.email_confirmed) {
+    } else if (profile.verification_status === 'approved' && !profile.email_confirmed) {
       // Approved users need email confirmation for protected routes
       logSecurityEvent('protected_access_denied', request, { 
         reason: 'email_not_confirmed',
