@@ -28,15 +28,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin
+    // Check if user is admin and verified
     const { data: profile } = await supabase
       .from('profiles')
-      .select('is_admin')
+      .select('is_admin, verification_status')
       .eq('id', user.id)
       .single()
 
     if (!profile?.is_admin) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    }
+
+    if (profile.verification_status !== 'approved') {
+      return NextResponse.json({ error: 'Admin not verified' }, { status: 403 })
     }
 
     // Parse query parameters
@@ -107,15 +111,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is admin
+    // Check if user is admin and verified
     const { data: adminProfile } = await supabase
       .from('profiles')
-      .select('is_admin, name')
+      .select('is_admin, name, verification_status')
       .eq('id', user.id)
       .single()
 
     if (!adminProfile?.is_admin) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
+    }
+
+    if (adminProfile.verification_status !== 'approved') {
+      return NextResponse.json({ error: 'Admin not verified' }, { status: 403 })
     }
 
     // Parse and validate request body

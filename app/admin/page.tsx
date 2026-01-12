@@ -1,11 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { OptimizedQueries } from '@/lib/db-cache'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, Handshake, Shield, BarChart3, TrendingUp, FileText, AlertCircle } from 'lucide-react'
+import { Users, Heart, Shield, BarChart3, TrendingUp, FileText, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { redirect } from 'next/navigation'
-import { AdminPageClient } from './AdminPageClient'
 
 // Force dynamic rendering since this page uses authentication
 export const dynamic = 'force-dynamic'
@@ -15,12 +14,6 @@ export default async function AdminDashboard() {
   let totalHelpRequests = 0
   let openHelpRequests = 0
   let pendingApplications = 0
-  let userData = {
-    id: '',
-    name: 'Admin',
-    email: '',
-    isAdmin: true
-  }
 
   try {
     const supabase = await createClient()
@@ -32,18 +25,16 @@ export default async function AdminDashboard() {
       redirect('/login?redirectTo=/admin')
     }
 
-    // Fetch user profile for navigation
+    // Fetch user profile to verify admin status
     const { data: profile } = await supabase
       .from('profiles')
-      .select('name, is_admin')
+      .select('is_admin')
       .eq('id', user.id)
       .single()
 
-    userData = {
-      id: user.id,
-      name: profile?.name || user.email?.split('@')[0] || 'Admin',
-      email: user.email || '',
-      isAdmin: profile?.is_admin || true
+    // Redirect non-admin users
+    if (!profile?.is_admin) {
+      redirect('/dashboard')
     }
 
     const [
@@ -100,8 +91,8 @@ export default async function AdminDashboard() {
   ]
 
   return (
-    <AdminPageClient user={userData}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+    <>
+      <div className="space-y-6">
         {/* Admin Notice */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-8">
           <h2 className="text-base sm:text-lg font-semibold text-blue-900 mb-1 sm:mb-2 flex items-center gap-2">
@@ -180,7 +171,7 @@ export default async function AdminDashboard() {
             </Link>
             <Link href="/admin/help-requests">
               <Button variant="outline" className="w-full justify-start gap-2">
-                <Handshake className="w-4 h-4" aria-hidden="true" />
+                <Heart className="w-4 h-4" aria-hidden="true" />
                 Review Help Requests
               </Button>
             </Link>
@@ -237,6 +228,6 @@ export default async function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
-    </AdminPageClient>
+    </>
   )
 }
