@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { signOut } from '@/lib/auth'
+import { overlock } from '@/lib/fonts'
 import { useState } from 'react'
 
 interface LogoutButtonProps {
@@ -33,7 +34,7 @@ export function LogoutButton({ variant = 'destructive', size = 'sm', className }
       size={size}
       onClick={handleLogout}
       disabled={isLoading}
-      className={`text-white focus:ring-[#D8837C]/50 font-overlock ${className}`}
+      className={`text-white focus:ring-[#D8837C]/50 ${overlock.className} ${className}`}
       style={{ backgroundColor: isHovered ? '#C7726C' : '#D8837C' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

@@ -108,7 +108,7 @@ export function PrivacyDashboard({ userId, className }: PrivacyDashboardProps): 
         .from('data_export_requests')
         .select('*')
         .eq('user_id', userId)
-        .order('created_at', { ascending: false })
+        .order('requested_at', { ascending: false })
 
       if (exportsError) throw exportsError
       setExportRequests(exports)
