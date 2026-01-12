@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { emailService } from '@/lib/email-service'
 
 // Email templates for different notification types
@@ -144,8 +145,9 @@ export async function POST(request: NextRequest) {
     if (type === 'new_application') {
       userEmail = user.email || ''
     } else if (type === 'status_change' && userId) {
-      // Get the target user's email
-      const { data: targetUser } = await supabase.auth.admin.getUserById(userId)
+      // Get the target user's email using admin client (requires service role key)
+      const adminClient = createAdminClient()
+      const { data: targetUser } = await adminClient.auth.admin.getUserById(userId)
       userEmail = targetUser?.user?.email || ''
     }
 
