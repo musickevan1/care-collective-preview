@@ -76,9 +76,14 @@ export async function GET(request: NextRequest) {
             })
           } catch (profileError) {
             // Profile doesn't exist - check if this is a new OAuth user
+            // Check both app_metadata.provider AND linked identities
+            // (handles case where user originally signed up with email but now uses Google)
             const provider = user.app_metadata?.provider
+            const identities = user.identities || []
+            const hasGoogleIdentity = identities.some(i => i.provider === 'google')
+            const isGoogleAuth = provider === 'google' || hasGoogleIdentity
 
-            if (provider === 'google') {
+            if (isGoogleAuth) {
               // Create profile for new Google OAuth user
               console.log('[Auth Callback] New Google OAuth user, creating profile:', {
                 userId: user.id,
