@@ -155,7 +155,7 @@ export default function AdminLayout({ children }: AdminLayoutProps): ReactElemen
   }
 
   return (
-    <PlatformLayout user={user || undefined}>
+    <PlatformLayout user={user || undefined} mobileNavVariant="admin">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
         {/* Admin page header */}
         <div className="mb-6">
