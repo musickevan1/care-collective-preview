@@ -19,6 +19,7 @@ export default function SignUpPage() {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
   const [applicationReason, setApplicationReason] = useState('')
+  const [caregivingSituation, setCaregivingSituation] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [waiverAcknowledged, setWaiverAcknowledged] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -61,6 +62,7 @@ export default function SignUpPage() {
             name: name,
             location: location,
             application_reason: applicationReason,
+            caregiving_situation: caregivingSituation || null,
             terms_accepted_at: new Date().toISOString(),
             terms_version: '1.0',
             waiver_acknowledged_at: new Date().toISOString(),
@@ -295,6 +297,28 @@ export default function SignUpPage() {
                 />
                 <p className="text-xs text-muted-foreground">
                   This helps us understand what brings you here.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="caregivingSituation" className="text-sm font-medium text-foreground">
+                  Caregiving Situation <span className="text-muted-foreground">(optional)</span>
+                </label>
+                <Textarea
+                  id="caregivingSituation"
+                  value={caregivingSituation}
+                  onChange={(e) => setCaregivingSituation(e.target.value)}
+                  placeholder="e.g., 'Caring for aging parent with mobility challenges' or 'Single parent of two young children'"
+                  disabled={loading}
+                  rows={3}
+                  maxLength={500}
+                  aria-describedby="caregivingSituation-hint"
+                />
+                <p id="caregivingSituation-hint" className="text-xs text-muted-foreground">
+                  Share your caregiving context to help us understand your needs better.
+                  <span className="ml-1 text-muted-foreground/70">
+                    ({caregivingSituation.length}/500)
+                  </span>
                 </p>
               </div>
 

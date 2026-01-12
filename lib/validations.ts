@@ -44,7 +44,14 @@ export const signupSchema = z.object({
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
   termsAccepted: z.literal(true, {
     message: 'You must accept the Terms of Service'
-  })
+  }),
+  caregiving_situation: z
+    .string()
+    .max(500, 'Caregiving situation description too long (max 500 characters)')
+    .transform(sanitizeString)
+    .refine((s) => !validator.contains(s, '<script'), 'Invalid characters in description')
+    .optional()
+    .nullable(),
 })
 
 // Help request schemas

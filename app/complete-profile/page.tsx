@@ -16,6 +16,7 @@ export default function CompleteProfilePage(): ReactElement {
   const [name, setName] = useState('')
   const [location, setLocation] = useState('')
   const [applicationReason, setApplicationReason] = useState('')
+  const [caregivingSituation, setCaregivingSituation] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [signatureData, setSignatureData] = useState<SignatureData | null>(null)
   const [loading, setLoading] = useState(false)
@@ -83,6 +84,7 @@ export default function CompleteProfilePage(): ReactElement {
         name: name.trim(),
         location: location.trim(),
         application_reason: applicationReason.trim(),
+        caregiving_situation: caregivingSituation.trim() || null,
         terms_accepted: true,
         waiver_signature: signatureData,
       }
@@ -226,6 +228,28 @@ export default function CompleteProfilePage(): ReactElement {
                     This helps us understand what brings you here.{' '}
                     <span className={applicationReason.length < 10 ? 'text-primary font-medium' : 'text-sage'}>
                       ({applicationReason.length}/10 min)
+                    </span>
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="caregivingSituation" className="text-sm font-medium text-foreground">
+                    Caregiving Situation <span className="text-muted-foreground">(optional)</span>
+                  </label>
+                  <Textarea
+                    id="caregivingSituation"
+                    value={caregivingSituation}
+                    onChange={(e) => setCaregivingSituation(e.target.value)}
+                    placeholder="e.g., 'Caring for aging parent with mobility challenges' or 'Single parent of two young children'"
+                    disabled={loading}
+                    rows={3}
+                    maxLength={500}
+                    aria-describedby="caregivingSituation-hint"
+                  />
+                  <p id="caregivingSituation-hint" className="text-xs text-muted-foreground">
+                    Share your caregiving context to help us understand your needs better.
+                    <span className="ml-1 text-muted-foreground/70">
+                      ({caregivingSituation.length}/500)
                     </span>
                   </p>
                 </div>
