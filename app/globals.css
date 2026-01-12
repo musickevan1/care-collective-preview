@@ -97,6 +97,11 @@ p {
   line-height: 1.7;
 }
 
+/* Ensure all buttons use brand font */
+button, [role="button"] {
+  font-family: var(--font-family-sans);
+}
+
 /* Improved readability for card descriptions and small text */
 .text-xs {
   font-size: 0.8125rem; /* 13px instead of 12px */
