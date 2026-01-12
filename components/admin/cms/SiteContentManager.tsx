@@ -10,6 +10,35 @@ import type { Tables } from '@/lib/database.types';
 
 type SiteContent = Tables<'site_content'>;
 
+// Type guards for JSONB content validation
+// Handles both legacy data (objects with title/description/icon) and new data (strings)
+
+/**
+ * Extract display text from various content structures.
+ * Handles: strings, objects with title/name fields, or falls back to JSON.
+ */
+function getDisplayValue(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object' && value !== null) {
+    const obj = value as Record<string, unknown>;
+    // Handle {title, description, icon} objects from legacy data
+    if (typeof obj.title === 'string') return obj.title;
+    if (typeof obj.name === 'string') return obj.name;
+    // Fallback: show structured data for debugging
+    return JSON.stringify(value);
+  }
+  return String(value ?? '');
+}
+
+/**
+ * Convert values array to comma-separated string for editing.
+ * Safely handles both string arrays and object arrays.
+ */
+function valuesToEditString(values: unknown): string {
+  if (!Array.isArray(values)) return '';
+  return values.map(getDisplayValue).join(', ');
+}
+
 interface SiteContentManagerProps {
   adminUserId: string;
 }
@@ -203,12 +232,12 @@ export function SiteContentManager({ adminUserId }: SiteContentManagerProps): Re
                   <Input
                     id="values"
                     placeholder="Community, Support, Empowerment"
-                    value={(activeFormData.values || []).join(', ')}
+                    value={valuesToEditString(activeFormData.values)}
                     onChange={(e) =>
                       updateField(
                         activeTab,
                         'values',
-                        e.target.value.split(',').map((v) => v.trim())
+                        e.target.value.split(',').map((v) => v.trim()).filter(Boolean)
                       )
                     }
                     className="min-h-[44px]"
@@ -244,21 +273,22 @@ export function SiteContentManager({ adminUserId }: SiteContentManagerProps): Re
               <CardDescription>Current draft version</CardDescription>
             </CardHeader>
             <CardContent>
-              {activeFormData.heading && (
+              {/* Defensive type checks for JSONB content */}
+              {typeof activeFormData.heading === 'string' && activeFormData.heading && (
                 <h2 className="text-2xl font-bold mb-3">{activeFormData.heading}</h2>
               )}
-              {activeFormData.body && (
+              {typeof activeFormData.body === 'string' && activeFormData.body && (
                 <p className="text-muted-foreground mb-4 whitespace-pre-wrap">
                   {activeFormData.body}
                 </p>
               )}
-              {activeTab === 'mission' && activeFormData.values?.length > 0 && (
+              {activeTab === 'mission' && Array.isArray(activeFormData.values) && activeFormData.values.length > 0 && (
                 <div>
                   <h3 className="font-semibold mb-2">Core Values:</h3>
                   <ul className="list-disc list-inside space-y-1">
-                    {activeFormData.values.map((value: string, idx: number) => (
+                    {activeFormData.values.map((value: unknown, idx: number) => (
                       <li key={idx} className="text-muted-foreground">
-                        {value}
+                        {getDisplayValue(value)}
                       </li>
                     ))}
                   </ul>
