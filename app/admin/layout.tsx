@@ -4,19 +4,18 @@ import { ReactElement, ReactNode, useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  LayoutDashboard,
+  Home,
   Users,
   FileText,
-  Handshake,
+  Heart,
   BarChart3,
   TrendingUp,
-  FileEdit,
   AlertCircle,
-  MessageSquare,
-  Lock,
-  ArrowLeft,
+  MessageCircle,
   Shield,
   Loader2,
+  Settings,
+  ArrowLeft,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PlatformLayout } from '@/components/layout/PlatformLayout'
@@ -37,7 +36,7 @@ const adminNav = [
   {
     name: 'Overview',
     href: '/admin',
-    icon: LayoutDashboard,
+    icon: Home,
     description: 'Dashboard and key metrics',
   },
   {
@@ -55,7 +54,7 @@ const adminNav = [
   {
     name: 'Review Help Requests',
     href: '/admin/help-requests',
-    icon: Handshake,
+    icon: Heart,
     description: 'Moderate community requests',
   },
   {
@@ -73,7 +72,7 @@ const adminNav = [
   {
     name: 'Content Management',
     href: '/admin/cms',
-    icon: FileEdit,
+    icon: Settings,
     description: 'Manage site content',
   },
   {
@@ -85,13 +84,13 @@ const adminNav = [
   {
     name: 'Message Moderation',
     href: '/admin/messaging/moderation',
-    icon: MessageSquare,
+    icon: MessageCircle,
     description: 'Moderate community messages',
   },
   {
     name: 'Privacy Dashboard',
     href: '/admin/privacy',
-    icon: Lock,
+    icon: Shield,
     description: 'Privacy violations and security',
   },
 ]

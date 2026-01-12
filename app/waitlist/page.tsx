@@ -25,6 +25,7 @@ interface UserProfile {
 export default function WaitlistPage(): ReactElement {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [settingUp, setSettingUp] = useState(false)
   const [error, setError] = useState('')
   const [isReapplying, setIsReapplying] = useState(false)
   const [reapplicationData, setReapplicationData] = useState({
@@ -35,11 +36,39 @@ export default function WaitlistPage(): ReactElement {
   const supabase = createClient()
 
   useEffect(() => {
+    const MAX_RETRIES = 5
+    const RETRY_DELAY = 2000 // 2 seconds
+
+    async function fetchProfileWithRetry(userId: string): Promise<UserProfile | null> {
+      for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, name, location, verification_status, application_reason, applied_at, rejection_reason')
+          .eq('id', userId)
+          .maybeSingle()
+
+        if (error) {
+          console.error('Error fetching profile:', error)
+          return null
+        }
+
+        if (data) {
+          return data as UserProfile
+        }
+
+        // Profile doesn't exist yet - wait before retry
+        if (attempt < MAX_RETRIES - 1) {
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY))
+        }
+      }
+      return null
+    }
+
     async function getProfile() {
       try {
         // First verify we have a valid session
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
+
         if (sessionError) {
           console.error('Session error:', sessionError)
           setError('Session expired. Please log in again.')
@@ -50,7 +79,7 @@ export default function WaitlistPage(): ReactElement {
         if (!session?.user) {
           // Try to refresh session once before giving up
           const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession()
-          
+
           if (refreshError || !refreshedSession?.user) {
             setError('Please log in to view your application status.')
             setLoading(false)
@@ -59,32 +88,55 @@ export default function WaitlistPage(): ReactElement {
         }
 
         const { data: { user } } = await supabase.auth.getUser()
-        
+
         if (!user) {
           setError('Authentication failed. Please log in again.')
           setLoading(false)
           return
         }
 
+        // Try to fetch profile, with retries for new signups where trigger may not have completed
         const { data, error } = await supabase
           .from('profiles')
           .select('id, name, location, verification_status, application_reason, applied_at, rejection_reason')
           .eq('id', user.id)
-          .single()
+          .maybeSingle()
 
         if (error) {
           console.error('Error fetching profile:', error)
           setError('Unable to load your application status.')
-        } else {
-          setProfile(data)
+          setLoading(false)
+          return
+        }
+
+        if (data) {
+          setProfile(data as UserProfile)
           setReapplicationData({
             applicationReason: data.application_reason || ''
           })
+          setLoading(false)
+          return
+        }
+
+        // Profile doesn't exist yet - show "setting up" state and retry
+        setLoading(false)
+        setSettingUp(true)
+
+        const profileData = await fetchProfileWithRetry(user.id)
+
+        if (profileData) {
+          setProfile(profileData)
+          setReapplicationData({
+            applicationReason: profileData.application_reason || ''
+          })
+          setSettingUp(false)
+        } else {
+          setSettingUp(false)
+          setError('Unable to load your application status. Please try refreshing the page.')
         }
       } catch (err) {
         console.error('Error:', err)
         setError('An unexpected error occurred.')
-      } finally {
         setLoading(false)
       }
     }
@@ -158,6 +210,26 @@ export default function WaitlistPage(): ReactElement {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground">Loading your application status...</p>
           </div>
+        </div>
+      </PublicPageLayout>
+    )
+  }
+
+  if (settingUp) {
+    return (
+      <PublicPageLayout>
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">Setting Up Your Profile</CardTitle>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground">
+                We&apos;re finishing up your account setup. This should only take a moment...
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </PublicPageLayout>
     )
