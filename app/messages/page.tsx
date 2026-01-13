@@ -44,10 +44,13 @@ async function getMessagingData(userId: string) {
     const supabase = await createClient();
 
     // Get conversations using the list_conversations_v2 RPC
+    // Pass null to get all statuses, then filter client-side
+    // This is needed because system conversations have status='active'
+    // while regular accepted conversations have status='accepted'
     const { data: conversationsResponse, error: conversationsError } = await supabase
       .rpc('list_conversations_v2', {
         p_user_id: userId,
-        p_status: 'active'
+        p_status: null  // Get all statuses
       });
 
     if (conversationsError) {
@@ -67,7 +70,7 @@ async function getMessagingData(userId: string) {
     }
 
     // Format conversations from RPC response
-    const conversations = result.conversations.map((conv: any) => {
+    const allConversations = result.conversations.map((conv: any) => {
       // Transform other_participant object to participants array format
       const participants = conv.other_participant ? [{
         user_id: conv.other_participant.id,
@@ -103,6 +106,13 @@ async function getMessagingData(userId: string) {
         is_system_conversation: conv.is_system_conversation || false
       };
     });
+
+    // Filter to show only active conversations:
+    // - 'active' status: system conversations (CARE Team welcome message)
+    // - 'accepted' status: regular user conversations that have been accepted
+    const conversations = allConversations.filter((conv: any) =>
+      conv.status === 'active' || conv.status === 'accepted'
+    );
 
     // Calculate total unread
     const unreadCount = conversations.reduce((sum: number, conv: any) => sum + (conv.unread_count || 0), 0);

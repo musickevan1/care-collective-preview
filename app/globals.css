@@ -278,15 +278,20 @@ button, [role="button"] {
 :root {
   /* Fallback for browsers without dvh support */
   --vh: 1vh;
+  /* Header heights for messaging page */
+  --navbar-height: 64px;
+  --messaging-context-height: 54px;
+  --messaging-total-header: calc(var(--navbar-height) + var(--messaging-context-height));
 }
 
 /* Messaging page container - handles mobile URL bar properly */
 .messaging-page-container {
-  /* Use dvh (dynamic viewport height) on modern browsers */
-  height: calc(100dvh - 64px);
+  /* Use dvh (dynamic viewport height) on modern browsers
+     Account for both navbar (64px) and messaging context bar (~54px) */
+  height: calc(100dvh - var(--messaging-total-header));
 
   /* Fallback for older browsers */
-  height: calc(var(--vh, 1vh) * 100 - 64px);
+  height: calc(var(--vh, 1vh) * 100 - 118px);
 
   /* Ensure it fills the space */
   min-height: 0;
@@ -297,7 +302,7 @@ button, [role="button"] {
 /* Modern browsers: Use dvh for dynamic viewport */
 @supports (height: 100dvh) {
   .messaging-page-container {
-    height: calc(100dvh - 64px);
+    height: calc(100dvh - var(--messaging-total-header));
   }
 }
 

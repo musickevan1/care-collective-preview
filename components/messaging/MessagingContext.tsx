@@ -86,7 +86,7 @@ export function MessagingProvider({
   isMobile,
   onMobileNavigate
 }: MessagingProviderProps): ReactElement {
-  const [conversations] = useState<ConversationWithDetails[]>(initialConversations)
+  const [conversations, setConversations] = useState<ConversationWithDetails[]>(initialConversations)
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null)
   const [messageThread, setMessageThread] = useState<MessageThread>({
     messages: [],
@@ -169,6 +169,22 @@ export function MessagingProvider({
         sender: profileMap.get(msg.sender_id)
       })) || []
 
+      // Prepend initial_message if it exists (for welcome messages and conversation starters)
+      // This bridges the gap between conversations_v2.initial_message and messages_v2 table
+      const allMessages = [];
+      if (conversation.initial_message) {
+        allMessages.push({
+          id: `initial-${conversation.id}`,
+          conversation_id: conversation.id,
+          sender_id: conversation.helper_id,
+          content: conversation.initial_message,
+          message_type: 'text',
+          created_at: conversation.created_at,
+          sender: helperProfile || { id: conversation.helper_id, name: 'CARE Team', location: '' }
+        });
+      }
+      allMessages.push(...messagesWithSenders);
+
       // Build participants array
       const participants = [
         {
@@ -193,7 +209,7 @@ export function MessagingProvider({
       }
 
       setMessageThread({
-        messages: messagesWithSenders,
+        messages: allMessages,
         conversation: conversationWithDetails,
         loading: false,
         error: null,
@@ -372,6 +388,59 @@ export function MessagingProvider({
   }, [supabase, userId])
 
   /**
+   * Refresh conversations list
+   * Called after accepting an offer to update the Active tab
+   */
+  const refreshConversations = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.rpc('list_conversations_v2', {
+        p_user_id: userId,
+        p_status: null  // Get all statuses
+      })
+
+      if (error) {
+        console.error('Error refreshing conversations:', error)
+        return
+      }
+
+      const result = data as any
+      if (result.success && result.conversations) {
+        // Filter for active (system) and accepted (regular) conversations
+        const activeConversations = result.conversations
+          .filter((conv: any) => conv.status === 'active' || conv.status === 'accepted')
+          .map((conv: any) => {
+            const participants = conv.other_participant ? [{
+              user_id: conv.other_participant.id,
+              name: conv.other_participant.name || 'Unknown',
+              location: conv.other_participant.location,
+              role: 'member' as const,
+              is_system_user: conv.other_participant.is_system_user || false
+            }] : []
+
+            return {
+              id: conv.id,
+              help_request_id: conv.help_request_id,
+              created_by: conv.requester_id,
+              title: conv.help_request?.title || 'Conversation',
+              status: conv.status,
+              created_at: conv.created_at,
+              updated_at: conv.updated_at,
+              last_message_at: conv.last_message_at || conv.created_at,
+              unread_count: conv.unread_count || 0,
+              participants,
+              help_request: conv.help_request || undefined,
+              is_system_conversation: conv.is_system_conversation || false
+            }
+          })
+
+        setConversations(activeConversations)
+      }
+    } catch (error) {
+      console.error('Error refreshing conversations:', error)
+    }
+  }, [supabase, userId])
+
+  /**
    * Accept an offer
    */
   const handleAcceptOffer = useCallback(async (conversationId: string) => {
@@ -385,6 +454,7 @@ export function MessagingProvider({
 
       if (result.success) {
         await loadPendingOffers()
+        await refreshConversations()  // Refresh the Active conversations list
         await loadMessages(conversationId)
         setActiveTab('active')
         setSelectedConversation(conversationId)
@@ -394,7 +464,7 @@ export function MessagingProvider({
     } catch (error) {
       console.error('Error accepting offer:', error)
     }
-  }, [loadPendingOffers, loadMessages])
+  }, [loadPendingOffers, loadMessages, refreshConversations])
 
   /**
    * Reject an offer
