@@ -20,7 +20,7 @@ const completeProfileSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100, 'Name too long'),
   location: z.string().min(1, 'Location is required').max(100, 'Location too long'),
   application_reason: z.string().min(10, 'Please provide a bit more detail').max(500, 'Reason too long'),
-  caregiving_situation: z.string().max(500, 'Caregiving situation too long').optional().nullable(),
+  caregiving_situation: z.string().min(1, 'Caregiving situation is required').max(500, 'Caregiving situation too long'),
   terms_accepted: z.literal(true, { message: 'You must accept the terms' }),
   waiver_signature: waiverSignatureSchema,
 })

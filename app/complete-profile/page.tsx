@@ -76,6 +76,11 @@ export default function CompleteProfilePage(): ReactElement {
       return
     }
 
+    if (!caregivingSituation.trim()) {
+      setError('Please describe your caregiving situation.')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -84,7 +89,7 @@ export default function CompleteProfilePage(): ReactElement {
         name: name.trim(),
         location: location.trim(),
         application_reason: applicationReason.trim(),
-        caregiving_situation: caregivingSituation.trim() || null,
+        caregiving_situation: caregivingSituation.trim(),
         terms_accepted: true,
         waiver_signature: signatureData,
       }
@@ -234,16 +239,17 @@ export default function CompleteProfilePage(): ReactElement {
 
                 <div className="space-y-2">
                   <label htmlFor="caregivingSituation" className="text-sm font-medium text-foreground">
-                    Caregiving Situation <span className="text-muted-foreground">(optional)</span>
+                    Caregiving Situation <span className="text-primary">*</span>
                   </label>
                   <Textarea
                     id="caregivingSituation"
                     value={caregivingSituation}
                     onChange={(e) => setCaregivingSituation(e.target.value)}
-                    placeholder="e.g., 'Caring for aging parent with mobility challenges' or 'Single parent of two young children'"
+                    placeholder="e.g., 'Caring for aging parent with mobility challenges'"
                     disabled={loading}
                     rows={3}
                     maxLength={500}
+                    required
                     aria-describedby="caregivingSituation-hint"
                   />
                   <p id="caregivingSituation-hint" className="text-xs text-muted-foreground">
@@ -304,7 +310,7 @@ export default function CompleteProfilePage(): ReactElement {
                   type="submit"
                   className="w-full"
                   size="lg"
-                  disabled={loading || !termsAccepted || applicationReason.trim().length < 10 || !signatureData}
+                  disabled={loading || !termsAccepted || applicationReason.trim().length < 10 || !caregivingSituation.trim() || !signatureData}
                 >
                   {loading ? 'Submitting...' : 'Complete Application'}
                 </Button>

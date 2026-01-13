@@ -47,11 +47,10 @@ export const signupSchema = z.object({
   }),
   caregiving_situation: z
     .string()
+    .min(1, 'Caregiving situation is required')
     .max(500, 'Caregiving situation description too long (max 500 characters)')
     .transform(sanitizeString)
-    .refine((s) => !validator.contains(s, '<script'), 'Invalid characters in description')
-    .optional()
-    .nullable(),
+    .refine((s) => !validator.contains(s, '<script'), 'Invalid characters in description'),
 })
 
 // Help request schemas

@@ -56,6 +56,12 @@ export default function SignUpPage() {
       return
     }
 
+    if (!caregivingSituation.trim()) {
+      setError('Please describe your caregiving situation.')
+      setLoading(false)
+      return
+    }
+
     signupPromise = (async () => {
       try {
         const { data: signUpData, error } = await supabase.auth.signUp({
@@ -66,7 +72,7 @@ export default function SignUpPage() {
             name: name,
             location: location,
             application_reason: applicationReason,
-            caregiving_situation: caregivingSituation || null,
+            caregiving_situation: caregivingSituation,
             terms_accepted_at: new Date().toISOString(),
             terms_version: '1.0',
             // Waiver signature saved via /api/auth/save-waiver after signup
@@ -330,16 +336,17 @@ export default function SignUpPage() {
 
               <div className="space-y-2">
                 <label htmlFor="caregivingSituation" className="text-sm font-medium text-foreground">
-                  Caregiving Situation <span className="text-muted-foreground">(optional)</span>
+                  Caregiving Situation <span className="text-primary">*</span>
                 </label>
                 <Textarea
                   id="caregivingSituation"
                   value={caregivingSituation}
                   onChange={(e) => setCaregivingSituation(e.target.value)}
-                  placeholder="e.g., 'Caring for aging parent with mobility challenges' or 'Single parent of two young children'"
+                  placeholder="e.g., 'Caring for aging parent with mobility challenges'"
                   disabled={loading}
                   rows={3}
                   maxLength={500}
+                  required
                   aria-describedby="caregivingSituation-hint"
                 />
                 <p id="caregivingSituation-hint" className="text-xs text-muted-foreground">
@@ -400,7 +407,7 @@ export default function SignUpPage() {
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={loading || !termsAccepted || !signatureData}
+                disabled={loading || !termsAccepted || !caregivingSituation.trim() || !signatureData}
               >
                 {loading ? 'Creating Account...' : 'Create Account'}
               </Button>
