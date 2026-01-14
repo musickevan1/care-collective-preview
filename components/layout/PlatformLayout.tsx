@@ -255,10 +255,10 @@ export function PlatformLayout({
               </div>
               
               <Button
-                variant="outline" 
+                variant="outline"
                 size="sm"
                 asChild
-                className="border-sage/30 text-sage hover:bg-sage/5"
+                className="border-sage/30 text-sage hover:bg-sage/5 whitespace-nowrap"
               >
                 <Link href="/requests">
                   <Search className="w-4 h-4 mr-2" />
