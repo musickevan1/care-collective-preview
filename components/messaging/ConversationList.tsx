@@ -79,9 +79,10 @@ function ConversationItem({
       data-testid="conversation-item"
       className={cn(
         "w-full h-auto p-4 justify-start text-left relative",
-        "hover:bg-muted/50 transition-colors duration-200",
-        "border border-transparent hover:border-muted",
-        isSelected && "bg-sage/10 border-sage/30 shadow-sm"
+        "bg-background shadow-sm rounded-xl",
+        "hover:shadow-md transition-all duration-200",
+        "border border-muted/30",
+        isSelected && "bg-sage/10 border-sage/30 shadow-md"
       )}
       aria-selected={isSelected}
       role="option"
@@ -115,8 +116,8 @@ function ConversationItem({
 
               {otherParticipant?.location && (
                 <div className="flex items-center gap-1 mt-1">
-                  <MapPin className="w-3 h-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground truncate">
+                  <MapPin className="w-3 h-3 text-muted-foreground/60" />
+                  <span className="text-xs text-muted-foreground/60 truncate">
                     {otherParticipant.location}
                   </span>
                 </div>
@@ -138,12 +139,14 @@ function ConversationItem({
         {conversation.help_request && (
           <div className="bg-muted/30 rounded-lg p-2 space-y-1">
             <div className="flex items-center gap-2">
-              <Badge 
-                variant="outline" 
-                className={cn("text-xs px-2 py-0.5", getUrgencyColor(conversation.help_request.urgency))}
-              >
-                {conversation.help_request.urgency}
-              </Badge>
+              {conversation.help_request.urgency !== 'normal' && (
+                <Badge
+                  variant="outline"
+                  className={cn("text-xs px-2 py-0.5", getUrgencyColor(conversation.help_request.urgency))}
+                >
+                  {conversation.help_request.urgency}
+                </Badge>
+              )}
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 {getStatusIcon(conversation.help_request.status)}
                 <span className="capitalize">{conversation.help_request.status.replace('_', ' ')}</span>
@@ -152,7 +155,7 @@ function ConversationItem({
             <h4 className="text-sm font-medium text-foreground line-clamp-1">
               {conversation.help_request.title}
             </h4>
-            <Badge variant="outline" className="text-xs">
+            <Badge className="text-xs bg-muted/50 border-0 text-muted-foreground font-medium">
               {conversation.help_request.category}
             </Badge>
           </div>
@@ -167,7 +170,7 @@ function ConversationItem({
                 : lastMessage.content
               }
             </p>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground/60">
               <span>{lastMessage.sender_name}</span>
               <span>•</span>
               <time dateTime={lastMessage.created_at}>
@@ -180,7 +183,7 @@ function ConversationItem({
         )}
 
         {/* Conversation metadata */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <div className="flex items-center justify-between text-sm text-muted-foreground/60">
           <div className="flex items-center gap-2">
             <MessageCircle className="w-4 h-4" />
             <span>

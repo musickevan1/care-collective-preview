@@ -82,6 +82,16 @@ export const selectors = {
     sendButton: '[data-testid="send-button"], button:has-text("Send")',
     backButton: '[aria-label="Back"], button:has-text("Back")',
     unreadBadge: '[data-testid="unread-badge"]',
+    // Tab navigation
+    activeTab: 'button[role="tab"]:has-text("Active")',
+    pendingTab: 'button[role="tab"]:has-text("Pending")',
+    // CARE Team welcome conversation
+    careTeamConversation: '[data-testid="conversation-item"]:has-text("CARE Team"), [role="option"]:has-text("CARE Team")',
+    welcomeMessage: 'text=/Welcome to CARE Collective messaging/i',
+    // Pending offers
+    pendingOfferCard: 'article[aria-label*="offer"]',
+    acceptOfferButton: 'button:has-text("Accept Offer")',
+    declineOfferButton: 'button:has-text("Decline")',
   },
 
   // Offer Help Dialog
