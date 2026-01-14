@@ -163,8 +163,8 @@ function ConversationItem({
 
         {/* Last message preview */}
         {lastMessage && (
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground line-clamp-2 break-words">
+          <div className="space-y-1 overflow-hidden w-full">
+            <p className="text-sm text-muted-foreground line-clamp-2 break-all">
               {lastMessage.message_type === 'system' 
                 ? `System: ${lastMessage.content}` 
                 : lastMessage.content
