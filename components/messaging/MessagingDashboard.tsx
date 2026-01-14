@@ -147,7 +147,7 @@ export function MessagingDashboard({
             : undefined
         }
       >
-        <div className="mx-auto w-full max-w-7xl flex">
+        <div className="mx-auto w-full max-w-7xl flex lg:px-4 xl:px-8">
           <ConversationPanel isMobile={isMobile} showConversationList={showConversationList} />
           <MessageThreadPanel
             isMobile={isMobile}

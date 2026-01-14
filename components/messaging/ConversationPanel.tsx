@@ -49,7 +49,7 @@ export function ConversationPanel({
   return (
     <div
       className={cn(
-        "flex flex-col border-r border-border bg-muted/20",
+        "flex flex-col border-r border-border bg-muted/40",
         isMobile
           ? (showConversationList ? "w-full" : "hidden")
           : "w-80 min-w-80",
@@ -93,8 +93,11 @@ export function ConversationPanel({
       {/* Tab Navigation */}
       <nav className="flex gap-2 border-b border-border px-4" role="tablist">
         <button
+          id="active-tab"
           role="tab"
           aria-selected={activeTab === 'active'}
+          aria-controls="active-tabpanel"
+          tabIndex={activeTab === 'active' ? 0 : -1}
           onClick={() => setActiveTab('active')}
           className={cn(
             "px-4 py-3 font-medium transition-colors relative text-sm",
@@ -106,8 +109,11 @@ export function ConversationPanel({
           Active ({conversations.length})
         </button>
         <button
+          id="pending-tab"
           role="tab"
           aria-selected={activeTab === 'pending'}
+          aria-controls="pending-tabpanel"
+          tabIndex={activeTab === 'pending' ? 0 : -1}
           onClick={() => setActiveTab('pending')}
           className={cn(
             "px-4 py-3 font-medium transition-colors relative text-sm",
@@ -122,7 +128,7 @@ export function ConversationPanel({
 
       {/* Conditional Content */}
       {activeTab === 'active' && (
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div id="active-tabpanel" role="tabpanel" aria-labelledby="active-tab" className="flex-1 flex flex-col overflow-hidden">
           {/* Welcome Banner for new users - compact variant */}
           <WelcomeBanner variant="compact" />
           
@@ -135,7 +141,7 @@ export function ConversationPanel({
         </div>
       )}
       {activeTab === 'pending' && (
-        <div className="flex-1 overflow-auto p-4">
+        <div id="pending-tabpanel" role="tabpanel" aria-labelledby="pending-tab" className="flex-1 overflow-auto p-4">
           <PendingOffersSection
             offers={pendingOffers}
             currentUserId={userId}

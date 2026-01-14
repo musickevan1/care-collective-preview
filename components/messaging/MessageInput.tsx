@@ -197,11 +197,11 @@ export function MessageInput({
           e.preventDefault()
           handleSendMessage()
         }}
-        className="space-y-3"
+        className="space-y-2"
       >
         {/* Pending conversation notice */}
         {isPending && (
-          <div className="flex items-center gap-2 text-sm text-yellow-700 bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-yellow-700 bg-yellow-50/80 border border-yellow-200/60 px-3 py-2 rounded-xl">
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>
               This conversation is pending. You can send messages once the recipient accepts your offer to help.
@@ -211,7 +211,7 @@ export function MessageInput({
 
         {/* Rejected conversation notice */}
         {isRejected && (
-          <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50/80 border border-red-200/60 px-3 py-2 rounded-xl">
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>
               This offer was declined. You cannot send messages in this conversation.
@@ -221,97 +221,95 @@ export function MessageInput({
 
         {/* Error display */}
         {error && (
-          <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-xl">
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        <div className="relative">
+        {/* Unified Input Bar - Organic warmth aesthetic */}
+        <div className={cn(
+          "flex items-end gap-2 p-2 rounded-2xl",
+          "bg-muted/25 border border-border/40",
+          "transition-all duration-200",
+          "focus-within:bg-muted/35 focus-within:border-sage/30 focus-within:shadow-sm"
+        )}>
           <Label htmlFor="message-input" className="sr-only">
             Message content
           </Label>
-          
-          <Textarea
-            id="message-input"
-            ref={textareaRef}
-            value={content}
-            onChange={handleContentChange}
-            onKeyDown={handleKeyDown}
-            placeholder={placeholder}
-            disabled={disabled || isSending}
-            autoFocus={autoFocus}
-            data-testid="message-input"
-            className={cn(
-              "min-h-[60px] max-h-[120px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-4 py-3",
-              "placeholder:text-muted-foreground",
-              isAtLimit && "border-destructive focus-visible:ring-destructive"
-            )}
-            style={{ height: minHeight }}
-            rows={1}
-            aria-describedby={showCharacterCount ? "character-count" : undefined}
-          />
 
-          {/* Character count and actions */}
-          <div className="absolute bottom-2 right-2 flex items-center gap-2">
+          {/* Textarea - blends into container */}
+          <div className="flex-1 relative group">
+            <Textarea
+              id="message-input"
+              ref={textareaRef}
+              value={content}
+              onChange={handleContentChange}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              disabled={disabled || isSending || isPending || isRejected}
+              autoFocus={autoFocus}
+              data-testid="message-input"
+              className={cn(
+                "min-h-[44px] max-h-[120px] resize-none",
+                "bg-transparent border-0",
+                "focus-visible:ring-0 focus-visible:ring-offset-0",
+                "px-3 py-2.5 text-sm leading-relaxed",
+                "placeholder:text-muted-foreground/60",
+                isAtLimit && "text-destructive"
+              )}
+              style={{ height: minHeight }}
+              rows={1}
+              aria-describedby={showCharacterCount ? "character-count" : undefined}
+            />
+
+            {/* Character count - subtle, only prominent when near limit */}
             {showCharacterCount && (
-              <span 
+              <span
                 id="character-count"
                 className={cn(
-                  "text-xs",
-                  isAtLimit 
-                    ? "text-destructive" 
-                    : isNearLimit 
-                      ? "text-yellow-600" 
-                      : "text-muted-foreground"
+                  "absolute bottom-1.5 right-2 text-[10px] tabular-nums transition-opacity duration-200",
+                  isAtLimit
+                    ? "text-destructive font-medium opacity-100"
+                    : isNearLimit
+                      ? "text-yellow-600 opacity-100"
+                      : "text-muted-foreground/50 opacity-0 group-focus-within:opacity-100"
                 )}
                 aria-live="polite"
               >
                 {characterCount}/{maxLength}
               </span>
             )}
-
-            {/* Future: File attachment button */}
-            {/* <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              disabled={disabled || isSending}
-              aria-label="Attach file"
-            >
-              <Paperclip className="w-4 h-4" />
-            </Button> */}
           </div>
-        </div>
 
-        {/* Send button */}
-        <div className="flex items-center justify-end">
+          {/* Circular Send Button - inline with input */}
           <Button
             type="submit"
+            size="icon"
             disabled={!canSend}
             data-testid="send-button"
             className={cn(
+              "shrink-0 h-11 w-11 rounded-full",
               "bg-sage hover:bg-sage-dark text-white",
-              "disabled:opacity-50 disabled:cursor-not-allowed",
-              "transition-all duration-200 hover:shadow-md",
+              "disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-muted",
+              "transition-all duration-200",
+              "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]",
               "messaging-action-button"
             )}
             aria-label={isSending ? "Sending message..." : "Send message"}
           >
             {isSending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Sending...
-              </>
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <>
-                <Send className="w-4 h-4 mr-2" />
-                Send
-              </>
+              <Send className="w-4 h-4" />
             )}
           </Button>
         </div>
+
+        {/* Keyboard hint - subtle */}
+        <p className="text-[10px] text-muted-foreground/50 text-center">
+          {isTouchDevice ? 'Enter to send' : 'Ctrl+Enter to send'}
+        </p>
 
         {/* Accessibility hints */}
         <div className="sr-only" aria-live="polite">

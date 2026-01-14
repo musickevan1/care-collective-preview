@@ -177,4 +177,150 @@ export class MessagesPage extends BasePage {
       return false
     }
   }
+
+  // ===== Tab Navigation Methods =====
+
+  /**
+   * Get the Active tab button
+   */
+  getActiveTab(): Locator {
+    return this.page.locator(selectors.messages.activeTab)
+  }
+
+  /**
+   * Get the Pending tab button
+   */
+  getPendingTab(): Locator {
+    return this.page.locator(selectors.messages.pendingTab)
+  }
+
+  /**
+   * Click the Active tab
+   */
+  async clickActiveTab(): Promise<void> {
+    await this.getActiveTab().click()
+    await this.page.waitForTimeout(300)
+  }
+
+  /**
+   * Click the Pending tab
+   */
+  async clickPendingTab(): Promise<void> {
+    await this.getPendingTab().click()
+    await this.page.waitForTimeout(300)
+  }
+
+  /**
+   * Get the count from "Active (N)" tab text
+   */
+  async getActiveTabCount(): Promise<number> {
+    const text = await this.getActiveTab().textContent()
+    const match = text?.match(/Active \((\d+)\)/)
+    return match ? parseInt(match[1], 10) : 0
+  }
+
+  /**
+   * Get the count from "Pending (N)" tab text
+   */
+  async getPendingTabCount(): Promise<number> {
+    const text = await this.getPendingTab().textContent()
+    const match = text?.match(/Pending \((\d+)\)/)
+    return match ? parseInt(match[1], 10) : 0
+  }
+
+  /**
+   * Check if Active tab is selected
+   */
+  async isActiveTabSelected(): Promise<boolean> {
+    const selected = await this.getActiveTab().getAttribute('aria-selected')
+    return selected === 'true'
+  }
+
+  /**
+   * Check if Pending tab is selected
+   */
+  async isPendingTabSelected(): Promise<boolean> {
+    const selected = await this.getPendingTab().getAttribute('aria-selected')
+    return selected === 'true'
+  }
+
+  // ===== CARE Team Welcome Methods =====
+
+  /**
+   * Get the CARE Team conversation item
+   */
+  getCareTeamConversation(): Locator {
+    return this.page.locator(selectors.messages.careTeamConversation)
+  }
+
+  /**
+   * Click the CARE Team conversation
+   */
+  async selectCareTeamConversation(): Promise<void> {
+    await this.getCareTeamConversation().click()
+    await this.page.waitForTimeout(500)
+  }
+
+  /**
+   * Check if welcome message is visible
+   */
+  async isWelcomeMessageVisible(): Promise<boolean> {
+    return this.page.locator(selectors.messages.welcomeMessage).isVisible()
+  }
+
+  // ===== Pending Offers Methods =====
+
+  /**
+   * Get all pending offer cards
+   */
+  getPendingOfferCards(): Locator {
+    return this.page.locator(selectors.messages.pendingOfferCard)
+  }
+
+  /**
+   * Get a specific pending offer card by index
+   */
+  getPendingOfferCard(index: number = 0): Locator {
+    return this.getPendingOfferCards().nth(index)
+  }
+
+  /**
+   * Get the Accept Offer button (first visible one)
+   */
+  getAcceptOfferButton(): Locator {
+    return this.page.locator(selectors.messages.acceptOfferButton)
+  }
+
+  /**
+   * Click Accept Offer on the first pending offer
+   */
+  async clickAcceptOffer(index: number = 0): Promise<void> {
+    const card = this.getPendingOfferCard(index)
+    const acceptButton = card.locator('button:has-text("Accept Offer")')
+    await acceptButton.click()
+  }
+
+  /**
+   * Click Decline on a pending offer
+   */
+  async clickDeclineOffer(index: number = 0): Promise<void> {
+    const card = this.getPendingOfferCard(index)
+    const declineButton = card.locator('button:has-text("Decline")')
+    await declineButton.click()
+  }
+
+  // ===== Viewport Methods =====
+
+  /**
+   * Check if send button is visible within the viewport (not cut off)
+   */
+  async isSendButtonInViewport(): Promise<boolean> {
+    const sendButton = this.getSendButton()
+    try {
+      await expect(sendButton).toBeInViewport({ timeout: 3000 })
+      return true
+    } catch {
+      return false
+    }
+  }
 }

@@ -86,7 +86,7 @@ export function ConversationHeader({
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          {conversation.help_request && (
+          {conversation.help_request && conversation.help_request.urgency !== 'normal' && (
             <Badge variant="outline">
               {conversation.help_request.urgency}
             </Badge>
