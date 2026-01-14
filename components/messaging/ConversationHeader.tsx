@@ -90,7 +90,24 @@ export function ConversationHeader({
 
           {/* Participant Name + Help Request Title */}
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-sm sm:text-base flex items-center gap-2">
+            {/* Mobile: Single line "Name - Title" */}
+            <h3 className="md:hidden font-semibold text-sm flex items-center gap-1.5">
+              <span className="truncate max-w-[100px]">{otherParticipant?.name || 'Unknown User'}</span>
+              {otherParticipant && (
+                <PresenceIndicator
+                  userId={otherParticipant.user_id}
+                  showStatus={false}
+                />
+              )}
+              {conversation.help_request && (
+                <>
+                  <span className="text-muted-foreground">-</span>
+                  <span className="text-muted-foreground truncate">{conversation.help_request.title}</span>
+                </>
+              )}
+            </h3>
+            {/* Desktop: Two lines - Name above Title */}
+            <h3 className="hidden md:flex font-semibold text-base items-center gap-2">
               <span className="truncate">{otherParticipant?.name || 'Unknown User'}</span>
               {otherParticipant && (
                 <PresenceIndicator
@@ -99,9 +116,8 @@ export function ConversationHeader({
                 />
               )}
             </h3>
-            {/* Help Request Title - Full title with responsive truncation */}
             {conversation.help_request && (
-              <p className="text-xs sm:text-sm text-muted-foreground truncate max-w-[140px] sm:max-w-[280px] md:max-w-[400px] lg:max-w-[500px]">
+              <p className="hidden md:block text-sm text-muted-foreground truncate max-w-[280px] md:max-w-[400px] lg:max-w-[500px]">
                 {conversation.help_request.title}
               </p>
             )}

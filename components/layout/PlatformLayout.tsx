@@ -234,9 +234,9 @@ export function PlatformLayout({
         </div>
       </header>
 
-      {/* Messaging Context Bar (when in messaging areas) */}
+      {/* Messaging Context Bar (when in messaging areas) - Hidden on mobile to save space */}
       {showMessagingContext && (
-        <div className="border-b bg-sage/5">
+        <div className="hidden md:block border-b bg-sage/5">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between py-3">
               <div className="flex items-center gap-3">

@@ -70,6 +70,28 @@ export function MessageInput({
     setIsTouchDevice(hasTouchScreen)
   }, [])
 
+  // Handle mobile keyboard focus - scroll input into view when keyboard opens
+  const handleFocus = useCallback(() => {
+    if (!isTouchDevice) return
+
+    // Wait for keyboard to open before scrolling
+    const scrollIntoView = () => {
+      if (textareaRef.current) {
+        // Use scrollIntoView with options for smooth behavior
+        textareaRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        })
+      }
+    }
+
+    // Delay to allow keyboard animation to complete
+    setTimeout(scrollIntoView, 300)
+    // Second scroll after keyboard fully opens (some devices need longer)
+    setTimeout(scrollIntoView, 500)
+  }, [isTouchDevice])
+
   // Typing status management
   const { broadcastTypingStart, broadcastTypingStop } = useTypingStatus({
     conversationId: conversationId || '',
@@ -246,9 +268,11 @@ export function MessageInput({
               value={content}
               onChange={handleContentChange}
               onKeyDown={handleKeyDown}
+              onFocus={handleFocus}
               placeholder={placeholder}
               disabled={disabled || isSending || isPending || isRejected}
               autoFocus={autoFocus}
+              inputMode="text"
               data-testid="message-input"
               className={cn(
                 "min-h-[44px] max-h-[120px] resize-none",

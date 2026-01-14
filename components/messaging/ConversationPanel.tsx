@@ -57,8 +57,8 @@ export function ConversationPanel({
       )}
       data-tour="conversation-list"
     >
-      {/* Header */}
-      <div className="p-4 border-b border-border">
+      {/* Header - Hidden on mobile since PlatformLayout shows "Community Messages" */}
+      <div className="hidden md:block p-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -90,8 +90,8 @@ export function ConversationPanel({
         )}
       </div>
 
-      {/* Tab Navigation */}
-      <nav className="flex gap-2 border-b border-border px-4" role="tablist">
+      {/* Tab Navigation - Refresh button added for mobile */}
+      <nav className="flex items-center border-b border-border px-4" role="tablist">
         <button
           id="active-tab"
           role="tab"
@@ -124,6 +124,19 @@ export function ConversationPanel({
         >
           Pending ({pendingOffers.length})
         </button>
+        {/* Mobile-only refresh button */}
+        <div className="md:hidden ml-auto">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={loadPendingOffers}
+            disabled={isLoadingOffers}
+            aria-label="Refresh conversations"
+            className="h-10 w-10 p-0"
+          >
+            <RefreshCw className={cn("w-4 h-4", isLoadingOffers && "animate-spin")} />
+          </Button>
+        </div>
       </nav>
 
       {/* Conditional Content */}
