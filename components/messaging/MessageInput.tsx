@@ -211,7 +211,7 @@ export function MessageInput({
 
   return (
     <div
-      className={cn("border-t bg-background p-3 sm:p-4 pb-safe", className)}
+      className={cn("bg-background p-2 sm:p-4 pb-safe", className)}
       data-component={dataComponent}
     >
       <form
@@ -219,7 +219,7 @@ export function MessageInput({
           e.preventDefault()
           handleSendMessage()
         }}
-        className="space-y-2"
+        className="space-y-1 sm:space-y-2"
       >
         {/* Pending conversation notice */}
         {isPending && (
@@ -330,10 +330,12 @@ export function MessageInput({
           </Button>
         </div>
 
-        {/* Keyboard hint - subtle */}
-        <p className="text-[10px] text-muted-foreground/50 text-center">
-          {isTouchDevice ? 'Enter to send' : 'Ctrl+Enter to send'}
-        </p>
+        {/* Keyboard hint - desktop only */}
+        {!isTouchDevice && (
+          <p className="text-[10px] text-muted-foreground/50 text-center">
+            Ctrl+Enter to send
+          </p>
+        )}
 
         {/* Accessibility hints */}
         <div className="sr-only" aria-live="polite">
