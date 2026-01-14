@@ -799,3 +799,48 @@ button, [role="button"] {
     display: none;
   }
 }
+
+/* ========================================
+   CUSTOM SCROLLBAR STYLING
+   Matches the organic warmth design aesthetic
+   ======================================== */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-tan);
+  border-radius: 4px;
+  opacity: 0.6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-sage);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-tan) transparent;
+}
+
+/* Messaging specific - thinner scrollbar */
+.messaging-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messaging-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(195, 151, 120, 0.5);
+  border-radius: 3px;
+}
+
+.messaging-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(195, 151, 120, 0.8);
+}
