@@ -193,7 +193,7 @@ export function MessageBubble({
         {/* Message bubble */}
         <div
           className={cn(
-            "relative px-4 py-3 rounded-2xl break-words",
+            "relative px-4 py-3 rounded-2xl max-w-full overflow-hidden",
             "shadow-md hover:shadow-lg transition-all duration-200",
             getMessageTypeColor(),
             // Rounded corner adjustments for message direction (tail pointing to avatar)
@@ -203,7 +203,7 @@ export function MessageBubble({
           )}
         >
           {/* Message content */}
-          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+          <p className="text-sm leading-relaxed whitespace-pre-wrap break-all">
             {message.content}
           </p>
         </div>

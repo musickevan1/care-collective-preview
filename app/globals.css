@@ -306,6 +306,32 @@ button, [role="button"] {
   }
 }
 
+/* Prevent scroll jitter on mobile keyboards */
+.messaging-page-container {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Message thread scroll container - smooth and stable */
+.message-thread-scroll {
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* When keyboard is open, hide the context bar */
+.keyboard-open .messaging-context-bar {
+  display: none !important;
+}
+
+/* Collapsed header variant for mobile keyboard */
+@media (max-width: 767px) {
+  .keyboard-open .messaging-page-container {
+    --messaging-context-height: 0px;
+    height: calc(100dvh - var(--navbar-height));
+  }
+}
+
 /* ========================================
    MOBILE MESSAGING LAYOUT SYSTEM
    Phase 2.2 Part 3 - WCAG 2.5.5 Compliance & Mobile Keyboard Handling

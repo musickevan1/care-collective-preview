@@ -80,42 +80,68 @@ export function MessagingDashboard({
 
     if (!isTouchDevice) return
 
+    // Store initial viewport height to detect keyboard
+    let initialHeight = window.innerHeight
+
     // Use Visual Viewport API if available (modern browsers)
     if ('visualViewport' in window && window.visualViewport) {
       const viewport = window.visualViewport
+      initialHeight = viewport.height
 
       const handleViewportChange = () => {
         const newHeight = viewport.height
         setViewportHeight(newHeight)
 
-        // Scroll input into view when keyboard opens
-        if (messageThreadRef.current) {
+        // Detect keyboard open: viewport height decreased by >150px
+        const heightDiff = initialHeight - newHeight
+        const isKeyboardOpen = heightDiff > 150
+
+        // Toggle keyboard-open class on body for CSS-based header collapse
+        if (isKeyboardOpen) {
+          document.body.classList.add('keyboard-open')
+        } else {
+          document.body.classList.remove('keyboard-open')
+        }
+
+        // Scroll input into view when keyboard opens (with debounce)
+        if (isKeyboardOpen && messageThreadRef.current) {
           setTimeout(() => {
             messageThreadRef.current?.scrollIntoView({
               behavior: 'smooth',
               block: 'end'
             })
-          }, 100)
+          }, 150)
         }
       }
 
       viewport.addEventListener('resize', handleViewportChange)
-      viewport.addEventListener('scroll', handleViewportChange)
       setViewportHeight(viewport.height)
 
       return () => {
         viewport.removeEventListener('resize', handleViewportChange)
-        viewport.removeEventListener('scroll', handleViewportChange)
+        document.body.classList.remove('keyboard-open')
       }
     } else {
       // Fallback for older browsers
       const handleResize = () => {
-        setViewportHeight(window.innerHeight)
+        const newHeight = window.innerHeight
+        setViewportHeight(newHeight)
+
+        // Detect keyboard open
+        const heightDiff = initialHeight - newHeight
+        if (heightDiff > 150) {
+          document.body.classList.add('keyboard-open')
+        } else {
+          document.body.classList.remove('keyboard-open')
+        }
       }
 
       handleResize()
       window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
+      return () => {
+        window.removeEventListener('resize', handleResize)
+        document.body.classList.remove('keyboard-open')
+      }
     }
   }, [])
 
