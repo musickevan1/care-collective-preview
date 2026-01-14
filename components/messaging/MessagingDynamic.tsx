@@ -6,7 +6,7 @@ import type { ConversationWithDetails, MessageWithSender } from '@/lib/messaging
 
 // Dynamically import messaging components to reduce bundle size
 const MessagingDashboard = lazy(() => import('./MessagingDashboard').then(m => ({ default: m.MessagingDashboard })))
-const VirtualizedMessageList = lazy(() => import('./VirtualizedMessageList').then(m => ({ default: m.VirtualizedMessageList })))
+const VirtualizedMessageList = lazy(() => import('./VirtualizedMessageList'))
 const ConversationList = lazy(() => import('./ConversationList').then(m => ({ default: m.ConversationList })))
 const MessageInput = lazy(() => import('./MessageInput').then(m => ({ default: m.MessageInput })))
 const MessageBubble = lazy(() => import('./MessageBubble').then(m => ({ default: m.MessageBubble })))
@@ -51,7 +51,7 @@ export function MessagingDynamic(props: MessagingComponentProps) {
 
 // Export individual lazy components for direct use
 export const LazyMessagingDashboard = lazy(() => import('./MessagingDashboard').then(m => ({ default: m.MessagingDashboard })))
-export const LazyVirtualizedMessageList = lazy(() => import('./VirtualizedMessageList').then(m => ({ default: m.VirtualizedMessageList })))
+export const LazyVirtualizedMessageList = lazy(() => import('./VirtualizedMessageList'))
 export const LazyConversationList = lazy(() => import('./ConversationList').then(m => ({ default: m.ConversationList })))
 export const LazyMessageInput = lazy(() => import('./MessageInput').then(m => ({ default: m.MessageInput })))
 export const LazyMessageBubble = lazy(() => import('./MessageBubble').then(m => ({ default: m.MessageBubble })))

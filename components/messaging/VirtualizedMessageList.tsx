@@ -305,24 +305,23 @@ export function VirtualizedMessageList({
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const previousMessageCount = useRef(messages.length);
 
-  // Helper function to find grouping metadata for a message
-  const getGroupingMetadata = useCallback((messageId: string, groupedMessages: MessageWithGrouping[]) => {
-    const found = groupedMessages.find(m => m.id === messageId);
-    return found || { isFirstInGroup: true, isLastInGroup: true };
-  }, []);
-
   // Group messages and calculate item count
-  const { groups, itemCount, messagesWithGrouping } = useMemo(() => {
+  const { groups, itemCount, groupingMap } = useMemo(() => {
     const messageGroups = groupMessagesByDate(messages, showDateSeparators);
     const count = calculateItemCount(messageGroups, showDateSeparators);
 
     // NEW: Add grouping metadata for sender-based grouping
     const withGrouping = addGroupingMetadata(messages, 5); // 5-minute window
 
+    // Create a Map for O(1) lookup of grouping metadata
+    const metadataMap = new Map(
+      withGrouping.map(msg => [msg.id, { isFirstInGroup: msg.isFirstInGroup, isLastInGroup: msg.isLastInGroup }])
+    );
+
     return {
       groups: messageGroups,
       itemCount: count,
-      messagesWithGrouping: withGrouping
+      groupingMap: metadataMap
     };
   }, [messages, showDateSeparators]);
 
@@ -415,7 +414,7 @@ export function VirtualizedMessageList({
                 )}
 
                 {group.messages.map((message) => {
-                  const groupingMeta = getGroupingMetadata(message.id, messagesWithGrouping);
+                  const groupingMeta = groupingMap.get(message.id) || { isFirstInGroup: true, isLastInGroup: true };
                   return (
                     <div key={message.id} className="space-y-1">
                       <MessageBubble
@@ -511,3 +510,6 @@ export function VirtualizedMessageList({
     </div>
   );
 }
+
+// Default export for dynamic imports to avoid module loading issues
+export default VirtualizedMessageList;
