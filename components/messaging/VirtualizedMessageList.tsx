@@ -454,8 +454,6 @@ export function VirtualizedMessageList({
                     </div>
                   );
                 })}
-                  </div>
-                ))}
               </div>
             ))}
           </div>
