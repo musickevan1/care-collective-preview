@@ -144,7 +144,7 @@ export function MessageBubble({
     <div
       ref={messageRef}
       className={cn(
-        "flex w-full group gap-2",
+        "flex w-full group gap-2 px-4",
         spacingClass,  // Dynamic spacing based on grouping
         "animate-in fade-in slide-in-from-bottom-2 duration-300",
         isCurrentUser ? "justify-end flex-row-reverse" : "justify-start",
@@ -166,7 +166,7 @@ export function MessageBubble({
       {/* Empty spacer to maintain alignment when avatar hidden */}
       {!shouldShowAvatar && !compact && (
         <div className={cn('flex-shrink-0', isCurrentUser ? 'ml-2' : 'mr-2')}>
-          <div className="size-10" /> {/* Same size as Avatar size="md" (40px) */}
+          <div className="size-8" /> {/* Same size as Avatar size="md" (32px) */}
         </div>
       )}
 

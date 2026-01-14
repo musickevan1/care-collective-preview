@@ -140,14 +140,14 @@ export function MessagingDashboard({
         selectedConversationId={selectedConversationId}
       />
       <div
-        className={cn("h-full flex bg-background", className)}
+        className={cn("h-full flex flex-col overflow-hidden bg-background", className)}
         style={
           viewportHeight && isMobile
             ? { height: `${viewportHeight}px`, maxHeight: `${viewportHeight}px` }
             : undefined
         }
       >
-        <div className="mx-auto w-full max-w-7xl flex lg:px-4 xl:px-8">
+        <div className="mx-auto w-full max-w-7xl flex-1 flex overflow-hidden px-0 sm:px-2 lg:px-4 xl:px-6">
           <ConversationPanel isMobile={isMobile} showConversationList={showConversationList} />
           <MessageThreadPanel
             isMobile={isMobile}
