@@ -40,7 +40,7 @@ export function ConversationHeader({
 
   return (
     <div
-      className={`border-b border-border p-4 bg-background ${className || ''}`}
+      className={`h-14 sm:h-16 border-b border-border p-3 sm:p-4 bg-background ${className || ''}`}
       data-component={dataComponent}
     >
       <div className="flex items-center justify-between">

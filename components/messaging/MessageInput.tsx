@@ -189,7 +189,7 @@ export function MessageInput({
 
   return (
     <div
-      className={cn("border-t bg-background p-4", className)}
+      className={cn("border-t bg-background p-3 sm:p-4 pb-safe", className)}
       data-component={dataComponent}
     >
       <form
