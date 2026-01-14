@@ -61,7 +61,7 @@ export function PendingOffersSection({
   if (offers.length === 0) {
     return (
       <div className="text-center py-12 px-4">
-        <Mail className="w-12 h-12 text-muted-foreground mb-3 opacity-50" aria-hidden="true" />
+        <Mail className="w-12 h-12 text-muted-foreground mb-3 opacity-50 mx-auto" aria-hidden="true" />
         <h3 className="text-lg font-semibold text-secondary mb-2">
           No Pending Offers
         </h3>
