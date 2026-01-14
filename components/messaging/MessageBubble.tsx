@@ -147,7 +147,7 @@ export function MessageBubble({
         "flex w-full group gap-2 px-4",
         spacingClass,  // Dynamic spacing based on grouping
         "animate-in fade-in slide-in-from-bottom-2 duration-300",
-        isCurrentUser ? "justify-end flex-row-reverse" : "justify-start",
+        isCurrentUser ? "flex-row-reverse" : "",
         className
       )}
       role="article"

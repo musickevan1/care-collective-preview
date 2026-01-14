@@ -147,7 +147,10 @@ export function MessagingDashboard({
             : undefined
         }
       >
-        <div className="mx-auto w-full max-w-7xl flex-1 flex overflow-hidden px-0 sm:px-2 lg:px-4 xl:px-6">
+        <div className="mx-auto w-full max-w-7xl flex-1 flex overflow-hidden px-4 sm:px-6 lg:px-8">
+          {/* Left accent line */}
+          <div className="hidden sm:block w-px bg-border/60 flex-shrink-0" />
+
           <ConversationPanel isMobile={isMobile} showConversationList={showConversationList} />
           <MessageThreadPanel
             isMobile={isMobile}
@@ -156,6 +159,9 @@ export function MessagingDashboard({
             userName={userName}
             onBack={handleBackToConversations}
           />
+
+          {/* Right accent line */}
+          <div className="hidden sm:block w-px bg-border/60 flex-shrink-0" />
         </div>
       </div>
     </MessagingProvider>
