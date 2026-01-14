@@ -147,14 +147,16 @@ export function MessagingDashboard({
             : undefined
         }
       >
-        <ConversationPanel isMobile={isMobile} showConversationList={showConversationList} />
-        <MessageThreadPanel
-          isMobile={isMobile}
-          showConversationList={showConversationList}
-          messageThreadRef={messageThreadRef}
-          userName={userName}
-          onBack={handleBackToConversations}
-        />
+        <div className="mx-auto w-full max-w-7xl flex">
+          <ConversationPanel isMobile={isMobile} showConversationList={showConversationList} />
+          <MessageThreadPanel
+            isMobile={isMobile}
+            showConversationList={showConversationList}
+            messageThreadRef={messageThreadRef}
+            userName={userName}
+            onBack={handleBackToConversations}
+          />
+        </div>
       </div>
     </MessagingProvider>
   )

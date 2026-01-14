@@ -3,7 +3,7 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from 'react'
 import { ReactElement } from 'react'
 import { MessageWithSender } from '@/lib/messaging/types'
-import { formatDistanceToNow } from 'date-fns'
+import { formatMessageTimestamp, formatTimestampForA11y } from '@/lib/utils/relative-time'
 import { cn } from '@/lib/utils'
 import {
   Flag,
@@ -126,7 +126,13 @@ export function MessageBubble({
           <p className="text-center">{message.content}</p>
           <p className="text-xs text-center mt-1 opacity-70">
             <ClientOnly>
-              {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+              <time
+                dateTime={message.created_at}
+                title={formatTimestampForA11y(message.created_at)}
+                aria-label={`Sent ${formatTimestampForA11y(message.created_at)}`}
+              >
+                {formatMessageTimestamp(message.created_at)}
+              </time>
             </ClientOnly>
           </p>
         </div>
@@ -166,7 +172,7 @@ export function MessageBubble({
 
       <div
         className={cn(
-          "max-w-[70%] sm:max-w-md space-y-1 flex flex-col",
+          "max-w-[70%] sm:max-w-[480px] space-y-1 flex flex-col",
           isCurrentUser ? "items-end" : "items-start"
         )}
       >
@@ -212,10 +218,12 @@ export function MessageBubble({
           >
             <time
               dateTime={message.created_at}
+              title={formatTimestampForA11y(message.created_at)}
+              aria-label={`Sent ${formatTimestampForA11y(message.created_at)}`}
               className="text-muted-foreground"
             >
               <ClientOnly>
-                {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+                {formatMessageTimestamp(message.created_at)}
               </ClientOnly>
             </time>
 
