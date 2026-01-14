@@ -10,6 +10,7 @@ import { ReactElement } from 'react';
 import { List, useListRef, ListImperativeAPI } from 'react-window';
 import { MessageBubble } from './MessageBubble';
 import { MessageWithSender } from '@/lib/messaging/types';
+import { addGroupingMetadata, type MessageWithGrouping } from '@/lib/messaging/message-grouping';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronDown, CornerDownRight, MessageCircle } from 'lucide-react';
@@ -304,14 +305,24 @@ export function VirtualizedMessageList({
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const previousMessageCount = useRef(messages.length);
 
+  // Helper function to find grouping metadata for a message
+  const getGroupingMetadata = useCallback((messageId: string, groupedMessages: MessageWithGrouping[]) => {
+    const found = groupedMessages.find(m => m.id === messageId);
+    return found || { isFirstInGroup: true, isLastInGroup: true };
+  }, []);
+
   // Group messages and calculate item count
-  const { groups, itemCount } = useMemo(() => {
+  const { groups, itemCount, messagesWithGrouping } = useMemo(() => {
     const messageGroups = groupMessagesByDate(messages, showDateSeparators);
     const count = calculateItemCount(messageGroups, showDateSeparators);
 
+    // NEW: Add grouping metadata for sender-based grouping
+    const withGrouping = addGroupingMetadata(messages, 5); // 5-minute window
+
     return {
       groups: messageGroups,
-      itemCount: count
+      itemCount: count,
+      messagesWithGrouping: withGrouping
     };
   }, [messages, showDateSeparators]);
 
@@ -403,39 +414,46 @@ export function VirtualizedMessageList({
                   </div>
                 )}
 
-                {group.messages.map((message) => (
-                  <div key={message.id} className="space-y-1">
-                    <MessageBubble
-                      message={message}
-                      isCurrentUser={message.sender_id === currentUserId}
-                      showSenderName={message.sender_id !== currentUserId}
-                      onReply={onMessageReply ? () => onMessageReply(message.id) : undefined}
-                      onThreadOpen={message.thread_id && onThreadOpen
-                        ? () => onThreadOpen(message.thread_id!)
-                        : undefined
-                      }
-                      showThreadIndicator={!!message.thread_id}
-                    />
+                {group.messages.map((message) => {
+                  const groupingMeta = getGroupingMetadata(message.id, messagesWithGrouping);
+                  return (
+                    <div key={message.id} className="space-y-1">
+                      <MessageBubble
+                        message={message}
+                        isCurrentUser={message.sender_id === currentUserId}
+                        showSenderName={message.sender_id !== currentUserId}
+                        isFirstInGroup={groupingMeta.isFirstInGroup}
+                        isLastInGroup={groupingMeta.isLastInGroup}
+                        onReply={onMessageReply ? () => onMessageReply(message.id) : undefined}
+                        onThreadOpen={message.thread_id && onThreadOpen
+                          ? () => onThreadOpen(message.thread_id!)
+                          : undefined
+                        }
+                        showThreadIndicator={!!message.thread_id}
+                      />
 
-                    {/* Thread replies */}
-                    {group.threads
-                      .filter(thread => thread.parentId === message.id)
-                      .map(thread => (
-                        <div key={`thread-${thread.parentId}`} className="pl-8 space-y-1">
-                          {thread.replies.map(reply => (
-                            <div key={reply.id} className="flex items-start gap-2">
-                              <CornerDownRight className="w-4 h-4 text-muted-foreground mt-2 flex-shrink-0" />
-                              <MessageBubble
-                                message={reply}
-                                isCurrentUser={reply.sender_id === currentUserId}
-                                showSenderName={reply.sender_id !== currentUserId}
-                                compact={true}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      ))
-                    }
+                      {/* Thread replies */}
+                      {group.threads
+                        .filter(thread => thread.parentId === message.id)
+                        .map(thread => (
+                          <div key={`thread-${thread.parentId}`} className="pl-8 space-y-1">
+                            {thread.replies.map(reply => (
+                              <div key={reply.id} className="flex items-start gap-2">
+                                <CornerDownRight className="w-4 h-4 text-muted-foreground mt-2 flex-shrink-0" />
+                                <MessageBubble
+                                  message={reply}
+                                  isCurrentUser={reply.sender_id === currentUserId}
+                                  showSenderName={reply.sender_id !== currentUserId}
+                                  compact={true}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        ))
+                      }
+                    </div>
+                  );
+                })}
                   </div>
                 ))}
               </div>

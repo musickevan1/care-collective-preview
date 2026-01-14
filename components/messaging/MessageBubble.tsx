@@ -27,6 +27,9 @@ interface MessageBubbleProps {
   showThreadIndicator?: boolean
   compact?: boolean
   onThreadOpen?: () => void
+  // NEW: Grouping props for message grouping (Phase 2)
+  isFirstInGroup?: boolean
+  isLastInGroup?: boolean
 }
 
 /**
@@ -45,9 +48,17 @@ export function MessageBubble({
   showThreadIndicator = false,
   compact = false,
   onThreadOpen,
+  isFirstInGroup = true,    // Default to true for backward compatibility
+  isLastInGroup = true,
 }: MessageBubbleProps): ReactElement {
   const messageRef = useRef<HTMLDivElement>(null)
   const [isTouchDevice, setIsTouchDevice] = useState(false)
+
+  // Grouping logic: determine what to show based on position in group
+  const spacingClass = isLastInGroup ? 'mb-4' : 'mb-1'
+  const shouldShowAvatar = isFirstInGroup && !compact
+  const shouldShowSenderName = isFirstInGroup && !isCurrentUser && showSenderName
+  const shouldShowTimestamp = isFirstInGroup
 
   // Detect touch device capability
   useEffect(() => {
@@ -127,7 +138,8 @@ export function MessageBubble({
     <div
       ref={messageRef}
       className={cn(
-        "flex w-full mb-4 group gap-2",
+        "flex w-full group gap-2",
+        spacingClass,  // Dynamic spacing based on grouping
         "animate-in fade-in slide-in-from-bottom-2 duration-300",
         isCurrentUser ? "justify-end flex-row-reverse" : "justify-start",
         className
@@ -135,8 +147,8 @@ export function MessageBubble({
       role="article"
       aria-label={`Message from ${message.sender.name}`}
     >
-      {/* Avatar */}
-      {!compact && (
+      {/* Avatar - only show if first in group */}
+      {shouldShowAvatar && (
         <Avatar
           name={message.sender.name}
           avatarUrl={message.sender.avatar_url}
@@ -145,14 +157,21 @@ export function MessageBubble({
         />
       )}
 
+      {/* Empty spacer to maintain alignment when avatar hidden */}
+      {!shouldShowAvatar && !compact && (
+        <div className={cn('flex-shrink-0', isCurrentUser ? 'ml-2' : 'mr-2')}>
+          <div className="size-10" /> {/* Same size as Avatar size="md" (40px) */}
+        </div>
+      )}
+
       <div
         className={cn(
           "max-w-[70%] sm:max-w-md space-y-1 flex flex-col",
           isCurrentUser ? "items-end" : "items-start"
         )}
       >
-        {/* Sender name (for non-current users or if explicitly requested) */}
-        {showSenderName && !isCurrentUser && (
+        {/* Sender name - only show if first in group and not current user */}
+        {shouldShowSenderName && (
           <div className="px-2">
             <p className="text-xs text-muted-foreground font-medium">
               {message.sender.name}
@@ -183,45 +202,47 @@ export function MessageBubble({
           </p>
         </div>
 
-        {/* Timestamp and status */}
-        <div
-          className={cn(
-            "flex items-center gap-1.5 px-2 text-xs",
-            isCurrentUser ? "flex-row-reverse" : "flex-row"
-          )}
-        >
-          <time
-            dateTime={message.created_at}
-            className="text-muted-foreground"
+        {/* Timestamp and status - only show if first in group */}
+        {shouldShowTimestamp && (
+          <div
+            className={cn(
+              "flex items-center gap-1.5 px-2 text-xs",
+              isCurrentUser ? "flex-row-reverse" : "flex-row"
+            )}
           >
-            <ClientOnly>
-              {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
-            </ClientOnly>
-          </time>
+            <time
+              dateTime={message.created_at}
+              className="text-muted-foreground"
+            >
+              <ClientOnly>
+                {formatDistanceToNow(new Date(message.created_at), { addSuffix: true })}
+              </ClientOnly>
+            </time>
 
-          {/* Show status icon only for current user's messages */}
-          {isCurrentUser && (
-            <span className="flex items-center">
-              {message.status === 'read' ? (
-                <CheckCheck className="w-4 h-4 text-sage" aria-label="Read" />
-              ) : message.status === 'delivered' ? (
-                <CheckCheck className="w-4 h-4 text-muted-foreground" aria-label="Delivered" />
-              ) : message.status === 'sent' ? (
-                <Check className="w-4 h-4 text-muted-foreground" aria-label="Sent" />
-              ) : message.status === 'failed' ? (
-                <AlertTriangle className="w-4 h-4 text-destructive" aria-label="Failed" />
-              ) : null}
-            </span>
-          )}
+            {/* Show status icon only for current user's messages */}
+            {isCurrentUser && (
+              <span className="flex items-center">
+                {message.status === 'read' ? (
+                  <CheckCheck className="w-4 h-4 text-sage" aria-label="Read" />
+                ) : message.status === 'delivered' ? (
+                  <CheckCheck className="w-4 h-4 text-muted-foreground" aria-label="Delivered" />
+                ) : message.status === 'sent' ? (
+                  <Check className="w-4 h-4 text-muted-foreground" aria-label="Sent" />
+                ) : message.status === 'failed' ? (
+                  <AlertTriangle className="w-4 h-4 text-destructive" aria-label="Failed" />
+                ) : null}
+              </span>
+            )}
 
-          {/* Flagged indicator */}
-          {message.is_flagged && (
-            <span className="flex items-center gap-1 text-yellow-600">
-              <Flag className="w-3 h-3" />
-              <span>Flagged</span>
-            </span>
-          )}
-        </div>
+            {/* Flagged indicator */}
+            {message.is_flagged && (
+              <span className="flex items-center gap-1 text-yellow-600">
+                <Flag className="w-3 h-3" />
+                <span>Flagged</span>
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
