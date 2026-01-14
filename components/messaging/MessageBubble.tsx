@@ -196,10 +196,10 @@ export function MessageBubble({
             "relative px-4 py-3 rounded-2xl break-words",
             "shadow-md hover:shadow-lg transition-all duration-200",
             getMessageTypeColor(),
-            // Rounded corner adjustments for message direction (tail effect)
+            // Rounded corner adjustments for message direction (tail pointing to avatar)
             isCurrentUser
-              ? "rounded-tr-none"
-              : "rounded-tl-none"
+              ? "rounded-br-none"  // Bottom-right flat, tail points to avatar on right
+              : "rounded-bl-none"  // Bottom-left flat, tail points to avatar on left
           )}
         >
           {/* Message content */}
